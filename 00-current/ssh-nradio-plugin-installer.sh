@@ -2,7 +2,7 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V1.60.5"
+SCRIPT_VERSION="V2.0.0"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
 SCRIPT_RELEASE_DATE="2026-04-26"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
@@ -1942,6 +1942,20 @@ FANCTRL_LEGACY_DISPLAY_NAME="FanControl"
 FANCTRL_LEGACY_PACKAGE_NAME="fanctrl"
 FANCTRL_LEGACY_ROUTE="nradioadv/system/fanctrl"
 FANCTRL_ICON_NAME="nradio-fanctrl"
+QIYOU_APP_NAME="奇游联机宝"
+QIYOU_PACKAGE_NAME="nradio-qiyou"
+QIYOU_ROUTE="nradioadv/system/qiyou"
+QIYOU_CONTROLLER="/usr/lib/lua/luci/controller/nradio_adv/qiyou.lua"
+QIYOU_VIEW="/usr/lib/lua/luci/view/nradiobridge_qiyou/qiyou.htm"
+QIYOU_ICON_NAME="qiyou.svg"
+LEIGOD_APP_NAME="雷神加速器"
+LEIGOD_PACKAGE_NAME="nradio-leigod"
+LEIGOD_ROUTE="nradioadv/system/leigod"
+LEIGOD_CONTROLLER="/usr/lib/lua/luci/controller/nradio_adv/leigod.lua"
+LEIGOD_VIEW="/usr/lib/lua/luci/view/nradiobridge_leigod/leigod.htm"
+LEIGOD_ICON_NAME="leigod.svg"
+LEIGOD_DIR="/usr/sbin/leigod"
+LEIGOD_INIT="/etc/init.d/acc"
 EASYTIER_ROUTE_STATE_FILE="$STATE_DIR/easytier_routes.conf"
 EASYTIER_ROUTE_APPLY_SCRIPT="/etc/easytier/route-apply.sh"
 
@@ -2544,6 +2558,41 @@ cleanup_fanctrl() {
     cleanup_appcenter_entry "$FANCTRL_LEGACY_DISPLAY_NAME" "$FANCTRL_LEGACY_PACKAGE_NAME" "$FANCTRL_LEGACY_ROUTE"
 }
 
+cleanup_qiyou() {
+    /etc/qy/qy_acc.sh stop >/dev/null 2>&1 || true
+    [ -x /tmp/qy/init.sh ] && /tmp/qy/init.sh stop >/dev/null 2>&1 || true
+    kill_name qy_proxy
+    kill_name qy_mosq
+    kill_name qy_acc
+    rm -rf /tmp/qy /etc/qy 2>/dev/null || true
+    rm -f /tmp/qyplug.sh /tmp/qyplug.ret /tmp/qyplug.pid /tmp/qyplug.get /tmp/qiyou-install.sh 2>/dev/null || true
+    rm -f /etc/init.d/qy_acc.boot /etc/rc.d/S99qy_acc.boot 2>/dev/null || true
+    rm -f "$QIYOU_CONTROLLER" "$QIYOU_VIEW" 2>/dev/null || true
+    remove_app_icon_file "$QIYOU_ICON_NAME"
+    cleanup_appcenter_entry "$QIYOU_APP_NAME" "$QIYOU_PACKAGE_NAME" "$QIYOU_ROUTE"
+    cleanup_appcenter_entry "$QIYOU_PACKAGE_NAME" "$QIYOU_PACKAGE_NAME" "$QIYOU_ROUTE"
+}
+
+cleanup_leigod() {
+    if [ -x "$LEIGOD_INIT" ]; then
+        "$LEIGOD_INIT" disable >/dev/null 2>&1 || true
+        "$LEIGOD_INIT" stop >/dev/null 2>&1 || true
+    fi
+    if [ -f "$LEIGOD_DIR/leigod_uninstall.sh" ]; then
+        ( cd "$LEIGOD_DIR" && sh ./leigod_uninstall.sh ) >>/tmp/nradio-plugin-uninstall.log 2>&1 || true
+    else
+        kill_name acc-gw.router.arm64
+        kill_name acc-gw.router.aarch64
+        kill_name acc_upgrade_monitor
+        rm -rf "$LEIGOD_DIR" /tmp/acc 2>/dev/null || true
+        rm -f "$LEIGOD_INIT" /etc/config/accelerator 2>/dev/null || true
+    fi
+    rm -f "$LEIGOD_CONTROLLER" "$LEIGOD_VIEW" 2>/dev/null || true
+    remove_app_icon_file "$LEIGOD_ICON_NAME"
+    cleanup_appcenter_entry "$LEIGOD_APP_NAME" "$LEIGOD_PACKAGE_NAME" "$LEIGOD_ROUTE"
+    cleanup_appcenter_entry "$LEIGOD_PACKAGE_NAME" "$LEIGOD_PACKAGE_NAME" "$LEIGOD_ROUTE"
+}
+
 case "$plugin" in
     openclash)
         cleanup_openclash
@@ -2568,6 +2617,12 @@ case "$plugin" in
         ;;
     fanctrl)
         cleanup_fanctrl
+        ;;
+    qiyou)
+        cleanup_qiyou
+        ;;
+    leigod)
+        cleanup_leigod
         ;;
     *)
         exit 1
@@ -2602,6 +2657,8 @@ function index()
     entry({"nradioadv", "system", "plugin_uninstall", "openvpn"}, call("uninstall_openvpn"), nil, 102).leaf = true
     entry({"nradioadv", "system", "plugin_uninstall", "easytier"}, call("uninstall_easytier"), nil, 103).leaf = true
     entry({"nradioadv", "system", "plugin_uninstall", "fanctrl"}, call("uninstall_fanctrl"), nil, 104).leaf = true
+    entry({"nradioadv", "system", "plugin_uninstall", "qiyou"}, call("uninstall_qiyou"), nil, 105).leaf = true
+    entry({"nradioadv", "system", "plugin_uninstall", "leigod"}, call("uninstall_leigod"), nil, 106).leaf = true
 end
 
 local function json_response(code, msg, detail)
@@ -2661,6 +2718,10 @@ local function plugin_from_name(name)
         return "easytier"
     elseif name == "FanControl Plus" or name == "fanctrl-plus" or name == "FanControl" or name == "fanctrl" then
         return "fanctrl"
+    elseif name == "奇游联机宝" or name == "QiYou" or name == "qiyou" or name == "nradio-qiyou" then
+        return "qiyou"
+    elseif name == "雷神加速器" or name == "Leigod" or name == "LeigodAcc" or name == "leigod" or name == "nradio-leigod" then
+        return "leigod"
     end
 
     return nil
@@ -2770,6 +2831,14 @@ end
 
 function uninstall_fanctrl()
     start_plugin("fanctrl")
+end
+
+function uninstall_qiyou()
+    start_plugin("qiyou")
+end
+
+function uninstall_leigod()
+    start_plugin("leigod")
 end
 EOF_PLUGIN_UNINSTALL_CONTROLLER
 }
@@ -4433,6 +4502,10 @@ EOF
             return "easytier";
         if(app_name == "FanControl Plus" || app_name == "fanctrl-plus" || app_name == "FanControl" || app_name == "fanctrl")
             return "fanctrl";
+        if(app_name == "奇游联机宝" || app_name == "QiYou" || app_name == "qiyou" || app_name == "nradio-qiyou")
+            return "qiyou";
+        if(app_name == "雷神加速器" || app_name == "Leigod" || app_name == "LeigodAcc" || app_name == "leigod" || app_name == "nradio-leigod")
+            return "leigod";
         return "";
     }
     function nradio_plugin_uninstall_result(data){
@@ -4638,12 +4711,16 @@ EOF
     need_openlist_route='1'
     need_zerotier_route='1'
     need_fanctrl_route='1'
+    need_qiyou_route='1'
+    need_leigod_route='1'
     grep -q 'db.name == "OpenList"' "$tmp3" && need_openlist_route='0'
     grep -q 'db.name == "ZeroTier"' "$tmp3" && need_zerotier_route='0'
     grep -q 'nradioadv/system/fanctrl_plus' "$tmp3" && need_fanctrl_route='0'
-    if [ "$need_openlist_route$need_zerotier_route$need_fanctrl_route" != '000' ]; then
+    grep -q 'db.name == "奇游联机宝"' "$tmp3" && need_qiyou_route='0'
+    grep -q 'db.name == "雷神加速器"' "$tmp3" && need_leigod_route='0'
+    if [ "$need_openlist_route$need_zerotier_route$need_fanctrl_route$need_qiyou_route$need_leigod_route" != '00000' ]; then
         tmp4="$WORKDIR/appcenter.4"
-        awk -v need_openlist="$need_openlist_route" -v need_zerotier="$need_zerotier_route" -v need_fanctrl="$need_fanctrl_route" '
+        awk -v need_openlist="$need_openlist_route" -v need_zerotier="$need_zerotier_route" -v need_fanctrl="$need_fanctrl_route" -v need_qiyou="$need_qiyou_route" -v need_leigod="$need_leigod_route" '
             BEGIN { inserted = 0 }
             {
                 print
@@ -4659,6 +4736,14 @@ EOF
                     if (need_fanctrl == "1") {
                         print "            else if (db.name == \"FanControl Plus\" || db.name == \"fanctrl-plus\" || db.name == \"FanControl\" || db.name == \"fanctrl\")"
                         print "                open_route = \"nradioadv/system/fanctrl_plus\";"
+                    }
+                    if (need_qiyou == "1") {
+                        print "            else if (db.name == \"奇游联机宝\" || db.name == \"QiYou\" || db.name == \"qiyou\" || db.name == \"nradio-qiyou\")"
+                        print "                open_route = \"nradioadv/system/qiyou\";"
+                    }
+                    if (need_leigod == "1") {
+                        print "            else if (db.name == \"雷神加速器\" || db.name == \"Leigod\" || db.name == \"LeigodAcc\" || db.name == \"leigod\" || db.name == \"nradio-leigod\")"
+                        print "                open_route = \"nradioadv/system/leigod\";"
                     }
                     inserted = 1
                 }
@@ -4909,7 +4994,7 @@ patch_appcenter_card_polish() {
 
     cat > "$css_file" <<'EOF_APPCENTER_CARD_POLISH_CSS'
     /* NRadio appcenter card polish: visual-only layer */
-    /* NRadio appcenter card polish V1.60.5 full repair layer */
+    /* NRadio appcenter card polish V2.0.0 full repair layer */
     /* NRadio appcenter visual polish 1-5 safe refinement */
     /* Keep appcontainer/container_left/app_top_menu/container_right layout owned by NRadio OEM CSS. */
     .container_right .app_box{
@@ -5883,7 +5968,7 @@ EOF_APPCENTER_EMPTY_STATE_JS
     fi
 
     verify_template_marker 'NRadio appcenter card polish: visual-only layer' '应用商店卡片美化 CSS'
-    verify_template_marker 'NRadio appcenter card polish V1.60.5 full repair layer' '应用商店 V1.60.5 修复美化 CSS'
+    verify_template_marker 'NRadio appcenter card polish V2.0.0 full repair layer' '应用商店 V2.0.0 修复美化 CSS'
     verify_template_marker '<div class="app_meta_row"' '应用商店卡片状态徽标'
     verify_template_marker 'status_label: db.status_label' '应用商店卡片状态标签数据'
     verify_template_marker 'app_open_badge app_open_1' '应用商店后台状态徽标'
@@ -17397,6 +17482,7 @@ set_webssh_shortcut_icon() {
 
 install_ttyd_webssh() {
     require_nradio_oem_appcenter
+    confirm_or_exit "确认继续安装 ttyd / Web SSH 并修改系统吗？"
 
     helper="$WORKDIR/nradio-ttyd-webssh-embedded.sh"
     mkdir -p "$WORKDIR"
@@ -19167,49 +19253,11 @@ print_startup_disclaimer_text() {
 EOF
 }
 
-main_menu() {
-    choice="${1:-}"
-    initial_choice="$choice"
+run_menu_feature() {
+    feature_choice="$1"
     show_support_page_hint='0'
-    require_root
-    acquire_script_lock
-    require_startup_disclaimer_acceptance_once
-printf '%s\n' "$SCRIPT_TITLE"
-printf '%s\n' "$SCRIPT_SIGNATURE"
-printf '%s\n' "$SCRIPT_MODEL_NOTICE"
-printf '%s\n' "$SCRIPT_SCOPE_NOTICE"
-    require_supported_nradio_model_environment
-    log_nradio_oem_environment_hint
-    while :; do
-        show_support_page_hint='0'
-printf '%s\n' "$SCRIPT_SUPPORT_NOTICE"
-    printf '请选择要安装并接入应用商店的插件:\n'
-    printf '1. 扩容 swap 虚拟内存\n'
-    printf '2. 哈基米\n'
-    printf '3. ttyd / Web SSH\n'
-    printf '4. AdGuardHome\n'
-    printf '5. OpenList\n'
-    printf '6. ZeroTier\n'
-    printf '7. EasyTier\n'
-    printf '8. OpenVPN\n'
-    printf '9. OpenVPN 向导配置并运行\n'
-    printf '10. OpenVPN 路由表向导\n'
-    printf '11. EasyTier 路由表向导\n'
-    printf '12. OpenVPN 自检\n'
-    printf '13. 统一测试模式\n'
-    printf '14. NRadio_C8-688 风扇控制\n'
-    printf '15. 美化应用商店\n'
-    printf '请输入 1、2、3、4、5、6、7、8、9、10、11、12、13、14 或 15: '
-    if [ -z "$choice" ]; then
-        if ! ui_read_line; then
-            [ -t 0 ] && die "input cancelled"
-            choice=''
-        else
-            choice="$UI_READ_RESULT"
-        fi
-    fi
 
-    case "$choice" in
+    case "$feature_choice" in
         1)
             manage_swapfile
             ;;
@@ -19264,11 +19312,7 @@ printf '%s\n' "$SCRIPT_SUPPORT_NOTICE"
                 :
             else
                 fanctrl_rc="$?"
-                if [ "$fanctrl_rc" = '2' ]; then
-                    [ -n "$initial_choice" ] && return 0
-                    choice=''
-                    continue
-                fi
+                [ "$fanctrl_rc" = '2' ] && return 2
                 return "$fanctrl_rc"
             fi
             ;;
@@ -19278,12 +19322,700 @@ printf '%s\n' "$SCRIPT_SUPPORT_NOTICE"
             show_support_page_hint='1'
             ;;
         *)
-            die_menu_input_issue "$choice"
+            die_menu_input_issue "$feature_choice"
             ;;
     esac
 
     [ "$show_support_page_hint" = '1' ] && print_support_page_hint
-        break
+    return 0
+}
+
+read_category_choice() {
+    if ! ui_read_line; then
+        [ -t 0 ] && die "input cancelled"
+        UI_READ_RESULT=''
+    fi
+}
+
+common_plugin_menu() {
+    while :; do
+        submenu_feature=''
+        printf '\n常用插件安装:\n'
+        printf '1. 扩容 swap 虚拟内存\n'
+        printf '2. 哈基米\n'
+        printf '3. ttyd / Web SSH\n'
+        printf '4. AdGuardHome\n'
+        printf '5. OpenList\n'
+        printf '0. 返回功能分类\n'
+        printf '请选择 0、1、2、3、4 或 5: '
+        read_category_choice
+        case "$UI_READ_RESULT" in
+            0) return 2 ;;
+            1) submenu_feature='1' ;;
+            2) submenu_feature='2' ;;
+            3) submenu_feature='3' ;;
+            4) submenu_feature='4' ;;
+            5) submenu_feature='5' ;;
+            *) die_menu_input_issue "$UI_READ_RESULT" ;;
+        esac
+        if run_menu_feature "$submenu_feature"; then
+            return 0
+        else
+            return "$?"
+        fi
+    done
+}
+
+network_route_menu() {
+    while :; do
+        submenu_feature=''
+        printf '\nVPN / 组网 / 路由向导:\n'
+        printf '1. ZeroTier\n'
+        printf '2. EasyTier\n'
+        printf '3. OpenVPN\n'
+        printf '4. OpenVPN 向导配置并运行\n'
+        printf '5. OpenVPN 路由表向导\n'
+        printf '6. EasyTier 路由表向导\n'
+        printf '7. OpenVPN 自检\n'
+        printf '0. 返回功能分类\n'
+        printf '请选择 0、1、2、3、4、5、6 或 7: '
+        read_category_choice
+        case "$UI_READ_RESULT" in
+            0) return 2 ;;
+            1) submenu_feature='6' ;;
+            2) submenu_feature='7' ;;
+            3) submenu_feature='8' ;;
+            4) submenu_feature='9' ;;
+            5) submenu_feature='10' ;;
+            6) submenu_feature='11' ;;
+            7) submenu_feature='12' ;;
+            *) die_menu_input_issue "$UI_READ_RESULT" ;;
+        esac
+        if run_menu_feature "$submenu_feature"; then
+            return 0
+        else
+            return "$?"
+        fi
+    done
+}
+
+appcenter_polish_menu() {
+    while :; do
+        submenu_feature=''
+        printf '\n应用商店与页面美化:\n'
+        printf '1. 美化应用商店\n'
+        printf '0. 返回功能分类\n'
+        printf '请选择 0 或 1: '
+        read_category_choice
+        case "$UI_READ_RESULT" in
+            0) return 2 ;;
+            1) submenu_feature='15' ;;
+            *) die_menu_input_issue "$UI_READ_RESULT" ;;
+        esac
+        if run_menu_feature "$submenu_feature"; then
+            return 0
+        else
+            return "$?"
+        fi
+    done
+}
+
+game_accel_require_appcenter() {
+    [ -f "$CFG" ] || die "未检测到 NRadio 应用商店配置: $CFG"
+    [ -f "$TPL" ] || die "未检测到 NRadio 应用商店模板: $TPL"
+}
+
+game_accel_set_appcenter_entry() {
+    ga_app_name="$1"
+    ga_pkg_name="$2"
+    ga_version="$3"
+    ga_size="$4"
+    ga_route="$5"
+    ga_controller="$6"
+    ga_icon="$7"
+
+    cleanup_appcenter_entry "$ga_app_name" "$ga_pkg_name" "$ga_route"
+    ga_pkg_sec="$(uci add appcenter package)"
+    ga_list_sec="$(uci add appcenter package_list)"
+
+    uci set "appcenter.$ga_pkg_sec.name=$ga_app_name"
+    uci set "appcenter.$ga_pkg_sec.version=$ga_version"
+    uci set "appcenter.$ga_pkg_sec.size=$ga_size"
+    uci set "appcenter.$ga_pkg_sec.status=1"
+    uci set "appcenter.$ga_pkg_sec.has_luci=1"
+    uci set "appcenter.$ga_pkg_sec.open=1"
+    uci set "appcenter.$ga_pkg_sec.icon=$ga_icon"
+
+    uci set "appcenter.$ga_list_sec.name=$ga_app_name"
+    uci set "appcenter.$ga_list_sec.pkg_name=$ga_pkg_name"
+    uci set "appcenter.$ga_list_sec.parent=$ga_app_name"
+    uci set "appcenter.$ga_list_sec.size=$ga_size"
+    uci set "appcenter.$ga_list_sec.luci_module_file=$ga_controller"
+    uci set "appcenter.$ga_list_sec.luci_module_route=$ga_route"
+    uci set "appcenter.$ga_list_sec.version=$ga_version"
+    uci set "appcenter.$ga_list_sec.has_luci=1"
+    uci set "appcenter.$ga_list_sec.type=1"
+    uci set "appcenter.$ga_list_sec.icon=$ga_icon"
+    uci -q commit appcenter >/dev/null 2>&1 || true
+}
+
+qiyou_version() {
+    qy_version="$(sed -n 's/^VERSION=//p' /tmp/qy/etc/PKG_INFO 2>/dev/null | head -n 1)"
+    [ -n "$qy_version" ] || qy_version='1.2.1'
+    printf '%s\n' "$qy_version"
+}
+
+qiyou_size() {
+    qy_size="$(du -sk /tmp/qy /etc/qy 2>/dev/null | awk '{s+=$1} END{if(s>0) printf "%s KB", s}')"
+    [ -n "$qy_size" ] || qy_size='QiYou'
+    printf '%s\n' "$qy_size"
+}
+
+qiyou_write_icon() {
+    mkdir -p "$APP_ICON_DIR"
+    cat > "$APP_ICON_DIR/qiyou.svg" <<'EOF_QIYOU_ICON'
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="QiYou"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#eef8ff"/><stop offset="100%" stop-color="#cbeaff"/></linearGradient><linearGradient id="speed" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#0ea5e9"/></linearGradient><filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="26" stdDeviation="22" flood-color="#8db7dd" flood-opacity="0.28"/></filter></defs><rect x="84" y="84" width="856" height="856" rx="188" fill="url(#bg)" stroke="#9fd7ff" stroke-width="18" filter="url(#shadow)"/><rect x="162" y="162" width="700" height="700" rx="154" fill="#f8fcff" stroke="#d8eefc" stroke-width="12"/><path d="M268 612a244 244 0 0 1 488 0" fill="none" stroke="#d7ecfb" stroke-width="60" stroke-linecap="round"/><path d="M268 612a244 244 0 0 1 388-197" fill="none" stroke="url(#speed)" stroke-width="60" stroke-linecap="round"/><circle cx="512" cy="612" r="86" fill="url(#speed)"/><path d="M512 612L676 448" stroke="#0f3554" stroke-width="46" stroke-linecap="round"/><circle cx="512" cy="612" r="28" fill="#eef8ff"/><path d="M338 706h348" stroke="#9fd7ff" stroke-width="36" stroke-linecap="round"/></svg>
+EOF_QIYOU_ICON
+    chmod 644 "$APP_ICON_DIR/qiyou.svg" 2>/dev/null || true
+}
+
+qiyou_write_uninstall_helper() {
+    mkdir -p /usr/libexec
+    cat > /usr/libexec/nradio-qiyou-uninstall <<'EOF_QIYOU_UNINSTALL'
+#!/bin/sh
+APP_NAME="奇游联机宝"
+PKG_NAME="nradio-qiyou"
+APP_ROUTE="nradioadv/system/qiyou"
+APP_CONTROLLER="/usr/lib/lua/luci/controller/nradio_adv/qiyou.lua"
+APP_VIEW="/usr/lib/lua/luci/view/nradiobridge_qiyou/qiyou.htm"
+APP_ICON="/www/luci-static/nradio/images/icon/qiyou.svg"
+delete_sections() {
+    st="$1"; fn="$2"; fv="$3"
+    [ -n "$fv" ] || return 0
+    uci show appcenter 2>/dev/null | while IFS= read -r line; do
+        case "$line" in
+            "appcenter.@${st}"*".${fn}='${fv}'"|"appcenter.cfg"*".${fn}='${fv}'")
+                sec="${line#appcenter.}"; sec="${sec%%.*}"; printf '%s\n' "$sec" ;;
+        esac
+    done | sort -u | while IFS= read -r sec; do
+        [ -n "$sec" ] && uci -q delete "appcenter.$sec" >/dev/null 2>&1 || true
+    done
+}
+/etc/qy/qy_acc.sh stop >/dev/null 2>&1 || true
+[ -x /tmp/qy/init.sh ] && /tmp/qy/init.sh stop >/dev/null 2>&1 || true
+killall -9 qy_proxy qy_mosq qy_acc >/dev/null 2>&1 || true
+rm -rf /tmp/qy /etc/qy 2>/dev/null || true
+rm -f /tmp/qyplug.sh /tmp/qyplug.ret /tmp/qyplug.pid /tmp/qyplug.get /tmp/qiyou-install.sh 2>/dev/null || true
+rm -f /etc/init.d/qy_acc.boot /etc/rc.d/S99qy_acc.boot 2>/dev/null || true
+rm -f "$APP_CONTROLLER" "$APP_VIEW" "$APP_ICON" 2>/dev/null || true
+delete_sections package name "$APP_NAME"
+delete_sections package name "$PKG_NAME"
+delete_sections package_list name "$APP_NAME"
+delete_sections package_list pkg_name "$PKG_NAME"
+delete_sections package_list parent "$APP_NAME"
+delete_sections package_list luci_module_route "$APP_ROUTE"
+uci -q commit appcenter >/dev/null 2>&1 || true
+rm -f /tmp/luci-indexcache /tmp/infocd/cache/appcenter 2>/dev/null || true
+rm -f /tmp/luci-modulecache/* 2>/dev/null || true
+/etc/init.d/infocd restart >/dev/null 2>&1 || true
+/etc/init.d/appcenter restart >/dev/null 2>&1 || true
+/etc/init.d/uhttpd reload >/dev/null 2>&1 || true
+exit 0
+EOF_QIYOU_UNINSTALL
+    chmod 755 /usr/libexec/nradio-qiyou-uninstall
+}
+
+qiyou_write_controller() {
+    mkdir -p /usr/lib/lua/luci/controller/nradio_adv
+    cat > /usr/lib/lua/luci/controller/nradio_adv/qiyou.lua <<'EOF_QIYOU_CONTROLLER'
+module("luci.controller.nradio_adv.qiyou", package.seeall)
+function index()
+    local page = entry({"nradioadv", "system", "qiyou"}, template("nradiobridge_qiyou/qiyou"), _("QiYou"), 90)
+    page.show = true
+    entry({"nradioadv", "system", "qiyou", "status"}, call("action_status"), nil).leaf = true
+    entry({"nradioadv", "system", "qiyou", "uninstall"}, call("action_uninstall"), nil).leaf = true
+end
+local function trim(v) v=tostring(v or ""); local o=v:gsub("^%s+",""):gsub("%s+$",""); return o end
+local function readfile(p) local f=io.open(p,"r"); if not f then return "" end; local d=f:read("*a") or ""; f:close(); return d end
+local function exec(c) return trim(require("luci.sys").exec(c.." 2>/dev/null")) end
+local function write_json(data) local h=require "luci.http"; h.prepare_content("application/json"); if type(h.write_json)=="function" then h.write_json(data) else h.write("{}") end end
+local function pkg_info()
+    local info={}
+    for line in readfile("/tmp/qy/etc/PKG_INFO"):gmatch("[^\r\n]+") do
+        local k,v=line:match("^([A-Z0-9_]+)=(.*)$")
+        if k then info[k]=v end
+    end
+    return info
+end
+function action_status()
+    local fs=require "nixio.fs"
+    local installed=fs.access("/etc/qy/qy_acc.sh") and true or false
+    local info=pkg_info()
+    local status="NOT_INSTALLED"
+    if installed then status=exec("/etc/qy/qy_acc.sh status"); if status=="" then status="UNKNOWN" end end
+    local qy_acc=exec("pidof qy_acc")
+    local qy_mosq=exec("pidof qy_mosq")
+    local qy_proxy=exec("pidof qy_proxy")
+    write_json({
+        installed=installed,status=status,ret=trim(readfile("/tmp/qyplug.ret")),
+        mode=info.MODE or "",version=info.VERSION or "",date=info.DATE or "",pver=info.PVER or "",
+        qy_acc=qy_acc~="",qy_mosq=qy_mosq~="",qy_proxy=qy_proxy~="",
+        qy_acc_pid=qy_acc,qy_mosq_pid=qy_mosq,qy_proxy_pid=qy_proxy,
+        proxy_conn=tonumber(exec("netstat -tunap | grep qy_proxy | grep ESTABLISHED | wc -l")) or 0,
+        proxy_listen=exec("netstat -lntup | grep qy_proxy | head -n 1"),
+        cloud_conn=tonumber(exec("netstat -tunap | grep qy_acc | grep ESTABLISHED | wc -l")) or 0
+    })
+end
+function action_uninstall()
+    os.execute("/usr/libexec/nradio-qiyou-uninstall >/tmp/nradio-qiyou-uninstall.log 2>&1 &")
+    write_json({ok=true,msg="已开始卸载奇游联机宝"})
+end
+EOF_QIYOU_CONTROLLER
+    chmod 644 /usr/lib/lua/luci/controller/nradio_adv/qiyou.lua 2>/dev/null || true
+}
+
+qiyou_write_view() {
+    mkdir -p /usr/lib/lua/luci/view/nradiobridge_qiyou
+    cat > /usr/lib/lua/luci/view/nradiobridge_qiyou/qiyou.htm <<'EOF_QIYOU_VIEW'
+<%+header%>
+<style>
+.qy-wrap{min-height:520px;padding:26px;color:#eef8ff;background:linear-gradient(135deg,#0b1724,#10283a 58%,#0b1724);box-sizing:border-box}.qy-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.qy-title{font-size:28px;font-weight:900}.qy-sub{margin-top:6px;color:#b8d7ea;font-size:13px}.qy-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(125,211,252,.32);border-radius:999px;padding:8px 12px;background:rgba(14,165,233,.12);font-weight:800}.qy-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8;box-shadow:0 0 10px currentColor}.qy-dot.boosting{background:#22c55e;color:#22c55e}.qy-dot.running{background:#38bdf8;color:#38bdf8}.qy-dot.off{background:#f97316;color:#f97316}.qy-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}.qy-card{border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:16px;background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 30px rgba(0,0,0,.18)}.qy-label{color:#9ec6da;font-size:12px;font-weight:800}.qy-value{margin-top:8px;font-size:22px;font-weight:900;color:#fff;word-break:break-all}.qy-row{display:grid;grid-template-columns:190px 1fr;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);color:#cfe7f5}.qy-k{color:#9ec6da;font-weight:800}.qy-v{font-weight:800;word-break:break-all}.qy-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.qy-btn{border:1px solid rgba(125,211,252,.34);border-radius:10px;background:rgba(14,165,233,.16);color:#eef8ff;font-weight:900;padding:10px 16px;cursor:pointer}.qy-btn.danger{border-color:rgba(248,113,113,.48);background:rgba(239,68,68,.18)}.qy-note{margin-top:16px;color:#b8d7ea;line-height:1.7;font-size:13px}@media(max-width:900px){.qy-grid{grid-template-columns:1fr}.qy-row{grid-template-columns:1fr}.qy-head{align-items:flex-start;flex-direction:column}}
+</style>
+<div class="qy-wrap"><div class="qy-head"><div><div class="qy-title">奇游联机宝</div><div class="qy-sub">只读监听奇游后台状态，绑定和选择游戏仍在奇游联机宝 App 内完成。</div></div><div class="qy-pill"><span id="qy-dot" class="qy-dot"></span><span id="qy-status">读取中</span></div></div><div class="qy-grid"><div class="qy-card"><div class="qy-label">插件状态</div><div id="qy-main" class="qy-value">-</div></div><div class="qy-card"><div class="qy-label">实际代理连接</div><div id="qy-proxy-conn" class="qy-value">-</div></div><div class="qy-card"><div class="qy-label">云端连接</div><div id="qy-cloud-conn" class="qy-value">-</div></div></div><div class="qy-card"><div class="qy-row"><div class="qy-k">安装返回</div><div id="qy-ret" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">qy_acc</div><div id="qy-acc" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">qy_mosq</div><div id="qy-mosq" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">qy_proxy</div><div id="qy-proxy" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">包信息</div><div id="qy-pkg" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">代理监听</div><div id="qy-listen" class="qy-v">-</div></div></div><div class="qy-actions"><button class="qy-btn" onclick="qyRefresh()">刷新状态</button><button class="qy-btn danger" onclick="qyUninstall()">卸载奇游联机宝</button></div><div class="qy-note"><strong>状态解释：</strong>BOOSTING 表示正在加速；RUNNING 表示插件在线但未开启加速；实际代理连接不是连接路由器的设备数。</div></div>
+<script>
+var qyBase='<%=controller%>nradioadv/system/qiyou';function qyText(id,text){var el=document.getElementById(id);if(el)el.textContent=text||'-';}function qyBool(v,p){return v?('运行中'+(p?' / '+p:'')):'未运行';}function qyApply(d){var st=d.status||'UNKNOWN';var dot=document.getElementById('qy-dot');qyText('qy-status',st);qyText('qy-main',st==='BOOSTING'?'正在加速':(st==='RUNNING'?'插件在线':st));qyText('qy-proxy-conn',String(d.proxy_conn||0));qyText('qy-cloud-conn',String(d.cloud_conn||0));qyText('qy-ret',d.ret||'-');qyText('qy-acc',qyBool(d.qy_acc,d.qy_acc_pid));qyText('qy-mosq',qyBool(d.qy_mosq,d.qy_mosq_pid));qyText('qy-proxy',qyBool(d.qy_proxy,d.qy_proxy_pid));qyText('qy-pkg',[d.mode,d.version,d.date].filter(Boolean).join(' / ')||'-');qyText('qy-listen',d.proxy_listen||'-');if(dot){dot.className='qy-dot '+(st==='BOOSTING'?'boosting':(st==='RUNNING'?'running':'off'));}}function qyRefresh(){var x=new XMLHttpRequest();x.open('GET',qyBase+'/status?_='+Date.now(),true);x.onreadystatechange=function(){if(x.readyState===4){try{qyApply(JSON.parse(x.responseText||'{}'));}catch(e){qyText('qy-status','读取失败');}}};x.send(null);}function qyUninstall(){if(!confirm('确认卸载奇游联机宝并移除应用商店入口吗？'))return;var x=new XMLHttpRequest();x.open('POST',qyBase+'/uninstall',true);x.onreadystatechange=function(){if(x.readyState===4)alert('已开始卸载，稍后刷新应用商店。');};x.send('');}qyRefresh();setInterval(qyRefresh,5000);
+</script>
+<%+footer%>
+EOF_QIYOU_VIEW
+    chmod 644 /usr/lib/lua/luci/view/nradiobridge_qiyou/qiyou.htm 2>/dev/null || true
+}
+
+qiyou_install_assets() {
+    log "[3/7] 写入奇游应用商店接入文件"
+    qiyou_write_icon
+    qiyou_write_uninstall_helper
+    write_plugin_uninstall_assets
+    qiyou_write_controller
+    qiyou_write_view
+    game_accel_set_appcenter_entry "奇游联机宝" "nradio-qiyou" "$(qiyou_version)" "$(qiyou_size)" "nradioadv/system/qiyou" "/usr/lib/lua/luci/controller/nradio_adv/qiyou.lua" "qiyou.svg"
+    refresh_luci_appcenter
+}
+
+qiyou_install_integrated() {
+    game_accel_require_appcenter
+    confirm_or_exit "确认安装奇游联机宝官方脚本并接入 NRadio 应用商店吗？"
+    command -v opkg >/dev/null 2>&1 || die "系统没有 opkg，无法按奇游官方方式安装依赖"
+    log "[1/7] 安装奇游依赖"
+    opkg update || die "opkg update 失败"
+    opkg install curl kmod-tun ip-full || die "安装 curl/kmod-tun/ip-full 失败"
+    log "[2/7] 下载并执行奇游官方安装脚本"
+    download_file "http://sd.qiyou.cn" "/tmp/qiyou-install.sh" || die "下载奇游入口脚本失败"
+    grep -q 'qyplug.sh' /tmp/qiyou-install.sh 2>/dev/null || die "奇游入口脚本内容异常，已停止执行"
+    sh /tmp/qiyou-install.sh || die "奇游官方安装脚本执行失败"
+    sleep 2
+    [ -f /etc/qy/qy_acc.sh ] || die "奇游安装后未发现 /etc/qy/qy_acc.sh"
+    qiyou_install_assets
+    qiyou_show_status
+    log "完成：奇游联机宝已接入 NRadio 应用商店"
+}
+
+qiyou_show_status() {
+    log "奇游状态:"
+    if [ -x /etc/qy/qy_acc.sh ]; then
+        qy_status_text="$(/etc/qy/qy_acc.sh status 2>/dev/null || true)"
+        [ -n "$qy_status_text" ] && log "$qy_status_text" || true
+    else
+        log "NOT_INSTALLED"
+    fi
+    log "安装返回: $(cat /tmp/qyplug.ret 2>/dev/null || true)"
+    log "qy_acc: $(pidof qy_acc 2>/dev/null || printf '-')"
+    log "qy_mosq: $(pidof qy_mosq 2>/dev/null || printf '-')"
+    log "qy_proxy: $(pidof qy_proxy 2>/dev/null || printf '-')"
+    [ -f /tmp/qy/etc/PKG_INFO ] && cat /tmp/qy/etc/PKG_INFO
+}
+
+qiyou_uninstall_integrated() {
+    confirm_or_exit "确认卸载奇游联机宝并移除应用商店入口吗？"
+    [ -x /usr/libexec/nradio-qiyou-uninstall ] || qiyou_write_uninstall_helper
+    /usr/libexec/nradio-qiyou-uninstall
+    log "已执行奇游联机宝卸载流程"
+}
+
+leigod_installed() {
+    [ -d /usr/sbin/leigod ] && ls /usr/sbin/leigod/acc-gw.router.* >/dev/null 2>&1
+}
+
+leigod_version() {
+    lg_version=''
+    if [ -f /usr/sbin/leigod/acc_version.ini ]; then
+        lg_version="$(awk -F= '/version|VERSION|Ver|VER/ {print $2; exit}' /usr/sbin/leigod/acc_version.ini 2>/dev/null | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+    fi
+    if [ -z "$lg_version" ] && [ -f /usr/sbin/leigod/plugin_common.sh ]; then
+        lg_version="$(grep -m 1 '^download_base_url=' /usr/sbin/leigod/plugin_common.sh 2>/dev/null | sed 's/^download_base_url=//' | sed 's/"//g')"
+    fi
+    [ -n "$lg_version" ] || lg_version='LeigodAcc'
+    printf '%s\n' "$lg_version"
+}
+
+leigod_size() {
+    lg_size="$(du -sk /usr/sbin/leigod 2>/dev/null | awk '{print $1}')"
+    [ -n "$lg_size" ] || lg_size='0'
+    printf '%s\n' "$lg_size"
+}
+
+leigod_write_icon() {
+    mkdir -p "$APP_ICON_DIR"
+    cat > "$APP_ICON_DIR/leigod.svg" <<'EOF_LEIGOD_ICON'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Leigod"><defs><linearGradient id="lg-bg" x1="18" y1="10" x2="110" y2="118" gradientUnits="userSpaceOnUse"><stop stop-color="#f7fbff"/><stop offset="1" stop-color="#d7ecff"/></linearGradient><linearGradient id="lg-bolt" x1="48" y1="20" x2="83" y2="108" gradientUnits="userSpaceOnUse"><stop stop-color="#f59e0b"/><stop offset=".5" stop-color="#f97316"/><stop offset="1" stop-color="#ef4444"/></linearGradient><filter id="lg-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#0f172a" flood-opacity=".22"/></filter></defs><rect x="14" y="14" width="100" height="100" rx="24" fill="url(#lg-bg)" filter="url(#lg-shadow)"/><path d="M70 16 32 74h27l-8 38 45-63H68l2-33Z" fill="url(#lg-bolt)"/><path d="M72 28 47 66h22l-4 22 22-31H65l7-29Z" fill="#fff" opacity=".42"/><path d="M31 83c9 9 21 14 34 14 14 0 27-6 36-16" fill="none" stroke="#38bdf8" stroke-width="7" stroke-linecap="round" opacity=".78"/></svg>
+EOF_LEIGOD_ICON
+    chmod 644 "$APP_ICON_DIR/leigod.svg" 2>/dev/null || true
+}
+
+leigod_write_uninstall_helper() {
+    mkdir -p /usr/libexec
+    cat > /usr/libexec/nradio-leigod-uninstall <<'EOF_LEIGOD_UNINSTALL'
+#!/bin/sh
+APP_NAME="雷神加速器"
+PKG_NAME="nradio-leigod"
+APP_ROUTE="nradioadv/system/leigod"
+APP_CONTROLLER="/usr/lib/lua/luci/controller/nradio_adv/leigod.lua"
+APP_VIEW="/usr/lib/lua/luci/view/nradiobridge_leigod/leigod.htm"
+APP_ICON="/www/luci-static/nradio/images/icon/leigod.svg"
+LEIGOD_DIR="/usr/sbin/leigod"
+LEIGOD_INIT="/etc/init.d/acc"
+delete_sections() {
+    st="$1"; fn="$2"; fv="$3"
+    [ -n "$fv" ] || return 0
+    uci show appcenter 2>/dev/null | while IFS= read -r line; do
+        case "$line" in
+            "appcenter.@${st}"*".${fn}='${fv}'"|"appcenter.cfg"*".${fn}='${fv}'")
+                sec="${line#appcenter.}"; sec="${sec%%.*}"; printf '%s\n' "$sec" ;;
+        esac
+    done | sort -u | while IFS= read -r sec; do
+        [ -n "$sec" ] && uci -q delete "appcenter.$sec" >/dev/null 2>&1 || true
+    done
+}
+if [ -x "$LEIGOD_INIT" ]; then
+    "$LEIGOD_INIT" disable >/dev/null 2>&1 || true
+    "$LEIGOD_INIT" stop >/dev/null 2>&1 || true
+fi
+if [ -f "$LEIGOD_DIR/leigod_uninstall.sh" ]; then
+    ( cd "$LEIGOD_DIR" && sh ./leigod_uninstall.sh ) >/tmp/nradio-leigod-official-uninstall.log 2>&1 || true
+else
+    killall acc-gw.router.arm64 acc-gw.router.aarch64 acc_upgrade_monitor >/dev/null 2>&1 || true
+    rm -rf "$LEIGOD_DIR" /tmp/acc 2>/dev/null || true
+    rm -f "$LEIGOD_INIT" /etc/config/accelerator 2>/dev/null || true
+fi
+delete_sections package name "$APP_NAME"
+delete_sections package name "$PKG_NAME"
+delete_sections package_list name "$APP_NAME"
+delete_sections package_list pkg_name "$PKG_NAME"
+delete_sections package_list parent "$APP_NAME"
+delete_sections package_list luci_module_route "$APP_ROUTE"
+uci -q commit appcenter >/dev/null 2>&1 || true
+rm -f "$APP_CONTROLLER" "$APP_VIEW" "$APP_ICON" 2>/dev/null || true
+rm -f /tmp/luci-indexcache /tmp/infocd/cache/appcenter 2>/dev/null || true
+rm -f /tmp/luci-modulecache/* 2>/dev/null || true
+/etc/init.d/infocd restart >/dev/null 2>&1 || true
+/etc/init.d/appcenter restart >/dev/null 2>&1 || true
+/etc/init.d/uhttpd reload >/dev/null 2>&1 || true
+exit 0
+EOF_LEIGOD_UNINSTALL
+    chmod 755 /usr/libexec/nradio-leigod-uninstall
+}
+
+leigod_write_controller() {
+    mkdir -p /usr/lib/lua/luci/controller/nradio_adv
+    cat > /usr/lib/lua/luci/controller/nradio_adv/leigod.lua <<'EOF_LEIGOD_CONTROLLER'
+module("luci.controller.nradio_adv.leigod", package.seeall)
+function index()
+    local page=entry({"nradioadv","system","leigod"},template("nradiobridge_leigod/leigod"),_("LeigodAcc"),91)
+    page.show=true
+    entry({"nradioadv","system","leigod","status"},call("action_status"),nil).leaf=true
+    entry({"nradioadv","system","leigod","uninstall"},call("action_uninstall"),nil).leaf=true
+end
+local function trim(v) v=tostring(v or ""); local o=v:gsub("^%s+",""):gsub("%s+$",""); return o end
+local function exec(c) return trim(require("luci.sys").exec(c.." 2>/dev/null")) end
+local function has_file(p) return require("nixio.fs").access(p) and true or false end
+local function write_json(data) local h=require "luci.http"; h.prepare_content("application/json"); if type(h.write_json)=="function" then h.write_json(data) else h.write("{}") end end
+local function listen_line(port) return exec("netstat -lntup | grep ':"..port.." ' | head -n 1") end
+local function conn_count(pattern) return tonumber(exec("netstat -tunap | grep "..pattern.." | grep ESTABLISHED | wc -l")) or 0 end
+local function detect_mode()
+    local tun=exec("uci -q get accelerator.base.tun")
+    if tun=="1" then return "TUN" elseif tun=="0" then return "Tproxy" end
+    if exec("grep -q -- '--mode tun' /etc/init.d/acc && echo yes || echo no")=="yes" then return "TUN" end
+    if has_file("/etc/init.d/acc") then return "Tproxy" end
+    return "UNKNOWN"
+end
+local function tail_log()
+    local log=exec("ls -t /tmp/acc/log/acc_Game.log /tmp/acc/acc-gw.log-* 2>/dev/null | head -n 1")
+    if log=="" then return "" end
+    return exec("tail -n 12 "..log)
+end
+function action_status()
+    local installed=has_file("/usr/sbin/leigod/acc-gw.router.arm64") or has_file("/usr/sbin/leigod/acc-gw.router.aarch64") or exec("ls /usr/sbin/leigod/acc-gw.router.* 2>/dev/null | head -n 1")~=""
+    local acc_pid=exec("pidof acc-gw.router.arm64")
+    if acc_pid=="" then acc_pid=exec("pidof acc-gw.router.aarch64") end
+    if acc_pid=="" then acc_pid=exec("ps | grep 'acc-gw.router' | grep -v grep | awk '{print $1}'") end
+    local acc_runner_pid=exec("ps | grep 'acc-gw.router' | grep ' -r acc ' | grep -v grep | awk '{print $1}'")
+    local init_exists=has_file("/etc/init.d/acc")
+    local service_enabled=false
+    if init_exists then service_enabled=exec("/etc/init.d/acc enabled && echo yes || echo no")=="yes" end
+    write_json({
+        installed=installed,service_enabled=service_enabled,service_running=acc_pid~="",accelerating=acc_runner_pid~="",
+        init_exists=init_exists,acc_pid=acc_pid,acc_runner_pid=acc_runner_pid,upgrade_pid=exec("pidof acc_upgrade_monitor"),
+        web5588=listen_line("5588")~="",web5588_line=listen_line("5588"),
+        port10001=listen_line("10001")~="",port10001_line=listen_line("10001"),
+        udp6066=exec("netstat -lunp | grep ':6066 ' | head -n 1")~="",udp6066_line=exec("netstat -lunp | grep ':6066 ' | head -n 1"),
+        mode=detect_mode(),acc_conn=conn_count("acc-gw.router"),log_tail=tail_log()
+    })
+end
+function action_uninstall()
+    os.execute("/usr/libexec/nradio-leigod-uninstall >/tmp/nradio-leigod-uninstall.log 2>&1 &")
+    write_json({ok=true,msg="已开始卸载雷神加速器"})
+end
+EOF_LEIGOD_CONTROLLER
+    chmod 644 /usr/lib/lua/luci/controller/nradio_adv/leigod.lua 2>/dev/null || true
+}
+
+leigod_write_view() {
+    mkdir -p /usr/lib/lua/luci/view/nradiobridge_leigod
+    cat > /usr/lib/lua/luci/view/nradiobridge_leigod/leigod.htm <<'EOF_LEIGOD_VIEW'
+<%+header%>
+<style>
+.lg-wrap{min-height:560px;padding:26px;color:#f8fbff;background:linear-gradient(135deg,#121827,#1f273c 58%,#111827);box-sizing:border-box}.lg-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.lg-title{font-size:28px;font-weight:900}.lg-sub{margin-top:6px;color:#c6d3e1;font-size:13px}.lg-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(248,181,74,.38);border-radius:999px;padding:8px 12px;background:rgba(245,158,11,.13);font-weight:900}.lg-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8;box-shadow:0 0 10px currentColor}.lg-dot.ok{background:#22c55e;color:#22c55e}.lg-dot.warn{background:#f59e0b;color:#f59e0b}.lg-dot.bad{background:#ef4444;color:#ef4444}.lg-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}.lg-card{border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:16px;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.032));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 30px rgba(0,0,0,.18)}.lg-label{color:#fcd38a;font-size:12px;font-weight:900}.lg-value{margin-top:8px;font-size:22px;font-weight:900;color:#fff;word-break:break-all}.lg-row{display:grid;grid-template-columns:180px 1fr;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);color:#d8e2f0}.lg-k{color:#fcd38a;font-weight:900}.lg-v{font-weight:800;word-break:break-all}.lg-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.lg-btn{border:1px solid rgba(248,181,74,.42);border-radius:10px;background:rgba(245,158,11,.15);color:#fff7ed;font-weight:900;padding:10px 16px;cursor:pointer}.lg-btn.danger{border-color:rgba(248,113,113,.50);background:rgba(239,68,68,.18)}.lg-log{white-space:pre-wrap;line-height:1.55;font-family:monospace;font-size:12px;max-height:180px;overflow:auto;color:#dbeafe}.lg-note{margin-top:16px;color:#c6d3e1;line-height:1.7;font-size:13px}@media(max-width:900px){.lg-grid{grid-template-columns:1fr}.lg-row{grid-template-columns:1fr}.lg-head{align-items:flex-start;flex-direction:column}}
+</style>
+<div class="lg-wrap"><div class="lg-head"><div><div class="lg-title">雷神加速器</div><div class="lg-sub">只读监听雷神后台状态；绑定设备和选择游戏仍在雷神 App 内完成。</div></div><div class="lg-pill"><span id="lg-dot" class="lg-dot"></span><span id="lg-status">读取中</span></div></div><div class="lg-grid"><div class="lg-card"><div class="lg-label">服务状态</div><div id="lg-main" class="lg-value">-</div></div><div class="lg-card"><div class="lg-label">代理连接</div><div id="lg-conn" class="lg-value">-</div></div><div class="lg-card"><div class="lg-label">运行模式</div><div id="lg-mode" class="lg-value">-</div></div></div><div class="lg-card"><div class="lg-row"><div class="lg-k">安装目录</div><div id="lg-installed" class="lg-v">-</div></div><div class="lg-row"><div class="lg-k">acc-gw</div><div id="lg-acc" class="lg-v">-</div></div><div class="lg-row"><div class="lg-k">升级监控</div><div id="lg-upgrade" class="lg-v">-</div></div><div class="lg-row"><div class="lg-k">5588 Web</div><div id="lg-web" class="lg-v">-</div></div><div class="lg-row"><div class="lg-k">10001 服务端口</div><div id="lg-port" class="lg-v">-</div></div><div class="lg-row"><div class="lg-k">6066 UDP</div><div id="lg-udp" class="lg-v">-</div></div><div class="lg-row"><div class="lg-k">启动脚本</div><div id="lg-init" class="lg-v">-</div></div><div class="lg-row"><div class="lg-k">最近日志</div><div id="lg-log" class="lg-v lg-log">-</div></div></div><div class="lg-actions"><button class="lg-btn" onclick="lgRefresh()">刷新状态</button><button class="lg-btn danger" onclick="lgUninstall()">卸载雷神加速器</button></div><div class="lg-note"><strong>状态解释：</strong>检测到 <code>-r acc</code> 进程显示加速中；仅后台 web/daemon 在线显示插件在线。</div></div>
+<script>
+var lgBase='<%=controller%>nradioadv/system/leigod';function lgText(id,text){var el=document.getElementById(id);if(el)el.textContent=text||'-';}function lgApply(d){var dot=document.getElementById('lg-dot');var running=!!d.service_running;var accelerating=!!d.accelerating;var installed=!!d.installed;var statusText=accelerating?'加速中':(running?'插件在线':(installed?'已安装未在线':'未安装'));lgText('lg-status',statusText);lgText('lg-main',statusText);lgText('lg-conn',String(d.acc_conn||0));lgText('lg-mode',d.mode||'UNKNOWN');lgText('lg-installed',installed?'已安装':'未安装');lgText('lg-acc',accelerating?('加速中 / '+(d.acc_runner_pid||'-')):(running?('插件在线 / '+(d.acc_pid||'-')):'未运行'));lgText('lg-upgrade',d.upgrade_pid?('运行中 / '+d.upgrade_pid):'未运行');lgText('lg-web',d.web5588?d.web5588_line:'未监听');lgText('lg-port',d.port10001?d.port10001_line:'未监听');lgText('lg-udp',d.udp6066?d.udp6066_line:'未监听');lgText('lg-init',d.init_exists?(d.service_enabled?'已启用':'未启用'):'缺失');lgText('lg-log',d.log_tail||'-');if(dot){dot.className='lg-dot '+(running?'ok':(installed?'warn':'bad'));}}function lgRefresh(){var x=new XMLHttpRequest();x.open('GET',lgBase+'/status?_='+Date.now(),true);x.onreadystatechange=function(){if(x.readyState===4){try{lgApply(JSON.parse(x.responseText||'{}'));}catch(e){lgText('lg-status','读取失败');}}};x.send(null);}function lgUninstall(){if(!confirm('确认卸载雷神加速器并移除应用商店入口吗？'))return;var x=new XMLHttpRequest();x.open('POST',lgBase+'/uninstall',true);x.onreadystatechange=function(){if(x.readyState===4)alert('已开始卸载，稍后刷新应用商店。');};x.send('');}lgRefresh();setInterval(lgRefresh,5000);
+</script>
+<%+footer%>
+EOF_LEIGOD_VIEW
+    chmod 644 /usr/lib/lua/luci/view/nradiobridge_leigod/leigod.htm 2>/dev/null || true
+}
+
+leigod_install_assets() {
+    log "[3/6] 写入雷神应用商店接入文件"
+    leigod_write_icon
+    leigod_write_uninstall_helper
+    write_plugin_uninstall_assets
+    leigod_write_controller
+    leigod_write_view
+    game_accel_set_appcenter_entry "雷神加速器" "nradio-leigod" "$(leigod_version)" "$(leigod_size)" "nradioadv/system/leigod" "/usr/lib/lua/luci/controller/nradio_adv/leigod.lua" "leigod.svg"
+    refresh_luci_appcenter
+}
+
+leigod_attach_integrated() {
+    game_accel_require_appcenter
+    leigod_installed || die "未检测到 /usr/sbin/leigod/acc-gw.router.*，请先安装雷神加速器"
+    leigod_install_assets
+    log "完成：雷神加速器已接入 NRadio 应用商店"
+}
+
+leigod_install_integrated() {
+    game_accel_require_appcenter
+    cat <<'EOF_LEIGOD_RISK'
+高风险提示：
+雷神官方脚本可能修改系统网络、防火墙、UPnP、/etc/init.d/acc 和相关依赖。
+已经安装雷神时，建议优先使用“检测已安装并接入应用商店”。
+EOF_LEIGOD_RISK
+    confirm_or_exit "确认安装雷神官方脚本并接入 NRadio 应用商店吗？"
+    command -v opkg >/dev/null 2>&1 || die "系统没有 opkg，无法自动安装雷神依赖"
+    log "[1/6] 安装雷神依赖"
+    opkg update || die "opkg update 失败"
+    for lg_pkg in curl libpcap iptables kmod-ipt-nat iptables-mod-tproxy kmod-ipt-ipset ipset kmod-tun kmod-ipt-tproxy kmod-netem tc-full conntrack miniupnpd luci-app-upnp; do
+        if ! opkg list-installed 2>/dev/null | grep -q "^$lg_pkg "; then
+            log "安装依赖：$lg_pkg"
+            opkg install "$lg_pkg" || true
+        fi
+    done
+    if [ -f /etc/config/upnpd ]; then
+        uci set upnpd.config.enabled='1' >/dev/null 2>&1 || true
+        uci commit upnpd >/dev/null 2>&1 || true
+        /etc/init.d/miniupnpd start >/dev/null 2>&1 || true
+        /etc/init.d/miniupnpd enable >/dev/null 2>&1 || true
+    fi
+    log "[2/6] 下载并执行雷神官方安装脚本"
+    download_file "http://119.3.40.126/router_plugin_new/plugin_install.sh" "/tmp/leigod-plugin-install.sh" || die "下载雷神官方安装脚本失败"
+    grep -q 'leigod\|acc-gw\|accelerator' /tmp/leigod-plugin-install.sh 2>/dev/null || die "雷神官方安装脚本内容异常，已停止执行"
+    sh /tmp/leigod-plugin-install.sh || die "雷神官方安装脚本执行失败"
+    sleep 2
+    leigod_installed || die "安装后仍未检测到 /usr/sbin/leigod/acc-gw.router.*"
+    leigod_install_assets
+    leigod_show_status
+    log "完成：雷神加速器已接入 NRadio 应用商店"
+}
+
+leigod_show_status() {
+    log "雷神状态:"
+    if leigod_installed; then log "安装状态: 已安装"; else log "安装状态: 未安装"; fi
+    if [ -x /etc/init.d/acc ]; then /etc/init.d/acc enabled >/dev/null 2>&1 && log "服务启用: 是" || log "服务启用: 否"; else log "服务启用: 启动脚本缺失"; fi
+    log "acc-gw PID: $(pidof acc-gw.router.arm64 2>/dev/null || pidof acc-gw.router.aarch64 2>/dev/null || true)"
+    log "加速进程: $(ps | grep 'acc-gw.router' | grep ' -r acc ' | grep -v grep | awk '{print $1}' 2>/dev/null || true)"
+    log "升级监控 PID: $(pidof acc_upgrade_monitor 2>/dev/null || true)"
+    log "代理连接数: $(netstat -tunap 2>/dev/null | grep acc-gw.router | grep ESTABLISHED | wc -l)"
+    netstat -lntup 2>/dev/null | grep -E ':5588 |:10001 ' || true
+    netstat -lunp 2>/dev/null | grep ':6066 ' || true
+}
+
+leigod_uninstall_integrated() {
+    confirm_or_exit "确认卸载雷神加速器并移除应用商店入口吗？"
+    [ -x /usr/libexec/nradio-leigod-uninstall ] || leigod_write_uninstall_helper
+    /usr/libexec/nradio-leigod-uninstall
+    log "已执行雷神加速器卸载流程"
+}
+
+qiyou_integrated_menu() {
+    while :; do
+        printf '\n奇游联机宝（测试中）:\n'
+        printf '1. 安装奇游官方脚本并接入应用商店\n'
+        printf '2. 查看奇游状态\n'
+        printf '3. 卸载奇游联机宝\n'
+        printf '0. 返回游戏加速器\n'
+        printf '请选择 0、1、2 或 3: '
+        read_category_choice
+        case "$UI_READ_RESULT" in
+            0) return 2 ;;
+            1) if qiyou_install_integrated; then return 0; else return "$?"; fi ;;
+            2) qiyou_show_status; return 0 ;;
+            3) if qiyou_uninstall_integrated; then return 0; else return "$?"; fi ;;
+            *) die_menu_input_issue "$UI_READ_RESULT" ;;
+        esac
+    done
+}
+
+leigod_integrated_menu() {
+    while :; do
+        printf '\n雷神加速器（测试中）:\n'
+        printf '1. 检测已安装雷神并接入应用商店\n'
+        printf '2. 安装雷神官方脚本并接入应用商店\n'
+        printf '3. 查看雷神状态\n'
+        printf '4. 卸载雷神加速器\n'
+        printf '0. 返回游戏加速器\n'
+        printf '请选择 0、1、2、3 或 4: '
+        read_category_choice
+        case "$UI_READ_RESULT" in
+            0) return 2 ;;
+            1) if leigod_attach_integrated; then return 0; else return "$?"; fi ;;
+            2) if leigod_install_integrated; then return 0; else return "$?"; fi ;;
+            3) leigod_show_status; return 0 ;;
+            4) if leigod_uninstall_integrated; then return 0; else return "$?"; fi ;;
+            *) die_menu_input_issue "$UI_READ_RESULT" ;;
+        esac
+    done
+}
+
+game_accelerator_menu() {
+    while :; do
+        printf '\n游戏加速器:\n'
+        printf '1. 奇游联机宝（测试中）\n'
+        printf '2. 雷神加速器（测试中）\n'
+        printf '0. 返回功能分类\n'
+        printf '请选择 0、1 或 2: '
+        read_category_choice
+        case "$UI_READ_RESULT" in
+            0)
+                return 2
+                ;;
+            1)
+                if qiyou_integrated_menu; then game_rc='0'; else game_rc="$?"; fi
+                ;;
+            2)
+                if leigod_integrated_menu; then game_rc='0'; else game_rc="$?"; fi
+                ;;
+            *)
+                die_menu_input_issue "$UI_READ_RESULT"
+                ;;
+        esac
+        [ "$game_rc" = '2' ] && continue
+        return "$game_rc"
+    done
+}
+
+maintenance_test_menu() {
+    while :; do
+        submenu_feature=''
+        printf '\n设备维护与检测:\n'
+        printf '1. 统一测试模式\n'
+        printf '2. NRadio_C8-688 风扇控制\n'
+        printf '0. 返回功能分类\n'
+        printf '请选择 0、1 或 2: '
+        read_category_choice
+        case "$UI_READ_RESULT" in
+            0) return 2 ;;
+            1) submenu_feature='13' ;;
+            2) submenu_feature='14' ;;
+            *) die_menu_input_issue "$UI_READ_RESULT" ;;
+        esac
+        if run_menu_feature "$submenu_feature"; then
+            return 0
+        else
+            return "$?"
+        fi
+    done
+}
+
+main_menu() {
+    choice="${1:-}"
+    require_root
+    acquire_script_lock
+    require_startup_disclaimer_acceptance_once
+printf '%s\n' "$SCRIPT_TITLE"
+printf '%s\n' "$SCRIPT_SIGNATURE"
+printf '%s\n' "$SCRIPT_MODEL_NOTICE"
+printf '%s\n' "$SCRIPT_SCOPE_NOTICE"
+    require_supported_nradio_model_environment
+    log_nradio_oem_environment_hint
+
+    if [ -n "$choice" ]; then
+        if run_menu_feature "$choice"; then
+            feature_rc='0'
+        else
+            feature_rc="$?"
+        fi
+        [ "$feature_rc" = '2' ] && return 0
+        return "$feature_rc"
+    fi
+
+    while :; do
+        printf '%s\n' "$SCRIPT_SUPPORT_NOTICE"
+        printf '请选择功能分类:\n'
+        printf '1. 常用插件安装\n'
+        printf '2. VPN / 组网 / 路由向导\n'
+        printf '3. 游戏加速器（测试中）\n'
+        printf '4. 应用商店与页面美化\n'
+        printf '5. 设备维护与检测\n'
+        printf '0. 退出\n'
+        printf '请输入 0、1、2、3、4 或 5: '
+        read_category_choice
+
+        case "$UI_READ_RESULT" in
+            0)
+                return 0
+                ;;
+            1)
+                if common_plugin_menu; then menu_rc='0'; else menu_rc="$?"; fi
+                ;;
+            2)
+                if network_route_menu; then menu_rc='0'; else menu_rc="$?"; fi
+                ;;
+            3)
+                if game_accelerator_menu; then menu_rc='0'; else menu_rc="$?"; fi
+                ;;
+            4)
+                if appcenter_polish_menu; then menu_rc='0'; else menu_rc="$?"; fi
+                ;;
+            5)
+                if maintenance_test_menu; then menu_rc='0'; else menu_rc="$?"; fi
+                ;;
+            *)
+                die_menu_input_issue "$UI_READ_RESULT"
+                ;;
+        esac
+
+        [ "$menu_rc" = '2' ] && continue
+        return "$menu_rc"
     done
 }
 
