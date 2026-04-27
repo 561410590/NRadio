@@ -2,7 +2,7 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V2.0.0-beta"
+SCRIPT_VERSION="V2.0.0"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
 SCRIPT_RELEASE_DATE="2026-04-26"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
@@ -4994,7 +4994,7 @@ patch_appcenter_card_polish() {
 
     cat > "$css_file" <<'EOF_APPCENTER_CARD_POLISH_CSS'
     /* NRadio appcenter card polish: visual-only layer */
-    /* NRadio appcenter card polish V1.60.5 full repair layer */
+    /* NRadio appcenter card polish V2.0.0 full repair layer */
     /* NRadio appcenter visual polish 1-5 safe refinement */
     /* Keep appcontainer/container_left/app_top_menu/container_right layout owned by NRadio OEM CSS. */
     .container_right .app_box{
@@ -5968,7 +5968,7 @@ EOF_APPCENTER_EMPTY_STATE_JS
     fi
 
     verify_template_marker 'NRadio appcenter card polish: visual-only layer' '应用商店卡片美化 CSS'
-    verify_template_marker 'NRadio appcenter card polish V1.60.5 full repair layer' '应用商店 V1.60.5 修复美化 CSS'
+    verify_template_marker 'NRadio appcenter card polish V2.0.0 full repair layer' '应用商店 V2.0.0 修复美化 CSS'
     verify_template_marker '<div class="app_meta_row"' '应用商店卡片状态徽标'
     verify_template_marker 'status_label: db.status_label' '应用商店卡片状态标签数据'
     verify_template_marker 'app_open_badge app_open_1' '应用商店后台状态徽标'
@@ -17482,6 +17482,7 @@ set_webssh_shortcut_icon() {
 
 install_ttyd_webssh() {
     require_nradio_oem_appcenter
+    confirm_or_exit "确认继续安装 ttyd / Web SSH 并修改系统吗？"
 
     helper="$WORKDIR/nradio-ttyd-webssh-embedded.sh"
     mkdir -p "$WORKDIR"
@@ -19622,7 +19623,8 @@ qiyou_install_integrated() {
 qiyou_show_status() {
     log "奇游状态:"
     if [ -x /etc/qy/qy_acc.sh ]; then
-        /etc/qy/qy_acc.sh status 2>/dev/null || true
+        qy_status_text="$(/etc/qy/qy_acc.sh status 2>/dev/null || true)"
+        [ -n "$qy_status_text" ] && log "$qy_status_text" || true
     else
         log "NOT_INSTALLED"
     fi
@@ -19794,7 +19796,7 @@ EOF_LEIGOD_VIEW
 }
 
 leigod_install_assets() {
-    log "[2/6] 写入雷神应用商店接入文件"
+    log "[3/6] 写入雷神应用商店接入文件"
     leigod_write_icon
     leigod_write_uninstall_helper
     write_plugin_uninstall_assets
