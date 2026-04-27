@@ -309,7 +309,7 @@
     }
 
     .hero-copy::after {
-      content: "V2.0.0-beta";
+      content: "V2.0.0";
       position: absolute;
       right: 28px;
       bottom: 8px;
@@ -2039,7 +2039,7 @@
     }
 
     .timeline-entry.is-current::after {
-      content: "BETA";
+      content: "LIVE";
       position: absolute;
       right: 16px;
       bottom: -4px;
@@ -2501,7 +2501,7 @@
       <a href="#history">更新记录</a>
       <a href="#install">安装方式</a>
       <a href="#support">自愿支持</a>
-      <span>V2.0.0-beta</span>
+      <span>V2.0.0</span>
     </nav>
 
     <section class="hero">
@@ -2512,13 +2512,13 @@
           <h1>NRadio<br>插件助手</h1>
           <p class="lead">
             这里集中放置 NRadio 插件助手从
-            <strong>V1.0.0</strong> 到 <strong>V2.0.0-beta</strong> 的公开更新记录、
+            <strong>V1.0.0</strong> 到 <strong>V2.0.0</strong> 的公开更新记录、
             SSH 安装提醒、长期支持入口和公开发布状态。
           </p>
 
           <div class="hero-tags">
-            <span>稳定闭环 V1.60.5</span>
-            <span>当前里程碑 V2.0.0-beta</span>
+            <span>当前正式 V2.0.0</span>
+            <span>单一脚本下载入口</span>
             <span>公开页已迁入 Vercel</span>
           </div>
 
@@ -2526,7 +2526,7 @@
             <span><b>支持页</b>GitHub / Vercel</span>
             <span><b>安装入口</b>SSH 执行</span>
             <span><b>应用商店</b>统一集成</span>
-            <span><b>最新重点</b>V2.0.0-beta 分类菜单</span>
+            <span><b>最新重点</b>V2.0.0 正式发布</span>
           </div>
 
           <div class="hero-links">
@@ -2548,7 +2548,7 @@
             </div>
             <div>
               <strong>5</strong>
-              <span>V2 测试脚本改为功能分类入口</span>
+              <span>V2.0.0 正式脚本改为功能分类入口</span>
             </div>
             <div>
               <strong>4</strong>
@@ -2563,11 +2563,11 @@
           <section class="hero-latest" aria-label="当前里程碑说明">
             <div class="hero-latest-top">
               <div class="hero-latest-label">当前里程碑</div>
-              <div class="hero-latest-version">V2.0.0-beta</div>
+              <div class="hero-latest-version">V2.0.0</div>
             </div>
-            <strong>当前阶段新增分类菜单与游戏加速器测试入口</strong>
+            <strong>当前正式脚本已切换到 V2.0.0</strong>
             <p>
-              稳定闭环脚本继续保留 V1.60.5；V2.0.0-beta 把主菜单改为功能分类，并把奇游联机宝、雷神加速器作为“测试中”入口并入总脚本。
+              默认下载脚本已切换到 V2.0.0；旧 beta 独立下载入口取消。V2.0.0 把主菜单改为功能分类，并把奇游联机宝、雷神加速器入口并入总脚本。
               15 号应用商店美化仍保持收口边界，不改 2~8 插件下载链、安装链、卸载链和外层应用商店布局。
             </p>
             <div class="hero-milestones">
@@ -2578,13 +2578,13 @@
               <span>V1.50.5 OpenVPN Mk2 回写</span>
               <span>V1.60.0 应用商店美化菜单</span>
               <span>V1.60.5 应用商店修复与安全微调</span>
-              <span>V2.0.0-beta 分类菜单与加速器测试入口</span>
+              <span>V2.0.0 正式脚本默认下载</span>
               <span>支持页迁入 GitHub / Vercel</span>
             </div>
             <div class="hero-checks" aria-label="当前发布状态">
               <span><b>公开入口</b>https://nradio.mayebano.shop/</span>
               <span><b>发布状态</b>GitHub main 推送后由 Vercel 自动部署</span>
-              <span><b>维护边界</b>稳定下载仍保留 V1.60.5</span>
+              <span><b>维护边界</b>旧版本下载入口已取消</span>
             </div>
           </section>
 
@@ -2624,10 +2624,15 @@
               <strong>稳定闭环脚本保留下载</strong>
               <p>修复旧 CSS 残留、进度条占比、图标兜底和空描述问题，是当前稳定闭环版本。</p>
             </article>
-            <article class="release-card release-card-current">
+            <article class="release-card">
               <b>V2.0.0-beta</b>
               <strong>分类菜单与加速器测试入口</strong>
               <p>主菜单改为功能分类，奇游联机宝和雷神加速器并入总脚本，入口继续标注测试中。</p>
+            </article>
+            <article class="release-card release-card-current">
+              <b>V2.0.0</b>
+              <strong>正式切换默认下载脚本</strong>
+              <p>默认脚本升级为 V2.0.0，保留分类菜单与加速器入口；旧 beta 独立下载入口取消。</p>
             </article>
           </div>
 
@@ -2665,17 +2670,17 @@
                 <div class="release-panel-kicker">Current Release</div>
                 <h2>公开发布速览</h2>
               </div>
-              <div class="release-panel-version">V2.0.0-beta</div>
+              <div class="release-panel-version">V2.0.0</div>
             </div>
             <p>
               当前页面、下载脚本和安装提醒已经放在 GitHub 仓库里，Vercel 会把 main 分支的最新内容发布到当前公开域名。
             </p>
             <div class="release-panel-grid" aria-label="当前公开状态">
-              <span><b>稳定脚本</b><em>V1.60.5 继续使用默认文件名下载</em></span>
-              <span><b>测试脚本</b><em>V2.0.0-beta 已提供独立文件名下载</em></span>
+              <span><b>默认脚本</b><em>V2.0.0 使用默认文件名下载</em></span>
+              <span><b>旧版入口</b><em>旧 beta 独立下载入口已取消</em></span>
               <span><b>安装方式</b><em>打开 SSH 后在路由器终端执行</em></span>
-              <span><b>菜单结构</b><em>V2 测试脚本改为功能分类</em></span>
-              <span><b>测试入口</b><em>奇游联机宝与雷神加速器仍标测试中</em></span>
+              <span><b>菜单结构</b><em>V2.0.0 默认进入功能分类</em></span>
+              <span><b>加速器入口</b><em>奇游联机宝与雷神加速器已并入总脚本</em></span>
             </div>
             <div class="release-panel-foot" aria-label="公开页状态">
               <span>GitHub 开源</span>
@@ -2712,8 +2717,7 @@
 
             <div class="publish-actions">
               <a href="https://github.com/561410590/NRadio" target="_blank" rel="noopener">查看 GitHub</a>
-              <a href="./ssh-nradio-plugin-installer.sh" download>稳定脚本</a>
-              <a href="./ssh-nradio-plugin-installer-2.0.0beta.sh" download>测试脚本</a>
+              <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.0</a>
             </div>
           </section>
 
@@ -2721,11 +2725,10 @@
             <div class="download-main">
               <div>
                 <strong>下载总脚本</strong>
-                <span>稳定闭环：V1.60.5 / ssh-nradio-plugin-installer.sh；测试版本：V2.0.0-beta / ssh-nradio-plugin-installer-2.0.0beta.sh。下载后通过 SSH 在路由器上执行。</span>
+                <span>当前默认版本：V2.0.0 / ssh-nradio-plugin-installer.sh。旧 beta 独立下载入口已取消，下载后通过 SSH 在路由器上执行。</span>
               </div>
               <div class="download-actions">
-                <a href="./ssh-nradio-plugin-installer.sh" download>稳定 V1.60.5</a>
-                <a href="./ssh-nradio-plugin-installer-2.0.0beta.sh" download>测试 V2.0.0-beta</a>
+                <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.0</a>
               </div>
             </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
@@ -2735,7 +2738,7 @@
                   <li>先在 NRadio 系统安全页面打开 SSH：/cgi-bin/luci/admin/system/security。</li>
                   <li>使用 SSH 登录路由器，确认当前设备是带 NRadio 应用商店的官方 NROS 固件。</li>
                   <li>优先直接在路由器下载脚本；如果路由器不能访问公网，就先下载到电脑，再用 SCP 上传到 /root/。</li>
-                  <li>进入 /root 后执行脚本，阅读首页免责声明，10 秒倒计时结束后按提示同意，再进入菜单；V2 测试脚本会先进入功能分类。</li>
+                  <li>进入 /root 后执行脚本，阅读首页免责声明，10 秒倒计时结束后按提示同意，再进入 V2.0.0 功能分类菜单。</li>
                 </ul>
               </div>
               <div class="download-section">
@@ -2743,12 +2746,6 @@
                 <code class="download-code">cd /root
 wget -O ssh-nradio-plugin-installer.sh https://nradio.mayebano.shop/ssh-nradio-plugin-installer.sh
 sh ssh-nradio-plugin-installer.sh</code>
-              </div>
-              <div class="download-section">
-                <b>V2.0.0-beta 测试脚本</b>
-                <code class="download-code">cd /root
-wget -O ssh-nradio-plugin-installer-2.0.0beta.sh https://nradio.mayebano.shop/ssh-nradio-plugin-installer-2.0.0beta.sh
-sh ssh-nradio-plugin-installer-2.0.0beta.sh</code>
               </div>
               <div class="download-section">
                 <b>注意事项</b>
@@ -2828,7 +2825,7 @@ sh ssh-nradio-plugin-installer-2.0.0beta.sh</code>
               </div>
               <div>
                 <strong>2026-04-26</strong>
-                <span>当前公开里程碑整理到 V2.0.0-beta。</span>
+                <span>当前公开里程碑整理到 V2.0.0。</span>
               </div>
               <div>
                 <strong>持续追加</strong>
@@ -3074,11 +3071,19 @@ sh ssh-nradio-plugin-installer-2.0.0beta.sh</code>
                   </div>
                 </article>
 
-                <article class="timeline-entry is-current">
+                <article class="timeline-entry">
                   <div class="version">V2.0.0-beta</div>
                   <div class="entry-copy">
                     <strong>分类菜单与游戏加速器测试入口</strong>
                     <p>总脚本改为功能分类入口，每个子菜单都保留返回功能分类；奇游联机宝和雷神加速器已直接并入总脚本，提供应用商店卡片、NRadio 包装页、状态读取和卸载链，菜单名称继续标注“测试中”。稳定闭环脚本仍保留 V1.60.5 默认下载文件。</p>
+                  </div>
+                </article>
+
+                <article class="timeline-entry is-current">
+                  <div class="version">V2.0.0</div>
+                  <div class="entry-copy">
+                    <strong>正式版脚本切换默认下载入口</strong>
+                    <p>新设备现场验证脚本安装、美化和游戏加速器接入链路后，将默认公开脚本切换到 V2.0.0；旧 beta 独立下载渠道取消，页面只保留 ssh-nradio-plugin-installer.sh 单一下载入口。</p>
                   </div>
                 </article>
               </div>
@@ -3103,7 +3108,7 @@ sh ssh-nradio-plugin-installer-2.0.0beta.sh</code>
         <section class="next-actions" aria-label="页面闭环入口">
           <a href="#history">
             <b>查看版本时间线</b>
-            <span>从 V1.0.0 到 V2.0.0-beta 的关键节点都整理在这里。</span>
+            <span>从 V1.0.0 到 V2.0.0 的关键节点都整理在这里。</span>
           </a>
           <a href="#support">
             <b>自愿支持维护</b>
@@ -3117,7 +3122,7 @@ sh ssh-nradio-plugin-installer-2.0.0beta.sh</code>
 
         <footer class="page-signature">
           <div><b>NRadio Plugin Assistant</b><br>更新记录、SSH 安装提醒、自愿支持和项目归档规则集中在同一个页面。</div>
-          <div>Last updated: 2026-04-27 / V2.0.0-beta / GitHub and Vercel public domain publish</div>
+          <div>Last updated: 2026-04-27 / V2.0.0 / stable script publish and beta download retired</div>
         </footer>
       </div>
     </section>

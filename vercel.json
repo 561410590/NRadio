@@ -11,10 +11,6 @@
     {
       "source": "/ssh-nradio-plugin-installer.sh",
       "destination": "/00-current/ssh-nradio-plugin-installer.sh"
-    },
-    {
-      "source": "/ssh-nradio-plugin-installer-2.0.0beta.sh",
-      "destination": "/00-current/ssh-nradio-plugin-installer-2.0.0beta.sh"
     }
   ],
   "headers": [
