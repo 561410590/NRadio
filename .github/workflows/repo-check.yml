@@ -1,0 +1,45 @@
+name: Repository checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  public-release-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify public release files
+        run: |
+          test -f 00-current/ssh-nradio-plugin-installer.sh
+          test -f 40-server-web/mayebano-support/index.html
+          test -f vercel.json
+          test -f README.md
+          test -f CHANGELOG.md
+          test -f CHECKSUMS.txt
+
+      - name: Verify V2.0.0 script state
+        run: |
+          grep -q 'SCRIPT_VERSION="V2.0.0"' 00-current/ssh-nradio-plugin-installer.sh
+          ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
+          grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
+          grep -q "printf '2. 雷神加速器" 00-current/ssh-nradio-plugin-installer.sh
+
+      - name: Verify support page state
+        run: |
+          grep -q 'V2.0.0' 40-server-web/mayebano-support/index.html
+          grep -q 'support page visual polish' 40-server-web/mayebano-support/index.html
+          ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
+
+      - name: Verify Vercel public routes
+        run: |
+          grep -q '"/ssh-nradio-plugin-installer.sh"' vercel.json
+          ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' vercel.json
+
+      - name: Verify checksum record
+        run: |
+          grep -q '19e75fb79571a318b91c7926306850c4e42c1f8000fcca2042d91b16b7ff7a4a' CHECKSUMS.txt
+          printf '%s  %s\n' '19e75fb79571a318b91c7926306850c4e42c1f8000fcca2042d91b16b7ff7a4a' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -

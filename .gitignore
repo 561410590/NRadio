@@ -12,12 +12,16 @@
 **/SHA256SUMS*.txt
 **/*broken*
 **/*live-after*
+10-router-pages/*.fix-*
+10-router-pages/*openfix*
+10-router-pages/*statuspanel*
+30-theme/*backup*/
 
 # Local tools and generated binaries
+20-tools/
 20-tools/*.exe
 
 # OS/editor noise
 .DS_Store
 Thumbs.db
 desktop.ini
-
