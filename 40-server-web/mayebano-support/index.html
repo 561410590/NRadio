@@ -424,6 +424,14 @@
       transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
     }
 
+    .hero-links a:first-child {
+      color: #06341d;
+      background: linear-gradient(135deg, #d8fff0, #ffffff);
+      border-color: rgba(255, 255, 255, 0.62);
+      font-weight: 900;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 18px 34px rgba(5, 46, 24, 0.20);
+    }
+
     .hero-links a:hover {
       transform: translateY(-2px);
       background: rgba(255, 255, 255, 0.12);
@@ -501,10 +509,17 @@
     }
 
     .hero-note {
-      max-width: 34rem;
-      color: rgba(255, 255, 255, 0.78);
+      position: relative;
+      max-width: 38rem;
+      padding: 14px 16px 14px 18px;
+      border-left: 3px solid rgba(157, 253, 208, 0.82);
+      border-radius: 0 18px 18px 0;
+      color: rgba(255, 255, 255, 0.80);
+      background:
+        linear-gradient(90deg, rgba(157, 253, 208, 0.12), rgba(94, 231, 242, 0.04)),
+        rgba(255, 255, 255, 0.045);
       font-size: 14px;
-      line-height: 1.82;
+      line-height: 1.78;
     }
 
     .hero-latest {
@@ -930,13 +945,14 @@
       display: grid;
       gap: 16px;
       align-items: stretch;
-      padding: 18px;
-      border-radius: 22px;
+      padding: 20px;
+      border-radius: 26px;
       background:
-        linear-gradient(135deg, rgba(232, 255, 240, 0.16), rgba(94, 231, 242, 0.08)),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent),
-        rgba(2, 24, 13, 0.2);
-      border: 1px solid rgba(220, 255, 244, 0.16);
+        linear-gradient(145deg, rgba(232, 255, 240, 0.18), rgba(94, 231, 242, 0.10)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent),
+        rgba(2, 24, 13, 0.24);
+      border: 1px solid rgba(220, 255, 244, 0.20);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 22px 52px rgba(3, 35, 23, 0.14);
       overflow: hidden;
     }
 
@@ -961,6 +977,45 @@
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 14px;
       align-items: center;
+    }
+
+    .download-facts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .download-facts span {
+      min-height: 62px;
+      margin: 0;
+      padding: 12px;
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.035)),
+        rgba(3, 25, 18, 0.28);
+      border: 1px solid rgba(220, 255, 244, 0.12);
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .download-facts b,
+    .download-facts em {
+      display: block;
+      font-style: normal;
+      line-height: 1.25;
+    }
+
+    .download-facts b {
+      color: rgba(232, 255, 240, 0.62);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .download-facts em {
+      margin-top: 7px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      overflow-wrap: anywhere;
     }
 
     .download-card strong {
@@ -1059,16 +1114,17 @@
     .download-code {
       position: relative;
       display: block;
-      padding: 34px 12px 10px;
-      border-radius: 14px;
+      padding: 38px 14px 12px;
+      border-radius: 16px;
       color: #e9fff1;
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 34px),
-        rgba(0, 0, 0, 0.30);
-      border: 1px solid rgba(220, 255, 244, 0.13);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 38px),
+        linear-gradient(135deg, rgba(94, 231, 242, 0.08), transparent 48%),
+        rgba(0, 0, 0, 0.34);
+      border: 1px solid rgba(220, 255, 244, 0.16);
       font-family: Consolas, "Courier New", monospace;
-      font-size: 11px;
-      line-height: 1.65;
+      font-size: 12px;
+      line-height: 1.72;
       white-space: pre-wrap;
       word-break: break-all;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -2420,6 +2476,10 @@
         grid-template-columns: 1fr;
       }
 
+      .download-facts {
+        grid-template-columns: 1fr;
+      }
+
       .download-actions {
         justify-content: flex-start;
       }
@@ -2511,53 +2571,52 @@
           <div class="eyebrow">NRadio Plugin Assistant</div>
           <h1>NRadio<br>插件助手</h1>
           <p class="lead">
-            这里集中放置 NRadio 插件助手从
-            <strong>V1.0.0</strong> 到 <strong>V2.0.0</strong> 的公开更新记录、
-            SSH 安装提醒、长期支持入口和公开发布状态。
+            面向 NRadio 官方 NROS 设备的 SSH 插件安装助手。
+            当前正式版 <strong>V2.0.0</strong> 已切换为默认下载入口。
           </p>
 
           <div class="hero-tags">
             <span>当前正式 V2.0.0</span>
-            <span>单一脚本下载入口</span>
-            <span>公开页已迁入 Vercel</span>
+            <span>默认脚本入口</span>
+            <span>GitHub / Vercel 发布</span>
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
-            <span><b>支持页</b>GitHub / Vercel</span>
-            <span><b>安装入口</b>SSH 执行</span>
-            <span><b>应用商店</b>统一集成</span>
-            <span><b>最新重点</b>V2.0.0 正式发布</span>
+            <span><b>当前版本</b>V2.0.0 正式脚本</span>
+            <span><b>安装方式</b>SSH 终端执行</span>
+            <span><b>入口状态</b>单一下载入口</span>
+            <span><b>菜单结构</b>5 个功能分类</span>
           </div>
 
           <div class="hero-links">
-            <a href="#history">查看完整更新记录</a>
-            <a href="#install">查看 SSH 安装方式</a>
-            <a href="#support">前往微信支持</a>
+            <a href="#support">下载 V2.0.0</a>
+            <a href="#install">安装方式</a>
+            <a href="#history">更新记录</a>
           </div>
 
           <div class="signal-strip" aria-label="当前公网页状态">
-            <span><b>GitHub Main</b>公开仓库已同步网页与脚本下载入口</span>
-            <span><b>Vercel Ready</b>Production 自动部署当前公网版本</span>
-            <span><b>Custom Domain</b>nradio.mayebano.shop 已绑定 HTTPS</span>
+            <span><b>GitHub Main</b>脚本与页面已同步</span>
+            <span><b>Vercel Ready</b>Production 部署在线</span>
+            <span><b>HTTPS Domain</b>nradio.mayebano.shop</span>
           </div>
 
           <div class="hero-summary" aria-label="关键数字">
             <div>
-              <strong>24</strong>
-              <span>已整理进页面的历史版本节点</span>
+              <strong>V2</strong>
+              <span>正式版默认入口</span>
+            </div>
+            <div>
+              <strong>1</strong>
+              <span>公开下载脚本</span>
             </div>
             <div>
               <strong>5</strong>
-              <span>V2.0.0 正式脚本改为功能分类入口</span>
-            </div>
-            <div>
-              <strong>4</strong>
-              <span>白名单机型环境检测与适配方向</span>
+              <span>功能分类菜单</span>
             </div>
           </div>
 
           <div class="hero-note">
-            页面只写已经落地并写入记忆文档的内容。当前公开入口统一使用 nradio.mayebano.shop 域名，支持页由 GitHub 仓库提交并通过 Vercel 自动部署，后续脚本发版时同步维护网页更新记录和公开下载入口。
+            默认入口只保留当前正式脚本。旧 beta 独立下载通道已取消，后续版本继续沿用这条公开发布链路。
           </div>
 
           <section class="hero-latest" aria-label="当前里程碑说明">
@@ -2567,8 +2626,8 @@
             </div>
             <strong>当前正式脚本已切换到 V2.0.0</strong>
             <p>
-              默认下载脚本已切换到 V2.0.0；旧 beta 独立下载入口取消。V2.0.0 把主菜单改为功能分类，并把奇游联机宝、雷神加速器入口并入总脚本。
-              15 号应用商店美化仍保持收口边界，不改 2~8 插件下载链、安装链、卸载链和外层应用商店布局。
+              V2.0.0 使用默认文件名下载，主菜单进入功能分类；奇游联机宝与雷神加速器已并入总脚本。
+              页面只保留当前正式入口，历史版本记录继续放在时间线中。
             </p>
             <div class="hero-milestones">
               <span>V1.50.1 卸载提示对齐原厂</span>
@@ -2626,13 +2685,13 @@
             </article>
             <article class="release-card">
               <b>V2.0.0-beta</b>
-              <strong>分类菜单与加速器测试入口</strong>
-              <p>主菜单改为功能分类，奇游联机宝和雷神加速器并入总脚本，入口继续标注测试中。</p>
+              <strong>分类菜单与加速器入口</strong>
+              <p>主菜单改为功能分类，奇游联机宝和雷神加速器并入总脚本，为 V2.0.0 正式版铺路。</p>
             </article>
             <article class="release-card release-card-current">
               <b>V2.0.0</b>
               <strong>正式切换默认下载脚本</strong>
-              <p>默认脚本升级为 V2.0.0，保留分类菜单与加速器入口；旧 beta 独立下载入口取消。</p>
+              <p>默认脚本升级为 V2.0.0，保留分类菜单与加速器入口；加速器菜单改为正式入口。</p>
             </article>
           </div>
 
@@ -2656,7 +2715,7 @@
               <a href="http://192.168.66.1/cgi-bin/luci/admin/system/security" target="_blank" rel="noopener">一键打开 SSH 安全页</a>
             </div>
             <div class="maintenance-principles" aria-label="维护原则">
-              <div><b>先确认，再记录</b><span>更新记录只写已经落地的修改，不把猜测当公告。</span></div>
+              <div><b>先验证，再发布</b><span>公开页跟随已落地版本和公网下载入口更新。</span></div>
               <div><b>少打扰原厂</b><span>尽量接入 NRadio 原有应用商店和页面结构。</span></div>
               <div><b>外层布局冻结</b><span>应用商店继续美化只动内部视觉，不再改外层网格、左栏和顶部标签。</span></div>
             </div>
@@ -2673,14 +2732,14 @@
               <div class="release-panel-version">V2.0.0</div>
             </div>
             <p>
-              当前页面、下载脚本和安装提醒已经放在 GitHub 仓库里，Vercel 会把 main 分支的最新内容发布到当前公开域名。
+              当前公开入口由 GitHub main 分支发布，Vercel 承载，默认下载脚本为 V2.0.0。
             </p>
             <div class="release-panel-grid" aria-label="当前公开状态">
               <span><b>默认脚本</b><em>V2.0.0 使用默认文件名下载</em></span>
               <span><b>旧版入口</b><em>旧 beta 独立下载入口已取消</em></span>
               <span><b>安装方式</b><em>打开 SSH 后在路由器终端执行</em></span>
               <span><b>菜单结构</b><em>V2.0.0 默认进入功能分类</em></span>
-              <span><b>加速器入口</b><em>奇游联机宝与雷神加速器已并入总脚本</em></span>
+              <span><b>加速器入口</b><em>奇游联机宝与雷神加速器为正式菜单</em></span>
             </div>
             <div class="release-panel-foot" aria-label="公开页状态">
               <span>GitHub 开源</span>
@@ -2725,15 +2784,20 @@
             <div class="download-main">
               <div>
                 <strong>下载总脚本</strong>
-                <span>当前默认版本：V2.0.0 / ssh-nradio-plugin-installer.sh。旧 beta 独立下载入口已取消，下载后通过 SSH 在路由器上执行。</span>
+                <span>当前默认版本：V2.0.0。下载后通过 SSH 上传或直接在路由器终端执行。</span>
               </div>
               <div class="download-actions">
                 <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.0</a>
               </div>
             </div>
+            <div class="download-facts" aria-label="下载状态">
+              <span><b>文件名</b><em>ssh-nradio-plugin-installer.sh</em></span>
+              <span><b>版本</b><em>V2.0.0</em></span>
+              <span><b>旧入口</b><em>已取消</em></span>
+            </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
               <div class="download-section">
-                <b>完整安装步骤</b>
+                <b>安装步骤</b>
                 <ul class="download-list">
                   <li>先在 NRadio 系统安全页面打开 SSH：/cgi-bin/luci/admin/system/security。</li>
                   <li>使用 SSH 登录路由器，确认当前设备是带 NRadio 应用商店的官方 NROS 固件。</li>
@@ -2755,7 +2819,7 @@ sh ssh-nradio-plugin-installer.sh</code>
                   <li>安装和美化入口只按菜单提示执行；中途关闭终端可能导致插件未完整接入应用商店。</li>
                 </ul>
               </div>
-              <p class="download-note">页面只提供公开脚本下载和安装提醒；自愿支持仅用于脚本维护与后续更新。</p>
+              <p class="download-note">脚本保持公开下载；自愿支持不绑定任何功能权限。</p>
             </div>
           </section>
 
@@ -2796,7 +2860,7 @@ sh ssh-nradio-plugin-installer.sh</code>
               <div class="support-url">
                 当前支持页地址
                 <code>https://nradio.mayebano.shop/</code>
-                <br>提示：公开访问以 Vercel 域名为准，旧 5668 入口只作为历史服务器维护记录。
+                <br>公开访问以当前 HTTPS 域名为准。
               </div>
 
               <div class="support-note-strip">
@@ -2815,7 +2879,7 @@ sh ssh-nradio-plugin-installer.sh</code>
             <div class="history-kicker">Version Timeline</div>
             <h3>版本变化按阶段收好</h3>
             <p>
-              时间线只保留已经确认落地的版本变化，避免把调试猜测写成公告。
+              时间线按公开版本阶段整理，当前正式版放在最后。
             </p>
 
             <div class="history-facts">
@@ -2834,9 +2898,8 @@ sh ssh-nradio-plugin-installer.sh</code>
             </div>
 
             <div class="history-note-card">
-              <strong>记录原则</strong>
-              每次公开记录只写已验证的脚本变化、页面变化和路由器实测结论。
-              如果后续脚本继续更新，可以直接沿着当前时间线追加。
+              <strong>更新方式</strong>
+              后续版本继续追加在当前时间线末尾，默认下载入口保持为正式脚本。
             </div>
           </section>
 
@@ -3100,8 +3163,7 @@ sh ssh-nradio-plugin-installer.sh</code>
           </div>
 
           <div class="closing-note">
-            说明：本页只整理已经在记忆文档中明确收口的版本变动，不把猜测内容写进公开记录。
-            自愿支持仅用于脚本维护与后续更新；脚本功能不绑定任何支持行为。
+            当前页面保留下载入口、安装提醒和版本时间线。脚本功能免费使用，自愿支持不影响任何功能。
           </div>
         </section>
 
@@ -3116,13 +3178,13 @@ sh ssh-nradio-plugin-installer.sh</code>
           </a>
           <div>
             <b>GitHub / Vercel 发布</b>
-            <span>当前公开页由 GitHub main 分支提交触发 Vercel 自动部署，对外入口使用 nradio.mayebano.shop。</span>
+            <span>当前公开页由 GitHub main 分支触发 Vercel 部署，对外入口使用 nradio.mayebano.shop。</span>
           </div>
         </section>
 
         <footer class="page-signature">
-          <div><b>NRadio Plugin Assistant</b><br>更新记录、SSH 安装提醒、自愿支持和项目归档规则集中在同一个页面。</div>
-          <div>Last updated: 2026-04-27 / V2.0.0 / stable script publish and beta download retired</div>
+          <div><b>NRadio Plugin Assistant</b><br>更新记录、SSH 安装和支持入口集中在同一个页面。</div>
+          <div>Last updated: 2026-04-27 / V2.0.0 / support page visual polish</div>
         </footer>
       </div>
     </section>
