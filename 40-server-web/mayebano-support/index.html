@@ -200,7 +200,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1.04fr) 468px;
       gap: 34px;
-      align-items: center;
+      align-items: start;
     }
 
     .hero-shell::before,
@@ -745,6 +745,27 @@
       word-break: break-all;
     }
 
+    .route-code-card a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      justify-self: start;
+      min-height: 38px;
+      padding: 0 15px;
+      border-radius: 999px;
+      color: #06341d;
+      background: linear-gradient(135deg, #d8fff0, #ffffff);
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94), 0 12px 24px rgba(5, 46, 24, 0.16);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .route-code-card a:hover {
+      transform: translateY(-1px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.98), 0 16px 30px rgba(5, 46, 24, 0.2);
+    }
+
     .download-card {
       display: grid;
       gap: 16px;
@@ -1009,6 +1030,7 @@
     }
 
     .publish-card {
+      position: relative;
       display: grid;
       gap: 16px;
       padding: 18px;
@@ -1020,6 +1042,26 @@
       border: 1px solid rgba(220, 255, 244, 0.14);
       box-shadow: 0 24px 54px rgba(5, 46, 24, 0.13);
       backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .publish-card::before {
+      content: "";
+      position: absolute;
+      right: -48px;
+      top: -58px;
+      width: 190px;
+      height: 190px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 36% 36%, rgba(216, 255, 240, 0.22), transparent 38%),
+        rgba(22, 184, 200, 0.10);
+      pointer-events: none;
+    }
+
+    .publish-card > * {
+      position: relative;
+      z-index: 1;
     }
 
     .publish-card-top {
@@ -1092,23 +1134,75 @@
       word-break: break-all;
     }
 
-    .publish-flow {
+    .publish-summary {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
     }
 
+    .publish-summary span {
+      min-height: 42px;
+      padding: 10px;
+      border-radius: 14px;
+      color: rgba(232, 255, 240, 0.9);
+      background: rgba(216, 255, 240, 0.065);
+      border: 1px solid rgba(220, 255, 244, 0.11);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .publish-flow {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      counter-reset: publishStep;
+    }
+
     .publish-flow span {
+      position: relative;
       display: grid;
       gap: 5px;
-      min-height: 70px;
-      padding: 12px;
+      min-width: 0;
+      min-height: 68px;
+      padding: 13px 14px 13px 48px;
       border-radius: 16px;
       background: rgba(216, 255, 240, 0.055);
       border: 1px solid rgba(220, 255, 244, 0.10);
       color: rgba(255, 255, 255, 0.88);
       font-size: 13px;
       font-weight: 900;
+      overflow: hidden;
+    }
+
+    .publish-flow span:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 24px;
+      top: 39px;
+      bottom: -15px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(216, 255, 240, 0.42), rgba(216, 255, 240, 0));
+    }
+
+    .publish-flow span::before {
+      counter-increment: publishStep;
+      content: counter(publishStep);
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      color: #06341d;
+      background: #d8fff0;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 0 18px rgba(124, 255, 194, 0.24);
+      z-index: 1;
     }
 
     .publish-flow em {
@@ -1117,6 +1211,8 @@
       font-style: normal;
       font-weight: 700;
       line-height: 1.35;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .publish-actions {
@@ -1192,7 +1288,6 @@
       display: grid;
       gap: 18px;
       align-content: start;
-      transform: translateY(44px);
       animation: rise 0.95s ease-out 0.12s both;
     }
 
@@ -2058,8 +2153,8 @@
         flex-direction: column;
       }
 
-      .publish-flow {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .publish-summary {
+        grid-template-columns: 1fr;
       }
 
       .hero-summary {
@@ -2253,13 +2348,14 @@
               脚本会把支持的插件接入 NRadio 应用商店入口。
             </p>
             <ol class="install-steps">
-              <li><b>1</b><span>进入安全页：/cgi-bin/luci/admin/system/security</span></li>
+              <li><b>1</b><span>进入安全页：192.168.66.1 系统安全页面</span></li>
               <li><b>2</b><span>启用 SSH，勾选声明后保存并应用。</span></li>
               <li><b>3</b><span>通过 SSH 运行总脚本，再按菜单选择功能。</span></li>
             </ol>
             <div class="route-code-card">
-              <span>安全页路径</span>
-              <code>http://路由器IP/cgi-bin/luci/admin/system/security</code>
+              <span>安全页链接</span>
+              <code>http://192.168.66.1/cgi-bin/luci/admin/system/security</code>
+              <a href="http://192.168.66.1/cgi-bin/luci/admin/system/security" target="_blank" rel="noopener">一键打开 SSH 安全页</a>
             </div>
             <div class="maintenance-principles" aria-label="维护原则">
               <div><b>先确认，再记录</b><span>更新记录只写已经落地的修改，不把猜测当公告。</span></div>
@@ -2309,11 +2405,16 @@
               <a href="https://nradio.mayebano.shop/" target="_blank" rel="noopener">https://nradio.mayebano.shop/</a>
             </div>
 
+            <div class="publish-summary" aria-label="当前发布状态">
+              <span>GitHub 已同步</span>
+              <span>Vercel 已上线</span>
+              <span>HTTPS 可访问</span>
+            </div>
+
             <div class="publish-flow" aria-label="维护发布流程">
-              <span>本地维护<em>D:\Downloads\NRadio</em></span>
-              <span>提交仓库<em>GitHub main</em></span>
-              <span>自动构建<em>Vercel Production</em></span>
-              <span>公网访问<em>自定义域名</em></span>
+              <span>提交仓库<em>GitHub main 分支</em></span>
+              <span>自动构建<em>Vercel Production 部署</em></span>
+              <span>公网访问<em>nradio.mayebano.shop</em></span>
             </div>
 
             <div class="publish-actions">
