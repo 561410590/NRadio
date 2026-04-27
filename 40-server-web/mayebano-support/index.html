@@ -524,11 +524,26 @@
     .hero-latest::before {
       content: "";
       position: absolute;
-      inset: auto auto -44px -32px;
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.12), transparent 72%);
+      inset: auto auto -48px -26px;
+      width: 150px;
+      height: 170px;
+      border-radius: 34px;
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.12), transparent 72%);
+      transform: rotate(-18deg);
+      pointer-events: none;
+    }
+
+    .hero-latest::after {
+      content: "PUBLIC";
+      position: absolute;
+      right: 18px;
+      bottom: 12px;
+      color: rgba(232, 255, 240, 0.055);
+      font-family: "DIN Alternate", "Bahnschrift", sans-serif;
+      font-size: 54px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0;
       pointer-events: none;
     }
 
@@ -571,6 +586,8 @@
     }
 
     .hero-latest p {
+      position: relative;
+      z-index: 1;
       margin: 0;
       color: rgba(255, 255, 255, 0.76);
       font-size: 14px;
@@ -602,8 +619,9 @@
     }
 
     .hero-checks span {
+      position: relative;
       min-height: 58px;
-      padding: 12px;
+      padding: 12px 12px 12px 15px;
       border-radius: 18px;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.045)),
@@ -612,6 +630,16 @@
       color: rgba(255, 255, 255, 0.78);
       font-size: 12px;
       line-height: 1.55;
+      overflow: hidden;
+    }
+
+    .hero-checks span::before {
+      content: "";
+      position: absolute;
+      inset: 12px auto 12px 0;
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--cyan-400), rgba(241, 199, 91, 0.78));
     }
 
     .hero-checks b {
@@ -668,6 +696,24 @@
         linear-gradient(155deg, rgba(232, 255, 240, 0.18), rgba(22, 184, 200, 0.08)),
         rgba(4, 31, 26, 0.24);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 38px rgba(5, 46, 24, 0.12);
+    }
+
+    .release-card-current::before {
+      content: "NOW";
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      color: #06341d;
+      background: linear-gradient(135deg, #d8fff0, #ffffff);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      z-index: 1;
     }
 
     .release-card b {
@@ -1011,17 +1057,47 @@
     }
 
     .download-code {
+      position: relative;
       display: block;
-      padding: 10px 12px;
+      padding: 34px 12px 10px;
       border-radius: 14px;
       color: #e9fff1;
-      background: rgba(0, 0, 0, 0.28);
-      border: 1px solid rgba(220, 255, 244, 0.11);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 34px),
+        rgba(0, 0, 0, 0.30);
+      border: 1px solid rgba(220, 255, 244, 0.13);
       font-family: Consolas, "Courier New", monospace;
       font-size: 11px;
       line-height: 1.65;
       white-space: pre-wrap;
       word-break: break-all;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .download-code::before {
+      content: "root@nradio";
+      position: absolute;
+      left: 12px;
+      top: 10px;
+      color: rgba(232, 255, 240, 0.56);
+      font-family: "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .download-code::after {
+      content: "";
+      position: absolute;
+      right: 12px;
+      top: 14px;
+      width: 34px;
+      height: 7px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 4px 50%, #78ffd0 0 3px, transparent 3.5px),
+        radial-gradient(circle at 17px 50%, rgba(94, 231, 242, 0.9) 0 3px, transparent 3.5px),
+        radial-gradient(circle at 30px 50%, rgba(241, 199, 91, 0.9) 0 3px, transparent 3.5px);
     }
 
     .download-note {
@@ -1946,8 +2022,33 @@
       padding: 18px;
       border: 1px solid rgba(17, 177, 85, 0.16);
       background:
-        linear-gradient(135deg, rgba(232, 255, 240, 0.82), rgba(22, 184, 200, 0.08), rgba(255, 255, 255, 0.66));
+        linear-gradient(135deg, rgba(232, 255, 240, 0.86), rgba(94, 231, 242, 0.12), rgba(241, 199, 91, 0.065), rgba(255, 255, 255, 0.72));
       box-shadow: 0 18px 42px rgba(9, 81, 68, 0.09);
+      overflow: hidden;
+    }
+
+    .timeline-entry.is-current::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 4px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--cyan-400), var(--green-700), var(--amber-500));
+    }
+
+    .timeline-entry.is-current::after {
+      content: "BETA";
+      position: absolute;
+      right: 16px;
+      bottom: -4px;
+      color: rgba(13, 120, 68, 0.055);
+      font-family: "DIN Alternate", "Bahnschrift", sans-serif;
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 1;
+      pointer-events: none;
     }
 
     .timeline-entry.is-current .version {
@@ -2019,6 +2120,7 @@
 
     .next-actions a,
     .next-actions div {
+      position: relative;
       min-height: 118px;
       padding: 18px;
       border-radius: 24px;
@@ -2026,7 +2128,22 @@
         linear-gradient(145deg, rgba(16, 158, 86, 0.09), rgba(22, 184, 200, 0.045), rgba(255, 255, 255, 0.8));
       border: 1px solid rgba(16, 158, 86, 0.12);
       box-shadow: 0 14px 34px rgba(8, 56, 48, 0.07);
+      overflow: hidden;
       transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+
+    .next-actions a::after,
+    .next-actions div::after {
+      content: "";
+      position: absolute;
+      right: -18px;
+      top: -24px;
+      width: 72px;
+      height: 118px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(16, 158, 86, 0.10), transparent);
+      transform: rotate(24deg);
+      pointer-events: none;
     }
 
     .next-actions a:hover {
