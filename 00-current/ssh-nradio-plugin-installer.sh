@@ -19868,7 +19868,7 @@ leigod_uninstall_integrated() {
 
 qiyou_integrated_menu() {
     while :; do
-        printf '\n奇游联机宝（测试中）:\n'
+        printf '\n奇游联机宝:\n'
         printf '1. 安装奇游官方脚本并接入应用商店\n'
         printf '2. 查看奇游状态\n'
         printf '3. 卸载奇游联机宝\n'
@@ -19887,7 +19887,7 @@ qiyou_integrated_menu() {
 
 leigod_integrated_menu() {
     while :; do
-        printf '\n雷神加速器（测试中）:\n'
+        printf '\n雷神加速器:\n'
         printf '1. 检测已安装雷神并接入应用商店\n'
         printf '2. 安装雷神官方脚本并接入应用商店\n'
         printf '3. 查看雷神状态\n'
@@ -19909,8 +19909,8 @@ leigod_integrated_menu() {
 game_accelerator_menu() {
     while :; do
         printf '\n游戏加速器:\n'
-        printf '1. 奇游联机宝（测试中）\n'
-        printf '2. 雷神加速器（测试中）\n'
+        printf '1. 奇游联机宝\n'
+        printf '2. 雷神加速器\n'
         printf '0. 返回功能分类\n'
         printf '请选择 0、1 或 2: '
         read_category_choice
@@ -19983,7 +19983,7 @@ printf '%s\n' "$SCRIPT_SCOPE_NOTICE"
         printf '请选择功能分类:\n'
         printf '1. 常用插件安装\n'
         printf '2. VPN / 组网 / 路由向导\n'
-        printf '3. 游戏加速器（测试中）\n'
+        printf '3. 游戏加速器\n'
         printf '4. 应用商店与页面美化\n'
         printf '5. 设备维护与检测\n'
         printf '0. 退出\n'
