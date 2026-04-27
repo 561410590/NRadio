@@ -1,0 +1,702 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%+header%>
+
+<%
+local uci  = require "luci.model.uci".cursor()
+local nr = require "luci.nradio"
+local platform = nr.get_platform()
+local dfs_enable = tonumber(uci:get("wireless", "radio1", "dfs_enable") or "0")
+local region = nr.get_wifi_region()
+local vendor = nr.get_wifi_vendor()
+local wifi7 = nr.support_eht()
+%>
+
+<div class="cbi-map visual-map wifi-advanced-refresh">
+
+	<h2 name="content"><%:Wireless Setting%></h2>
+	<ul class="cbi-tabmenu hidden-xs">
+		<li class="cbi-tab-disabled"><a href="<%=url("nradio/basic/wifi")%>"><%:Wi-Fi Basic%></a></li>
+		<li class="cbi-tab"><a href="#"><%:Wi-Fi Advanced%></a></li>
+	</ul>
+
+	<div class="table-box form-box full-width hidden-xs wifi-table-shell">
+		<table>
+			<thead>
+				<tr>
+					<th style="width: 10%"><%:Freq%></th>
+					<%if wifi7 then%>
+					<th onclick="$('.pc_description_box').toggleClass('hide');"><%:WifiMode%><i style="display: inline !important;" class="far fa-nradio-note fa-fw icon_disable visible-xs-block" ></i></th>
+					<%end%>
+					<th><%:Channel%></th>
+					<th><%:Bandwidth%></th>
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					<th><%:Transmit Power%></th>
+					<% end %>
+					<th ><%:Maximum Stations Limit%></th>
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					<th style="width: 20%"><%:RSSI Threshold%></th>
+					<% end %>
+				</tr>
+			</thead>
+			<tbody class="radio_list pc">
+			</tbody>
+		</table>
+	</div>
+	<%if wifi7 then%>
+	<fieldset class="cbi-section pc_description_box hide">
+	<div class="cbi-section-node  hidden-xs ">
+		<div class="cbi-value " >
+			<p class="cbi-value-title width_auto text-left unlinked_color adapt_label_padding" style="line-height:20px;">
+				<%:WifiModeHelp2%>
+			</p>
+			<p class="cbi-value-title width_auto text-left unlinked_color adapt_label_padding" style="line-height:20px;">
+				<%:WifiModeHelp5%>
+			</p>
+		</div>
+	</div>
+	</fieldset>
+	<% end %>
+	<div class="radio_list phone" data-terminal="mobile"></div>
+	<div class="cbi-page-actions" style="margin-top: 30px;">
+		<input id="btn_change" class="cbi-button cbi-button-apply" type="button" value="<%:Save & Apply%>">
+	</div>
+</div>
+
+<script language="javascript">
+var nrdevMobileRow = ''+
+	'<div class="sub_item panel panel-info visible-xs-block hide" data-did="{{did}}" data-idx="{{idx}}" data-freq="{{freq}}" data-chlist="{{chlist}}" data-skip_channels="{{skip_channels}}" data-bwlist="{{bwlist}}">'+
+	'<div class="panel-body info-box">'+
+	'	<div class="row">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{freq_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					{{freq_val}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>' +
+	<%if wifi7 then%>
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left " onclick="show_info_help(this)">'+
+	'					{{mode_label}}'+'<i style="display: inline !important;" class="far fa-nradio-note fa-fw icon_disable visible-xs-block" ></i>'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					{{mode_val}}'+
+	'				</div>'+
+	'			</div>'+
+	'			<div class="row description_box hide">'+
+	'				<div class="col-sm-12 col-xs-12 text-left unlinked_color">'+
+	'					{{mode_help}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>' +
+	<%end%>
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{channel_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					{{channel}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{bandwidth_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					{{bandwidth}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{power_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					{{power}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	<%end%>
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{limit_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					{{limit}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{rssi_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					{{rssi}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	<%end%>
+	'</div>'+
+	'</div>';
+	function show_info_help(obj) { 
+		if (!obj) { 
+			return;
+		}
+
+		var parent_label = $(obj).parents().parents().children(".description_box");
+		if ($(parent_label).length) { 
+			$(parent_label).toggleClass("hide");
+		}
+	}
+	function get_radioinfo(){
+		var info=[];
+		var item_class = ".radio_list.pc";
+		if (is_mobile_device()){
+			item_class = ".radio_list.phone";
+		}
+		$(item_class+' .sub_item').each(function(i){
+			var nch, nbw, nen, och, obw, oen;
+			var otp = 100, ntp = 100;
+			var oms = 0, nms = 0;
+			var ori = 0, nri = 0;
+			var ofr = 0, nfr = 0;
+			$(this).find('.select-ch').each(function(j){
+				och = $(this).attr('data-ori');
+				nch = $(this).val();
+			});
+			$(this).find('.select-bw').each(function(j){
+				obw = $(this).attr('data-ori');
+				nbw = $(this).val();
+			});
+			$(this).find('.select-txp').each(function(j){
+				otp = $(this).attr('data-ori');
+				ntp = $(this).val();
+			});
+			<% if platform == "tdtech" then %>
+			$(this).find('.select-freq').each(function(j){
+				ofr = $(this).attr('data-ori')+'g';
+				nfr = $(this).val();
+			});
+			<% end %>
+			<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+			$(this).find('.input-rssi').each(function(j){
+				ori = $(this).attr('data-ori');
+				nri = $(this).val();
+			});
+			<%end%>
+			<% if wifi7 then %>
+			$(this).find('.select-hwmode').each(function(j){
+				oht = $(this).attr('data-ori');
+				nht = $(this).val();
+			});
+			<%end%>
+			$(this).find('.input-maxc').each(function(j){
+				oms = $(this).attr('data-ori');
+				nms = $(this).val();
+			});
+
+			if (och != nch || obw != nbw || oen != nen || otp != ntp || ori != nri || oms != nms || ofr != nfr|| oht != nht){
+				var ele={};
+				var idx=$(this).attr('data-idx');
+
+				ele['did']=$(this).attr('data-did');
+				ele['idx']=idx;
+				ele['channel_radio'+idx]=nch;
+				ele['htmode_radio'+idx]=nbw;
+				ele['txpower_radio'+idx]=ntp;
+				ele['lowrssi_wlan'+idx]=nri;
+				ele['maxstanum_wlan'+idx]=nms;
+				<% if wifi7 then %>
+				ele['hwmode_radio'+idx]=nht;
+				<% end %>
+				<% if platform == "tdtech" then %>
+				ele['band_radio'+idx]=nfr;
+				<% end %>
+				info.push(ele);
+			}
+		});
+		return JSON.stringify(info);
+	}
+
+	function channel_is_band4(ch) {
+		return (ch >= 149 && ch <= 165);
+	}
+
+	function refresh_bwlist(type, idx, ch) {
+		var bwlist_str = $("#bw-"+type+"-"+idx).closest(".sub_item").attr("data-bwlist");
+		var bwlist=
+			<% if luci.nradio.support_vht160() then %>
+			['20', '40', '80', '160'];
+			<% else %>
+			['20', '40', '80'];
+			<% end %>
+		var trans_bw={
+			'20': '<%:20MHz%>',
+			'40': '<%:40MHz%>',
+			'80': '<%:80MHz%>',
+			<% if luci.nradio.support_vht160() then %>
+			'160': '<%:160MHz%>',
+			<% end %>
+		}
+		if (bwlist_str != undefined && bwlist_str.length > 0) {
+			bwlist = bwlist_str.split(",");
+		}
+		if (ch == 165) {
+			bwlist = [bwlist[0]];
+		}
+		else if (channel_is_band4(ch)) {
+			var index = bwlist.indexOf('160');
+			if (index > -1){
+				bwlist.splice(index, 1);
+			}
+		}
+		$("#bw-"+type+"-"+idx).empty();
+		bwlist.map(function(k){
+			$("#bw-"+type+"-"+idx).append($('<option>', {
+				value: k,
+				text: (trans_bw[k]===undefined ? k:trans_bw[k]),
+			}));
+		});
+		$("#bw-"+type+"-"+idx).val(bwlist[bwlist.length-1]);
+	}
+
+	function change_channel(obj,idx) {
+		var ch = $(obj).val();
+		var oldch = $(obj).data('oldch') || $(obj).data('ori');
+		$(obj).data('oldch', ch);
+		if ((ch == 165 || (ch != 165 && oldch == 165))
+			<% if luci.nradio.support_vht160() then%>
+			|| (channel_is_band4(ch) && (!channel_is_band4(oldch)))
+			|| (!channel_is_band4(ch) && channel_is_band4(oldch))
+			<% end%>
+		) {
+			refresh_bwlist($(obj).data('terminal'),idx, ch);
+		}
+	}
+
+	function fill_radio_table(freq_val,obj) {
+		var htm="";
+		var mobile_htm="";
+		var sniffer = "<%=sniffer%>";
+		var j = 1;
+		var radiolist = <%=luci.http.write_json(radiolist)%>;
+
+		$.each(radiolist.radio, function(i, db){
+			if (db.mode && db.mode == 'sniffer'){
+				if (sniffer == "0")
+					return true;
+				htm+='<tr class="sub_item" data-did='+db.did+' data-idx='+db.idx+' data-freq='+db.freq+' data-chlist="'+db.chlist+'" data-skip_channels="'+db.skip_channels+'" data-bwlist="'+db.bwlist+'">'+
+					'<td><%:N/A%></td>'+
+					'<td><%:N/A%></td>'+
+					'<td><%:N/A%></td>'+
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					'<td><i class="far fa-spinner-third fa-spin"></i></td>'+
+					<% end %>
+					'<td><%:N/A%></td>'+
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					'<td><%:N/A%></td>'+
+					<% end %>
+					'</tr>';
+				mobile_htm= nrdevMobileRow.compose({
+					did:db.did,
+					idx:db.idx,
+					chlist:db.chlist,
+					skip_channels:db.skip_channels,
+					bwlist:db.bwlist,
+					freq: db.freq,
+					freq_label:"<td><%:N/A%></td>",
+					freq_val: "",
+					channel_label:"<td><%:N/A%></td>",
+					channel:"",
+					bandwidth_label: "<td><%:N/A%></td>",
+					bandwidth: "",
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					power_label:'<i class="far fa-spinner-third fa-spin"></i></td>',
+					power:"",
+					<%end%>
+					limit_label:"<td><%:N/A%></td>",
+					limit:"",
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					rssi_label:"<td><%:N/A%></td>",
+					rssi:""
+					<%end%>
+				});
+			}
+			else{
+				freq_info = "";
+				<% if platform ~= "tdtech" then %>
+				freq_info = db.radio+"Hz";
+				<% else %>
+				freq_info = '<select  class="select-freq" data-ori="'+db.freq+'"></select>';
+				<% end %>
+				if(db.freq=="2")
+					mode_mobile_help="<%:WifiModeHelp2%>";
+				else
+					mode_mobile_help="<%:WifiModeHelp5%>";
+				channel_info = '<select class="select-ch" data-terminal="pc" id="ch-pc-'+i+'" data-ori="'+db.channel+'" onchange="change_channel(this,'+i+')"></select>';
+				bandwidth_info = '<select class="select-bw" data-terminal="pc" id="bw-pc-'+i+'" data-ch="'+db.channel+'" data-ori="'+db.width+'"></select>';
+				channel_mobile_info = '<select class="select-ch" data-terminal="mobile" id="ch-mobile-'+i+'" data-ori="'+db.channel+'" onchange="change_channel(this,'+i+')"></select>';
+				bandwidth_mobile_info = '<select class="select-bw" data-terminal="mobile" id="bw-mobile-'+i+'" data-ch="'+db.channel+'" data-ori="'+db.width+'"></select>';
+				mode_info = '<select class="select-hwmode" data-terminal="pc"  id="hwmode-pc-'+i+'" data-freq='+db.freq+' data-ori="'+db.hwmode+'"></select>';
+				mode_mobile_info = '<select class="select-hwmode" style="max-width: 10em;" data-terminal="mobile" id="hwmode-mobile-'+i+'" data-freq='+db.freq+' data-ori="'+db.hwmode+'"></select>';
+				power_info = '<select class="select-txp" data-ori="'+db.txp+'"></select>';
+				max_client=nradio_phyname_maxclients(db.phyname);
+				maxsta_info = '<input class="input-maxc cbi-input-text" placeholder="1-'+max_client+'" data-max="'+max_client+'" style="display:inline-block" data-ori="'+db.maxsta+'" value="'+db.maxsta+'">';
+				rssi_info = '<input class="input-rssi cbi-input-text" data-ori="'+db.rssi+'" value="'+db.rssi+'" placeholder="<%:rssiFormat%>">';
+				htm+='<tr class="sub_item" data-did='+db.did+' data-idx='+db.idx+' data-freq='+db.freq+' data-chlist="'+db.chlist+'" data-skip_channels="'+db.skip_channels+'" data-bwlist="'+db.bwlist+'">'+
+					'<td>'+freq_info+'</td>'+
+					<% if wifi7 then %>
+					'<td>'+mode_info+'</td>'+
+					<% end %>
+					'<td>'+channel_info+'</td>'+
+					'<td>'+bandwidth_info+'</td>'+
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					'<td>'+power_info+'</td>'+
+					<% end %>
+					'<td>'+maxsta_info+'</td>'+
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					'<td>'+rssi_info+'</td>'+
+					<% end %>
+					'</tr>';
+				mobile_htm+= nrdevMobileRow.compose({
+					did:db.did,
+					idx:db.idx,
+					chlist:db.chlist,
+					skip_channels:db.skip_channels,
+					bwlist:db.bwlist,
+					freq: db.freq,
+					freq_label:"<%:Freq%>",
+					freq_val: freq_info,
+					mode_label:"<%:WifiMode%>",
+					mode_val:mode_mobile_info,
+					mode_help:mode_mobile_help,
+					channel_label:"<%:Channel%>",
+					channel:channel_mobile_info,
+					bandwidth_label: "<%:Bandwidth%>",
+					bandwidth: bandwidth_mobile_info,
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					power_label:"<%:Transmit Power%>",
+					power:power_info,
+					<%end%>
+					limit_label:"<%:Maximum Stations Limit%>",
+					limit:maxsta_info,
+					<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+					rssi_label:"<%:RSSI Threshold%>",
+					rssi:rssi_info
+					<%end%>
+				});
+
+			}
+		});
+		$('.radio_list.pc').empty().append(htm);
+		$('.radio_list.phone').empty().append(mobile_htm);
+		$('.radio_list .sub_item').each(function(i){
+			var freq=$(this).attr('data-freq');
+			<% if platform == "tdtech" then %>
+			if (freq_val == '2g')
+				freq='2';
+			else if (freq_val == '5g')
+				freq='5';
+			var freqlist=["2g", "5g"];
+			var trans_freq={
+				'2g':"<%:2.4GHz%>",
+				'5g': "<%:5GHz%>"
+			}
+			<% end %>
+			var chlist_dft={
+					<% if region == "CN" then %>
+					'2': ['auto', "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+						<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+						'5': ['auto', "36", "40", "44", "48", "52", "56", "60", "64", "149", "153", "157", "161", "165"]
+						<% else %>
+						'5': ['auto', "36", "40", "44", "48", "149", "153", "157", "161", "165"]
+						<% end %>
+					<% elseif region == "FCC" then %>
+					'2': ['auto', "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
+						<% if dfs_enable == 1 then %>
+						'5': ['auto', "36", "40", "44", "48", "52", "56", "60", "64", "100", "104", "108", "112", "116", "132", "136", "140", "149", "153", "157", "161", "165"]
+						<% else %>
+						'5': ['auto', "36", "40", "44", "48", "149", "153", "157", "161", "165"]
+						<% end %>
+					<% elseif region == "CE" then %>
+					'2': ['auto', "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+						<% if dfs_enable == 1 then %>
+						'5': ['auto', "36", "40", "44", "48", "52", "56", "60", "64", "100", "104", "108", "112", "116", "120", "124", "128", "132", "136", "140"]
+						<% else %>
+						'5': ['auto', "36", "40", "44", "48"]
+						<% end %>
+					<% elseif region == "JP" then %>
+					'2': ['auto', "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"],
+						<% if dfs_enable == 1 then %>
+						'5': ['auto', "36", "40", "44", "48", "52", "56", "60", "64", "100", "104", "108", "112", "116", "120", "124", "128", "132", "136", "140"]
+						<% else %>
+						'5': ['auto', "36", "40", "44", "48"]
+						<% end %>
+					<% elseif region == "KR" then %>
+					'2': ['auto', "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+						<% if dfs_enable == 1 then %>
+						'5': ['auto', "36", "40", "44", "48", "52", "56", "60", "64", "100", "104", "108", "112", "116", "120", "124", "128", "132", "136", "140", "149", "153", "157", "161", "165"]
+						<% else %>
+						'5': ['auto', "36", "40", "44", "48", "149", "153", "157", "161", "165"]
+						<% end %>
+					<% elseif region == "ID" then %>
+						'2': ['auto', "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+						<% if dfs_enable == 1 then %>
+						'5': ['auto', "36", "40", "44", "48", "52", "56", "60", "64", "149", "153", "157", "161", "165"]
+						<% else %>
+						'5': ['auto', "36", "40", "44", "48", "149", "153", "157", "161", "165"]
+						<% end %>
+					<% end %>
+			}
+			var bwlist_dft={
+				'2': ['20', '40'],
+				<% if luci.nradio.support_vht160() then %>
+				'5': ['20', '40', '80', '160']
+				<% else %>
+				'5': ['20', '40', '80']
+				<% end %>
+			}
+			var en=['0', '1'];
+			var txp=[100, 80, 50];
+			var mode_list={
+				'2':["11be", "11ax", "11n"],
+				'5':["11be", "11ax", "11ac"]
+			};
+			var trans={
+				'auto': '<%:Auto%>',
+			}
+			var trans_en={
+				'1': '<%:Disable%>',
+				'0': '<%:Enable%>',
+			}
+			var trans_txp={
+				'100':"<%:Strong%>",
+				'80': "<%:Normal%>",
+				'50': "<%:Poor%>",
+			}
+			var trans_mode={
+				'2':{"11be":"Wi-Fi7(802.11b/g/n/ax/be)","11ax":"Wi-Fi6(802.11b/g/n/ax)","11n":"Wi-Fi4(802.11b/g/n)"},
+				'5':{"11be":"Wi-Fi7(802.11a/n/ac/ax/be)","11ax":"Wi-Fi6(802.11a/n/ac/ax)","11ac":"Wi-Fi5(802.11a/n/ac)"},
+			}
+			var trans_bw={
+				'20': '<%:20MHz%>',
+				'40': '<%:40MHz%>',
+				'80': '<%:80MHz%>',
+				<% if luci.nradio.support_vht160() then %>
+				'160': '<%:160MHz%>',
+				<% end %>
+			}
+			var chlist;
+			var chlist_str=$(this).attr('data-chlist');
+			if (chlist_str.length > 0) {
+				chlist = chlist_str.split(",");
+				chlist.splice(0, 0, "auto");
+			}
+			else {
+				chlist = chlist_dft[freq];
+			}
+			var bwlist = null;
+			if(obj){
+				var ori_freq=$(obj).data("ori");
+				if(ori_freq!=freq){
+					bwlist = bwlist_dft[freq];
+				}
+			}
+			if(!bwlist){
+				var bwlist_str=$(this).attr('data-bwlist');
+				if (bwlist_str != undefined && bwlist_str.length > 0) {
+					bwlist = bwlist_str.split(",");
+				}
+				else {
+					bwlist = bwlist_dft[freq];
+				}
+			}
+
+
+			var skip_channels;
+			var index;
+			var skip_channels_str=$(this).attr('data-skip_channels');
+
+			if (skip_channels_str.length > 0) {
+				skip_channels = skip_channels_str.split(",");
+				if (skip_channels && skip_channels.length){
+					for(j=0;j<skip_channels.length;j++){
+						if((index = jQuery.inArray((skip_channels[j]),chlist)) !=-1){
+							chlist.splice(index,1);
+						}
+					}
+				}
+			}
+
+			$(this).find('select').each(function(j){
+				var sel=$(this);
+				var arr=[];
+				var t = trans;
+				if (sel.hasClass('select-bw')){
+					arr=bwlist;
+					t=trans_bw;
+					if (sel.attr('data-ch') == 165){
+						arr=[bwlist[0]];
+					}
+					<% if luci.nradio.support_vht160() then %>
+					else if (channel_is_band4(sel.attr('data-ch'))){
+						var index = arr.indexOf('160');
+						if (index > -1){
+							arr.splice(index, 1);
+						}
+					}
+					<% end %>
+				}
+				else if (sel.hasClass('select-en')){
+					arr=en;
+					t=trans_en;
+				}
+				<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+				else if (sel.hasClass('select-txp')){
+					arr=txp;
+					t=trans_txp;
+				}
+				<% end %>
+				<% if platform == "tdtech" then %>
+				else if (sel.hasClass('select-freq')){
+					arr=freqlist;
+					t=trans_freq;
+				}
+				<% end %>
+				<% if wifi7 then %>
+				else if (sel.hasClass('select-hwmode')){
+					arr=mode_list[freq];
+					t=trans_mode[freq];
+				}
+				<% end %>
+				else{
+					arr=chlist;
+				}
+
+				arr.map(function(k){
+					sel.append($('<option>', {
+						value: k,
+						text: (t[k]===undefined ? k:t[k]),
+					}));
+				});
+				<% if platform == "tdtech" then %>
+				if (sel.hasClass('select-freq'))
+					sel.val(freq+'g');
+				else
+					sel.val(sel.attr('data-ori'));
+				<% else %>
+				sel.val(sel.attr('data-ori'));
+				<% end %>
+				if (!sel.val())
+					sel.val(arr[0]);
+			});
+		});
+		$('.input-maxc').on('blur', function () {
+			check_limit($(this));
+		});
+		$('.select-freq').change(function(){			
+			fill_radio_table($(this).val(),$(this));
+		});
+	}
+	function check_limit(obj){
+		let $input = $(obj);
+		var max=$(obj).data("max");
+		let rawValue = $input.val().replace(/[^0-9]/g, '');
+		if (rawValue.length > 1 && rawValue.startsWith('0')) {
+				rawValue = rawValue.replace(/^0+/, '');
+				if (rawValue.length ==  0){
+						rawValue = '0'
+				}
+		}
+
+		let numberValue = parseInt(rawValue, 10);
+		if (isNaN(numberValue)) {
+			$input.val('');
+			return;
+		}
+		if (numberValue > max) numberValue = max;
+		if (numberValue <= 0) numberValue = max;
+		$input.val(numberValue);
+	}
+	$(document).ready(function(){
+		fill_radio_table(0);
+
+		$('#btn_change').click(function(){
+			var data={};
+			$('.input-maxc').blur();
+			data['type']='radio';
+			data['info']=get_radioinfo();
+			data['token']='<%=token%>'
+
+			if (data['info'] != "[]"){
+				var msgNote = "<%:Waiting for changes to be applied...%>";
+				var dail_box = create_dial_box(msgNote);
+				$.ajax({
+						type: "POST",
+						url: '<%=controller%>nradio/basic/wifi/set',
+						data: data,
+						success: function(data){
+								dail_box.close();
+								location.reload();
+						},
+						error: function(xhr, error){
+								nradio_network_interval(function(){
+										location.replace(document.URL);
+								},2000,msgNote,dail_box);
+						}
+				});
+			}
+		});
+
+		<% if platform ~= "tdtech" and platform ~= "quectel" then %>
+		$('.input-rssi').on('input', function () {
+			let $input = $(this);
+			let rawValue = $input.val().replace(/[^0-9]/g, '');
+			if (rawValue.length > 1 && rawValue.startsWith('0')) {
+					rawValue = rawValue.replace(/^0+/, '');
+					if (rawValue.length ==  0){
+							rawValue = '0'
+					}
+			}
+
+			let numberValue = parseInt(rawValue, 10);
+			if (isNaN(numberValue)) {
+				$input.val('');
+				return;
+			}
+			if (numberValue > 110) numberValue = 110;
+			$input.val(numberValue);
+		});
+		<%end%>
+	});
+
+</script>
+<%+footer%>

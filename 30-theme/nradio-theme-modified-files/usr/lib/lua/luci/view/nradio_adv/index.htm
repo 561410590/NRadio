@@ -1,0 +1,81 @@
+<%#
+-- Copyright 2017 NRadio
+-%>
+
+<%+header%>
+<h2 name="content"><%:Advanced Feature%></h2>
+<%
+	local uci = require "luci.model.uci".cursor()
+	local disp = require "luci.dispatcher"
+	local t_category = 'nradioadv'
+	local t_cattree  = t_category and disp.node(t_category)
+	local t_childs = disp.node_childs(t_cattree)
+	local i, r
+
+	for i, r in ipairs(t_childs) do
+		local t_nnode = t_cattree.nodes[r]
+		local t_grandchildren = disp.node_childs(t_nnode)
+		local x, y
+		local t_count = 0
+
+		if #t_grandchildren ~= 0 then
+			for x, y in ipairs(t_grandchildren) do
+				local tt_nnode = t_nnode.nodes[y]
+				local t_href = controller .. t_category .. "/" .. r .. "/" .. y .. (tt_nnode.query and http.build_querystring(k.query) or "")
+				local t_show = tt_nnode.show or false
+				local route = nil
+				if tt_nnode.full then
+					route = tt_nnode.full:gsub("/", ".")
+				end
+				if route and nixio.fs.access("/tmp/appcenter/luci/"..route) then
+					t_show = false
+				end 
+				repeat
+					if t_show then
+						t_count = t_count + 1
+					else
+						break
+					end
+
+					if t_count == 1 then
+%>
+<fieldset class="cbi-section">
+	<legend><%=pcdata(striptags(translate(t_nnode.title)))%></legend>
+	<div class="nav-funcs">
+		<ul class="nav-funcs-list">
+<%
+					end
+
+					if tt_nnode.icon then
+						t_icon = tt_nnode.icon
+					end
+
+					if not t_icon then
+						t_icon = "wrench"
+					end
+%>
+			<li>
+				<a href="<%=pcdata(t_href)%>">
+					<div class="func-icon">
+						<span class="far fa-fw fa-4x fa-<%=t_icon%>" aria-hidden="true"></span>
+					</div>
+					<div class="func-desc">
+						<span class="func-desc-text"><%=pcdata(striptags(translate(tt_nnode.title)))%></span>
+					</div>
+				</a>
+			</li>
+<%
+				until true
+			end
+
+			if t_count ~= 0 then
+%>
+		</ul>
+	</div>
+</fieldset>
+<%
+			end
+		end
+	end
+%>
+<%+footer%>

@@ -1,0 +1,23 @@
+# Internal notes and private operation records
+00-current/NRadio统一记忆文档.txt
+**/*cookie*
+**/*Cookie*
+
+# Backups, archives and temporary field files
+*.bak
+*.bak-*
+*.zip
+90-backup/
+99-archive/
+**/SHA256SUMS*.txt
+**/*broken*
+**/*live-after*
+
+# Local tools and generated binaries
+20-tools/*.exe
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+

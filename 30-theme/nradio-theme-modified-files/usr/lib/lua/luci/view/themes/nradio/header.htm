@@ -1,0 +1,904 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local sys  = require "luci.sys"
+	local util = require "luci.util"
+	local http = require "luci.http"
+	local disp = require "luci.dispatcher"
+	local nr = require "luci.nradio"
+	local uci = require "luci.model.uci".cursor()
+
+	local boardinfo = util.ubus("system", "board")
+
+	local request  = disp.context.path
+	local category = request[1]
+	local second_category = request[2]
+	local third_category = request[3]
+	local class_name ="";
+	local bg_class = "";
+	local wifiauth = false
+	if not second_category then
+		class_name="first-stand"
+		second_category = "sysauth"
+		if category == "authcheck" then
+			wifiauth = true
+		end
+	else
+		if second_category == "qsetup" then
+			if not third_category then
+				class_name="first-stand"
+			else
+				class_name="second-stand"
+			end
+		elseif second_category == "hsetup" or second_category == "download" then
+			class_name="hsetup-stand"
+		end
+	end
+
+	if (nr.get_firmware_type() == "stand") and (class_name == "first-stand") and second_category == "sysauth" then
+		bg_class="mobile_bg_color"
+	end
+
+	if category and (category == "authcheck" or category == "auth" or category == "login" or category == "message" or category == "portal") then
+		class_name="first-stand"
+	end
+
+	if category then
+		category = "nradio"
+	end
+
+	local cattree  = category and disp.node(category)
+
+	local tree = disp.node()
+	local node = disp.context.dispatched
+
+	local categories = disp.node_childs(tree)
+
+	local c = tree
+	local i, r
+
+	-- tag all nodes leading to this page
+	for i, r in ipairs(request) do
+		if c.nodes and c.nodes[r] then
+			c = c.nodes[r]
+			c._menu_selected = true
+		end
+	end
+
+	local function nodeurl(prefix, name, query)
+		local u = url(prefix, name)
+		if query then
+			u = u .. http.build_querystring(query)
+		end
+		return pcdata(u)
+	end
+
+	local function render_dropmenu(prefix, node)
+		local childs = disp.node_childs(node)
+		local i, r
+		if #childs ~= 0 then
+			write('<li class="dropdown">')
+			write('<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">')
+			write('<i class="far fa-%s"></i><span class="nav_title">%s</span></a>' %{
+				node.icon or "cog",
+				pcdata(striptags(translate(node.title)))
+			})
+			write('<ul class="dropdown-menu">')
+
+			for i, r in ipairs(childs) do
+				local nnode = node.nodes[r]
+				write('<li><a href="%s">%s</a></li>' %{
+					nodeurl(prefix, r, nnode.query),
+					pcdata(striptags(translate(nnode.title)))
+				})
+			end
+
+			write('</ul>')
+			write('</li>')
+		end
+	end
+	local radio_menu_node = {}
+	local wan_menu_node = {}
+
+	if cattree and cattree.nodes['basic'] then
+		if cattree.nodes['basic'].nodes['wifi'] then
+			radio_menu_node = cattree.nodes['basic'].nodes['wifi']
+		end
+		if cattree.nodes['basic'].nodes['wan'] then
+			wan_menu_node = cattree.nodes['basic'].nodes['wan']
+		end
+	end
+	-- send as HTML5
+	http.prepare_content("text/html")
+	local top_menu = util.serialize_json(nr.get_top_menu(),nil)
+	local page_shell_class = "nr-special-shell"
+	if #class_name == 0 then
+		page_shell_class = "nr-page-shell"
+	end
+
+	local has_cellular = nr.support_ims()
+
+-%>
+
+<!DOCTYPE html>
+<html lang="<%=luci.i18n.context.lang%>">
+	<head>
+		<meta charset="utf-8">
+		<title><%=striptags(((node and node.title) and translate(node.title) or '')) %></title>
+		<meta name="viewport" content="initial-scale=1.0">
+
+
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/bootstrap-dialog.min.css?v=git-26.103.38496-283ac67">
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/cascade.min.css?v=git-26.103.38496-283ac67">
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/main.min.css?v=git-26.103.38496-283ac67">
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/nradio.min.css?v=git-26.103.38496-283ac67">
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/nradio-refresh.css?v=sidebar-v14">
+		<% if second_category == "sysauth" then%>
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/login.min.css?v=git-26.103.38496-283ac67">
+		<%end%>
+		<link rel="shortcut icon" href="<%=media%>/favicon.ico">
+		<script defer src="<%=media%>/js/nradio.min.js?v=git-26.103.38496-283ac67"></script>
+		<script defer src="<%=media%>/js/fontawesome.min.js?v=git-26.103.38496-283ac67"></script>
+		<script defer src="<%=media%>/js/v4-shims.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/jquery.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/jquery.validate.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/bootstrap.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/bootstrap-filestyle.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/bootstrap-dialog.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/main.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/clipboard.min.js?v=git-26.103.38496-283ac67"></script>
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="<%=media%>/js/html5shiv.min.js?v=git-26.103.38496-283ac67"></script>
+			<script src="<%=media%>/js/respond.min.js?v=git-26.103.38496-283ac67"></script>
+		<![endif]-->
+		<script src="<%=resource%>/xhr.js?v=git-26.103.38496-283ac67"></script>
+		<style>
+			.lang-drawer-item {
+				text-align: center;
+				padding: 12px 0;
+			}
+			.next-button-lang::before {
+				transition: transform 0.3s ease;
+				transform: rotate(136deg) translateX(-50%);
+			}
+			.next-button-lang.expanded::before {
+				transform: rotate(225deg) translateX(-50%);
+			}
+			.sms-li {
+				position: relative;
+			}
+			.sms-badge {
+				position: absolute;
+				top: -6px;
+				right: -3px;
+				min-width: 15px;
+				border-radius: 8px;
+				font-size: 10px;
+				line-height: 16px;
+				text-align: center;
+			}
+			.sms-badge.hide {
+				display: none;
+			}
+		</style>
+		<script>
+		function uptime2dhms(uptime, max = 5, delim = ' '){
+			if(!uptime){
+				return "-";
+			}
+			var dhms=[];
+			if (uptime >= 60*60*24){
+				dhms.push(Math.floor(uptime/(60*60*24))+'<%:d%>');
+			}
+			if (uptime >= 60*60){
+				dhms.push(Math.floor(uptime%(60*60*24)/60/60)+'<%:h%>');
+			}
+			if (uptime >= 60){
+				dhms.push(Math.floor(uptime%(60*60)/60)+'<%:m%>');
+			}
+			dhms.push(Math.floor(uptime%60)+'<%:s%>');
+			return dhms.slice(0, max).join(delim);
+		}
+
+		$.validator.addMethod("wpakey-invalid", function(value, element) {
+			return false;
+		}, "<%:Invalid WPA password.%>")
+
+		$.validator.addMethod("ipaddr-invalid", function(value, element) {
+			return false;
+		}, "<%:Invalid IP address.%>")
+
+		$.validator.addMethod("ip4addr-invalid", function(value, element) {
+			return false;
+		}, "<%:Invalid IPv4 address.%>")
+
+		$.validator.addMethod("dataneeded", function(value, element) {
+			return !this.optional(element);
+		}, "<%:This field is required.%>")
+
+		var reloadFieldset = '';
+
+		$(document).ready(function() {
+			nradio_style_onload();
+			$(':file').not('.hide').filestyle({
+				buttonBefore: true,
+				buttonText: "<%:Choose File...%>",
+				iconName: "far fa-folder-open"
+			});
+			$(':file').click(function() {
+				$(this).closest('div.cbi-value').removeClass('cbi-value-error');
+			});
+
+			$('form').each(function() {
+				var v = $(this).validate({
+					errorPlacement: function(error, element) {
+						if ($(element).next('span.glyphicon').length > 0) {
+							if ($(element).parent().hasClass('dylist-input-group')) {
+								$(element).parent().next('div.empty').prepend(error);
+							} else {
+								$(element).parent().after(error);
+							}
+						} else {
+							$(element).parents('div.cbi-value-field')
+								.children('div.error').remove();
+							$(element).parents('div.cbi-value-field')
+								.children().last().after(error);
+						}
+					},
+					errorElement: "div",
+				});
+
+				$('.cbi-button-next').click(function(event) {
+					if (v.form()) {
+						$('ul.cbi-tabmenu > li.cbi-tab').nextAll('li').first().children('a').click();
+					}
+				});
+				$('.cbi-button-apply').click(function() {
+					v.form();
+				});
+			});
+
+			$(document).on("click", "#select_all", function(){
+				$("input[name='sel_check']").not(':disabled').prop('checked', $(this).is(":checked"));
+			});
+			document.onkeydown=function(e){
+				e=e||window.event;
+				if(e.keyCode==116){
+					e.preventDefault();
+					location.replace(document.URL);
+				}
+			}
+			if ( window.history.replaceState ) {
+				window.history.replaceState( null, null, window.location.href );
+			}
+		});
+		</script>
+	</head>
+	<body class="nradio-visual-refresh <%=page_shell_class%> <%=bg_class%> <%= second_category == 'sysauth' and 'nradio-auth-refresh' or '' %> lang_<%=luci.i18n.context.lang%> <%- if node then %><%= striptags( node.title ) %><%- end %> body-total-<%=class_name%>"  >
+<%-
+	childs = disp.node_childs(cattree)
+	if #childs ~= 0 then
+	%>
+	<%if #class_name == 0 or class_name == "second-stand" or class_name == "hsetup-stand" then%>
+		<% if not disp._INNTER_PAGE then%>	
+		<header>
+			<%if class_name == "second-stand" or class_name == "hsetup-stand" then%>
+			<div class="container menu-top nr-desktop-sidebar">
+				<div class="row logo-nradio hidden-xs small_banner" style="margin-top:10px">
+					<div class="col-xs-4 col-sm-4 text-left"><div class="<% if nr.get_firmware_type() ~= "oem" then print "nradio-logo" end%> main-logo-size"></div></div>
+					<%if class_name == "second-stand" then%>
+					<div class="col-xs-8 col-sm-8 text-right">
+						<ul class="list-inline nradio-right-btn">
+							<li class="click_pointer" onclick="confirm_quit_qsetup()"><i class="far fa-nradio-login-out fa-fw" ></i><%:QSetupExit%></li>
+						</ul>
+					</div>
+					<%end%>
+				</div>
+			</div>
+
+			<%else%>
+			<div class="row logo-nradio hidden-xs large_banner">							
+				<div class="<% if nr.get_firmware_type() ~= "oem" then print "nradio-logo" end%> main-logo-size"></div>
+			</div>
+			<div class="container menu-top">
+				<div class="row logo-nradio hidden-xs small_banner" style="margin-top:10px">
+					<div class="col-xs-4 col-sm-4 text-left"><div class="<% if nr.get_firmware_type() ~= "oem" then print "nradio-logo" end%> main-logo-size"></div></div>
+					<div class="col-xs-8 col-sm-8 text-right qmenu" tabindex=0 style="outline:none" onblur="show_icon_menu(1);">
+					</div>
+				</div>
+				<div class="row hidden-xs">
+					<div class="flex menu-tab" >
+					</div>
+				</div>
+			</div>
+			<div class="large_banner qmenu" tabindex=0 style="outline:none" onblur="show_icon_menu(1);">
+			</div>
+			<%end%>
+		</header>
+		<%end%>
+		<a name="top_position"></a>
+
+		<div class="container visible-xs-block mobile menu_mobile">
+			<% if not disp._INNTER_PAGE then%>	
+			<div class="col-xs-4 col-sm-4  text-left"></div>
+			<div class="col-xs-4 col-sm-4 text-center"><div class="<% if nr.get_firmware_type() ~= "oem" then print "nradio-logo" end%> mobile-logo-size"></div></div>
+				<%if class_name == "second-stand" then%>
+					<div class="col-xs-4  text-right"><a class="mobile click_pointer" onclick="confirm_quit_qsetup()"><%:QSetupExit%></a></div>
+				<%else%>
+					<div class="col-xs-4 text-right hide" id="mobile_apply" ><a class="click_pointer mobile" onclick="rebind_apply()"><%:Save%></a></div>
+				<%end%>
+
+			<%else%>
+				<%if class_name == "second-stand" then%>
+					<div class="col-xs-12  text-right"><a class="mobile click_pointer" onclick="confirm_quit_qsetup()"><%:QSetupExit%></a></div>
+				<%else%>
+					<div class="col-xs-12 text-right hide" id="mobile_apply" ><a class="click_pointer mobile" onclick="rebind_apply()"><%:Save%></a></div>
+				<%end%>
+			<%end%>
+		</div>	
+<%
+	end
+	end
+%>
+	<iframe id='background_form' name='background_form' style='display: none'>
+	</iframe>
+	<script>
+		var	gSmsIfaces = null;
+		var gSmsUnread = 0;
+		function render_sms_badge(count,clean){
+			var $badge = $('.sms-badge');
+			if(!$badge.length) return;
+			if(clean){
+				$('.sms-li').addClass("blink");
+				$badge.removeClass('hide').html('<i class="far fa-nradio-del fa-fw" ></i> ');
+			}
+			else if(!count || count <= 0){
+				$('.sms-li').removeClass("blink");
+				$badge.addClass('hide').text('');
+			}else{
+				$('.sms-li').removeClass("blink");
+				$badge.removeClass('hide').text(count > 99 ? '99+' : String(count));
+			}
+		}
+		function refresh_sms_badge(){
+			(new XHR()).get('<%=controller%>nradio/cellular/sms/unread', null, function(xhr){
+				if (xhr.getResponseHeader("Content-Type") == "application/json") {
+					try {
+						gSmsIfaces = null;
+						var count = 0;
+						var total = 0;
+						var used = 0;
+						var clean_flag = 0;
+						var data_res = eval('(' + xhr.responseText + ')');
+						if(data_res && data_res.result && data_res.result.length > 0){
+							for( var i = 0; i < data_res.result.length; i++){
+								var item = data_res.result[i];
+								if (item.max)
+									total+=item.max;
+								if (item.used)
+									used+=item.used;
+								if(item.count > 0 && item.iface){
+									gSmsIfaces = item.iface;
+									count = item.count + count;
+								}
+							}
+							gSmsUnread = count;
+							if(total && (used*100/total >= 90))
+								clean_flag = 1;
+							
+							//console.log("used:"+used+",total:"+total+" "+used*100/total);
+							render_sms_badge(count,clean_flag);
+						}
+					}
+					catch(e) {
+					}
+				}
+			});
+		}
+		function goto_cellular_sms(){
+			if (!gSmsIfaces)
+				window.location = '<%=controller%>/nradio/cellular/sms';
+			else
+				window.location = '<%=controller%>/nradio/cellular/sms/model/' + gSmsIfaces;
+		}
+
+		function apply_lang(lang){
+			var data={};
+			data['lang']=lang;
+			(new XHR()).post('/cgi-bin/luci/admin/syslang', data, function(){
+				location.reload();
+			});
+		}
+		function toggle_lang_drawer(){
+			$("#mobile_lang_drawer").slideToggle();
+			$(".next-button-lang").toggleClass("expanded");
+		}
+		function confirm_lang(){
+			$(".sub_lang_list").html("");
+			var htm = `
+				<li class="click_pointer" data-lang="0" onclick="apply_lang(0)"><%: SystemLangAuto %></li>
+				<li class="click_pointer" data-lang="1" onclick="apply_lang(1)">中文</li>
+				<li class="click_pointer" data-lang="2" onclick="apply_lang(2)">English</li>
+			`
+			$(".sub_lang_list").append(htm);
+		}
+		function generate_qmenu(){
+			var htm = '<ul class="list-inline nradio-right-btn">'+
+				<%if has_cellular then%>
+					  '	<li class="click_pointer sms-li" style="margin-right:10px" onclick="goto_cellular_sms();"><i class="far fa-nradio-sms-header fa-2x"></i><span class="sms-badge hide" id="sms_badge"></span></li>'+
+				<%end%>
+					  '	<li class="click_pointer"  onclick="show_icon_menu();"><i class="far fa-nradio-menu fa-2x" ></i></li>'+
+					  '</ul>'+
+					  '	<ul class="sub_icon_list sub_lang_list hide">'+
+			<%if (not nr.has_cpe()) and not nr.has_ptype("ap", "cb") then%>
+					  '	<li class="click_pointer" onclick="confirm_jump_qsetup()"><%:QSetupTitle%><div class="next-button">&nbsp;</div></li>'+
+			<%end%>
+					  '	<li class="click_pointer" onclick="confirm_lang(this)"><%: SystemLang %><div class="next-button">&nbsp;</div></li>'+
+					  '	<li class="click_pointer" onclick="location.href=\'/cgi-bin/luci/nradioadv/system/restart\'"><%:Reboot%><div class="next-button">&nbsp;</div></li>'+
+					  '	<li class="click_pointer" onclick="location.href=\'/cgi-bin/luci/nradioadv/system/passwd\'"><%:Administrator%><div class="next-button">&nbsp;</div></li>'+
+					  '	<li class="click_pointer" onclick="location.href=\'/cgi-bin/luci/nradio/logout\'"><%:LoginOut%><div class="next-button">&nbsp;</div></li>'+
+					  '</ul>';
+			$(".qmenu").html("");
+			$(".qmenu").append(htm);
+			<%if has_cellular then%>
+				render_sms_badge(gSmsUnread);
+			<%end%>
+		}
+		generate_qmenu();
+		function show_icon_menu(hide){
+			if(hide){
+				generate_qmenu();
+				$(".sub_icon_list").addClass("hide");
+			}
+			else{
+				generate_qmenu();
+				$(".sub_icon_list").toggleClass("hide");
+			}
+		}
+		function confirm_jump_qsetup(){
+			var msg = {};
+			msg.message = '<div style="padding:0 20px;text-align:left"><i class="far fa-nradio-note fa-fw icon_disable" ></i><%:qsetup_confirm_note%></div>';
+			msg.confirm = "<%:Yes%>";
+			msg.cancel = "<%:No%>";
+			msg.callback = function(){
+				location.href="/cgi-bin/luci/nradio/qsetup/second";
+			}
+			confirm_box(msg);
+		}
+		function confirm_quit_qsetup(){
+			var msg = {};
+			msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:QSetupQuitNote%>';
+			msg.confirm = "<%:Confirm%>";
+			msg.cancel = "<%:Cancel%>";
+			msg.callback = function(){
+				var data={};
+				data['token']='<%=token%>';
+				(new XHR()).post('<%=controller%>nradio/qsetup/next', data, function(){
+					setTimeout(function(){
+						location.href="/cgi-bin/luci/nradio/system/overview";
+					},1000);
+				});
+			}
+			confirm_box(msg);
+		}
+		function get_each_menu(menu,index,lastname){
+			var box_class="";
+			var menu_index=index;
+			var menu_data = menu;
+			var menu_list = null;
+			var father_name = "";
+			var style = "";
+			var pre_name = lastname?lastname:"main";
+			if(!menu_index){
+				father_name="main";
+				menu_list = menu_data;
+			}
+			else{
+				father_name=menu.name;		
+				menu_list = menu_data.sub_menu;
+				style = "style='display:none'";
+			}
+			box_class=father_name+"_menu_box";
+			if(!menu_list)
+				return "";
+			var sub_htm = "";
+			var htm = "";
+				htm+='	<div data-father="'+pre_name+'" class="mobile_bg_color panel panel-info device-panel menu_box '+box_class+'" '+style+'>';
+				htm+='		<div class="panel-heading">';
+				htm+='			<h3 class="panel-title"</h3>';
+				htm+='		</div>';
+				htm+='		<div class="panel-body info-box no_padding">';
+			var line = "";
+			var has_sub = 0;
+			var first_index = 0;
+			for(var i=0;i<menu_list.length;i++){
+				var icon_info = "";
+				if(menu_list[i].name == "index"){
+					first_index=1;
+					continue;
+				}
+
+				if(i>first_index)
+					line="line_top_class";
+				has_sub = 0;
+				if(menu_list[i].sub_menu){
+					sub_htm+=get_each_menu(menu_list[i],(menu_index+1),father_name);
+					has_sub=1;
+				}
+				if(menu_list[i].name == "cellular")
+					icon_info='<i class="far fa-podcast"></i>&nbsp;&nbsp;';
+				else if(menu_list[i].name == "wifi")
+					icon_info='<i class="far fa-nradio-wifi"></i>&nbsp;&nbsp;';
+				else if(menu_list[i].name == "wan")
+					icon_info='<i class="far fa-nradio-internet"></i>&nbsp;&nbsp;';
+				else if(menu_list[i].name == "client")
+					icon_info='<i class="far fa-nradio-terminal"></i>&nbsp;&nbsp;';
+				else if(menu_list[i].name == "advanced")
+					icon_info='<i class="far fa-nradio-advanced-setting"></i>&nbsp;&nbsp;';
+
+				htm+='			<div class="row">';
+				htm+='				<div class="col-sm-12 col-xs-12 text-left" data-father="'+father_name+'" data-name="'+menu_list[i].name+'"  data-url="'+menu_list[i].url+'" data-language="'+menu_list[i].language+'" onclick="show_menu(this,'+has_sub+')">';
+				htm+='					<div class="row padding_fix '+line+'">';
+				htm+='						<div class="col-sm-6 col-xs-6 text-left" >';
+				htm+='							'+icon_info+menu_list[i].language;
+				htm+='						</div>';
+				htm+='						<div class="col-sm-6 col-xs-6 text-right sub_label_color" >';
+				htm+='							<div style="display: inline-block"></div>&nbsp;&nbsp;&nbsp;';
+				htm+='							<div class="next-button" >';
+				htm+='								&nbsp;';
+				htm+='							</div>';
+				htm+='						</div>';
+				htm+='					</div>';
+				htm+='				</div>';
+				htm+='			</div>';
+
+			}		
+				htm+='		</div>';
+				htm+='	</div>';
+				htm+=sub_htm;
+				return htm;
+		}
+		function get_pc_menu(menu_list){
+			var htm = "";		
+			for(var i=0;i<menu_list.length;i++){
+				var active_class = "";
+				var icon_class = "fa-nradio-home";
+				if(menu_list[i].name == "index")
+					icon_class='fa-nradio-home';
+				else if(menu_list[i].name == "cellular")
+					icon_class='fa-podcast';
+				else if(menu_list[i].name == "wifi")
+					icon_class='fa-nradio-wifi';
+				else if(menu_list[i].name == "wan")
+					icon_class='fa-nradio-internet';
+				else if(menu_list[i].name == "client")
+					icon_class='fa-nradio-terminal';
+				else if(menu_list[i].name == "advanced")
+					icon_class='fa-nradio-advanced-setting';
+				if(menu_list[i].match)
+					active_class="active";
+				htm+='			<div class="item '+active_class+'" data-menu="'+menu_list[i].name+'" onclick="location.href=\''+menu_list[i].url+'\';">';
+				htm+='				<span class="item-icon"><i class="far '+icon_class+' fa-fw"></i></span>';
+				htm+='				<span class="item-copy"><span class="title">'+menu_list[i].language+'</span></span>';
+				htm+='				<span class="bottomline"></span>';
+				htm+='			</div>';
+	
+			}
+			$(".menu-tab").html(htm);
+		}
+		function format_mobile_menu(menu,sub){
+			var top = 0;
+			var class_name="";
+			var htm = "";
+				htm+='	<div class="mobile_bg_color">';
+				htm+='		<div class="panel-heading">';
+				htm+='			<h3 class="panel-title sub_label_color">&nbsp;</h3>';
+				htm+='		</div>	';
+				htm+='	</div>';
+				htm+= get_each_menu(menu,0);
+
+				if(sub){
+
+					htm+='	<div class="mobile_bg_color panel panel-info device-panel menu_box main_menu_box">';
+					htm+='		<div class="panel-heading">';
+					htm+='			<h3 class="panel-title"</h3>';
+					htm+='		</div>';
+					htm+='		<div class="panel-body info-box no_padding">';
+					<%if (not nr.has_cpe()) and not nr.has_ptype("ap", "cb") then%>
+					top++;
+					htm+='			<div class="row">';
+					htm+='				<div class="col-sm-12 col-xs-12 text-left">';
+					htm+='					<div class="row padding_fix">';
+					htm+='						<div class="col-sm-6 col-xs-6 text-left" >';
+					htm+='							<i class="far fa-nradio-qsetup fa-fw"  ></i>&nbsp;&nbsp;<%:QSetupTitle%>';
+					htm+='						</div>';
+					htm+='						<div class="col-sm-6 col-xs-6 text-right sub_label_color" data-father="main" data-name="qsetup"  data-url="" data-language="<%:QSetupTitle%>" onclick="confirm_jump_qsetup()">';
+					htm+='							<div style="display: inline-block"></div>&nbsp;&nbsp;&nbsp;';
+					htm+='							<div class="next-button" >';
+					htm+='								&nbsp;';
+					htm+='							</div>';
+					htm+='						</div>';
+					htm+='					</div>';
+					htm+='				</div>';
+					htm+='			</div>';
+					<%end%>
+					if(top)
+						class_name="line_top_class";
+					top++;
+					htm+='			<div class="row click_pointer" onclick="toggle_lang_drawer()">';
+					htm+='				<div class="col-sm-12 col-xs-12 text-left">';
+					htm+='					<div class="row padding_fix '+class_name+'">';
+					htm+='						<div class="col-sm-6 col-xs-6 text-left" >';
+					htm+='							<i class="far fa-nradio-syslang"></i>&nbsp;&nbsp;<%: SystemLang %>';
+					htm+='						</div>';
+					htm+='						<div class="col-sm-6 col-xs-6 text-right sub_label_color">';
+					htm+='							<div style="display: inline-block"></div>&nbsp;&nbsp;&nbsp;';
+					htm+='							<div class="next-button next-button-lang" >';
+					htm+='								&nbsp;';
+					htm+='							</div>';
+					htm+='						</div>';
+					htm+='					</div>';
+					htm+='				</div>';
+					htm+='			</div>';
+					htm+='			<div id="mobile_lang_drawer" style="display:none;">';
+					htm+='				<div class="col-xs-12 click_pointer lang-drawer-item" onclick="apply_lang(0)"><%: SystemLangAuto %></div>';
+					htm+='				<div class="col-xs-12 click_pointer lang-drawer-item" onclick="apply_lang(1)">中文</div>';
+					htm+='				<div class="col-xs-12 click_pointer lang-drawer-item" onclick="apply_lang(2)">English</div>';
+					htm+='			</div>';
+					if(top)
+						class_name="line_top_class";
+					top++;
+					htm+='			<div class="row">';
+					htm+='				<div class="col-sm-12 col-xs-12 text-left"  data-father="main" data-name="restart"  data-url="/cgi-bin/luci/nradioadv/system/restart" data-language="<%:Reboot%>" onclick="show_menu(this,0)">';
+					htm+='					<div class="row padding_fix '+class_name+'">';
+					htm+='						<div class="col-sm-6 col-xs-6 text-left" >';
+					htm+='							<i class="far fa-nradio-reset"></i>&nbsp;&nbsp;<%:Reboot%>';
+					htm+='						</div>';
+					htm+='						<div class="col-sm-6 col-xs-6 text-right sub_label_color">';
+					htm+='							<div style="display: inline-block"></div>&nbsp;&nbsp;&nbsp;';
+					htm+='							<div class="next-button" >';
+					htm+='								&nbsp;';
+					htm+='							</div>';
+					htm+='						</div>';
+					htm+='					</div>';
+					htm+='				</div>';		
+					htm+='			</div>';
+					if(top)
+						class_name="line_top_class";
+					htm+='			<div class="row">';
+					htm+='				<div class="col-sm-12 col-xs-12 text-left" data-father="main" data-name="passwd"  data-url="/cgi-bin/luci/nradioadv/system/passwd" data-language="<%:Administrator%>" onclick="show_menu(this,0)">';
+					htm+='					<div class="row padding_fix '+class_name+'">';
+					htm+='						<div class="col-sm-6 col-xs-6 text-left" >';
+					htm+='							<i class="far fa-nradio-pwd-change"></i>&nbsp;&nbsp;<%:Administrator%>';
+					htm+='						</div>';
+					htm+='						<div class="col-sm-6 col-xs-6 text-right sub_label_color" >';
+					htm+='							<div style="display: inline-block"></div>&nbsp;&nbsp;&nbsp;';
+					htm+='							<div class="next-button" >';
+					htm+='								&nbsp;';
+					htm+='							</div>';
+					htm+='						</div>';
+					htm+='					</div>';
+					htm+='				</div>';
+					htm+='			</div>';
+
+					htm+='			<div class="row">';
+					htm+='				<div class="col-sm-12 col-xs-12 text-left" data-father="main" data-name="logout"  data-url="/cgi-bin/luci/nradio/logout" data-language="<%:LoginOut%>" onclick="show_menu(this,0)">';
+					htm+='					<div class="row padding_fix '+class_name+'">';
+					htm+='						<div class="col-sm-6 col-xs-6 text-left" >';
+					htm+='							<i class="far fa-nradio-login-out"></i>&nbsp;&nbsp;<%:LoginOut%>';
+					htm+='						</div>';
+					htm+='						<div class="col-sm-6 col-xs-6 text-right sub_label_color" >';
+					htm+='							<div style="display: inline-block"></div>&nbsp;&nbsp;&nbsp;';
+					htm+='							<div class="next-button" >';
+					htm+='								&nbsp;';
+					htm+='							</div>';
+					htm+='						</div>';
+					htm+='					</div>';
+					htm+='				</div>';
+					htm+='			</div>';
+					htm+='		</div>';
+					htm+='	</div>';
+					htm+='	<div class="mobile_bg_color panel panel-info device-panel menu_box main_menu_box" onclick="location.href=\'/cgi-bin/luci/nradio/simple\'">';
+					htm+='		<div class="panel-heading">';
+					htm+='			<h3 class="panel-title"></h3>';
+					htm+='		</div>';
+					htm+='		<div class="panel-body info-box no_padding">';
+					htm+='			<div class="row">';
+					htm+='				<div class="col-sm-12 col-xs-12 text-left ">';
+					htm+='					<div class="row">';
+					htm+='						<div class="col-sm-12 col-xs-12 text-center sub_label_color">';
+					htm+='							<%:Switch to Basic%>';
+					htm+='						</div>';
+					htm+='					</div>';
+					htm+='				</div>';
+					htm+='			</div>';
+					htm+='		</div>';
+					htm+='	</div>';
+				}
+
+			$(".mobile_index_box").html(htm);
+		}
+
+		function goto_innter_menu(name){
+			var class_name = name+"_menu_box";
+			$(".menu_mobile").find("div").first().data("father",name);
+			$(".menu_mobile").find("div").first().addClass("back-button").html("&nbsp;").off("click").on("click",function(){
+				var father = $(this).data("father");
+				var father_class = father+"_menu_box";
+				var pre = $("."+father+"_menu_box").data("father");
+				if (pre == father)
+					$(this).removeClass("back-button");
+				$(this).data("father",pre);
+				$(".menu_box").css("display","none");
+				$("."+father+"_menu_box").css("display","block");
+			});
+		}
+		function show_menu(obj,has_sub){
+			var url = $(obj).data("url");
+			var name = $(obj).data("name");
+			var language = $(obj).data("language");
+			var father = $(obj).data("father");
+			if(!has_sub){
+				if(url && url.length)
+					location.href=url;
+			}
+			else{
+				var class_name = name+"_menu_box";
+				var father_name = father+"_menu_box";
+				$(".menu_box").css("display","none");		
+				$("."+class_name).css("display","block");
+				goto_innter_menu(father);
+			}
+		}
+		function goto_father_menu(father_item,main_item){
+			var name = null;
+			if(father_item)
+				name = father_item.name;
+			$(".menu_mobile").find("div").first().data("father",name?name:"");
+			$(".menu_mobile").find("div").first().addClass("back-button").html("&nbsp;").off("click").on("click",function(){
+				if(name)
+					location.href=main_item.url+"?menu="+name;
+				else
+					location.href=main_item.url;
+			});
+		}
+	</script>
+		<% if (nr.get_firmware_type() == "stand") and (class_name == "first-stand") then %>
+		<% if second_category == "sysauth" and nr.support_authvideo() and not wifiauth then%>
+			<video class="bg-video hidden-xs hidden-sm hidden-md" autoplay muted loop>
+				<source src="<%=media%>/images/login.mp4" type="video/mp4">
+		    </video>
+			<!--<video class="bg-video visible-xs-block" autoplay muted loop preload playsinline>
+				<source src="<%=media%>/images/login_mobile.mp4" type="video/mp4">
+			</video>-->
+			<div class="container visible-xs-block visible-sm-block visible-md-block body-container nradio-bg body-<%=class_name%>" style="width:100%;height:100%;position:absolute;top:0"></div>
+		<%else%>
+			<div class="container body-container nradio-bg body-<%=class_name%>" style="width:100%;height:100%;position:absolute;top:0"></div>
+		<%end%>
+		<%end%>
+		<%if #class_name == 0 then%>
+		<div class="mobile_bg_color container body-container visible-xs-block">
+			<div class="main-content">
+				<div class="mobile_index_box visible-xs-block hide" >
+				</div>
+			</div>
+		</div>
+		<%end%>
+		<script>
+			var top_menu=<%=top_menu%>;
+			var navigation = [];
+			var navigation_index =0;
+			var father_obj = null;
+			function get_match_menu(menu){
+				for(var i=0;i<menu.length;i++){
+					var item = menu[i];
+					if(item.match){
+						navigation[navigation_index] = item;
+						navigation_index++;
+						if (item.sub_menu){
+							get_match_menu(item.sub_menu);
+						}
+					}					
+				}
+			}
+			function get_match_menu_byname(menu,name){
+				for(var i=0;i<menu.length;i++){
+					var item = menu[i];
+					if(item.name == name){
+						father_obj = null;
+						return item;
+					}
+					else{
+						if (item.sub_menu){
+							var target = get_match_menu_byname(item.sub_menu,name);
+							if(target){
+								father_obj = item;
+								return target;
+							}								
+						}
+					}
+				}
+				return null;
+			}
+			function getQueryString(name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+				var r = window.location.search.substr(1).match(reg);
+				if (r != null) return unescape(r[2]);
+				return null;
+			}
+			<% if not disp._INNTER_PAGE then%>	
+			var menu = getQueryString("menu");
+			get_match_menu(top_menu);
+			get_pc_menu(top_menu);
+			if(!menu && (navigation.length == 1) && (navigation[0].name == "index"))
+				format_mobile_menu(top_menu,true);
+			else{				
+				if(menu){
+					var menu_list = get_match_menu_byname(top_menu,menu);
+					format_mobile_menu(menu_list.sub_menu,false);
+					if(father_obj)
+						goto_father_menu(father_obj,top_menu[0]);
+					else
+						goto_father_menu(null,top_menu[0]);
+				}
+				else{
+					goto_father_menu(navigation[navigation.length-2],top_menu[0]);
+				}				
+			}
+			<% end%>	
+		</script>
+		<div class="container body-container nr-page-content body-<%=class_name%>">
+			<div class="main <%=class_name%>">
+				<div class="main-content">
+					<%if class_name == "second-stand" then%>
+					<div class="row padding_nav">
+						<div class="col-sm-4 col-xs-4 text-center no_padding">
+							<%:QSetupInternet%><br>
+							<div class="num_gray_out">
+								<div class="num_gray"></div>
+							</div>
+							<div class="line_gray"></div>
+						</div>
+						<div class="col-sm-4 col-xs-4 text-center no_padding">
+							<%:QSetupWifi%><br>
+							<div class="num_gray_out">
+								<div class="num_gray"></div>
+							</div>
+							<div class="line_gray"></div>
+						</div>
+						<div class="col-sm-4 col-xs-4 text-center no_padding">
+							<%:QSetupDone%><br>
+							<div class="num_gray_out">
+								<div class="num_gray"></div>
+							</div>
+						</div>
+					</div>
+					<script>
+						var menu_key = "<%=third_category%>";
+						console.log(menu_key)
+						if (menu_key && menu_key.length){
+							if (menu_key.indexOf("wifi") !=-1){
+								$(".num_gray_out:lt(2)").parent("div").addClass("active");
+								$(".num_gray_out:lt(2)").addClass("active");
+								$(".line_gray:lt(1)").addClass("active");
+							}
+							else if (menu_key.indexOf("third") !=-1){
+								$(".num_gray_out:lt(3)").addClass("active");
+								$(".num_gray_out:lt(3)").parent("div").addClass("active");
+								$(".line_gray:lt(2)").addClass("active");
+							}
+							else{
+								$(".num_gray_out").eq(0).addClass("active");
+								$(".num_gray_out").eq(0).parent("div").addClass("active");
+							}
+						}
+					</script>
+					<%end%>
+		<script>
+			<%if has_cellular then%>
+				setInterval(refresh_sms_badge, 3000);
+			<%end%>
+		</script>

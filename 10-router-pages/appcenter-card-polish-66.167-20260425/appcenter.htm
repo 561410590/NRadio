@@ -1,0 +1,1871 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+    local util = require "luci.util"
+    local applist = luci.controller.nradio_adv.appcenter.action_app_list_data()
+    local applist_buffer = util.serialize_json({result=applist},nil) or "{\"result\":{\"applist\":[]}}"
+
+    local import_result_buffer = nil
+    if import_result then
+        import_result_buffer = util.serialize_json(import_result,nil)
+    end    
+%>
+
+<%+header%>
+<h2 id="app_top_menu"><span class="top_menu top_menu_active"><%:AppCenterTitle%></span></h2>
+<style>
+    .list-dialog .modal-dialog{
+        margin: 280px auto;
+    }
+
+    .modal.app_frame.in .modal-dialog{
+        width: 100%;
+        margin: 50px auto;
+    }
+    @media (min-width: 1200px) {
+        .modal.app_frame.in .modal-dialog{
+            width:80%;
+            margin: 150px 10%;
+        }
+    }
+
+    .bootstrap-dialog-message>iframe{
+        height: 78vh;
+        overflow:scroll;
+        border: 0;
+        width: 100%;
+    }
+    .modal.app_frame.in .modal-header{
+        height: 0;
+    }
+    .modal.app_frame.in .modal-content{
+        width: 100%;
+        height: 100%;
+    }
+    .app_frame_box{
+        width: 100%;
+    }
+    .app_frame_nav{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 0 15px 12px;
+        border-bottom: 1px solid #e5e5e5;
+    }
+    .app_frame_nav_item{
+        display: inline-block;
+        padding: 6px 10px;
+        color: #666;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+    }
+    .app_frame_nav_item_active{
+        color: #0088cc;
+        border-bottom-color: #0088cc;
+    }
+    .app_frame_box iframe{
+        height: 78vh;
+        overflow: scroll;
+        border: 0;
+        width: 100%;
+    }
+    .top_menu{
+        position: unset;
+        margin-left: 10px;
+        display: inline-block;
+        border-bottom: none;
+        color: #929292;
+        cursor: pointer;
+    }
+    .top_menu_inner{
+        display: inline-block;
+    }
+    .top_menu_inner_icon{
+        margin-left: 10px;
+        position: relative;
+        top: -5px;
+        cursor: pointer;
+    }
+    .top_menu_active{
+        border-bottom: 3px solid #0088cc;
+        color: #0088cc;
+    }
+
+    .app_btn_box{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: nowrap;
+    }
+    .app_btn_box .app_btn_class{
+        float: none;
+    }
+    .app_btn_group{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .app_menu{
+        line-height: 35px;
+        cursor: pointer;
+    }
+
+    .app_icon{
+        width: 35%;
+        float: left;
+        margin: 10px 0px 0px 5px;
+    }
+    .app_info{
+        width: 60%;
+        margin-top: 10px;
+        float: right;
+    }
+    .app_name{
+        float: left;
+        font-size: 14px;
+        width: 100%;
+        height: 20px;
+        overflow: hidden;
+    }
+    .app_version{
+        float:left;
+        line-height: 18px;
+        vertical-align: bottom;
+        font-size: 10px;
+        width: 100%;
+        height: 18px;
+        overflow: hidden;
+    }
+    .app_des{
+        float: left;
+        margin-top: 8px;
+        height: 35px;
+        overflow: hidden;
+    }
+    .app_action{
+        float: left;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .action_list_li:hover{
+        border: 1px solid #00aeff;
+        background: linear-gradient(to right, #00D5FF, #00aeff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;  
+    }
+    .app_btn_class:hover{
+        border: 1px solid #00aeff;
+        background: linear-gradient(to right, #00D5FF, #00aeff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .action_import_btn{
+        padding: 5px 15px 5px 15px;
+        background-color: #C5ECFF;
+        border: rebeccapurple;
+        margin-right: 5px;
+        border-radius: 8px;
+        color: #0458FF;
+        cursor: pointer; 
+    }    
+    .action_list{
+        float: right;
+    }
+    .app_icon_img{
+        width: 68px;
+        height: 68px;
+    }
+    .import_title{
+        font-size: 16px;
+        width: 100%;
+        color:black;
+        text-align:center;
+    }
+    .bootstrap-dialog .bootstrap-dialog-title{
+        text-align: center;
+        width: 100%;
+    }
+    .error_box{
+        text-align:left;
+        display: inline-block;
+        width: 65%;
+    }
+    .error_detail_title{
+        text-align:left;
+        float: left;
+    }
+    .error_detail_content{
+        float: left;
+    }
+
+    .mem_header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    .mem_track{
+        max-width: 250px;
+        font-size: 11px;
+        display: flex;
+        gap: 6px;
+        flex: 1 1 auto;
+        flex-direction: column;
+        margin-left: calc(10% + 15px);
+    }
+    .mem_percent{
+        float: right;
+    }
+    .mem_progress{
+        flex: 1 1 auto;
+        height: 7px;
+        background: #686868;
+        border-radius: 7px;
+        overflow: hidden;
+        margin-top: -5px;
+    }
+    .mem_progress_inner{
+        height: 100%;
+        background: linear-gradient(to right, #00D5FF, #00aeff);
+        width: 66.6%;
+    }
+    .mem_mobile{
+        display: none;
+        font-size: 11px;
+        margin: 34vh 0 0 0;
+    }
+    .mem_mobile span{
+        display: block;
+        margin-top: 5px;
+    }
+    .container_right{
+        position: relative;
+        min-height: 500px;
+        box-sizing: border-box;
+        padding-right: 344px;
+    }
+    .app_status_panel{
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 320px;
+        box-sizing: border-box;
+        padding: 12px 13px;
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 2px;
+        background: rgba(255,255,255,.018);
+        color: #d9dbe5;
+    }
+    .app_status_head{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+        padding-bottom: 9px;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        color: #22d3ee;
+        font-size: 14px;
+        font-weight: 700;
+    }
+    .app_status_time{
+        color: #a7a9b7;
+        font-size: 10px;
+        font-weight: 400;
+    }
+    .app_status_grid{
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .app_status_tile{
+        padding: 8px 5px;
+        border-radius: 2px;
+        background: rgba(255,255,255,.035);
+        border: 1px solid rgba(255,255,255,.08);
+        text-align: center;
+    }
+    .app_status_tile strong{
+        display: block;
+        color: #fff;
+        font-size: 18px;
+        line-height: 20px;
+    }
+    .app_status_tile span{
+        display: block;
+        margin-top: 5px;
+        color: #c2c4ce;
+        font-size: 10px;
+    }
+    .app_status_metric{
+        padding: 9px 0;
+        border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .app_status_metric_row{
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 7px;
+        color: #c2c4ce;
+        font-size: 11px;
+    }
+    .app_status_metric_row strong{
+        color: #f4f5f8;
+        font-size: 12px;
+    }
+    .app_status_bar{
+        height: 5px;
+        overflow: hidden;
+        border-radius: 2px;
+        background: rgba(255,255,255,.12);
+    }
+    .app_status_bar span{
+        display: block;
+        width: 0;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(to right, #00D5FF, #35b9e8);
+        transition: width .25s ease;
+    }
+    .app_status_hint{
+        margin-top: 10px;
+        padding-top: 9px;
+        border-top: 1px solid rgba(255,255,255,.08);
+        color: #a7a9b7;
+        font-size: 10px;
+        line-height: 1.55;
+    }
+        @media (max-width: 768px){
+        .app_btn_box{
+            flex-wrap: nowrap;
+            gap: 8px;
+            justify-content: space-between;
+        }
+        .mem_percent{
+            float: none;
+            display: block;
+            text-align: unset;
+        }
+        .mem_progress{
+            width: 100%;
+            height: 8px;
+        }
+        .mem_track{
+            order: 0;
+            max-width: 175px;
+            margin-left: calc(20% + 15px);
+        }
+    }
+    @media (max-width: 568px){
+        .mem_track{
+            display: none;
+        }
+        .app_btn_box{
+            justify-content: flex-end;
+        }
+        .mem_mobile{
+            display: block;
+        }
+    }
+    @media (max-width: 1280px){
+        .container_right{
+            padding-right: 0;
+        }
+        .app_status_panel{
+            position: relative;
+            right: auto;
+            top: auto;
+            clear: both;
+            width: calc(100% - 10px);
+            margin: 14px 0 0 5px;
+        }
+    }
+
+    /* NRadio appcenter card polish: visual-only layer */
+    .appcontainer{
+        position: relative;
+    }
+    #app_top_menu{
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        white-space: nowrap;
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+    #app_top_menu::-webkit-scrollbar{
+        height: 4px;
+    }
+    #app_top_menu::-webkit-scrollbar-thumb{
+        background: rgba(0, 213, 255, .38);
+        border-radius: 999px;
+    }
+    #app_top_menu .top_menu{
+        flex: 0 0 auto;
+        margin-left: 0;
+        padding: 0 0 8px;
+        font-weight: 800;
+        letter-spacing: .01em;
+    }
+    #app_top_menu .top_menu_inner{
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        flex: 0 0 auto;
+    }
+    #app_top_menu .top_menu_inner_icon{
+        top: -3px;
+        margin-left: 0;
+        opacity: .76;
+        transition: opacity .18s ease, transform .18s ease;
+    }
+    #app_top_menu .top_menu_inner:hover .top_menu_inner_icon{
+        opacity: 1;
+        transform: scale(1.06);
+    }
+    .container_right{
+        display: grid;
+        grid-template-columns: repeat(2, minmax(215px, 1fr));
+        gap: 10px;
+        align-items: stretch;
+        align-content: start;
+    }
+    .container_right .app_box{
+        position: relative;
+        float: none !important;
+        width: auto !important;
+        min-height: 138px;
+        margin: 0 !important;
+        padding: 16px 14px 48px;
+        overflow: hidden;
+        box-sizing: border-box;
+        border: 1px solid rgba(255,255,255,.11);
+        border-radius: 14px;
+        background:
+            radial-gradient(circle at 18% 18%, rgba(34,211,238,.13), transparent 30%),
+            radial-gradient(circle at 92% 0%, rgba(59,130,246,.12), transparent 34%),
+            linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 10px 24px rgba(0,0,0,.10);
+        transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease, background .18s ease;
+    }
+    .container_right .app_box::before{
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0,213,255,.62), transparent);
+        opacity: .44;
+    }
+    .container_right .app_box::after{
+        content: "";
+        position: absolute;
+        right: -35px;
+        top: -38px;
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background: rgba(0,213,255,.09);
+        filter: blur(8px);
+        opacity: 0;
+        transition: opacity .18s ease;
+        pointer-events: none;
+    }
+    .container_right .app_box:hover{
+        transform: translateY(-2px);
+        border-color: rgba(0,213,255,.34);
+        background:
+            radial-gradient(circle at 18% 18%, rgba(34,211,238,.17), transparent 30%),
+            radial-gradient(circle at 92% 0%, rgba(59,130,246,.16), transparent 34%),
+            linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.032));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 16px 30px rgba(0,0,0,.16), 0 0 0 1px rgba(0,213,255,.06);
+    }
+    .container_right .app_box:hover::after{
+        opacity: 1;
+    }
+    .container_right .app_icon{
+        position: absolute;
+        left: 14px;
+        top: 18px;
+        float: none;
+        width: 72px;
+        margin: 0;
+        text-align: center;
+        z-index: 1;
+    }
+    .container_right .app_icon_img{
+        width: 58px;
+        height: 58px;
+        padding: 7px;
+        object-fit: contain;
+        box-sizing: border-box;
+        border-radius: 16px;
+        background:
+            linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 10px 18px rgba(0,0,0,.18);
+    }
+    .container_right .app_info{
+        position: relative;
+        z-index: 1;
+        float: none;
+        width: auto;
+        min-width: 0;
+        margin: 0 0 0 88px;
+    }
+    .container_right .app_name{
+        float: none;
+        width: 100%;
+        height: auto;
+        max-height: 42px;
+        color: #f8fbff;
+        font-size: 14px;
+        font-weight: 900;
+        line-height: 1.38;
+        letter-spacing: -.01em;
+    }
+    .container_right .app_version{
+        float: none;
+        display: inline-flex;
+        width: auto;
+        max-width: 100%;
+        height: auto;
+        margin-top: 4px;
+        padding: 2px 0;
+        color: #f8fafc;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.2;
+        opacity: .95;
+    }
+    .container_right .app_meta_row{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 6px;
+    }
+    .container_right .app_state_badge,
+    .container_right .app_open_badge{
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+        min-height: 19px;
+        padding: 2px 7px;
+        box-sizing: border-box;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.10);
+        background: rgba(255,255,255,.055);
+        color: #cbd5e1;
+        font-size: 10px;
+        font-weight: 900;
+        line-height: 1;
+    }
+    .container_right .app_state_1{
+        color: #bbf7d0;
+        border-color: rgba(74,222,128,.30);
+        background: rgba(34,197,94,.14);
+    }
+    .container_right .app_state_2{
+        color: #fde68a;
+        border-color: rgba(251,191,36,.32);
+        background: rgba(245,158,11,.14);
+    }
+    .container_right .app_state_0{
+        color: #bae6fd;
+        border-color: rgba(56,189,248,.30);
+        background: rgba(14,165,233,.13);
+    }
+    .container_right .app_open_1{
+        color: #a5f3fc;
+        border-color: rgba(34,211,238,.34);
+        background: rgba(34,211,238,.14);
+    }
+    .container_right .app_des{
+        float: none;
+        width: 100%;
+        height: 38px;
+        margin-top: 8px;
+        color: #d4d8e7;
+        font-size: 12px;
+        line-height: 1.45;
+        opacity: .92;
+    }
+    .container_right .app_action{
+        position: absolute;
+        z-index: 2;
+        right: 12px;
+        bottom: 10px;
+        float: none;
+        width: auto;
+        margin: 0;
+    }
+    .container_right .action_list{
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 7px;
+        float: none;
+        margin: 0;
+        padding: 0;
+    }
+    .container_right .action_list_li,
+    .app_btn_class{
+        min-width: 54px;
+        height: 30px;
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 9px;
+        color: #dce4f2;
+        background: rgba(255,255,255,.075);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+        box-sizing: border-box;
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1;
+        cursor: pointer;
+        transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+    .container_right .action_list_li:hover,
+    .app_btn_class:hover{
+        transform: translateY(-1px);
+        border-color: rgba(34,211,238,.42);
+        color: #06111f;
+        background: linear-gradient(135deg, #67e8f9, #38bdf8 54%, #60a5fa);
+        -webkit-text-fill-color: currentColor;
+        box-shadow: 0 10px 18px rgba(34,211,238,.14);
+    }
+    .app_btn_group{
+        gap: 10px;
+    }
+    .app_btn_class{
+        min-width: 84px;
+        height: 32px;
+        color: #cbd5e1;
+        background: rgba(255,255,255,.065);
+    }
+    .mem_track{
+        max-width: 280px;
+    }
+    .mem_header{
+        color: #dce4f2;
+        font-weight: 800;
+    }
+    .mem_progress{
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.16);
+    }
+    .mem_progress_inner{
+        border-radius: inherit;
+        background: linear-gradient(90deg, #67e8f9, #38bdf8 50%, #60a5fa);
+        box-shadow: 0 0 12px rgba(34,211,238,.28);
+    }
+    .app_status_panel{
+        width: 326px;
+        padding: 14px 14px 13px;
+        border-radius: 18px;
+        border: 1px solid rgba(34,211,238,.20);
+        background:
+            radial-gradient(circle at 12% 12%, rgba(34,211,238,.15), transparent 34%),
+            radial-gradient(circle at 88% 0%, rgba(59,130,246,.16), transparent 36%),
+            linear-gradient(160deg, rgba(24,32,50,.92), rgba(16,22,36,.78));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 16px 32px rgba(0,0,0,.18);
+    }
+    .app_status_head{
+        margin-bottom: 12px;
+        padding-bottom: 11px;
+        border-bottom-color: rgba(255,255,255,.10);
+        color: #7dd3fc;
+    }
+    .app_status_head span{
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+    }
+    .app_status_head span::before{
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #22d3ee;
+        box-shadow: 0 0 14px rgba(34,211,238,.8);
+    }
+    .app_status_time{
+        color: #cbd5e1;
+        font-weight: 800;
+        font-style: italic;
+    }
+    .app_status_tile{
+        min-height: 54px;
+        padding: 9px 5px;
+        border-radius: 10px;
+        border-color: rgba(255,255,255,.10);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .app_status_tile strong{
+        color: #ffffff;
+        font-size: 20px;
+        line-height: 22px;
+    }
+    .app_status_tile span{
+        color: #d8dfec;
+        font-weight: 800;
+    }
+    .app_status_metric{
+        padding: 10px 0;
+        border-top-color: rgba(255,255,255,.095);
+    }
+    .app_status_metric_row{
+        color: #cbd5e1;
+        font-weight: 800;
+    }
+    .app_status_metric_row strong{
+        color: #f8fafc;
+        font-weight: 900;
+    }
+    .app_status_bar{
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.15);
+    }
+    .app_status_bar span{
+        background: linear-gradient(90deg, #22d3ee, #38bdf8 50%, #60a5fa);
+        box-shadow: 0 0 12px rgba(34,211,238,.36);
+    }
+    .app_status_hint{
+        margin-top: 10px;
+        padding: 9px 10px 0;
+        color: #b9c6d8;
+        border-top-color: rgba(255,255,255,.095);
+    }
+    @media (max-width: 1280px){
+        .container_right{
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+        }
+        .app_status_panel{
+            width: auto;
+        }
+    }
+    @media (max-width: 760px){
+        .container_right{
+            grid-template-columns: 1fr;
+        }
+        .container_right .app_box{
+            min-height: 132px;
+        }
+        .container_right .app_info{
+            margin-left: 82px;
+        }
+        .container_right .app_icon{
+            width: 66px;
+        }
+    }
+
+</style>
+<div class="appcontainer">
+    <div class="app_btn_box">
+        <div class="mem_track">
+            <div class="mem_header">
+                <span><%:APPMemory%></span>
+                <span id="memory_detail">9.9 G / 99.9 G</span>
+            </div>
+            <div class="mem_progress">
+                <div class="mem_progress_inner"></div>
+            </div>
+        </div>
+        <div class="app_btn_group">
+            <div class="app_btn_class" onclick="check_version()"><%:APPVerisonCheck%></div>
+            <div class="app_btn_class" onclick="import_pkg()"><%:APPImport%></div>
+        </div>
+    </div>
+    <div class="container_left">
+        <ul class="">
+            <li class="app_menu menu_active"><%:AppMenuInstalled%></li>
+            <li class="app_menu"><%:AppMenuAll%></li>
+        </ul>
+        <div class="mem_mobile">
+            <span><%:APPMemory%></span>
+            <span id="memory_detail_mobile">9.9 G / 99.9 G</span>
+        </div>
+    </div>
+
+    <div class="container_right app_installed">
+
+    </div>
+
+    <div class="container_right hide app_all">
+
+    </div>
+</div>
+<script language="javascript">
+    var TFCARD = false;
+    var AVAI_MRMORY = 0;
+    var TOTAL_MRMORY = 0;
+
+    var app_list = <%=applist_buffer%>;
+    if (!app_list.result) app_list.result = {applist: []};
+    if (!app_list.result.applist) app_list.result.applist = [];
+    app_list.result.applist.unshift({name:"Web SSH", version:"ttyd 1.7.7", des:"浏览器 SSH 终端", icon:"webssh.svg", open:1, has_luci:1, status:1, luci_module_route:"nradioadv/system/webssh"});
+    if (!app_list.result) app_list.result = {applist: []};
+    if (!app_list.result.applist) app_list.result.applist = [];
+    if (!app_list.result) app_list.result = {applist: []};
+    if (!app_list.result.applist) app_list.result.applist = [];
+    var APPTableRow = ''+
+    '<div class="app_box app_item{{index}}" >'+
+        '    <div class="app_icon"><img class="app_icon_img" src="/luci-static/nradio/images/icon/{{icon}}?v=2026-04-26-V1.50.5"></div>'+
+        '    <div class="app_info">'+
+        '        <div class="app_title">'+
+        '            <div class="app_name" title="{{name}}">'+
+        '                {{name}}'+
+        '            </div>'+
+        '            <div class="app_version" title=" {{version}}">'+
+        '                 {{version}}'+
+        '            </div>'+
+        '            <div class="app_meta_row">'+
+        '                <span class="app_state_badge app_state_{{status}}">{{status_label}}</span>'+
+        '                {{open_badge}}'+
+        '            </div>'+
+        '        </div>'+
+        '        <div class="app_des" title="{{des}}">'+
+        '            {{des}}'+
+        '        </div>'+
+        '    </div>'+
+        '    <div class="app_action">'+
+        '        <ul class="action_list">'+
+            '            {{opt}}'+
+        '        </ul>'+
+        '    </div>'+
+        '</div>';
+
+    var APPErrorRow = ''+
+    '   <div class="error_box"><%:APPpackage%>:'+
+    '      <span>{{name}}</span>'+
+    '   </div>'+
+    '   <div class="error_box"><%:APPErrorTitle%>:'+
+    '      <span>{{msg}}</span>'+
+    '   </div><br>'+
+    '   <div class="error_box">'+
+    '      <span class="error_detail_title"><%:APPErrorDetail%>:</span>'+
+    '      <span class="error_detail_content">{{detail}}</span>'+
+    '   </div>';
+
+    var AVAI_MEMORY = 0;
+    var TOTAL_MEMORY = 0;
+    var USED_MEMORY = 0;
+    var APP_STATUS_LAST = null;
+
+    var APP_STATUS_APP_NEW = 0;
+    var APP_STATUS_APP_INSTALLED = 1;
+    var APP_STATUS_APP_UPDATEED = 2;
+
+    var APPCENTER_OK=0;
+    var APPCENTER_INSTALL_PREPARE=1;
+    var APPCENTER_REMOVE_PREPARE=2;
+    var APPCENTER_UPDATE_PREPARE=3;
+    var APPSTORE_PREPARE = 13;
+
+    var APPSTORE_SPACE_ERR = 8;
+
+    function normalize_app_route(app_name, route){
+        if (!route || !route.length)
+            return route;
+        if (app_name == "Web SSH" && route.indexOf("embed=") === -1)
+            return route + (route.indexOf("?") === -1 ? "?embed=1" : "&embed=1");
+        return route;
+    }
+
+
+    function show_app_data(data){
+        var htm="";
+        var htm_installed="";
+        var top_menu_ht="<span class='top_menu top_menu_active'><%:AppCenterTitle%></span>";
+        var installed_count = 0;
+        var open_count = 0;
+        var all_count = 0;
+        $.each(data.result.applist, function(index, db){
+            var optht = '';
+            var icon_name = "app_default.png";
+            var open_route = ""
+            var des_info = "&nbsp;";
+            all_count++;
+            if(db.des && db.des.length)
+                des_info=db.des;
+            if (db.luci_module_route)
+                open_route = db.luci_module_route;
+            else if (db.name == "luci-app-openclash")
+                open_route = "admin/services/openclash";
+            else if (db.name == "luci-app-adguardhome")
+                open_route = "admin/services/AdGuardHome";
+            else if (db.name == "OpenVPN")
+                open_route = "nradioadv/system/openvpnfull";
+            else if (db.name == "FanControl Plus" || db.name == "fanctrl-plus" || db.name == "FanControl" || db.name == "fanctrl")
+                open_route = "nradioadv/system/fanctrl_plus";
+            else if (db.name == "OpenList")
+                open_route = "nradioadv/system/openlist/basic";
+            else if (db.name == "ZeroTier" || db.name == "zerotier")
+                open_route = "nradioadv/system/zerotier/basic";
+            else if (db.name == "FanControl" || db.name == "fanctrl")
+                open_route = "nradioadv/system/fanctrl";
+            
+            open_route = normalize_app_route(db.name, open_route);
+            var open_ht='<li class="action_list_li" onclick="app_action(\''+db.name+'\',\'open\',\''+index+'\',\''+open_route+'\')"><%:AppOpen%></li>';
+            if(db.open == 1){
+                open_count++;
+                top_menu_ht+='<div class="top_menu_inner"><span class="top_menu" data-index="'+index+'" onclick="callback(\''+index+'\',\''+open_route+'\')">'+db.name+'</span><i onclick="app_action(\''+db.name+'\',\'close\')" class="far fa-nradio-close fa-fw icon_disable top_menu_inner_icon" ></i></div>';                
+                open_ht='<li class="action_list_li" onclick="callback(\''+index+'\',\''+open_route+'\')"><%:AppOpen%></li>';
+            }
+            if(db.has_luci != 1)
+                open_ht='';
+            if (db.status == APP_STATUS_APP_NEW){
+                db.status_label = "未安装";
+                optht = '<li class="action_list_li" onclick="app_action(\''+db.name+'\',\'install\')"><%:AppInstall%></li>';
+            }
+            else if (db.status == APP_STATUS_APP_INSTALLED){
+                db.status_label = "已安装";
+                optht = '<li class="action_list_li" onclick="app_action(\''+db.name+'\',\'uninstall\')"><%:AppUninstall%></li>'+open_ht;
+            }
+            else if (db.status == APP_STATUS_APP_UPDATEED){
+                db.status_label = "可更新";
+                optht = '<li class="action_list_li" onclick="app_action(\''+db.name+'\',\'update\')"><%:AppUpdate%></li><li class="action_list_li" onclick="app_action(\''+db.name+'\',\'uninstall\')"><%:AppUninstall%></li>'+open_ht;
+            }
+            else {
+                db.status_label = "未知";
+            }
+
+            var open_badge = "";
+            if (db.open == 1)
+                open_badge = '<span class="app_open_badge app_open_1">后台</span>';
+
+            if (db.icon && db.icon.length)
+                icon_name = db.icon;
+            if (db.status == APP_STATUS_APP_INSTALLED || db.status == APP_STATUS_APP_UPDATEED){
+                installed_count++;
+                htm_installed+=APPTableRow.compose({
+                    name:db.name,
+                    version: db.version,
+                    des: des_info,
+                    icon: icon_name,
+                    opt:optht,
+                    status: db.status,
+                    status_label: db.status_label,
+                    open_badge: open_badge,
+                    index:index
+                });
+            }
+            htm+=APPTableRow.compose({
+                name:db.name,
+                version: db.version,
+                des: des_info,
+                icon: icon_name,
+                opt:optht,
+                status: db.status,
+                status_label: db.status_label,
+                open_badge: open_badge,
+                index:index
+            });
+        });
+        $("#app_top_menu").html(top_menu_ht);
+        var status_panel = build_app_status_panel(installed_count, open_count, all_count);
+        $(".app_all").html(htm + status_panel);
+        $(".app_installed").html(htm_installed + status_panel);
+        if(APP_STATUS_LAST)
+            update_app_status_panel(APP_STATUS_LAST);
+    }
+
+    function build_app_status_panel(installed_count, open_count, all_count){
+        return ''+
+        '<aside class="app_status_panel">'+
+        '    <div class="app_status_head"><span>系统状态</span><em class="app_status_time">等待刷新</em></div>'+
+        '    <div class="app_status_grid">'+
+        '        <div class="app_status_tile"><strong>'+installed_count+'</strong><span>已安装</span></div>'+
+        '        <div class="app_status_tile"><strong>'+open_count+'</strong><span>后台</span></div>'+
+        '        <div class="app_status_tile"><strong>'+all_count+'</strong><span>全部</span></div>'+
+        '    </div>'+
+        '    <div class="app_status_metric">'+
+        '        <div class="app_status_metric_row"><span>CPU 温度</span><strong class="app_status_temp">--</strong></div>'+
+        '        <div class="app_status_bar"><span class="app_status_temp_bar"></span></div>'+
+        '    </div>'+
+        '    <div class="app_status_metric">'+
+        '        <div class="app_status_metric_row"><span>CPU 使用率</span><strong class="app_status_cpu">采样中</strong></div>'+
+        '        <div class="app_status_bar"><span class="app_status_cpu_bar"></span></div>'+
+        '    </div>'+
+        '    <div class="app_status_metric">'+
+        '        <div class="app_status_metric_row"><span>内存占用</span><strong class="app_status_mem">--</strong></div>'+
+        '        <div class="app_status_bar"><span class="app_status_mem_bar"></span></div>'+
+        '    </div>'+
+        '    <div class="app_status_hint">只读状态 · 5 秒刷新 · 不参与安装卸载</div>'+
+        '</aside>';
+    }
+
+    function format_kib(kib){
+        var mb = Number(kib || 0) / 1024;
+        if(mb >= 1024)
+            return (mb / 1024).toFixed(1) + " G";
+        return mb.toFixed(0) + " M";
+    }
+
+    function set_status_width(selector, value){
+        var percent = Number(value || 0);
+        percent = Math.max(0, Math.min(100, percent));
+        $(selector).css("width", percent.toFixed(1) + "%");
+    }
+
+    function update_app_status_panel(data){
+        if(!data) return;
+        APP_STATUS_LAST = data;
+
+        var temp = Number(data.cpu_temp || 0);
+        var cpu = data.cpu_percent;
+        var mem_percent = Number(data.mem_percent || 0);
+        var now = new Date();
+
+        $(".app_status_time").text(("0"+now.getHours()).slice(-2)+":"+("0"+now.getMinutes()).slice(-2)+":"+("0"+now.getSeconds()).slice(-2));
+        $(".app_status_temp").text(temp > 0 ? temp.toFixed(1) + " ℃" : "--");
+        set_status_width(".app_status_temp_bar", temp > 0 ? Math.min(100, temp) : 0);
+
+        if(cpu === null || typeof cpu === "undefined" || cpu === ""){
+            $(".app_status_cpu").text("采样中");
+            set_status_width(".app_status_cpu_bar", 0);
+        }
+        else{
+            cpu = Number(cpu || 0);
+            $(".app_status_cpu").text(cpu.toFixed(1) + "%");
+            set_status_width(".app_status_cpu_bar", cpu);
+        }
+
+        $(".app_status_mem").text(format_kib(data.mem_used) + " / " + format_kib(data.mem_total) + " · " + mem_percent.toFixed(1) + "%");
+        set_status_width(".app_status_mem_bar", mem_percent);
+    }
+
+    function get_system_status(){
+        var data={};
+        data['token']='<%=token%>';
+        (new XHR()).post('<%=controller%>nradioadv/system/appcenter/sys_status', data, function(xhr){
+            if (xhr.getResponseHeader("Content-Type") == "application/json") {
+                try {
+                    var data_res = eval('(' + xhr.responseText + ')');
+                    if(data_res && data_res.result)
+                        update_app_status_panel(data_res.result);
+                }
+                catch(e) {
+                }
+            }
+        });
+    }
+    var loading_htm = '<div  id="scan_loading"><img alt="loading" src="<%=media%>/images/loading.gif" ></div>';
+    function import_pkg(){
+        var htm=''+
+        '<fieldset class="cbi-section">'+
+        '    <form name="upgrade" method="post" action="<%=url('nradioadv/system/appcenter/import')%>" enctype="multipart/form-data">'+
+        '        <input type="hidden" name="token" value="<%=token%>" />'+
+        '        <div class="cbi-section-node hide" id="import_box_file">'+
+        '            <div class="cbi-value" style="width: 350px;display: inline-block;">'+
+        '                    <input type="file" name="image" id="image" onchange="check_upload(this)"/>'+
+        '                    <div class="note_info text-left"></div>'+
+        '                    <input style="margin: 10px 0px 10px 0px;float: left;" class="cbi-button cbi-button-apply btn_save_stand_width" type="submit" value="<%:APPImportBTn%>">'+
+        '            </div>'+
+        '        </div>'+
+        '    </form>'+
+        '</fieldset>';
+
+	
+        BootstrapDialog.show({
+            type: BootstrapDialog.TYPE_DEFAULT,
+            cssClass: 'list-dialog dialog_box',
+            closeByBackdrop: false,
+            title: '<%:APPImport%>',
+            message: htm,
+            onshown:function(){
+                $(":file").filestyle({
+                    buttonBefore: true,
+                    buttonText:"<%:Choose File...%>",
+                });
+                $("#import_box_file").removeClass("hide");
+            }
+        });
+    }
+
+    function deal_import(daillog,filename){
+	    var data={};
+        data['token']='<%=token%>';
+        data['filename']=filename;
+
+        (new XHR()).post('<%=controller%>nradioadv/system/appcenter/import_status', data, function(xhr){
+            var data_res = null;
+            var code = -1;
+            if (xhr.getResponseHeader("Content-Type") == "application/json") {
+                try {
+                    data_res = eval('(' + xhr.responseText + ')');
+                    show_error(data_res.result,daillog);
+                }
+                catch(e) {
+                    data_res = null;
+                }
+            }
+        });
+    }
+
+    function check_version(){
+        var data={};
+        data['token']='<%=token%>';
+        appstore_check_dial = BootstrapDialog.show({
+            type: BootstrapDialog.TYPE_DEFAULT,
+            cssClass: '',
+            closeByBackdrop: false,
+            title: '<%:APPVerisonCheck%>',
+            message: loading_htm+"<br><%:APPVerisonCheckNote%>"
+        });
+
+        (new XHR()).post('<%=controller%>nradioadv/system/appcenter/appstore', data, function(xhr){
+            var data_res = null;
+            var code = -1;
+
+            if (xhr.getResponseHeader("Content-Type") == "application/json") {
+                try {
+                    data_res = eval('(' + xhr.responseText + ')');
+                    code = data_res.result.code;
+                    msg = data_res.result.msg;
+                    if(code == 0){
+                        refresh_data();                        
+                    }
+                    else{
+                        var error_info = msg;
+                        appstore_error_count = 0;
+                        if(code == APPSTORE_PREPARE){
+                            appstore_req_add_timer =  setInterval(function(){request_appstore_result(name)}, 4000);
+                        }
+                        else{
+                            appstore_check_dial.setMessage('<i class="far fa-nradio-note fa-fw icon_disable" ></i>'+error_info);
+                        }
+                    }
+                }
+                catch(e) {
+                    data_res = null;
+                }
+            }
+        });
+    }
+    function check_upload(obj){
+        var data = {};
+        if (!obj.files){
+            $("input[type=submit]").prop("disabled",true);
+            return;
+        }
+            
+        data['token']='<%=token%>';
+        data['size']=obj.files[0].size;
+        file_size_check=0;
+        (new XHR()).post('<%=controller%>nradioadv/system/appcenter/check_size', data, function(xhr){
+
+            var filestatus = null;
+            var code = -1;
+            if (xhr.getResponseHeader("Content-Type") == "application/json") {
+                try {
+                    data_res = eval('(' + xhr.responseText + ')');
+                    filestatus = data_res.result.filestatus;
+                }
+                catch(e) {
+                }
+            }
+
+            console.log(filestatus);
+            if(filestatus=="1"){
+                file_size_check=1;
+                $(obj).parent().children(".note_info").html("");
+                $("input[type=submit]").prop("disabled",false);
+            }
+            else{
+                $(obj).parent().children(".note_info").html("<%:Upload file size exceeds the available space on the device%>");
+                $('#image').val('');
+                $("input[type=submit]").prop("disabled",true);
+            }
+        });
+    }
+    function reload_iframe(){
+        var iframe_main = $('#sub_frame').contents().find('.main');
+        var iframe_container = $('#sub_frame').contents().find('.body-container');
+        if(iframe_main)
+            $(iframe_main).addClass("inner_main");
+        if(iframe_container)
+            $(iframe_container).addClass("inner_container");
+
+        try {
+            var frame = document.getElementById('sub_frame');
+            if (!frame || !frame.src)
+                return;
+
+            if (frame.src.indexOf('/admin/services/openclash') === -1 && frame.src.indexOf('/admin/services/AdGuardHome') === -1 && frame.src.indexOf('/nradioadv/system/openvpnfull') === -1 && frame.src.indexOf('/nradioadv/system/openlist') === -1 && frame.src.indexOf('/nradioadv/system/zerotier') === -1 && frame.src.indexOf('/admin/vpn/easytier') === -1 && frame.src.indexOf('/nradioadv/system/webssh') === -1)
+                return;
+
+            var d = frame.contentWindow.document;
+            var hide_selectors = [
+                'header',
+                '.menu_mobile',
+                '.mobile_bg_color.container.body-container.visible-xs-block',
+                '.footer',
+                '.tail_wave'
+            ];
+
+            $.each(hide_selectors, function(index, sel){
+                $(d).find(sel).css('display', 'none');
+            });
+
+            $(d).find('.container.body-container').not('.visible-xs-block').css({
+                'width': '100%',
+                'margin': '0',
+                'padding': '0 10px'
+            });
+            $(d).find('.main').css({
+                'width': '100%',
+                'margin': '0'
+            });
+            $(d).find('.main-content').css({
+                'width': '100%',
+                'margin': '0',
+                'padding': '0'
+            });
+            $(d.body).css({
+                'margin-top': '0',
+                'padding-top': '0'
+            });
+        }
+        catch(e) {}
+    }
+    function get_app_route_url(route){
+        return "<%=controller%>" + route;
+    }
+    function build_app_iframe(route){
+        if(route && route.length > 0)
+            return "<iframe id='sub_frame' src='" + get_app_route_url(route) + "' name='subpage'></iframe>";
+        return "<iframe id='sub_frame' name='subpage'></iframe>";
+    }
+    function is_openclash_route(route){
+        return route && route.indexOf("admin/services/openclash") === 0;
+    }
+    function is_adguardhome_route(route){
+        return route && route.indexOf("admin/services/AdGuardHome") === 0;
+    }
+    function get_openclash_frame(route){
+        var current_route = route && route.length > 0 ? route : "admin/services/openclash/client";
+        if(current_route == "admin/services/openclash")
+            current_route = "admin/services/openclash/client";
+
+        var tabs = [
+            {route: "admin/services/openclash/client", title: "<%:Overviews%>"},
+            {route: "admin/services/openclash/settings", title: "<%:Plugin Settings%>"},
+            {route: "admin/services/openclash/config-overwrite", title: "<%:Overwrite Settings%>"},
+            {route: "admin/services/openclash/config-subscribe", title: "<%:Config Subscribe%>"},
+            {route: "admin/services/openclash/config", title: "<%:Config Manage%>"},
+            {route: "admin/services/openclash/log", title: "<%:Server Logs%>"}
+        ];
+
+        var sub_web_ht = "<div class='app_frame_box'><div class='app_frame_nav'>";
+        $.each(tabs, function(index, tab){
+            var active_class = "";
+            if(tab.route == current_route)
+                active_class = " app_frame_nav_item_active";
+            sub_web_ht += "<span class='app_frame_nav_item" + active_class + "' data-route='" + tab.route + "' onclick='switch_app_frame_route(this)'>" + tab.title + "</span>";
+        });
+        sub_web_ht += "</div>" + build_app_iframe(current_route) + "</div>";
+
+        return sub_web_ht;
+    }
+    function get_adguardhome_frame(route){
+        var current_route = route && route.length > 0 ? route : "admin/services/AdGuardHome/base";
+        if(current_route == "admin/services/AdGuardHome")
+            current_route = "admin/services/AdGuardHome/base";
+
+        var tabs = [
+            {route: "admin/services/AdGuardHome/base", title: "Base Setting"},
+            {route: "admin/services/AdGuardHome/manual", title: "Manual Config"},
+            {route: "admin/services/AdGuardHome/log", title: "Log"}
+        ];
+
+        var sub_web_ht = "<div class='app_frame_box'><div class='app_frame_nav'>";
+        $.each(tabs, function(index, tab){
+            var active_class = "";
+            if(tab.route == current_route)
+                active_class = " app_frame_nav_item_active";
+            sub_web_ht += "<span class='app_frame_nav_item" + active_class + "' data-route='" + tab.route + "' onclick='switch_app_frame_route(this)'>" + tab.title + "</span>";
+        });
+        sub_web_ht += "</div>" + build_app_iframe(current_route) + "</div>";
+
+        return sub_web_ht;
+    }
+    function build_app_frame(route){
+        if(is_openclash_route(route))
+            return get_openclash_frame(route);
+        if(is_adguardhome_route(route))
+            return get_adguardhome_frame(route);
+        return build_app_iframe(route);
+    }
+    function switch_app_frame_route(obj){
+        var route = $(obj).data("route");
+        $(".app_frame_nav_item").removeClass("app_frame_nav_item_active");
+        $(obj).addClass("app_frame_nav_item_active");
+        $("#sub_frame").attr("src", get_app_route_url(route));
+    }
+    function nradio_plugin_uninstall_key(app_name){
+        if(app_name == "luci-app-openclash" || app_name == "openclash")
+            return "openclash";
+        if(app_name == "Web SSH" || app_name == "webssh" || app_name == "ttyd")
+            return "webssh";
+        if(app_name == "luci-app-adguardhome" || app_name == "adguardhome")
+            return "adguardhome";
+        if(app_name == "OpenVPN" || app_name == "openvpn" || app_name == "luci-app-openvpn")
+            return "openvpn";
+        if(app_name == "OpenList" || app_name == "openlist" || app_name == "luci-app-openlist")
+            return "openlist";
+        if(app_name == "ZeroTier" || app_name == "zerotier")
+            return "zerotier";
+        if(app_name == "EasyTier" || app_name == "easytier" || app_name == "luci-app-easytier")
+            return "easytier";
+        if(app_name == "FanControl Plus" || app_name == "fanctrl-plus" || app_name == "FanControl" || app_name == "fanctrl")
+            return "fanctrl";
+        return "";
+    }
+    function nradio_plugin_uninstall_result(data){
+        if(data && data.result)
+            return data.result;
+        return data || {};
+    }
+    function nradio_plugin_uninstall_finish(dialogDeal, ok, msg){
+        if(dialogDeal)
+            dialogDeal.close();
+
+        BootstrapDialog.show({
+            type: ok ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
+            title: "<%:Tips%>",
+            message: msg,
+            buttons: [{
+                label: "<%:OK%>",
+                cssClass: "btn-primary",
+                action: function(dialog){
+                    dialog.close();
+                    if(ok) {
+                        if(typeof refresh_data == "function")
+                            refresh_data();
+                        else
+                            window.location.reload();
+                    }
+                }
+            }]
+        });
+    }
+    function nradio_plugin_uninstall_poll(app_name, dialogDeal){
+        $.ajax({
+            type: "POST",
+            url: "<%=controller%>nradioadv/system/plugin_uninstall/check",
+            data: { name: app_name },
+            dataType: "json",
+            success: function(data){
+                var result = nradio_plugin_uninstall_result(data);
+                var code = parseInt(result.code, 10);
+
+                if(code == 2) {
+                    setTimeout(function(){
+                        nradio_plugin_uninstall_poll(app_name, dialogDeal);
+                    }, 2000);
+                    return;
+                }
+
+                if(code == 0) {
+                    nradio_plugin_uninstall_finish(dialogDeal, true, result.msg || "卸载完成");
+                    return;
+                }
+
+                nradio_plugin_uninstall_finish(dialogDeal, false, result.errro_detail || result.error_detail || result.msg || "卸载失败");
+            },
+            error: function(){
+                nradio_plugin_uninstall_finish(dialogDeal, false, "卸载状态检查失败");
+            }
+        });
+    }
+    function nradio_plugin_uninstall_start(app_name, dialogDeal){
+        $.ajax({
+            type: "POST",
+            url: "<%=controller%>nradioadv/system/plugin_uninstall/start",
+            data: { name: app_name },
+            dataType: "json",
+            success: function(data){
+                var result = nradio_plugin_uninstall_result(data);
+                var code = parseInt(result.code, 10);
+
+                if(code == 2) {
+                    nradio_plugin_uninstall_poll(app_name, dialogDeal);
+                    return;
+                }
+
+                if(code == 0) {
+                    nradio_plugin_uninstall_finish(dialogDeal, true, result.msg || "卸载完成");
+                    return;
+                }
+
+                nradio_plugin_uninstall_finish(dialogDeal, false, result.errro_detail || result.error_detail || result.msg || "卸载失败");
+            },
+            error: function(){
+                nradio_plugin_uninstall_finish(dialogDeal, false, "卸载启动失败");
+            }
+        });
+    }
+    function nradio_plugin_uninstall_action(app_name){
+        var msg = {};
+        var dialogDeal = null;
+
+        if(!nradio_plugin_uninstall_key(app_name))
+            return false;
+
+        msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:AppUninstallNote%>';
+        msg.confirm = "<%:Confirm%>";
+        msg.confirm_keep = true;
+        msg.cancel = "<%:Cancel%>";
+        msg.onhide = function(){};
+        msg.callback = function(){
+            $(".modal-footer").css("display","none");
+            dialogDeal.setMessage(loading_htm);
+            nradio_plugin_uninstall_start(app_name, dialogDeal);
+        };
+        dialogDeal = confirm_box(msg);
+        return true;
+    }
+    function callback(id,route){
+        var sub_web_ht = build_app_frame(route);
+        $(".top_menu").removeClass("top_menu_active");
+        $(".top_menu").each(function(){
+            var cur_index = $(this).data("index");
+            if(cur_index == id){
+                $(this).addClass("top_menu_active");
+            }
+        });
+
+        sub_dialogDeal = BootstrapDialog.show({
+            type: BootstrapDialog.TYPE_DEFAULT,
+            closeByBackdrop: true,
+            cssClass:'app_frame',
+            title: '',
+            message: sub_web_ht,
+            onhide:function(){
+                $(".modal-dialog").css("display","none");
+                $(".top_menu").removeClass("top_menu_active");
+                $(".top_menu").eq(0).addClass("top_menu_active");
+            },
+            onshown:function(){
+                reload_iframe();
+                $('#sub_frame').on('load', function() {
+                    reload_iframe();
+                });
+            }
+        });
+    }
+    function app_action(app_name,action,id,route){
+        var msg = {};
+        var dialogDeal = null;
+        var info_msg = "";
+        if (action == 'uninstall' && nradio_plugin_uninstall_action(app_name)) {
+            return;
+        }
+
+        if (app_name == 'Web SSH' && action == 'open' && route) {
+            callback(id, route);
+            return;
+        }
+
+
+
+        if (action == 'uninstall') {
+            if (app_name == 'FanControl Plus' || app_name == 'fanctrl-plus' || app_name == 'FanControl' || app_name == 'fanctrl') {
+            }
+            if (app_name == 'luci-app-openclash') {
+            }
+            if (app_name == 'luci-app-adguardhome') {
+            }
+            if (app_name == 'OpenVPN') {
+            }
+            if (app_name == 'OpenList' || app_name == 'openlist') {
+            }
+            if (app_name == 'ZeroTier' || app_name == 'zerotier') {
+            }
+            if (app_name == 'EasyTier' || app_name == 'luci-app-easytier') {
+            }
+            if (app_name == 'FanControl' || app_name == 'fanctrl') {
+            }
+        }
+
+        if(action == "install")
+            info_msg="<%:AppInstallNote%>";
+        else if(action == "uninstall")
+            info_msg="<%:AppUninstallNote%>";
+        else if(action == "update")
+            info_msg="<%:AppUpdateNote%>";
+        else if(action == "close")
+            info_msg="<%:AppCloseNote%>";
+        else{
+            dialogDeal = BootstrapDialog.show({
+                type: BootstrapDialog.TYPE_DEFAULT,
+                closeByBackdrop: true,
+                title: '',
+                message: loading_htm,
+            });
+            process_deal(app_name,action,dialogDeal,callback,id,route);
+            return;
+        }
+        msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i>'+info_msg;
+        msg.confirm = "<%:Confirm%>";
+        msg.confirm_keep = true;
+        msg.cancel = "<%:Cancel%>";
+        msg.onhide = function(){},
+        msg.callback = function(){
+            $(".modal-footer").css("display","none");
+            dialogDeal.setMessage(loading_htm);
+            process_deal(app_name,action,dialogDeal);
+        }
+        dialogDeal = confirm_box(msg);
+    }
+    var error_count = 0;
+    var req_add_timer = null;
+    var check_dial = null;
+    
+    function request_result(name, action){
+        var data={};
+        var max_time = 20;
+        var useful_result = 0;
+        data['name']=name;
+        data['action']=action;
+        data['token']='<%=token%>';
+        if(error_count>=max_time){
+            if (req_add_timer){
+                check_dial.setMessage("<%:APPErrorTimeout%>");
+                window.clearInterval(req_add_timer);
+                req_add_timer = null;
+            }
+            return ;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/cgi-bin/luci/nradioadv/system/appcenter/check",
+            data: data,
+            success: function(data_res){                
+                if(data_res && data_res.result){
+                    code = data_res.result.code;
+                    if((code != APPCENTER_INSTALL_PREPARE) && (code != APPCENTER_REMOVE_PREPARE) && (code != APPCENTER_UPDATE_PREPARE))
+                    {
+                        useful_result = 1;
+                        var pkg_file="";
+                        var detail="";
+                        $(".btn-nradio-apply").removeClass("hide");
+                        var err_info = data_res.result.msg;
+                        if(data_res.result.errro_detail)
+                            detail=data_res.result.errro_detail;
+                        if(data_res.result.file_name)
+                            pkg_file = data_res.result.file_name;
+
+                        if (code != APPCENTER_OK){
+                            err_info = APPErrorRow.compose({
+                                name:pkg_file,
+                                msg: data_res.result.msg,
+                                detail: detail
+                            });
+                        }
+
+                        check_dial.setMessage(err_info);
+                        if (req_add_timer){
+                            window.clearInterval(req_add_timer);
+                            req_add_timer = null;
+                        }
+                        refresh_data();
+                    }
+                }
+                if(!useful_result){
+                    error_count++;
+                }
+            },
+            error: function(xhr, error){
+                error_count++;
+            }
+        });
+    }
+    
+    var appstore_error_count = 0;
+    var appstore_req_add_timer = null;
+    var appstore_check_dial = null;
+    
+    function request_appstore_result(name){
+        var data={};
+        var max_time = 20;
+        var useful_result = 0;
+        data['name']=name;
+        data['token']='<%=token%>';
+        if(appstore_error_count>=max_time){
+            if (appstore_req_add_timer){
+                window.clearInterval(appstore_req_add_timer);
+                appstore_req_add_timer = null;
+                appstore_check_dial.setMessage("<%:APPstoreErrorTimeout%>");
+            }
+            return ;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/cgi-bin/luci/nradioadv/system/appcenter/check_appstore",
+            data: data,
+            success: function(data_res){                
+                if(data_res && data_res.result){
+                    code = data_res.result.code;
+                    if((code != APPSTORE_PREPARE))
+                    {
+                        useful_result = 1;
+                        $(".btn-nradio-apply").removeClass("hide");
+                        appstore_check_dial.setMessage(data_res.result.msg);
+                        if (appstore_req_add_timer){
+                            window.clearInterval(appstore_req_add_timer);
+                            appstore_req_add_timer = null;
+                        }
+                        refresh_data();
+                    }
+                }
+                if(!useful_result){
+                    appstore_error_count++;
+                }
+            },
+            error: function(xhr, error){
+                appstore_error_count++;
+            }
+        });
+    }
+    function process_deal(name,action,dialogDeal,callback,id,route){
+        var data={};
+        data['name'] = name;
+        data['token']='<%=token%>';
+        if (data['name'] == ""){
+            if(dialogDeal)
+                dialogDeal.close();
+            return;
+        }
+
+        (new XHR()).post('<%=controller%>nradioadv/system/appcenter/'+action, data, function(xhr){
+            var data_res = null;
+            var code = -1;
+
+            if (xhr.getResponseHeader("Content-Type") == "application/json") {
+                try {
+                    data_res = eval('(' + xhr.responseText + ')');
+                    code = data_res.result.code;
+                    msg = data_res.result.msg;
+                    if(code == 0){
+                        refresh_data();                        
+                    }
+                    else{
+                        if (action == 'install' && data_res.result.code == APPSTORE_SPACE_ERR){
+                            if(TFCARD){
+                                BootstrapDialog.show({
+                                    type: BootstrapDialog.TYPE_DEFAULT,
+                                    title: '<%: APPTitle %>',
+                                    message: '<span><%: APPDealErrorSpace %><%: APPSpaceMsgTF %></span>',
+                                    buttons: [{
+                                        label: '<%: No %>',
+                                        cssClass: 'btn-nradio-cancel',
+                                        action: function(dialog) {
+                                            dialog.close();
+                                        }
+                                    }, {
+                                        label: '<%: APPInitTF %>',
+                                        cssClass: 'btn-nradio-apply',
+                                        action: function(dialog) {
+                                            dialog.close();
+                                            window.location.href = "/cgi-bin/luci/nradioadv/system/expand";
+                                        }
+                                    }]
+                                });
+                            }
+                            else{
+                                create_info_box({msg: data_res.result.msg, btn_val: "<%:OK%>"});
+                            }
+                        }
+                        else {
+                            var error_info = msg;
+                            error_count = 0;
+                            if((code == APPCENTER_INSTALL_PREPARE) || (code == APPCENTER_REMOVE_PREPARE) || (code == APPCENTER_UPDATE_PREPARE)){
+                                var htm = genarate_loading_box(error_info,0);
+                                check_dial = BootstrapDialog.show({
+                                    type: BootstrapDialog.TYPE_DEFAULT,
+                                    closeByBackdrop: false,
+                                    title: '',
+                                    message: htm,
+                                    buttons: [{
+                                        label: "<%:OK%>",
+                                        cssClass:'btn-nradio-apply hide',
+                                        action: function(dialog) {
+                                                dialog.close();
+                                            }
+                                        }]
+                                });
+
+                                req_add_timer =  setInterval(function(){request_result(name, action)}, 2000);
+                            }
+                            else{
+                                BootstrapDialog.show({
+                                    type: BootstrapDialog.TYPE_DEFAULT,
+                                    closeByBackdrop: true,
+                                    title: '',
+                                    message: '<i class="far fa-nradio-note fa-fw icon_disable" ></i>'+error_info,
+                                });
+                            }
+                        }
+                    }
+                }
+                catch(e) {
+                    data_res = null;
+                }
+                if(dialogDeal){
+                    setTimeout(function(){ dialogDeal.close();if(callback)callback(id,route);}, 1000);
+                }
+            }
+        });
+    }
+
+    function show_error(result,daillog){
+        var pkg_file="";
+        var detail="";
+
+        if (result.code == undefined){
+            return;
+        }
+
+        var err_info = result.msg;
+        if(result.errro_detail)
+            detail=result.errro_detail;
+        if(result.file_name)
+            pkg_file = result.file_name;
+
+        if (result.code != APPCENTER_OK){
+            err_info = APPErrorRow.compose({
+                name:pkg_file,
+                msg: result.msg,
+                detail: detail
+            });
+        }
+        else{
+            setTimeout(function(){location.href = "/cgi-bin/luci/nradioadv/system/appcenter"}, 2000);
+        }
+        if(daillog)
+            daillog.setMessage(err_info);
+        else
+            BootstrapDialog.show({
+                type: BootstrapDialog.TYPE_DEFAULT,
+                closeByBackdrop: true,
+                title: '',
+                message:err_info,
+            });
+    }
+
+    function show_import_error(result){
+        var err_info = "<%:APPImportFail%>";
+        if (result.code == 0){
+            err_info = "<%:APPImportOK%>";
+        }        
+        var daillog = BootstrapDialog.show({
+            type: BootstrapDialog.TYPE_DEFAULT,
+            closeByBackdrop: true,
+            title: '',
+            message:err_info,
+            onhide:function(){
+                setTimeout(function(){location.href = "/cgi-bin/luci/nradioadv/system/appcenter"}, 500);
+            },
+        });
+        if (result.code){
+            window.setTimeout(function(){
+                location.href = "/cgi-bin/luci/nradioadv/system/appcenter";
+            },2000);
+        }
+        else{
+            deal_import(daillog,result.file_name);
+        }
+    }
+
+    function update_memory(total, used){
+        if(!total || total <= 0) return;
+        var percent = Math.max(0, Math.min(100, (used / total) * 100));
+
+        var total_mb = total / 1024;
+        var used_mb = used / 1024;
+        var unit = (total_mb < 1024) ? " M" : " G";
+        var total_ui = (total_mb < 1024) ? total_mb : (total_mb / 1024);
+        var used_ui = (total_mb < 1024) ? used_mb : (used_mb / 1024);
+
+        $("#memory_detail").text(used_ui.toFixed(1) + unit + " / " + total_ui.toFixed(1) + unit);
+        $("#memory_detail_mobile").text(used_ui.toFixed(1) + unit + " / " + total_ui.toFixed(1) + unit);
+        $(".mem_progress_inner").css("width",percent.toFixed(1) + "%");
+    }
+
+    function get_memory(){
+        var data={};
+        data['token']='<%=token%>';
+        (new XHR()).post('<%=controller%>nradioadv/system/appcenter/memory', data, function(xhr){
+            if (xhr.getResponseHeader("Content-Type") == "application/json") {
+                try {
+                    var data_res = eval('(' + xhr.responseText + ')');
+                    if(data_res && data_res.result){
+                        TFCARD = data_res.result.tfcard || false;
+                        USED_MEMORY = Number(data_res.result.used_memory || 0);
+                        TOTAL_MEMORY  = Number(data_res.result.total_memory || 0);
+                        update_memory(TOTAL_MEMORY,USED_MEMORY);    
+                    }
+                }
+                catch(e) {
+                }
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        get_memory();
+        get_system_status();
+        window.setInterval(get_memory, 4000);
+        window.setInterval(get_system_status, 5000);
+        <%if import_result_buffer then %>
+            show_import_error(<%=import_result_buffer%>);       
+         <%else%>
+            show_app_data(app_list);
+         <%end%>
+    });
+    function refresh_data(){
+        var data={};
+        data['token']='<%=token%>';
+        (new XHR()).post('<%=controller%>nradioadv/system/appcenter/list', data, function(xhr){
+            if (xhr.getResponseHeader("Content-Type") == "application/json") {
+                try {
+                    var data_res = eval('(' + xhr.responseText + ')');
+                    if(data_res && data_res.result){
+                        show_app_data(data_res);
+                    }
+                }
+                catch(e) {
+                }
+            }
+        });        
+    }
+    $(".app_menu").click(function(e) {
+        var id = $(this).index();
+        $(".app_menu").removeClass("menu_active")
+        $(this).addClass("menu_active");
+        $(".container_right").addClass("hide");
+        $(".container_right").eq(id).removeClass("hide");
+    });
+</script>
+<%+footer%>

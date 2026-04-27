@@ -1,0 +1,103 @@
+<%#
+ Copyright 2008 Steven Barth <steven@midlink.org>
+ Copyright 2008 Jo-Philipp Wich <jow@openwrt.org>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<%+openvpn/ovpn_css%>
+
+<%
+local mode = self.mode or "basic"
+local uci = require("luci.model.uci").cursor()
+local category_title = nil
+local instance = self.instance or "-"
+local cfg_path = uci:get("openvpn", instance, "config") or "-"
+local enabled = uci:get("openvpn", instance, "enabled")
+local proto = uci:get("openvpn", instance, "proto") or "-"
+local port = uci:get("openvpn", instance, "port") or "-"
+local route_noexec = uci:get("openvpn", instance, "route_noexec") == "1" and "手动路由" or "自动路由"
+local enabled_label = (enabled == "1") and "已启用" or "未启用"
+local mode_label = "高级配置"
+local mode_desc = "适合查看与编辑更细粒度的 OpenVPN 参数分组。"
+local primary_href = url("admin/services/openvpn/basic", self.instance)
+local primary_label = "切换到基础配置"
+if mode == "advanced" then
+    for _, c in ipairs(self.categories or {}) do
+        if c.id == self.category then
+            category_title = c.title
+            break
+        end
+    end
+elseif mode == "basic" then
+    mode_label = "基础配置"
+    mode_desc = "适合快速修改常用参数，保存后会自动应用到当前实例。"
+    primary_href = url("admin/services/openvpn/advanced", self.instance)
+    primary_label = "切换到高级配置"
+elseif mode == "file" then
+    mode_label = "文件编辑"
+    mode_desc = "适合直接维护 ovpn 原始配置和 auth-user-pass 凭据文件。"
+    primary_href = url("admin/services/openvpn")
+    primary_label = "返回标准 OpenVPN"
+end
+%>
+
+<div class="vpn-shell vpn-shell-refined vpn-shell-mk2 vpn-shell-secondary">
+  <div class="vpn-hero vpn-hero-mk2 vpn-hero-secondary">
+    <div class="vpn-toolbar">
+      <span class="vpn-pill">OpenVPN</span>
+      <span class="vpn-status-chip"><%=mode_label%></span>
+    </div>
+    <h2 class="vpn-page-title">
+      <a href="<%=url('admin/services/openvpn')%>">标准 OpenVPN</a> &#187;
+      实例 <%=pcdata(self.instance)%>
+    </h2>
+    <p class="vpn-sub">
+      <%=mode_desc%>
+    </p>
+    <div class="vpn-hero-actions">
+      <a class="cbi-button cbi-button-apply" href="<%=primary_href%>"><%=primary_label%></a>
+      <a class="cbi-button" href="<%=url('nradioadv/system/openvpnfull')%>">返回连接中枢</a>
+    </div>
+  </div>
+
+  <div class="vpn-mini-grid">
+    <div class="vpn-mini-card">
+      <span class="vpn-mini-label">当前实例</span>
+      <strong><%=pcdata(instance)%></strong>
+      <span class="vpn-mini-note">当前正在编辑的 OpenVPN UCI 节点</span>
+    </div>
+    <div class="vpn-mini-card">
+      <span class="vpn-mini-label">配置来源</span>
+      <strong><%=pcdata(cfg_path)%></strong>
+      <span class="vpn-mini-note">若使用外部 ovpn 文件，这里显示其落盘路径</span>
+    </div>
+    <div class="vpn-mini-card">
+      <span class="vpn-mini-label">实例状态</span>
+      <strong><%=enabled_label%></strong>
+      <span class="vpn-mini-note">协议：<%=pcdata(proto)%> · 端口：<%=pcdata(port)%></span>
+    </div>
+    <div class="vpn-mini-card">
+      <span class="vpn-mini-label">路由模式</span>
+      <strong><%=route_noexec%></strong>
+      <span class="vpn-mini-note">用于判断当前实例是否交给外部脚本接管</span>
+    </div>
+  </div>
+
+  <% if mode == "advanced" then %>
+    <div class="vpn-card vpn-category-rail" style="margin-bottom:14px;">
+      <div class="vpn-card-title">高级分类</div>
+      <div class="vpn-toolbar">
+        <% for i, c in ipairs(self.categories or {}) do %>
+          <% if c.id == self.category then %>
+            <span class="vpn-status-chip"><%=c.title%></span>
+          <% else %>
+            <a class="vpn-pill" href="<%=luci.dispatcher.build_url('admin','services','openvpn','advanced', self.instance, c.id)%>"><%=c.title%></a>
+          <% end %>
+        <% end %>
+      </div>
+      <% if category_title then %>
+        <div class="vpn-mini-note">当前分类：<strong><%=category_title%></strong></div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

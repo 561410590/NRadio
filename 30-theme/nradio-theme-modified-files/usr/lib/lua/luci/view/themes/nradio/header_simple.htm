@@ -1,0 +1,247 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local sys  = require "luci.sys"
+	local util = require "luci.util"
+	local http = require "luci.http"
+	local disp = require "luci.dispatcher"
+	local nr = require "luci.nradio"
+
+	local boardinfo = util.ubus("system", "board")
+
+	local request  = disp.context.path
+	local category = request[1]
+	local second_category = request[2]
+	local third_category = request[3]
+	local class_name ="";
+	if not second_category then
+		class_name="first-stand"
+		second_category = "sysauth"
+	else
+		if second_category == "qsetup" then
+			if not third_category then
+				class_name="first-stand"
+			else
+				class_name="second-stand"
+			end
+		elseif second_category == "hsetup" or second_category == "download" then
+			class_name="hsetup-stand"
+		end
+	end
+
+
+
+	if category and (category == "authcheck" or category == "auth" or category == "login" or category == "message" or category == "portal") then
+		class_name="first-stand"
+	end
+
+	if category then
+		category = "nradio"
+	end
+
+	local cattree  = category and disp.node(category)
+
+	local tree = disp.node()
+	local node = disp.context.dispatched
+
+	local categories = disp.node_childs(tree)
+
+	local c = tree
+	local i, r
+
+	-- tag all nodes leading to this page
+	for i, r in ipairs(request) do
+		if c.nodes and c.nodes[r] then
+			c = c.nodes[r]
+			c._menu_selected = true
+		end
+	end
+
+	local function nodeurl(prefix, name, query)
+		local u = url(prefix, name)
+		if query then
+			u = u .. http.build_querystring(query)
+		end
+		return pcdata(u)
+	end
+
+	local function render_dropmenu(prefix, node)
+		local childs = disp.node_childs(node)
+		local i, r
+		if #childs ~= 0 then
+			write('<li class="dropdown">')
+			write('<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">')
+			write('<i class="far fa-%s"></i><span class="nav_title">%s</span></a>' %{
+				node.icon or "cog",
+				pcdata(striptags(translate(node.title)))
+			})
+			write('<ul class="dropdown-menu">')
+
+			for i, r in ipairs(childs) do
+				local nnode = node.nodes[r]
+				write('<li><a href="%s">%s</a></li>' %{
+					nodeurl(prefix, r, nnode.query),
+					pcdata(striptags(translate(nnode.title)))
+				})
+			end
+
+			write('</ul>')
+			write('</li>')
+		end
+	end
+	local radio_menu_node = {}
+	local wan_menu_node = {}
+
+	if cattree and cattree.nodes['basic'] then
+		if cattree.nodes['basic'].nodes['wifi'] then
+			radio_menu_node = cattree.nodes['basic'].nodes['wifi']
+		end
+		if cattree.nodes['basic'].nodes['wan'] then
+			wan_menu_node = cattree.nodes['basic'].nodes['wan']
+		end
+	end
+	-- send as HTML5
+	http.prepare_content("text/html")
+-%>
+<!DOCTYPE html>
+<html lang="<%=luci.i18n.context.lang%>">
+	<head>
+		<meta charset="utf-8">
+		<title><%=striptags(((node and node.title) and translate(node.title) or '')) %></title>
+		<meta name="viewport" content="initial-scale=1.0">
+
+
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/bootstrap-dialog.min.css?v=git-26.103.38496-283ac67">
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/cascade.min.css?v=git-26.103.38496-283ac67">
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/main.min.css?v=git-26.103.38496-283ac67">
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/nradio.min.css?v=git-26.103.38496-283ac67">
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/nradio-refresh.css?v=sidebar-v14">
+		<% if second_category == "sysauth" then%>
+		<link rel="stylesheet" type="text/css" href="<%=media%>/css/login.min.css?v=git-26.103.38496-283ac67">
+		<%end%>
+		<link rel="shortcut icon" href="<%=media%>/favicon.ico">
+		<script defer src="<%=media%>/js/nradio.min.js?v=git-26.103.38496-283ac67"></script>
+		<script defer src="<%=media%>/js/fontawesome.min.js?v=git-26.103.38496-283ac67"></script>
+		<script defer src="<%=media%>/js/v4-shims.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/jquery.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/jquery.validate.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/bootstrap.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/bootstrap-filestyle.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/bootstrap-dialog.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/main.min.js?v=git-26.103.38496-283ac67"></script>
+		<script src="<%=media%>/js/clipboard.min.js?v=git-26.103.38496-283ac67"></script>
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="<%=media%>/js/html5shiv.min.js?v=git-26.103.38496-283ac67"></script>
+			<script src="<%=media%>/js/respond.min.js?v=git-26.103.38496-283ac67"></script>
+		<![endif]-->
+		<script src="<%=resource%>/xhr.js?v=git-26.103.38496-283ac67"></script>
+		<script>
+		function uptime2dhms(uptime, max = 5, delim = ' '){
+			if(!uptime){
+				return "-";
+			}
+			var dhms=[];
+			if (uptime >= 60*60*24){
+				dhms.push(Math.floor(uptime/(60*60*24))+'<%:d%>');
+			}
+			if (uptime >= 60*60){
+				dhms.push(Math.floor(uptime%(60*60*24)/60/60)+'<%:h%>');
+			}
+			if (uptime >= 60){
+				dhms.push(Math.floor(uptime%(60*60)/60)+'<%:m%>');
+			}
+			dhms.push(Math.floor(uptime%60)+'<%:s%>');
+			return dhms.slice(0, max).join(delim);
+		}
+
+		$.validator.addMethod("wpakey-invalid", function(value, element) {
+			return false;
+		}, "<%:Invalid WPA password.%>")
+
+		$.validator.addMethod("ipaddr-invalid", function(value, element) {
+			return false;
+		}, "<%:Invalid IP address.%>")
+
+		$.validator.addMethod("ip4addr-invalid", function(value, element) {
+			return false;
+		}, "<%:Invalid IPv4 address.%>")
+
+		$.validator.addMethod("dataneeded", function(value, element) {
+			return !this.optional(element);
+		}, "<%:This field is required.%>")
+
+		var reloadFieldset = '';
+
+		$(document).ready(function() {
+			nradio_style_onload();
+			$(':file').not('.hide').filestyle({
+				buttonBefore: true,
+				buttonText: "<%:Choose File...%>",
+				iconName: "far fa-folder-open"
+			});
+			$(':file').click(function() {
+				$(this).closest('div.cbi-value').removeClass('cbi-value-error');
+			});
+
+			$('form').each(function() {
+				var v = $(this).validate({
+					errorPlacement: function(error, element) {
+						if ($(element).next('span.glyphicon').length > 0) {
+							if ($(element).parent().hasClass('dylist-input-group')) {
+								$(element).parent().next('div.empty').prepend(error);
+							} else {
+								$(element).parent().after(error);
+							}
+						} else {
+							$(element).parents('div.cbi-value-field')
+								.children('div.error').remove();
+							$(element).parents('div.cbi-value-field')
+								.children().last().after(error);
+						}
+					},
+					errorElement: "div",
+				});
+
+				$('.cbi-button-next').click(function(event) {
+					if (v.form()) {
+						$('ul.cbi-tabmenu > li.cbi-tab').nextAll('li').first().children('a').click();
+					}
+				});
+				$('.cbi-button-apply').click(function() {
+					v.form();
+				});
+			});
+
+			$(document).on("click", "#select_all", function(){
+				$("input[name='sel_check']").not(':disabled').prop('checked', $(this).is(":checked"));
+			});
+			document.onkeydown=function(e){
+				e=e||window.event;
+				if(e.keyCode==116){
+					e.preventDefault();
+					location.replace(document.URL);
+				}
+			}
+			if ( window.history.replaceState ) {
+				window.history.replaceState( null, null, window.location.href );
+			}
+		});
+		</script>
+	</head>
+	<body class="nradio-visual-refresh mobile_bg_color <%= second_category == 'sysauth' and 'nradio-auth-refresh' or '' %> lang_<%=luci.i18n.context.lang%> <%- if node then %><%= striptags( node.title ) %><%- end %>"  >
+
+		<a name="top_position"></a>
+		<div class="container mobile menu_mobile">
+			<div class="col-xs-4 col-sm-4  text-left"></div>
+			<div class="col-xs-4 col-sm-4 text-center"><div class="<% if nr.get_firmware_type() ~= "oem" then print "nradio-logo" end%> mobile-logo-size"></div></div>
+			
+		</div>	
+
+		<iframe id='background_form' name='background_form' style='display: none'>
+		</iframe>
+		<div class="mobile_bg_color container body-container">
+			<div class="mobile_bg_color main">
+				<div class="main-content">

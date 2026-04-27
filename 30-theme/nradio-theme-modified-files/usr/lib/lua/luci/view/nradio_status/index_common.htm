@@ -1,0 +1,1174 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<style>
+
+	.info-box{
+		padding:0px;
+	}
+	.speedflow_notebox,.speedflow_notebox2{
+		display: inline-block;
+	}
+	.flowdown_unit,.flowup_unit,.speedup_unit,.speeddown_unit{
+		font-size: 16px;
+		color:#9BA7C4;
+	}
+	.flowup_data,.speedup_data,.cpu_data{
+		font-size: 16px;
+		color:#75AAFF;
+	}
+	.flowdown_data,.speeddown_data,.mem_data,.model_temp{
+		font-size: 16px;
+		color:#42E3A6;
+	}
+
+	.cpu_data,.mem_data,.model_temp{
+		text-align: center;
+	}
+	.pc_box1,.pc_box2,.pc_box3,.pc_box4{
+		width: 48%;
+	}
+</style>
+<script type="text/javascript" src="<%=media%>/js/arc-progress.min.js?v=git-26.103.38496-283ac67"></script>
+<script>
+var temp_range = [60,75,85,95];
+var temp_lang = ["<%:ModelTempGreat%>","<%:ModelTempFine%>","<%:ModelTempHigh%>","<%:ModelTempHot%>","<%:ModelTempAlert%>"];
+var cpu_range = [50,75,85,95];
+var cpu_lang = ["<%:CPUStatusIdle%>","<%:CPUStatusLight%>","<%:CPUStatusNormal%>","<%:CPUStatusBusy%>","<%:CPUStatusCritical%>"];
+var mem_range = [50,75,85,95];
+var mem_lang = ["<%:MemStatusPlenty%>","<%:MemStatusEnough%>","<%:MemStatusNormal%>","<%:MemStatusTight%>","<%:MemStatusCritical%>"];
+var nrTheme = {
+	text: "#EEF3FF",
+	muted: "#9BA7C4",
+	ring: "#2A3346",
+	defaultText: "#F5F7FF",
+	info: "#75AAFF",
+	success: "#42E3A6",
+	accent: "#62DFE0",
+	warning: "#FFC65C",
+	danger: "#FF7486"
+};
+function reset_canvas(obj){
+	if(obj){
+		var canvas_size = $(obj).data("size");
+		var box_width=$(obj).width();
+		if(box_width > canvas_size){
+			box_width = canvas_size;
+		}
+		
+		if(box_width){
+			$(obj).children('canvas').width(box_width);
+			$(obj).children('canvas').height(box_width);
+		}
+	}
+	else{
+		$('canvas').each(function(){
+			var canvas_size = $(this).parent().data("size");
+			var box_width = $(this).parent().width();
+			if(box_width > canvas_size){
+				box_width = canvas_size;
+			}
+			if(box_width){
+				$(this).width(box_width);
+				$(this).height(box_width);
+			}
+		});
+	}
+}
+function isNumeric(str) {
+  return /^\-*\d+$/.test(str);
+}
+
+function validatePositiveInteger(input) {
+  var regex = /^[1-9]\d*$/;
+  return regex.test(input);
+}
+function format_isp_info(sim_isp,isp){
+	var target_isp = "";
+	if (sim_isp && !validatePositiveInteger(sim_isp)){
+
+		if(sim_isp == "中国联通" || sim_isp == "China Unicom"){
+			target_isp="<img class='plmn_icon' src='/luci-static/nradio/images/Unicom.png'> ";
+		}
+		else if(sim_isp == "中国电信" || sim_isp == "China Telecom"){
+			target_isp="<img class='plmn_icon' src='/luci-static/nradio/images/Telecom.png'> ";
+		}
+		else if(sim_isp == "中国移动" || sim_isp == "China Mobile"){
+			target_isp="<img class='plmn_icon' src='/luci-static/nradio/images/Mobile.png'> ";
+		}
+		else if(sim_isp == "中国广电" || sim_isp == "China Broadnet"){
+			target_isp="<img class='plmn_icon' src='/luci-static/nradio/images/Broadnet.png'> ";
+		}
+		else if(sim_isp == "AT&T"){
+			target_isp="<img class='plmn_icon' src='/luci-static/nradio/images/ATT.png'> ";
+		}
+		else if(sim_isp == "Verizon"){
+			target_isp="<img class='plmn_icon' src='/luci-static/nradio/images/Verizon.png'> ";
+		}
+		else if(sim_isp == "T-Mobile"){
+			target_isp="<img class='plmn_icon' src='/luci-static/nradio/images/TMobile.png'> ";
+		}
+		else {
+			target_isp="<img class='plmn_icon' src='/luci-static/nradio/images/common.png'> ";
+		}
+		target_isp+=sim_isp;
+	}
+	else{
+		target_isp="<img class='plmn_icon' src='/luci-static/nradio/images/common.png'> ";
+		target_isp+=isp?isp:"";
+	}
+	return target_isp;
+}
+function check_5ga(sim_isp,mode,bandcount,bandcombie){
+	if(mode != "5G" )
+		return 0;
+	if(sim_isp == "中国联通" || sim_isp == "China Unicom" || sim_isp == "中国电信" || sim_isp == "China Telecom"){
+		if(bandcount>=3)
+			return 1;
+		if(bandcombie>=200)
+			return 1;
+	}
+	else if(sim_isp == "中国移动" || sim_isp == "China Mobile" || sim_isp == "中国广电" || sim_isp == "China Broadnet"){
+		if(bandcount>=3)
+			return 1;
+	}
+	return 0
+}
+function wired_show(arcProgress,boxid,count,max_client){
+	var terminal_s = 0;
+	var terminal_l = max_client;
+	var size_percent = parseFloat($("#"+boxid).data("size")/300);
+	if(isNumeric(count))
+		count = parseInt(count);
+	else
+		count = terminal_s;
+
+	var terminal_percent = (count>=terminal_l)?1:(count - terminal_s)/(terminal_l - terminal_s);
+	var terminal_increase =  ((terminal_l - terminal_s)/8)
+	var target_info = null;
+	var text_color = nrTheme.defaultText;
+	var customTextInfo =[];
+	var terminal_info = [
+		{min:(terminal_increase*4+terminal_s),max:terminal_l,warg:"<%:StatusWifiLoadWorse%>",noting:"<%:WifiSuggestHelp5%>",color:nrTheme.danger,base:99,enbase:1,zhx1:155,enx1:155,zhx2:153,zhx3:142,enx2:140,enx3:170},
+		{min:(terminal_increase*3+terminal_s),max:(terminal_increase*4+terminal_s),warg:"<%:StatusWifiLoadPoor%>",noting:"<%:WifiSuggestHelp4%>",color:nrTheme.warning,base:90,enbase:10,zhx1:155,enx1:155,zhx2:153,zhx3:142,enx2:140,enx3:170},
+		{min:(terminal_increase*2+terminal_s),max:(terminal_increase*3+terminal_s),warg:"<%:StatusWifiLoadNotBad%>",noting:"<%:WifiSuggestHelp3%>",color:nrTheme.accent,base:75,enbase:25,zhx1:155,enx1:155,zhx2:153,zhx3:142,enx2:140,enx3:170},
+		{min:(terminal_increase+terminal_s),max:(terminal_increase*2+terminal_s),warg:"<%:StatusWifiLoadGood%>",noting:"<%:WifiSuggestHelp2%>",color:nrTheme.success,base:50,enbase:50,zhx1:155,enx1:155,zhx2:153,zhx3:142,enx2:140,enx3:170},
+		{min:terminal_s,max:(terminal_increase+terminal_s),warg:"<%:StatusWifiLoadBest%>",noting:"<%:WifiSuggestHelp1%>",color:nrTheme.success,base:25,enbase:75,zhx1:155,enx1:155,zhx2:154,zhx3:142,enx2:140,enx3:170}
+	];
+
+	$("#"+boxid).next("div").css("display","none");
+	$("#"+boxid).next("div").html('');
+	for(i=0;i<terminal_info.length;i++){
+		if((count > terminal_info[i].min && count <= terminal_info[i].max)){
+			target_info = terminal_info[i];
+		}
+	}
+	if(count == 0){
+		target_info = terminal_info[terminal_info.length-1];
+		target_info.base=1;
+		target_info.enbase=99;
+	}
+	else if(count > terminal_l){
+		target_info = terminal_info[0];
+	}
+	if(target_info){
+		if("<%=luci.i18n.context.lang%>" == "en" ){
+			if(target_info.enbase)
+				target_info.percent = target_info.enbase+"%";
+			target_info.x1=target_info.enx1;
+			target_info.x2=target_info.enx2;
+			target_info.x3=target_info.enx3;
+		}
+		else{
+			if(target_info.base)
+				target_info.percent = target_info.base+"%";
+			target_info.x1=target_info.zhx1;
+			target_info.x2=target_info.zhx2;
+			target_info.x3=target_info.zhx3;
+		}
+	}
+	if(!target_info.percent)
+		target_info.percent="";
+	text_color = target_info.color;
+	customTextInfo =  [{
+		text: "<%:StatusWifiLoadUnit%>",
+		size: "12px",
+		color: nrTheme.text,
+		x: 220*size_percent,
+		y: 120*size_percent
+	},
+	{
+		text: target_info.warg,
+		size: "14px",
+		color: nrTheme.text,
+		x: target_info.x1*size_percent,
+		y: 160*size_percent
+	},
+	{
+		text: target_info.noting,
+		size: "12px",
+		color: nrTheme.muted,
+		x: target_info.x2*size_percent,
+		y: 200*size_percent
+	},	
+	{
+		text:target_info.percent,
+		size: "12px",
+		color: target_info.color,
+		x: target_info.x3*size_percent,
+		y: 200*size_percent
+	},						
+	{
+		text: terminal_s,
+		size: "14px",
+		color: nrTheme.text,
+		x: 80*size_percent,
+		y: 245*size_percent
+	}, {
+		text: terminal_l,
+		size: "14px",
+		color: nrTheme.text,
+		x: 220*size_percent,
+		y: 245*size_percent
+	}];	
+
+	var progress_info = {
+		progress: terminal_percent,
+		text: count.toString(),
+		size:$("#"+boxid).data("size"),
+		customText:customTextInfo,
+		textStyle: {
+			y: 110*size_percent,
+			x: 150*size_percent,
+			size: (60*size_percent).toString(),
+			color: text_color,
+			font:"PingFangSC-Regular, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, WenQuanYi Micro Hei, Arial,“宋体”, sans-serif"
+		},
+		lineCap:"square",
+		thickness:40*size_percent,
+		fillThickness:10*size_percent,
+		emptyColor: nrTheme.ring,
+		fillColor:text_color,
+		observer: function(t, e) {
+			//console.log("observer:", t, e)
+		},
+		animationEnd: function(t) {
+			//console.log("animationEnd", t)
+		}
+	};
+	if(arcProgress){
+		progress_info.speed = -50;
+		progress_info.animation = 1000;
+		arcProgress.updateProgress(progress_info);
+	}
+	else{
+		progress_info.el='#'+boxid;
+		arcProgress = new ArcProgress(progress_info);
+	}
+	reset_canvas($("#"+boxid));
+	return arcProgress;
+}
+
+function signal_show(arcProgress,boxid,registerMode,signal,nocard,isSlot){
+	var signal_s = -156;
+	var signal_l = -31;
+	var default_size = 300;
+	var size_percent = parseFloat($("#"+boxid).data("size")/300);
+
+	if(registerMode == "4G"){
+		signal_s = -140;
+		signal_l = -44;
+		default_size = 300;
+	}
+	else if	(registerMode == "3G"){
+		signal_s = -120;
+		signal_l = -25;
+	}
+
+	if(isNumeric(signal))
+		signal = parseInt(signal);
+	else
+		signal = signal_s;
+	if(!signal)
+		signal = signal_s;
+	if(signal>signal_l)
+		signal= signal_l;
+	else if(signal<signal_s)
+		signal = signal_s;
+
+	var signal_percent =(signal - signal_s)/(signal_l - signal_s);
+	var target_info = null;
+	var text_color = nrTheme.defaultText;
+	var customTextInfo =[];
+	var signal_info = [
+		{min:signal_s,max:-110,warg:"<%:SignalWorse%>",noting:"<%:DeviceSuggestHelp1%>",color:nrTheme.danger,zhx1:135,zhx2:186,enx1:108,enx2:180,zhx3:150,zhx4:175,enx3:150,enx4:160},
+		{min:-110,max:-100,warg:"<%:SignalPoor%>",noting:"<%:DeviceSuggestHelp2%>",color:nrTheme.warning,zhx1:135,zhx2:186,enx1:123,enx2:190,zhx3:150,zhx4:175,enx3:150,enx4:160},
+		{min:-100,max:-90,warg:"<%:Signalnotbad%>",noting:"<%:DeviceSuggestHelp3%>",color:nrTheme.warning,base:40,zhx1:135,zhx2:186,enx1:123,enx2:190,zhx3:150,zhx4:175,enx3:150,enx4:160},
+		{min:-90,max:-80,warg:"<%:Signalgood%>",noting:"<%:DeviceSuggestHelp4%>",color:nrTheme.accent,base:60,zhx1:135,zhx2:186,enx1:123,enx2:190,zhx3:150,zhx4:175,enx3:150,enx4:160},
+		{min:-80,max:-60,warg:"<%:Signalbetter%>",noting:"<%:DeviceSuggestHelp5%>",color:nrTheme.success,base:80,zhx1:135,zhx2:186,enx1:108,enx2:180,zhx3:150,zhx4:175,enx3:150,enx4:160},
+		{min:-60,max:signal_l,warg:"<%:Signalbest%>",noting:"<%:DeviceSuggestHelp6%>",color:nrTheme.success,base:94,zhx1:135,zhx2:186,enx1:123,enx2:190,zhx3:150,zhx4:175,enx3:150,enx4:160}
+	];
+
+	if (nocard){
+
+		if (isSlot){
+			
+			customTextInfo =  [
+			{
+				text: "<%:DeviceNoSim%>",
+				size: "12px",
+				color: nrTheme.muted,
+				x: 155*size_percent,
+				y: 160*size_percent
+			},
+			{
+				text: "<%:DeviceSimHelp%>",
+				size: "12px",
+				color: nrTheme.muted,
+				x: 150*size_percent,
+				y: 180*size_percent
+			},
+			{
+				text: signal_s,
+				size: "14px",
+				color: nrTheme.text,
+				x: 80*size_percent,
+				y: 245*size_percent
+			}, 
+			{
+				text: signal_l,
+				size: "14px",
+				color: nrTheme.text,
+				x: 220*size_percent,
+				y: 245*size_percent
+			
+			}];
+		}
+		else{
+			customTextInfo =  [
+			{
+				text: "<%:DeviceNoSim1%>",
+				size: "12px",
+				color: nrTheme.muted,
+				x: 155*size_percent,
+				y: 160*size_percent
+			},
+			{
+				text: "<%:DeviceSimHelp1%>",
+				size: "12px",
+				color: nrTheme.muted,
+				x: 155*size_percent,
+				y: 180*size_percent
+			},
+			{
+				text: signal_s,
+				size: "14px",
+				color: nrTheme.text,
+				x: 80*size_percent,
+				y: 245*size_percent
+			},
+			{
+				text: signal_l,
+				size: "14px",
+				color: nrTheme.text,
+				x: 220*size_percent,
+				y: 245*size_percent
+			}
+			];
+		}
+		signal="";
+		target_info = {};
+		signal_percent = 0;
+		$("#"+boxid).next("div").html('<i class="far fa-nradio-nocard fa-3x" ></i>');
+		$("#"+boxid).next("div").css("display","block");
+	}
+	else{
+		if ((signal != signal_s) && 
+			((registerMode == "5G") || (registerMode == "4G") 
+			|| (registerMode == "3G") ||(registerMode == "2G"))){
+			$("#"+boxid).next("div").css("display","none");
+			$("#"+boxid).next("div").html('');
+			for(i=0;i<signal_info.length;i++){
+				if((signal >= signal_info[i].min && signal < signal_info[i].max) || (signal == -44)){
+					target_info = signal_info[i];
+					if(target_info.base)
+						target_info.percent = signal-target_info.max+target_info.base+"%";
+					if("<%=luci.i18n.context.lang%>" == "en" ){
+						target_info.x1=target_info.enx1;
+						target_info.x2=target_info.enx2;
+						target_info.x3=target_info.enx3;
+						target_info.x4=target_info.enx4;
+					}
+					else{
+						target_info.x1=target_info.zhx1;
+						target_info.x2=target_info.zhx2;
+						target_info.x3=target_info.zhx3;
+						target_info.x4=target_info.zhx4;
+					}
+				}
+			}
+			if(!target_info.percent)
+				target_info.percent="";
+			text_color = target_info.color;
+			customTextInfo =  [{
+				text: "dBm",
+				size: "12px",
+				color: nrTheme.text,
+				x: 220*size_percent,
+				y: 120*size_percent
+			},
+			{
+				text: "<%:DeviceSignal%>",
+				size: "14",
+				color: nrTheme.text,
+				x: target_info.x1*size_percent,
+				y: 160*size_percent
+			}
+			,{
+				text: target_info.warg,
+				size: "14",
+				color: target_info.color,
+				x: target_info.x2*size_percent,
+				y: 160*size_percent
+			},
+			{
+				text: target_info.noting,
+				size: "12",
+				color: nrTheme.muted,
+				x: target_info.x3*size_percent,
+				y: 200*size_percent
+			},	
+			{
+				text:target_info.percent,
+				size: "12px",
+				color: target_info.color,
+				x: target_info.x4*size_percent,
+				y: 200*size_percent
+			},						
+			{
+				text: signal_s,
+				size: "14px",
+				color: nrTheme.text,
+				x: 80*size_percent,
+				y: 245*size_percent
+			}, {
+				text: signal_l,
+				size: "14px",
+				color: nrTheme.text,
+				x: 220*size_percent,
+				y: 245*size_percent
+			}];
+		
+		}
+		else{
+			customTextInfo =  [
+			{
+				text: "<%:DeviceSimNoNet%>",
+				size: "12px",
+				color: nrTheme.muted,
+				x: 155*size_percent,
+				y: 160*size_percent
+			},
+			{
+				text: "<%:DeviceSimHelp2%>",
+				size: "12px",
+				color: nrTheme.muted,
+				x: 155*size_percent,
+				y: 180*size_percent
+			},
+			{
+				text: signal_s,
+				size: "14px",
+				color: nrTheme.text,
+				x: 80*size_percent,
+				y: 245*size_percent
+			},
+			{
+				text: signal_l,
+				size: "14px",
+				color: nrTheme.text,
+				x: 220*size_percent,
+				y: 245*size_percent
+			}
+			];
+		
+			signal="";
+			target_info = {};
+			signal_percent = 0;
+			$("#"+boxid).next("div").html('<i class="far fa-nradio-nosignal fa-3x" ></i>');
+			$("#"+boxid).next("div").css("display","block");
+		}
+	}
+
+	var progress_info = {
+		progress: signal_percent,
+		text: signal.toString(),
+		size:$("#"+boxid).data("size"),
+		customText:customTextInfo,
+		textStyle: {
+			y: 110*size_percent,
+			x: 140*size_percent,
+			size: (60*size_percent).toString(),
+			color: text_color,
+			font:"PingFangSC-Regular, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, WenQuanYi Micro Hei, Arial,“宋体”, sans-serif"
+		},
+		lineCap:"square",
+		thickness:40*size_percent,
+		fillThickness:10*size_percent,
+		emptyColor: nrTheme.ring,
+		fillColor:text_color,
+		observer: function(t, e) {
+			//console.log("observer:", t, e)
+		},
+		animationEnd: function(t) {
+			//console.log("animationEnd", t)
+		}
+	};
+	if(arcProgress){
+		progress_info.speed = -50;
+		progress_info.animation = 1000;
+		arcProgress.updateProgress(progress_info);
+	}
+	else{
+		progress_info.el='#'+boxid;
+		arcProgress = new ArcProgress(progress_info);
+	}
+	reset_canvas($("#"+boxid));
+	var obj_height = $("#"+boxid).height()/2;
+	if(!obj_height){
+		obj_height=$("#"+boxid).children('canvas').width()/2;
+	}
+	$("#"+boxid).next("div").css("top",0-(obj_height+$("#"+boxid).next("div").height()));
+	return arcProgress;
+}	
+
+function wan_show(arcProgress,boxid,isLinked,isConnected){
+	var target_info = null;
+	var text_color = nrTheme.defaultText;
+	var customTextInfo =[];
+	var size_percent = parseFloat($("#"+boxid).data("size")/300);
+	if (isLinked){
+
+		if (isConnected){
+			customTextInfo =  [
+			{
+				text: "<%:DeviceConnected%>",
+				size: "12px",
+				color: nrTheme.muted,
+				x: 150*size_percent,
+				y: 180*size_percent
+			}
+			];
+			text_color = nrTheme.success;
+			signal_percent = 1;
+			$("#"+boxid).next("div").html('<i class="far fa-nradio-linked fa-4x connected_color" ></i>');
+		}
+		else{
+			customTextInfo =  [
+			{
+				text: "<%:DeviceNoConnected%>",
+				size: "12px",
+				color: nrTheme.muted,
+				x: 150*size_percent,
+				y: 180*size_percent
+			}
+			];
+			signal_percent = 0;
+			$("#"+boxid).next("div").html('<i class="far fa-nradio-linked fa-4x connected_color" ></i>');
+		}
+
+		signal="";
+		target_info = {};		
+		$("#"+boxid).next("div").css("display","block");
+	}
+	else{
+		customTextInfo =  [
+		{
+			text: "<%:Unconnected%>",
+			size: "12px",
+			color: nrTheme.muted,
+			x: 150*size_percent,
+			y: 180*size_percent
+		}
+		];
+		signal_percent = 0;
+		$("#"+boxid).next("div").html('<i class="far fa-nradio-unlink fa-4x unlinked_color" ></i>');
+		signal="";
+		target_info = {};		
+		$("#"+boxid).next("div").css("display","block");
+	}
+	var progress_info = {
+		progress: signal_percent,
+		size:$("#"+boxid).data("size"),
+		text:"",
+		customText:customTextInfo,
+		lineCap:"square",
+		thickness:40*size_percent,
+		fillThickness:10*size_percent,
+		emptyColor: nrTheme.ring,
+		fillColor:text_color,
+		observer: function(t, e) {
+			//console.log("observer:", t, e)
+		},
+		animationEnd: function(t) {
+			//console.log("animationEnd", t)
+		}
+	};
+	if(arcProgress){
+		progress_info.speed = -50;
+		progress_info.animation = 1000;
+		arcProgress.updateProgress(progress_info);
+	}
+	else{
+		progress_info.el='#'+boxid;
+		arcProgress = new ArcProgress(progress_info);
+	}
+
+	reset_canvas($("#"+boxid));
+	var obj_height = $("#"+boxid).height()/2;
+	if(!obj_height){
+		obj_height=$("#"+boxid).children('canvas').width()/2;
+	}	
+	$("#"+boxid).next("div").css("top",0-(obj_height+$("#"+boxid).next("div").height()));
+	return arcProgress;
+}
+function canvas_val_show(arcProgress,boxid,count,max_val,range_arr,warg_lang_arr,unit){
+	var val_s = 0;
+	var val_l = max_val;
+
+	if(isNumeric(count))
+		count = parseInt(count);
+	else
+		count = val_s;
+
+	var val_percent = (count>=val_l)?1:(count - val_s)/(val_l - val_s);
+	var val_increase =  ((val_l - val_s)/8)
+	var target_info = null;
+	var text_color = nrTheme.defaultText;
+	var customTextInfo =[];
+	var val_info = [
+		{min:range_arr[3],max:val_l,warg:warg_lang_arr[4],color:nrTheme.danger,zhx1:65,enx1:67},
+		{min:range_arr[2],max:range_arr[3],warg:warg_lang_arr[3],color:nrTheme.warning,zhx1:65,enx1:65},
+		{min:range_arr[1],max:range_arr[2],warg:warg_lang_arr[2],color:nrTheme.accent,zhx1:65,enx1:65},
+		{min:range_arr[0],max:range_arr[1],warg:warg_lang_arr[1],color:nrTheme.success,zhx1:65,enx1:65},
+		{min:val_s,max:range_arr[0],warg:warg_lang_arr[0],color:nrTheme.success,zhx1:65,enx1:65}
+	];
+
+	$("#"+boxid).next("div").css("display","none");
+	$("#"+boxid).next("div").html('');
+	for(i=0;i<val_info.length;i++){
+		if((count > val_info[i].min && count <= val_info[i].max)){
+			target_info = val_info[i];
+		}
+	}
+	if(count == 0){
+		target_info = val_info[val_info.length-1];
+		if(unit=="℃"){
+			target_info.warg="-";
+			unit="";
+			count="";
+		}
+	}
+	else if(count > val_l){
+		target_info = val_info[0];
+	}
+	if(target_info){
+		if("<%=luci.i18n.context.lang%>" == "en" ){
+			target_info.x1=target_info.enx1;
+		}
+		else{
+			target_info.x1=target_info.zhx1;
+		}
+	}
+	text_color = target_info.color;
+	customTextInfo =  [{
+		text: unit,
+		size: "12px",
+		color: text_color,
+		x: 92,
+		y: 56
+	},
+	{
+		text: target_info.warg,
+		size: "12px",
+		color: nrTheme.text,
+		x: target_info.x1,
+		y: 80
+	},					
+	{
+		text: val_s,
+		size: "12px",
+		color: nrTheme.muted,
+		x: 40,
+		y: 103
+	}, {
+		text: val_l,
+		size: "12px",
+		color: nrTheme.muted,
+		x: 82,
+		y: 103
+	}];	
+	var size_box =  [130,20,5];
+	var progress_info = {
+		progress: val_percent,
+		text: count.toString(),
+		size:size_box[0],
+		customText:customTextInfo,
+		textStyle: {
+			y: 60,
+			x: 65,
+			size: "25",
+			color: text_color,
+			font:"PingFangSC-Regular, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, WenQuanYi Micro Hei, Arial,“宋体”, sans-serif"
+		},
+		lineCap:"square",
+		thickness:size_box[1],
+		fillThickness:size_box[2],
+		emptyColor: nrTheme.ring,
+		fillColor:text_color,
+		observer: function(t, e) {
+			//console.log("observer:", t, e)
+		},
+		animationEnd: function(t) {
+			//console.log("animationEnd", t)
+		}
+	};
+	if(arcProgress){
+		progress_info.speed = -50;
+		progress_info.animation = 1000;
+		arcProgress.updateProgress(progress_info);
+	}
+	else{
+		progress_info.el='#'+boxid;
+		arcProgress = new ArcProgress(progress_info);
+	}
+
+	reset_canvas($("#"+boxid));
+	return arcProgress;
+}
+function get_wank_link(data,nbcpe_work){
+	var wan_linked = 0;
+	var wan_count = 0;
+	if (!data){
+		return wan_linked;
+	}
+
+	$.each(data, function (i, db) {
+		if (db.mode == 1)
+			wan_count++;
+	});
+	var wan_index = 0;
+	$.each(data, function(i, db){
+
+		if (db.mode == 1) {
+			eth_label = "WAN";
+			wan_index++;
+			if (nbcpe_work && wan_index == wan_count) { 
+				eth_label = "NBCPE";
+			}
+			else if(db.status == 0 && parseInt(db.speed) > 0){
+				wan_linked = 1;
+			}
+		}
+		
+	});
+	return wan_linked;
+}
+
+
+function match_priority(value,match_key){
+	var key_info = "";
+	for (key in net_type_list){
+		if(net_type_list[key] == value){
+			key_info=key;
+			break;
+		}
+	}
+	if(key_info.length && (key_info.indexOf(match_key) != -1 )){
+		return 1;
+	}
+	return 0;
+}
+
+function get_priority(value){
+	var key_info = "";
+	for (key in net_type_list){
+		if(net_type_list[key] == value){
+			key_info=key;
+			break;
+		}
+	}
+
+	return key_info;
+}
+function get_cpe_data(name,cpe){
+	for (var i=0;i<cpe.length;i++){
+		var db = cpe[i];
+		if(db && (db.name == name)){
+			return db;
+		}
+	}
+	return null
+}
+function format_cpu_val(value){	
+	if(value<=50){
+		return "<%:CPUStatusIdle%>";
+	}
+	else if(value<=75){
+		return "<%:CPUStatusLight%>";
+	}
+	else if(value<=85){
+		return "<%:CPUStatusNormal%>";
+	}
+	else if(value<=95){
+		return "<%:CPUStatusBusy%>";
+	}
+	else{
+		return "<%:CPUStatusCritical%>";
+	}
+}
+
+function format_mem_val(value){
+	if(value<=50){
+		return "<%:MemStatusPlenty%>";
+	}
+	else if(value<=75){
+		return "<%:MemStatusEnough%>";
+	}
+	else if(value<=85){
+		return "<%:MemStatusNormal%>";
+	}
+	else if(value<=95){
+		return "<%:MemStatusTight%>";
+	}
+	else{
+		return "<%:MemStatusCritical%>";
+	}
+}
+function format_temp_des(value){
+	if(value.length == 0)
+		return "";
+	if(value<=60){
+		return "<%:ModelTempGreat%>";
+	}
+	else if(value<=75){
+		return "<%:ModelTempFine%>";
+	}
+	else if(value<=85){
+		return "<%:ModelTempHigh%>";
+	}
+	else if(value<=95){
+		return "<%:ModelTempHot%>";
+	}
+	else{
+		return "<%:ModelTempAlert%>";
+	}
+}
+
+function format_temp_val(value){
+	if(!value || value == "" )
+		return "-";
+	var data = parseInt(value);
+	if(data <=0 || data >300)
+		return "-";
+	return data+"℃";
+}
+function format_val_box(kind,name,type,class_name,mobile){
+	var html="";
+	var canvas_class = "hidden-sm hidden-xs hidden-md";
+	var canvas_mobile = "";
+	if(mobile){
+		canvas_class="";
+		canvas_mobile = "style='margin-top:-10px'";
+	}
+	html+="\
+		<div class='"+class_name+" "+canvas_class+"'>\
+			<div class='text-center'>\
+				<div id='"+kind+"progress-container-"+name+type+"' data-size=130 "+canvas_mobile+" class='text-center'>\
+				</div>\
+				<div class='progress-bg' style='display: none;' class='text-center'>\
+				</div>\
+			</div>	\
+		</div>";
+	return html;
+}
+function format_wans_speedflow_box(name,class_name,cpe_data,pre_label_info,type,mobile){
+	var html="";
+	var text_class = "hidden-lg";
+	var unit_class = "hidden-sm hidden-xs hidden-md";
+	var traffic_class = "col-sm-3 col-xs-3 col-md-3 col-lg-6";
+	if(mobile){
+		text_class="hide";
+		unit_class="";
+		traffic_class = "col-sm-6 col-xs-6 col-md-6 col-lg-6";
+	}
+
+	html+="\
+		<div "+cpe_data+" class='box_wans_"+name+" "+class_name+" panel stand_net_box panel-info internet-panel pc_box pc_box1'>\
+			<div class='panel-heading'>\
+				<div class='row'>\
+					<div class='col-sm-12 col-xs-12 text-left'><span class='pre_info'>"+pre_label_info+"</span><span class='rtemp_label'></span></div>\
+				</div>\
+			</div>\
+			<div class='panel-body info-box'>\
+				<div class='row'>\
+					<div class='col-sm-12 .col-xs-12 text-left'>\
+						<div class='cpe_box row no_padding "+text_class+"'>\
+							<div class='col-sm-12 col-xs-12 text-center no_padding speedflow_box'>\
+								<div class='speedflow_notebox2 temp_des'></div>\
+							</div>\
+						</div>\
+						<div class='cpe_box row no_padding "+text_class+"'>\
+							<div class='col-sm-12 col-xs-12 text-center model_temp'>-\
+							</div>\
+						</div>";
+	html+=format_val_box("temp",name,type,"cpe_box",mobile);
+	html+="\
+						<div class='wan_box row no_padding "+text_class+"'>\
+							<div class='col-sm-12 col-xs-12 text-center no_padding speedflow_box'>\
+								<div class='speedflow_notebox2 cpu_des'></div>\
+							</div>\
+						</div>\
+						<div class='wan_box row no_padding "+text_class+"'>\
+							<div class='col-sm-12 col-xs-12 text-center cpu_data'>-\
+							</div>\
+						</div>";
+	html+=format_val_box("cpu",name,type,"wan_box",mobile);	
+	html+="\
+					</div>\
+				</div>\
+			</div>\
+		</div>\
+		<div "+cpe_data+" class='box_wans_"+name+" "+class_name+" panel stand_net_box panel-info internet-panel pc_box pc_box2'>\
+			<div class='panel-heading'>\
+				<div class='row'>\
+					<div class='cpe_box col-sm-12 col-xs-12 text-left'><span class='pre_info'>"+pre_label_info+"</span><%:SystemUsage%></div>\
+					<div class='wan_box col-sm-12 col-xs-12 text-left no_paddingLeft'><span class='pre_info'>"+pre_label_info+"</span><%:Memusage%></div>\
+				</div>\
+			</div>\
+			<div class='panel-body info-box'>\
+				<div class='row'>\
+					<div class='col-sm-12 .col-xs-12 text-left'>\
+						<div class='cpe_box row no_padding'>\
+							<div class='col-sm-6 col-xs-6 text-center no_padding speedflow_box'>\
+								<div class='cpu_img'></div>\
+								<div class='speedflow_notebox'><%:SystemCPU%></div>\
+							</div>\
+							<div class='col-sm-6 col-xs-6 text-center no_padding speedflow_box'>\
+								<div class='mem_img'></div>\
+								<div class='speedflow_notebox'><%:SystemMem%></div>\
+							</div>\
+						</div>\
+						<div class='cpe_box row no_padding'>\
+							<div class='col-sm-6 col-xs-6 text-center cpu_data'>-\
+							</div>\
+							<div class='col-sm-6 col-xs-6 text-center mem_data'>-\
+							</div>\
+						</div>\
+						<div class='wan_box row no_padding "+text_class+"'>\
+							<div class='col-sm-12 col-xs-12 text-center no_padding speedflow_box'>\
+								<div class='speedflow_notebox2 mem_des'></div>\
+							</div>\
+						</div>\
+						<div class='wan_box row no_padding "+text_class+"'>\
+							<div class='col-sm-12 col-xs-12 text-center mem_data'>-\
+							</div>\
+						</div>";
+	html+=format_val_box("mem",name,type,"wan_box",mobile);
+	html+="\
+					</div>\
+				</div>\
+			</div>\
+		</div>\
+		<div "+cpe_data+" class='box_wans_"+name+" "+class_name+" panel stand_net_box panel-info internet-panel pc_box pc_box3'>\
+			<div class='panel-heading'>\
+				<div class='row'>\
+					<div class='col-sm-12 col-xs-12 text-left'><span class='pre_info'>"+pre_label_info+"</span><%:StatusSpeed%></div>\
+				</div>\
+			</div>\
+			<div class='panel-body info-box'>\
+				<div class='row'>\
+					<div class='col-sm-12 .col-xs-12 text-left'>\
+						<div class='row no_padding'>\
+							<div class='col-sm-6 col-xs-6 text-center no_padding speedflow_box'>\
+								<div class='speedup_img'></div>\
+								<div class='speedflow_notebox'><%:StatusSpeedUp%></div>\
+							</div>\
+							<div class='col-sm-6 col-xs-6 text-center no_padding speedflow_box'>\
+								<div class='speeddown_img'></div>\
+								<div class='speedflow_notebox'><%:StatusSpeedDown%></div>\
+							</div>\
+						</div>\
+						<div class='row no_padding'>\
+							<div class='"+traffic_class+" text-center speedup_data'>\
+							</div>\
+							<div class='col-sm-3 col-xs-3 col-md-3 "+text_class+" text-center speedup_unit'>\
+							</div>\
+							<div class='"+traffic_class+" text-center speeddown_data'>\
+							</div>\
+							<div class='col-sm-3 col-xs-3 col-md-3 "+text_class+" text-center speeddown_unit'>\
+							</div>\
+						</div>\
+						<div class='row no_padding "+unit_class+"'>\
+							<div class='col-sm-6 col-xs-6 text-center speedup_unit'>\
+							</div>\
+							<div class='col-sm-6 col-xs-6 text-center speeddown_unit'>\
+							</div>\
+						</div>\
+					</div>\
+				</div>\
+			</div>\
+		</div>\
+			<div "+cpe_data+"  class='box_wans_"+name+" "+class_name+" panel panel-info stand_net_box internet-panel pc_box pc_box4'>\
+				<div class='panel-heading'>\
+					<div class='row'>\
+						<div class='col-sm-12 col-xs-12 text-left'><span class='pre_info'>"+pre_label_info+"</span><%:StatusFlow%></div>\
+					</div>\
+				</div>\
+				<div class='panel-body info-box'>\
+					<div class='row'>\
+						<div class='col-sm-12 .col-xs-12 text-left'>\
+							<div class='cpe_box row no_padding'>\
+								<div class='col-sm-6 col-xs-6 text-center no_padding speedflow_box'>\
+									<div class='flowtotal_img'></div>\
+									<div class='speedflow_notebox'><%:StatusFlowTotal%></div>\
+								</div>\
+								<div class='cpe_box col-sm-6 col-xs-6 text-center no_padding speedflow_box'>\
+									<div class='flowmonth_img'></div>\
+									<div class='speedflow_notebox'><%:StatusFlowMon%></div>\
+								</div>\
+							</div>\
+							<div class='wan_box row no_padding'>\
+								<div class='col-sm-6 col-xs-6 text-center no_padding speedflow_box'>\
+									<div class='flowup_img'></div>\
+									<div class='speedflow_notebox'><%:StatusFlowUp%></div>\
+								</div>\
+								<div class='wan_box col-sm-6 col-xs-6 text-center no_padding speedflow_box'>\
+									<div class='flowdown_img'></div>\
+									<div class='speedflow_notebox'><%:StatusFlowDown%></div>\
+								</div>\
+							</div>\
+							<div class='row no_padding'>\
+								<div class='"+traffic_class+" text-center flowup_data'>\
+								</div>\
+								<div class='col-sm-3 col-xs-3 col-md-3 "+text_class+" text-center flowup_unit'>\
+								</div>\
+								<div class='"+traffic_class+" text-center flowdown_data'>\
+								</div>\
+								<div class='col-sm-3 col-xs-3 col-md-3 "+text_class+" text-center flowdown_unit'>\
+								</div>\
+							</div>\
+							<div class='row no_padding "+unit_class+"'>\
+								<div class='col-sm-6 col-xs-6 text-center flowup_unit'>\
+								</div>\
+								<div class='col-sm-6 col-xs-6 text-center flowdown_unit'>\
+								</div>\
+							</div>\
+						</div>\
+					</div>\
+				</div>\
+			</div>";
+		
+	return html;
+}
+
+function speed_show(wan_item,upload_bytes,download_bytes,speed_interval){
+	if(!wan_item)
+		return;
+	var cur_upload = (upload_bytes == undefined)?0:parseInt(upload_bytes);
+	var cur_download = (download_bytes == undefined)?0:parseInt(download_bytes);
+	var bytes_data = "";
+	if (wan_item.ulbytes == 0 || wan_item.ulbytes >= cur_upload) {
+		bytes_data = nradio_rate_format(0).split(" ");
+	}
+	else {
+		bytes_data = nradio_rate_format((cur_upload-wan_item.ulbytes)*8/speed_interval).split(" ");
+	}
+	$(".box_wans_"+wan_item.name+" .speedup_data").html(bytes_data[0]);
+	$(".box_wans_"+wan_item.name+" .speedup_unit").html(bytes_data[1]?bytes_data[1]:"bps");
+
+	if (wan_item.dlbytes == 0 || wan_item.dlbytes >= cur_download) {
+		bytes_data = nradio_rate_format(0).split(" ");
+	}
+	else {
+		bytes_data = nradio_rate_format((cur_download-wan_item.dlbytes)*8/speed_interval).split(" ");
+	}
+
+	$(".box_wans_"+wan_item.name+" .speeddown_data").html(bytes_data[0]);
+	$(".box_wans_"+wan_item.name+" .speeddown_unit").html(bytes_data[1]?bytes_data[1]:"bps");
+
+	wan_item.ulbytes = cur_upload;
+	wan_item.dlbytes = cur_download;
+}
+
+function get_speed_data(){
+	var data_name = "";
+	var sim_id = 0;
+	for(var i=0;i<wans_data.length;i++){
+		 if(wans_data[i].disabled != "1"){
+			if (data_name.length)
+				data_name+=",";
+			data_name +=wans_data[i].name;
+		 }
+	}
+	if(!data_name.length)
+		return;
+
+	$.getJSON('<%=url("nradio/status/speed")%>/'+data_name, function(data) {
+		if(data && data.result && data.result.list){
+			for(var i = 0;i<data.result.list.length;i++){
+				var status = data.result.list[i];
+				var wan_item = get_wans_item(status.name,wans_data);
+				speed_show(wan_item,status.upload,status.download,speed_interval);
+			}
+		}
+	});
+}
+
+function reset_wans_item(wans_data){
+	for(var i=0;i<wans_data.length;i++){
+		 wans_data[i].disabled = "1";
+	}
+	return null;
+}
+
+function reset_box_speed(wans_data){
+	var show_count = 0;
+	var item = null;
+	var index = 0;
+	for(var i=0;i<wans_data.length;i++){
+		 if(wans_data[i].disabled != "1"){
+			speed_show(wans_data[i],0,0,speed_interval);
+		 }
+	}
+}
+function get_wans_item(name,wans_data){
+	for(var i=0;i<wans_data.length;i++){
+		if(!name){
+			return wans_data[0];
+		}
+		else{
+			if(name == wans_data[i].name)
+				return wans_data[i];
+		}
+	}
+	return null;
+}
+
+function flow_show(wan_item,upload_bytes,download_bytes){
+	if(!wan_item)
+		return;
+	var cur_upload = (upload_bytes == undefined)?0:parseInt(upload_bytes);
+	var cur_download = (download_bytes == undefined)?0:parseInt(download_bytes);
+	var bytes_data = nradio_byte_format(parseInt(cur_upload),"","B",1).split(" ");
+
+	$(".box_wans_"+wan_item.name+" .flowup_data").html(bytes_data[0]);
+	$(".box_wans_"+wan_item.name+" .flowup_unit").html(bytes_data[1]?bytes_data[1]:"B");
+
+	bytes_data = nradio_byte_format(parseInt(cur_download),"","B",1).split(" ");
+	$(".box_wans_"+wan_item.name+" .flowdown_data").html(bytes_data[0]);
+	$(".box_wans_"+wan_item.name+" .flowdown_unit").html(bytes_data[1]?bytes_data[1]:"B");
+
+}
+</script>

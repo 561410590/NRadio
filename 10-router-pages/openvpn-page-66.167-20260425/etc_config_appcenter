@@ -1,0 +1,234 @@
+
+config rule 'config'
+	option md5 '912998772c94425ebe44bad6d03dea40'
+	option timestamp '1776529117934'
+
+config package
+	option name 'FileBrowser'
+	option version '1.0.3'
+	option icon 'filebrowser.png'
+	option des '页面文件管理系统，默认账号/密码 admin/admin'
+	option size '9619554'
+	option status '1'
+	option has_luci '1'
+	option open '1'
+
+config package_list
+	option name 'filebrowser'
+	option pkg_name 'filebrowser'
+	option parent 'FileBrowser'
+	option size '9614994'
+	option version '2.23.0-2'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/FileBrowser/1.0.1/filebrowser_2.23.0-2_aarch64_cortex-a53.ipk'
+	option md5 '1ffb587f76d0a63459917975101bd61d'
+	option has_luci '0'
+	option type '0'
+
+config package_list
+	option name 'luci-app-nradio-filebrowser'
+	option pkg_name 'luci-app-nradio-filebrowser'
+	option parent 'FileBrowser'
+	option size '1912'
+	option luci_module_file '/usr/lib/lua/luci/controller/nradio_adv/filebrowser.lua'
+	option version 'git-25.317.10927-d50d646-1'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/FileBrowser/1.0.2/luci-app-nradio-filebrowser_git-25.317.10927-d50d646-1_all.ipk'
+	option md5 'aacfa33836a0d0ff1e7fe7f0f036e0f3'
+	option has_luci '1'
+	option type '0'
+
+config package_list
+	option name 'luci-i18n-nradio-filebrowser-en'
+	option pkg_name 'luci-i18n-nradio-filebrowser-en'
+	option parent 'FileBrowser'
+	option size '1286'
+	option version 'git-25.052.47123-aeba903-1'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/FileBrowser/1.0.2/luci-i18n-nradio-filebrowser-en_git-25.052.47123-aeba903-1_all.ipk'
+	option md5 'aa64f4cc059c5ea868a467f9b2175f11'
+	option has_luci '0'
+	option type '0'
+
+config package_list
+	option name 'luci-i18n-nradio-filebrowser-zh-cn'
+	option pkg_name 'luci-i18n-nradio-filebrowser-zh-cn'
+	option parent 'FileBrowser'
+	option size '1362'
+	option version 'git-25.052.47123-aeba903-1'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/FileBrowser/1.0.2/luci-i18n-nradio-filebrowser-zh-cn_git-25.052.47123-aeba903-1_all.ipk'
+	option md5 'ce8309c26f4f37e6be8038540da9169e'
+	option has_luci '0'
+	option type '0'
+
+config package
+	option name 'VPN'
+	option version '1.0.2'
+	option icon 'vpn.png'
+	option des '虚拟专网（VPN），其主要功能是在公用网络上建立专用网络，进行加密通讯。在企业网络中有广泛应用。VPN网关通过对数据包的加密和数据包目标地址的转换实现远程访问'
+	option size '4256'
+	option status '0'
+	option has_luci '0'
+	option open '0'
+
+config package_list
+	option name 'luci-app-nradio-vpn'
+	option parent 'VPN'
+	option size '2972'
+	option version 'git-25.092.23422-f29eaea-1'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/VPN/1.0.2/luci-app-nradio-vpn_git-25.092.23422-f29eaea-1_all.ipk'
+	option md5 '7533a2a4eb29bd6e46b8502206731410'
+	option has_luci '0'
+	option type '0'
+
+config package_list
+	option name 'luci-i18n-nradio-vpn-zh-cn'
+	option parent 'VPN'
+	option size '1284'
+	option version 'git-25.036.40082-5bd5da1-1'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/VPN/1.0.2/luci-i18n-nradio-vpn-zh-cn_git-25.036.40082-5bd5da1-1_all.ipk'
+	option md5 'fa202b4cef75f8af25944d7bb03a6504'
+	option has_luci '0'
+	option type '0'
+
+config package
+	option name 'UU加速器'
+	option version '1.0.3'
+	option icon 'uu.png'
+	option des 'UU 加速一键优化网络，降低延迟，畅玩游戏'
+	option size '1740412'
+	option status '0'
+	option has_luci '0'
+	option open '0'
+
+config package_list
+	option name 'luci-app-nradio-uu'
+	option parent 'UU加速器'
+	option size '1965'
+	option version 'git-26.090.30259-9b51d95-1'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/UU加速器/1.0.1/luci-app-nradio-uu_git-26.090.30259-9b51d95-1_all.ipk'
+	option md5 '42a15738a9cccfab5d0858d47ed714ca'
+	option has_luci '0'
+	option type '0'
+
+config package_list
+	option name 'luci-i18n-nradio-uu-zh-cn'
+	option parent 'UU加速器'
+	option size '2000'
+	option version 'git-26.090.30259-9b51d95-1'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/UU加速器/1.0.1/luci-i18n-nradio-uu-zh-cn_git-26.090.30259-9b51d95-1_all.ipk'
+	option md5 '797cc35f6604eba7923be6d4b1ca9459'
+	option has_luci '0'
+	option type '0'
+
+config package_list
+	option name 'uuplugin'
+	option parent 'UU加速器'
+	option size '1734739'
+	option version '1.0-20240701'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/UU加速器/1.0.0/uuplugin_1.0-20240701_aarch64_cortex-a53.ipk'
+	option md5 '70105ef089774d608c086b5344824f63'
+	option has_luci '0'
+	option type '0'
+
+config package_list
+	option name 'luci-i18n-nradio-uu-en'
+	option parent 'UU加速器'
+	option size '1708'
+	option version 'git-26.090.30259-9b51d95-1'
+	option url 'https://nradio-appstore.oss-cn-beijing.aliyuncs.com/nradio-appstore/aarch64_cortex-a53/UU加速器/1.0.1/luci-i18n-nradio-uu-en_git-26.090.30259-9b51d95-1_all.ipk'
+	option md5 'd5853a1157ebdf1166ca75440583f182'
+	option has_luci '0'
+	option type '0'
+
+config package
+	option name 'luci-app-adguardhome'
+	option version '1.8-9'
+	option icon 'adguard.svg'
+	option size '91326'
+	option status '1'
+	option has_luci '1'
+	option open '1'
+
+config package_list
+	option name 'luci-app-adguardhome'
+	option pkg_name 'luci-app-adguardhome'
+	option parent 'luci-app-adguardhome'
+	option size '91326'
+	option luci_module_file '/usr/lib/lua/luci/controller/AdGuardHome.lua'
+	option version '1.8-9'
+	option has_luci '1'
+	option type '1'
+
+config package
+	option name 'OpenVPN'
+	option version 'git-23.013.73129-749268a'
+	option icon 'openvpn.svg'
+	option size '12738'
+	option status '1'
+	option has_luci '1'
+	option open '1'
+
+config package_list
+	option name 'OpenVPN'
+	option pkg_name 'luci-app-openvpn'
+	option parent 'OpenVPN'
+	option size '12738'
+	option luci_module_file '/usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua'
+	option version 'git-23.013.73129-749268a'
+	option has_luci '1'
+	option type '1'
+
+config package
+	option name 'openssh-sftp-server'
+	option version '8.4p1-4'
+	option size '51714'
+	option status '1'
+	option has_luci '0'
+	option open '0'
+
+config package_list
+	option name 'openssh-sftp-server'
+	option pkg_name 'openssh-sftp-server'
+	option parent 'openssh-sftp-server'
+	option size '51714'
+	option version '8.4p1-4'
+	option has_luci '0'
+	option type '1'
+
+config package
+	option name '温度监控'
+	option version '0.1.1'
+	option des '适配鲲鹏无限的C2000 Max设备的CPU温度、5G模块温度、内置4 PIN（默认没安装风扇）风扇的PWM占空比'
+	option size '4095'
+	option status '1'
+	option has_luci '1'
+	option open '1'
+
+config package_list
+	option name '温度监控'
+	option pkg_name '温度监控'
+	option parent '温度监控'
+	option size '4095'
+	option luci_module_file '/usr/lib/lua/luci/controller/fanctrl_status.lua'
+	option des '适配鲲鹏无限的C2000 Max设备的CPU温度、5G模块温度、内置4 PIN（默认没安装风扇）风扇的PWM占空比'
+	option version '0.1.1'
+	option has_luci '1'
+	option type '1'
+
+config package
+	option name 'luci-app-openclash'
+	option version '0.47.088'
+	option icon 'openclash.svg'
+	option size '6751882'
+	option status '1'
+	option has_luci '1'
+	option open '1'
+
+config package_list
+	option name 'luci-app-openclash'
+	option pkg_name 'luci-app-openclash'
+	option parent 'luci-app-openclash'
+	option size '6751882'
+	option luci_module_file '/usr/lib/lua/luci/controller/openclash.lua'
+	option version '0.47.088'
+	option has_luci '1'
+	option type '1'
+

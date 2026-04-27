@@ -1,0 +1,42 @@
+<%+openvpn/ovpn_css%>
+
+<div class="vpn-shell vpn-shell-refined vpn-shell-mk2 vpn-shell-secondary">
+  <div class="vpn-hero vpn-hero-mk2 vpn-hero-secondary">
+    <div class="vpn-hero-top">
+      <div class="vpn-brand-block">
+        <div class="vpn-toolbar">
+          <span class="vpn-pill">OpenVPN</span>
+          <span class="vpn-status-chip">标准实例管理</span>
+        </div>
+        <h2>标准 OpenVPN</h2>
+        <p class="vpn-sub">用于新建模板实例、导入现成 ovpn 文件，或维护原生 OpenVPN 节点；运行态建议回到连接中枢查看。</p>
+      </div>
+      <div class="vpn-hero-actions">
+        <a class="cbi-button cbi-button-apply" href="<%=url('nradioadv/system/openvpnfull')%>">返回连接中枢</a>
+      </div>
+    </div>
+
+    <div class="vpn-mini-grid">
+      <div class="vpn-mini-card">
+        <span class="vpn-mini-label">实例总数</span>
+        <strong><%=self.instance_count or 0%></strong>
+        <span class="vpn-mini-note">当前 UCI 中已注册的 OpenVPN 实例数量</span>
+      </div>
+      <div class="vpn-mini-card">
+        <span class="vpn-mini-label">启用实例</span>
+        <strong><%=self.enabled_count or 0%></strong>
+        <span class="vpn-mini-note">已开启 `enabled` 的实例数量</span>
+      </div>
+      <div class="vpn-mini-card">
+        <span class="vpn-mini-label">运行实例</span>
+        <strong><%=self.running_count or 0%></strong>
+        <span class="vpn-mini-note">当前检测到仍在运行的进程数量</span>
+      </div>
+      <div class="vpn-mini-card">
+        <span class="vpn-mini-label">文件型实例</span>
+        <strong><%=self.file_cfg_count or 0%></strong>
+        <span class="vpn-mini-note">配置来源为外部 `.ovpn` 文件的实例数量</span>
+      </div>
+    </div>
+  </div>
+</div>

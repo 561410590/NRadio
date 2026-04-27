@@ -1,0 +1,289 @@
+<%
+local dsp = require "luci.dispatcher"
+local http = require "luci.http"
+local webssh = require "luci.controller.nradio_adv.webssh"
+local status_data = webssh.collect_status()
+local installed = status_data.installed
+local restart_url = dsp.build_url("nradioadv", "system", "webssh", "restart")
+local status_url = dsp.build_url("nradioadv", "system", "webssh", "status")
+local embed_mode = http.formvalue("embed") == "1" or http.formvalue("embed") == "true"
+local stage_class = embed_mode and "webssh-stage is-embed" or "webssh-stage"
+%>
+<% if not embed_mode then %><%+header%><% end %>
+<style>
+.webssh-stage{--ws-bg:#f4f7fb;--ws-ink:#111827;--ws-muted:#64748b;--ws-line:#d8e1ec;--ws-panel:#ffffff;--ws-terminal:#07111f;--ws-terminal-2:#0d1b2e;--ws-accent:#0ea5e9;--ws-accent-2:#10b981;max-width:1180px;margin:18px auto 28px;padding:0 18px;color:var(--ws-ink)}
+.webssh-stage.is-embed{max-width:none;margin:0;padding:0}
+.webssh-shell{position:relative;overflow:hidden;border:1px solid var(--ws-line);border-radius:8px;background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);box-shadow:0 18px 48px rgba(15,23,42,.12)}
+.webssh-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border-bottom:1px solid var(--ws-line);background:linear-gradient(90deg,#0b1220 0%,#10233a 58%,#113f54 100%);color:#fff}
+.webssh-identity{display:flex;align-items:center;gap:14px;min-width:0}
+.webssh-mark{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:8px;background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.webssh-mark svg{width:25px;height:25px;display:block}
+.webssh-titlewrap{min-width:0}
+.webssh-label{margin:0 0 4px;color:#8bdcff;font-size:12px;font-weight:700;letter-spacing:0;text-transform:uppercase}
+.webssh-title{margin:0;color:#fff;font-size:22px;line-height:1.2;font-weight:800;letter-spacing:0}
+.webssh-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px}
+.webssh-badge{display:inline-flex;align-items:center;gap:7px;min-height:28px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;line-height:1;border:1px solid transparent;white-space:nowrap}
+.webssh-badge:before{content:"";width:7px;height:7px;border-radius:999px;background:currentColor}
+.webssh-badge.ok{background:#dcfce7;color:#166534}
+.webssh-badge.warn{background:#fef3c7;color:#92400e}
+.webssh-badge.off{background:#fee2e2;color:#991b1b}
+.webssh-badge.soft{background:rgba(255,255,255,.12);color:#dbeafe;border-color:rgba(255,255,255,.18)}
+.webssh-main{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:0;background:var(--ws-bg)}
+.webssh-terminal{min-width:0;padding:18px}
+.webssh-terminal-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}
+.webssh-terminal-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.webssh-terminal-meta .webssh-badge.soft{background:#e8f1fb;color:#334155;border-color:#d7e3ef}
+.webssh-terminal-title{margin:0;color:#111827;font-size:16px;line-height:1.3;font-weight:800;letter-spacing:0}
+.webssh-livebar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding:10px 12px;border:1px solid #172033;border-radius:8px;background:#0b1220;color:#dbeafe}
+.webssh-live-left{display:flex;align-items:center;gap:9px;min-width:0}
+.webssh-live-dot{width:9px;height:9px;border-radius:999px;background:#22c55e;box-shadow:0 0 0 6px rgba(34,197,94,.14)}
+.webssh-live-url{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.webssh-live-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.webssh-iconbtn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:1px solid rgba(148,163,184,.28);border-radius:7px;background:rgba(255,255,255,.06);color:#e0f2fe;text-decoration:none;font-size:13px;font-weight:900;cursor:pointer}
+.webssh-iconbtn:hover{background:rgba(14,165,233,.18);border-color:rgba(125,211,252,.55);color:#fff}
+.webssh-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px}
+.webssh-actions-start{justify-content:flex-start}
+.webssh-btn{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;border:1px solid var(--ws-line);border-radius:8px;background:#fff;color:#172033;text-decoration:none;font-size:12px;font-weight:800;line-height:1.2;cursor:pointer;transition:background-color .16s ease,border-color .16s ease,color .16s ease,transform .16s ease,box-shadow .16s ease}
+.webssh-btn:hover{transform:translateY(-1px);border-color:#93c5fd;box-shadow:0 10px 20px rgba(15,23,42,.08);color:#0f172a}
+.webssh-btn-primary{border-color:#0284c7;background:#0284c7;color:#fff}
+.webssh-btn-primary:hover{border-color:#0369a1;background:#0369a1;color:#fff}
+.webssh-btn-dark{border-color:#172033;background:#172033;color:#dbeafe}
+.webssh-btn-dark:hover{border-color:#0f172a;background:#0f172a;color:#fff}
+.webssh-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding:10px;border:1px solid rgba(148,163,184,.26);border-radius:8px;background:#fff}
+.webssh-segmented{display:inline-flex;gap:4px;padding:3px;border-radius:8px;background:#edf3f9}
+.webssh-segmented button{min-width:52px;padding:7px 10px;border:0;border-radius:6px;background:transparent;color:#526173;font-size:12px;font-weight:800;cursor:pointer}
+.webssh-segmented button.active{background:#fff;color:#0f172a;box-shadow:0 1px 4px rgba(15,23,42,.12)}
+.webssh-sync{display:inline-flex;align-items:center;gap:7px;color:#64748b;font-size:12px;font-weight:700}
+.webssh-sync:before{content:"";width:7px;height:7px;border-radius:999px;background:var(--ws-accent-2);box-shadow:0 0 0 5px rgba(16,185,129,.13)}
+.webssh-alert{margin-bottom:12px;padding:11px 12px;border:1px solid #fdba74;border-radius:8px;background:#fff7ed;color:#9a3412;font-size:12px;line-height:1.65}
+.webssh-framebox{position:relative;overflow:hidden;border-radius:8px;background:linear-gradient(180deg,var(--ws-terminal) 0%,var(--ws-terminal-2) 100%);box-shadow:0 18px 40px rgba(7,17,31,.26)}
+.webssh-framebox:before{content:"";display:block;height:34px;background:#101827;border-bottom:1px solid rgba(148,163,184,.18)}
+.webssh-dots{position:absolute;left:14px;top:12px;display:flex;gap:7px}
+.webssh-dots span{width:9px;height:9px;border-radius:999px;background:#ef4444}
+.webssh-dots span:nth-child(2){background:#f59e0b}
+.webssh-dots span:nth-child(3){background:#22c55e}
+.webssh-framealert{display:none;position:absolute;left:14px;right:14px;top:48px;z-index:2;padding:10px 12px;border-radius:8px;background:rgba(127,29,29,.92);color:#fff;font-size:12px;line-height:1.6;box-shadow:0 14px 30px rgba(15,23,42,.28)}
+.webssh-terminal-frame{display:block;width:100%;height:680px;border:0;background:#020617;transition:height .16s ease,box-shadow .16s ease}
+.webssh-terminal-frame:focus{box-shadow:inset 0 0 0 2px rgba(14,165,233,.8)}
+.webssh-hint{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;color:#64748b;font-size:12px;line-height:1.6}
+.webssh-hint code{padding:2px 5px;border-radius:4px;background:#e9eef5;color:#334155}
+.webssh-aside{border-left:1px solid var(--ws-line);background:#fff;padding:18px}
+.webssh-section+.webssh-section{margin-top:18px;padding-top:18px;border-top:1px solid #e8eef5}
+.webssh-section h3{margin:0 0 11px;color:#111827;font-size:13px;line-height:1.3;font-weight:800;letter-spacing:0}
+.webssh-details{border-top:1px solid #e8eef5}
+.webssh-details summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;color:#111827;font-size:13px;font-weight:800;cursor:pointer;list-style:none}
+.webssh-details summary::-webkit-details-marker{display:none}
+.webssh-details summary:after{content:"+";display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;background:#eef4fb;color:#334155}
+.webssh-details[open] summary:after{content:"-"}
+.webssh-details-body{padding-bottom:14px}
+.webssh-code{display:block;padding:11px 12px;border-radius:8px;background:#0f172a;color:#dbeafe;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;line-height:1.65;word-break:break-all;text-decoration:none}
+.webssh-code+.webssh-code{margin-top:8px}
+.webssh-copyrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:stretch;margin-top:10px}
+.webssh-copyrow .webssh-code{margin:0}
+.webssh-copyrow .webssh-btn{min-height:auto}
+.webssh-kv{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eef3f8;font-size:12px}
+.webssh-kv:last-child{border-bottom:0}
+.webssh-kv span{color:#64748b}
+.webssh-kv strong{color:#111827;text-align:right;word-break:break-word}
+.webssh-linkrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.webssh-linkrow .webssh-btn{width:100%}
+.webssh-quick{display:grid;gap:8px}
+.webssh-quick button{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border:1px solid var(--ws-line);border-radius:8px;background:#fff;color:#111827;font-size:12px;font-weight:800;cursor:pointer;text-align:left}
+.webssh-quick button span{color:#64748b;font-weight:700}
+.webssh-empty{padding:18px;border:1px dashed #cbd5e1;border-radius:8px;background:#fff;color:#475569;font-size:13px;line-height:1.7}
+.webssh-toast{position:fixed;right:18px;bottom:22px;z-index:9999;padding:10px 13px;border-radius:8px;background:rgba(15,23,42,.94);box-shadow:0 16px 36px rgba(15,23,42,.24);color:#f8fafc;font-size:13px;line-height:1.4;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .16s ease,transform .16s ease}
+.webssh-toast.show{opacity:1;transform:translateY(0)}
+.webssh-toast.warn{background:rgba(146,64,14,.94)}
+.webssh-stage.is-focus .webssh-topbar,.webssh-stage.is-focus .webssh-aside,.webssh-stage.is-focus .webssh-toolbar{display:none}
+.webssh-stage.is-focus .webssh-main{grid-template-columns:1fr}
+.webssh-stage.is-focus .webssh-terminal-frame{height:min(82vh,960px)}
+.webssh-stage.is-embed .webssh-shell{border:0;border-radius:0;box-shadow:none}
+.webssh-stage.is-embed .webssh-topbar{padding:12px 14px}
+.webssh-stage.is-embed .webssh-label{display:none}
+.webssh-stage.is-embed .webssh-title{font-size:18px}
+.webssh-stage.is-embed .webssh-main{grid-template-columns:1fr}
+.webssh-stage.is-embed .webssh-aside{display:none}
+.webssh-stage.is-embed .webssh-terminal{padding:12px}
+.webssh-stage.is-embed .webssh-terminal-head{display:none}
+.webssh-stage.is-embed .webssh-livebar{margin-bottom:10px}
+.webssh-stage.is-embed .webssh-toolbar{display:none}
+.webssh-stage.is-embed .webssh-terminal-frame{height:72vh;min-height:460px}
+.webssh-stage.is-embed .webssh-hint{display:none}
+@keyframes websshFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.webssh-shell{animation:websshFade .22s ease both}
+@media (max-width:980px){.webssh-main{grid-template-columns:1fr}.webssh-aside{border-left:0;border-top:1px solid var(--ws-line)}.webssh-topbar,.webssh-terminal-head,.webssh-toolbar{align-items:flex-start;flex-direction:column}.webssh-summary,.webssh-actions{justify-content:flex-start}.webssh-linkrow{grid-template-columns:1fr}}
+@media (max-width:640px){.webssh-stage{padding:0 10px}.webssh-topbar{padding:14px}.webssh-terminal{padding:12px}.webssh-title{font-size:18px}.webssh-summary{gap:6px}.webssh-badge{font-size:11px}.webssh-terminal-frame{height:540px}.webssh-hint{align-items:flex-start;flex-direction:column}.webssh-btn{width:auto}}
+</style>
+<div id="webssh-stage" class="<%=stage_class%>">
+  <div class="webssh-shell">
+    <div class="webssh-topbar">
+      <div class="webssh-identity">
+        <div class="webssh-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <rect x="10" y="14" width="44" height="36" rx="7" fill="rgba(255,255,255,.10)"/>
+            <path d="M21 28 L28 33 L21 38" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M34 39 H44" fill="none" stroke="#7dd3fc" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="webssh-titlewrap">
+          <div class="webssh-label">NRadio Terminal</div>
+          <h2 class="webssh-title">Web SSH / ttyd</h2>
+        </div>
+      </div>
+      <div class="webssh-summary">
+        <span id="webssh-runtime-badge" class="webssh-badge <%=status_data.runtime_tone%>"><%=status_data.runtime_label%></span>
+        <span id="webssh-check-badge" class="webssh-badge <%=status_data.self_check_tone%>"><%=status_data.self_check_label%></span>
+        <span class="webssh-badge soft">端口 <span id="webssh-port-inline"><%=status_data.bind_port%></span></span>
+        <span class="webssh-badge soft">接口 <span id="webssh-iface-inline"><%=status_data.bind_iface_label%></span></span>
+      </div>
+    </div>
+
+    <div class="webssh-main">
+      <main class="webssh-terminal">
+        <div class="webssh-terminal-head">
+          <div>
+            <h3 class="webssh-terminal-title">终端工作区</h3>
+            <div class="webssh-terminal-meta">
+              <span id="webssh-frame-state" class="webssh-badge soft">终端加载中</span>
+              <span class="webssh-badge soft">协议 <span id="webssh-transport-inline"><%=status_data.transport_label%></span></span>
+              <span class="webssh-badge soft">进程 <span id="webssh-proc-inline"><%=status_data.ttyd_proc_count%></span></span>
+            </div>
+          </div>
+          <% if installed then %>
+          <div class="webssh-actions">
+            <button class="webssh-btn" type="button" onclick="return reload_terminal_frame();">重载</button>
+            <button class="webssh-btn" type="button" onclick="return focus_terminal_frame();">激活键盘</button>
+            <% if not embed_mode then %>
+            <button class="webssh-btn" type="button" data-focus-toggle="1" aria-pressed="false" onclick="return toggle_focus_mode();">专注</button>
+            <% end %>
+            <a class="webssh-btn webssh-btn-primary" href="<%=status_data.ttyd_url%>" target="_blank" rel="noopener noreferrer">独立打开</a>
+          </div>
+          <% end %>
+        </div>
+
+        <% if installed and status_data.self_check_label ~= "通过" then %>
+        <div class="webssh-alert">自检未通过。优先重载终端；如果仍为空白，使用独立打开。</div>
+        <% end %>
+
+        <% if installed then %>
+        <div class="webssh-livebar">
+          <div class="webssh-live-left">
+            <span class="webssh-live-dot" aria-hidden="true"></span>
+            <span id="webssh-live-url" class="webssh-live-url"><%=status_data.ttyd_url%></span>
+          </div>
+          <div class="webssh-live-actions">
+            <button class="webssh-iconbtn" type="button" title="激活键盘" onclick="return focus_terminal_frame();">K</button>
+            <button class="webssh-iconbtn" type="button" title="重载终端" onclick="return reload_terminal_frame();">R</button>
+            <a class="webssh-iconbtn" title="独立打开" href="<%=status_data.ttyd_url%>" target="_blank" rel="noopener noreferrer">↗</a>
+          </div>
+        </div>
+        <div class="webssh-toolbar">
+          <div class="webssh-segmented">
+            <button type="button" data-height="520" onclick="set_terminal_height(520, this)">紧凑</button>
+            <button type="button" data-height="680" class="active" onclick="set_terminal_height(680, this)">标准</button>
+            <button type="button" data-height="860" onclick="set_terminal_height(860, this)">扩展</button>
+          </div>
+          <div class="webssh-sync" id="webssh-updated">更新 <%=status_data.updated_at%></div>
+        </div>
+
+        <div class="webssh-framebox">
+          <div class="webssh-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div id="webssh-frame-hint" class="webssh-framealert">内嵌终端暂未完成连接。可以重载，或独立打开 ttyd 页面。</div>
+          <iframe id="webssh-frame" src="<%=status_data.ttyd_url%>" data-current-src="<%=status_data.ttyd_url%>" title="ttyd Web SSH" loading="lazy" allow="clipboard-read; clipboard-write" tabindex="0" class="webssh-terminal-frame"></iframe>
+        </div>
+
+        <div class="webssh-hint">
+          <span>默认进入 <code>/bin/sh --login</code>。键盘不响应时，点“激活键盘”后再点终端区域。</span>
+          <span>独立页面：<a id="webssh-url" href="<%=status_data.ttyd_url%>" target="_blank" rel="noopener noreferrer"><%=status_data.ttyd_url%></a></span>
+        </div>
+        <% else %>
+        <div class="webssh-empty">ttyd 未安装。请先运行总脚本第 3 项安装 Web SSH。</div>
+        <% end %>
+      </main>
+
+      <% if not embed_mode then %>
+      <aside class="webssh-aside">
+        <section class="webssh-section">
+          <h3>快速操作</h3>
+          <% if installed then %>
+          <div class="webssh-actions webssh-actions-start">
+            <a class="webssh-btn webssh-btn-primary" href="<%=status_data.ttyd_url%>" target="_blank" rel="noopener noreferrer">打开终端</a>
+            <button class="webssh-btn" type="button" onclick="return copy_text(document.getElementById('webssh-ssh').textContent, 'SSH 命令已复制');">复制 SSH</button>
+            <a class="webssh-btn webssh-btn-dark" href="<%=restart_url%>">重启服务</a>
+          </div>
+          <div class="webssh-copyrow">
+            <a id="webssh-url-side" class="webssh-code" href="<%=status_data.ttyd_url%>" target="_blank" rel="noopener noreferrer"><%=status_data.ttyd_url%></a>
+            <button class="webssh-btn" type="button" onclick="return copy_text(document.getElementById('webssh-url-side').textContent, '终端地址已复制');">复制</button>
+          </div>
+          <div class="webssh-copyrow">
+            <div id="webssh-ssh" class="webssh-code"><%=status_data.ssh_cmd%></div>
+            <button class="webssh-btn" type="button" onclick="return copy_text(document.getElementById('webssh-ssh').textContent, 'SSH 命令已复制');">复制</button>
+          </div>
+          <div class="webssh-linkrow">
+            <a class="webssh-btn" href="<%=dsp.build_url('admin', 'system', 'ttyd', 'overview')%>" target="_blank" rel="noopener noreferrer">LuCI</a>
+            <a class="webssh-btn" href="<%=dsp.build_url('admin', 'system', 'ttyd', 'config')%>">配置</a>
+          </div>
+          <% else %>
+          <div class="webssh-empty">没有可用操作。</div>
+          <% end %>
+        </section>
+
+        <details class="webssh-details" open>
+          <summary>运行状态</summary>
+          <div class="webssh-details-body">
+          <div class="webssh-kv"><span>运行</span><strong id="webssh-runtime-text"><%=status_data.runtime_label%></strong></div>
+          <div class="webssh-kv"><span>自检</span><strong id="webssh-check-text"><%=status_data.self_check_label%></strong></div>
+          <div class="webssh-kv"><span>协议</span><strong id="webssh-transport-text"><%=status_data.transport_label%></strong></div>
+          <div class="webssh-kv"><span>端口</span><strong id="webssh-port-text"><%=status_data.bind_port%></strong></div>
+          <div class="webssh-kv"><span>接口</span><strong id="webssh-iface-text"><%=status_data.bind_iface_label%></strong></div>
+          <div class="webssh-kv"><span>客户端</span><strong id="webssh-limit-text"><%=status_data.client_limit_label%></strong></div>
+          <div class="webssh-kv"><span>进程</span><strong id="webssh-proc-text"><%=status_data.ttyd_proc_count%></strong></div>
+          <div class="webssh-kv"><span>监听</span><strong id="webssh-port-check"><%=status_data.port_check_label%></strong></div>
+          <div class="webssh-kv"><span>绑定</span><strong id="webssh-iface-check"><%=status_data.iface_check_label%></strong></div>
+          </div>
+        </details>
+
+        <details class="webssh-details">
+          <summary>排查命令</summary>
+          <div class="webssh-details-body">
+          <div class="webssh-quick">
+            <button type="button" onclick="return copy_text('logread | tail -50', '日志命令已复制');">最近日志 <span>logread</span></button>
+            <button type="button" onclick="return copy_text('netstat -lnt | grep 7681', '监听命令已复制');">监听端口 <span>7681</span></button>
+            <button type="button" onclick="return copy_text('/etc/init.d/ttyd restart', '重启命令已复制');">重启服务 <span>ttyd</span></button>
+          </div>
+          <% if status_data.listen_line ~= "" then %>
+          <div style="margin-top:10px" class="webssh-code" id="webssh-listen"><%=status_data.listen_line%></div>
+          <% end %>
+          </div>
+        </details>
+      </aside>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div id="webssh-toast" class="webssh-toast"></div>
+<script type="text/javascript">//<![CDATA[
+var WEBSSH_STATUS_URL = '<%=status_url%>';
+var WEBSSH_EMBED_MODE = <%=embed_mode and "true" or "false"%>;
+var WEBSSH_STORAGE_PREFIX = WEBSSH_EMBED_MODE ? 'webssh-embed' : 'webssh';
+function show_toast(message, tone){var toast=document.getElementById('webssh-toast');if(!toast)return;toast.textContent=message;toast.className='webssh-toast show'+(tone?' '+tone:'');if(window.__websshToastTimer)window.clearTimeout(window.__websshToastTimer);window.__websshToastTimer=window.setTimeout(function(){toast.className='webssh-toast';},1800);}
+function copy_text(value, success_text){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(value).then(function(){show_toast(success_text||'已复制');}).catch(function(){window.prompt('复制内容',value);});}else{window.prompt('复制内容',value);}return false;}
+function set_badge_state(el, tone, text){if(!el)return;el.className='webssh-badge '+tone;el.textContent=text;}
+function set_text(id, value){var el=document.getElementById(id);if(el)el.textContent=value;}
+function set_code(id, value, href){var el=document.getElementById(id);if(!el)return;el.textContent=value;if(href)el.href=href;}
+function set_href(id, value){var el=document.getElementById(id);if(el&&value)el.href=value;}
+function set_terminal_height(height, el){var frame=document.getElementById('webssh-frame');var buttons=document.querySelectorAll('.webssh-segmented button[data-height]');var i;if(frame)frame.style.height=String(height)+'px';if(window.localStorage)localStorage.setItem(WEBSSH_STORAGE_PREFIX+'-terminal-height',String(height));for(i=0;i<buttons.length;i++)buttons[i].classList.remove('active');if(el)el.classList.add('active');return false;}
+function restore_terminal_height(){if(!window.localStorage)return;var saved=localStorage.getItem(WEBSSH_STORAGE_PREFIX+'-terminal-height');if(!saved)return;var button=document.querySelector('.webssh-segmented button[data-height="'+saved+'"]');if(button)set_terminal_height(parseInt(saved,10),button);}
+function sync_focus_buttons(){var stage=document.getElementById('webssh-stage');var buttons=document.querySelectorAll('[data-focus-toggle]');var active=stage&&stage.classList.contains('is-focus');var i;for(i=0;i<buttons.length;i++){buttons[i].setAttribute('aria-pressed',active?'true':'false');buttons[i].textContent=active?'退出专注':'专注';}}
+function toggle_focus_mode(force_state){if(WEBSSH_EMBED_MODE)return false;var stage=document.getElementById('webssh-stage');var active;if(!stage)return false;active=(typeof force_state==='boolean')?force_state:!stage.classList.contains('is-focus');stage.classList.toggle('is-focus',active);if(window.localStorage)localStorage.setItem(WEBSSH_STORAGE_PREFIX+'-focus-mode',active?'1':'0');sync_focus_buttons();return false;}
+function restore_focus_mode(){if(WEBSSH_EMBED_MODE)return;try{if(window.localStorage&&localStorage.getItem(WEBSSH_STORAGE_PREFIX+'-focus-mode')==='1')toggle_focus_mode(true);else sync_focus_buttons();}catch(e){sync_focus_buttons();}}
+function arm_terminal_timeout(){var state=document.getElementById('webssh-frame-state');var hint=document.getElementById('webssh-frame-hint');if(window.__websshFrameTimer)window.clearTimeout(window.__websshFrameTimer);window.__websshFrameLoaded=false;window.__websshFrameTimer=window.setTimeout(function(){if(window.__websshFrameLoaded)return;if(state)set_badge_state(state,'warn','终端握手中');if(hint)hint.style.display='block';},5000);}
+function clear_terminal_timeout(){if(window.__websshFrameTimer)window.clearTimeout(window.__websshFrameTimer);window.__websshFrameLoaded=true;}
+function reload_terminal_frame(){var frame=document.getElementById('webssh-frame');var state=document.getElementById('webssh-frame-state');var hint=document.getElementById('webssh-frame-hint');if(!frame)return false;if(state)set_badge_state(state,'soft','终端重新加载中');if(hint)hint.style.display='none';arm_terminal_timeout();frame.src=frame.getAttribute('data-current-src')||frame.src;return false;}
+function focus_terminal_frame(){var frame=document.getElementById('webssh-frame');if(!frame)return false;try{frame.setAttribute('tabindex','0');frame.focus();}catch(e){}try{if(frame.contentWindow&&frame.contentWindow.focus)frame.contentWindow.focus();}catch(e){}show_toast('键盘焦点已激活');return false;}
+function sync_terminal_url(next_url){var frame=document.getElementById('webssh-frame');var current='';if(!frame||!next_url)return;current=frame.getAttribute('data-current-src')||'';if(!current){frame.setAttribute('data-current-src',frame.src||next_url);current=frame.getAttribute('data-current-src')||'';}if(current!==next_url){frame.setAttribute('data-current-src',next_url);frame.src=next_url;arm_terminal_timeout();}}
+function apply_status(data){set_badge_state(document.getElementById('webssh-runtime-badge'),data.runtime_tone||'soft',data.runtime_label||'未知');set_badge_state(document.getElementById('webssh-check-badge'),data.self_check_tone||'soft',data.self_check_label||'未知');set_text('webssh-runtime-text',data.runtime_label||'未知');set_text('webssh-check-text',data.self_check_label||'未知');set_text('webssh-transport-text',data.transport_label||'-');set_text('webssh-transport-inline',data.transport_label||'-');set_text('webssh-port-text',data.bind_port||'-');set_text('webssh-port-inline',data.bind_port||'-');set_text('webssh-iface-text',data.bind_iface_label||'-');set_text('webssh-iface-inline',data.bind_iface_label||'-');set_text('webssh-limit-text',data.client_limit_label||'-');set_text('webssh-proc-text',data.ttyd_proc_count||'0');set_text('webssh-proc-inline',data.ttyd_proc_count||'0');set_text('webssh-port-check',data.port_check_label||'-');set_text('webssh-iface-check',data.iface_check_label||'-');set_text('webssh-updated','更新 '+(data.updated_at||'--:--:--'));set_text('webssh-live-url',data.ttyd_url||'');set_code('webssh-url',data.ttyd_url||'',data.ttyd_url||'');set_code('webssh-url-side',data.ttyd_url||'',data.ttyd_url||'');set_href('webssh-url',data.ttyd_url||'');set_href('webssh-url-side',data.ttyd_url||'');set_code('webssh-ssh',data.ssh_cmd||'');if(document.getElementById('webssh-listen')&&data.listen_line)set_code('webssh-listen',data.listen_line);sync_terminal_url(data.ttyd_url||'');}
+function poll_status(initial){var xhr=new XMLHttpRequest();xhr.open('GET',WEBSSH_STATUS_URL,true);xhr.onreadystatechange=function(){if(xhr.readyState!==4)return;if(xhr.status>=200&&xhr.status<300){try{apply_status(JSON.parse(xhr.responseText||'{}'));}catch(e){if(!initial)show_toast('状态刷新失败，保留上次结果','warn');}}else if(!initial){show_toast('状态刷新失败，保留上次结果','warn');}};xhr.send(null);}
+(function(){var frame=document.getElementById('webssh-frame');var state=document.getElementById('webssh-frame-state');var hint=document.getElementById('webssh-frame-hint');restore_terminal_height();restore_focus_mode();poll_status(true);if(!frame||!state||!hint){window.setInterval(function(){poll_status(false);},12000);return;}frame.addEventListener('load',function(){clear_terminal_timeout();frame.setAttribute('data-current-src',frame.src||frame.getAttribute('data-current-src')||'');set_badge_state(state,'ok','终端已连接');hint.style.display='none';window.setTimeout(function(){focus_terminal_frame();},140);});frame.addEventListener('mouseenter',function(){focus_terminal_frame();});frame.addEventListener('click',function(){focus_terminal_frame();});arm_terminal_timeout();window.setInterval(function(){poll_status(false);},12000);})();
+//]]></script>
+<% if not embed_mode then %><%+footer%><% end %>

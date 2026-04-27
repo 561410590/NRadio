@@ -1,0 +1,119 @@
+
+<script type="text/javascript">
+//<![CDATA[
+	function vpn_add()
+	{
+		var vpn_name     = div_add.querySelector("#instance_name1").value.replace(/[^\x00-\x7F]|[\s\.!@#$%^&*()\-+=\[\]{};':"\\|,<>\/?]/g,'');
+		var vpn_template = div_add.querySelector("#instance_template").value;
+		var form         = document.getElementsByName('cbi')[0];
+
+		if (!vpn_name || !vpn_name.length)
+		{
+			return info_message(vpn_output, "实例名称不能为空。", 2000);
+		}
+
+		document.getElementById("instance_name1").value = vpn_name;
+		if (document.getElementById("cbi-openvpn-" + vpn_name) != null)
+		{
+			return info_message(vpn_output, "该实例名称已存在，请更换一个名称。", 2000);
+		}
+
+		if (!vpn_template || !vpn_template.length)
+		{
+			return info_message(vpn_output, "请选择一个可用的模板。", 2000);
+		}
+
+		if (form)
+		{
+			form.submit();
+		}
+	}
+
+	function vpn_upload()
+	{
+		var vpn_name = div_upload.querySelector("#instance_name2").value.replace(/[^\x00-\x7F]|[\s\.!@#$%^&*()\-+=\[\]{};':"\\|,<>\/?]/g,'');
+		var vpn_file = document.getElementById("ovpn_file").value;
+		var form     = document.getElementsByName('cbi')[0];
+
+		if (!vpn_name || !vpn_name.length)
+		{
+			return info_message(vpn_output, "实例名称不能为空。", 2000);
+		}
+
+		document.getElementById("instance_name2").value = vpn_name;
+		if (document.getElementById("cbi-openvpn-" + vpn_name) != null)
+		{
+			return info_message(vpn_output, "该实例名称已存在，请更换一个名称。", 2000);
+		}
+
+		if (!vpn_file || !vpn_file.length)
+		{
+			return info_message(vpn_output, "请选择一个有效的 OVPN 配置文件。", 2000);
+		}
+
+		if (form)
+		{
+			form.enctype = 'multipart/form-data';
+			form.action  = '<%=url('admin/services/openvpn/upload')%>';
+			form.submit();
+		}
+	}
+
+	function info_message(output, msg, timeout)
+	{
+		timeout = timeout || 0;
+		output.innerHTML = '<em>' + msg + '</em>';
+		if (timeout > 0)
+		{
+			setTimeout(function(){ output.innerHTML=""}, timeout);
+		}
+	}
+//]]>
+</script>
+
+<%+openvpn/ovpn_css%>
+
+<div class="vpn-entry-grid vpn-entry-grid-mk2">
+	<div class="vpn-entry-card" id="div_add">
+		<div class="vpn-entry-head">
+			<h4>模板创建</h4>
+			<span class="vpn-entry-badge">推荐</span>
+		</div>
+		<p class="vpn-entry-lead">适合快速生成一个标准 OpenVPN 实例，再进入基础配置或高级配置继续细化。</p>
+		<label class="vpn-field-label" for="instance_name1">实例名称</label>
+		<input type="text" maxlength="20" placeholder="例如 custom_config" name="cbi.cts.<%=self.config%>.<%=self.sectiontype%>.text" id="instance_name1" />
+		<div class="vpn-field-help">仅允许字母、数字和下划线。创建后会出现在实例列表中。</div>
+		<label class="vpn-field-label" for="instance_template">模板</label>
+		<select id="instance_template" name="cbi.cts.<%=self.config%>.<%=self.sectiontype%>.select">
+			<option value="" selected="selected" disabled="disabled">请选择模板...</option>
+			<%- for k, v in luci.util.kspairs(self.add_select_options) do %>
+				<option value="<%=k%>"><%=pcdata(v)%></option>
+			<% end -%>
+		</select>
+		<div class="vpn-field-help">模板会预填一组常用参数，后续仍可继续编辑。</div>
+		<div class="vpn-entry-actions">
+			<input class="btn cbi-button cbi-button-add" type="submit" onclick="vpn_add(); return false;" value="创建实例" title="创建模板实例" />
+		</div>
+	</div>
+
+	<div class="vpn-entry-card" id="div_upload">
+		<div class="vpn-entry-head">
+			<h4>OVPN 文件上传</h4>
+			<span class="vpn-entry-badge vpn-badge-neutral">兼容</span>
+		</div>
+		<p class="vpn-entry-lead">适合直接导入现成客户端文件。上传后将创建实例并把配置落盘到 <code>/etc/openvpn/&lt;name&gt;.ovpn</code>。</p>
+		<label class="vpn-field-label" for="instance_name2">实例名称</label>
+		<input type="text" maxlength="20" placeholder="例如 custom_config" name="instance_name2" id="instance_name2" />
+		<div class="vpn-field-help">实例名称会决定落盘文件名和列表中的显示项。</div>
+		<label class="vpn-field-label" for="ovpn_file">配置文件</label>
+		<input type="file" name="ovpn_file" id="ovpn_file" accept="application/x-openvpn-profile,.ovpn" />
+		<div class="vpn-field-help">支持标准 `.ovpn` 客户端配置文件，上传后可再到 OEM 视图核对运行状态。</div>
+		<div class="vpn-entry-actions">
+			<input class="btn cbi-button cbi-button-add" type="submit" onclick="vpn_upload(); return false;" value="上传导入" title="上传 ovpn 文件" />
+		</div>
+	</div>
+</div>
+
+<div class="vpn-output">
+	<span id="vpn_output"></span>
+</div>

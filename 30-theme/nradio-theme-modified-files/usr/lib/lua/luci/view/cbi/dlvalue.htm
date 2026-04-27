@@ -1,0 +1,58 @@
+<%
+	local i, key
+	local br = self.orientation == "horizontal" and '&#160;' or '<br />'
+%>
+<%
+local util = require "luci.util"
+local uci = require "luci.model.uci".cursor()
+local id_str=cbid:gsub('%.', '_')
+%>
+
+<div class="cbi-value<% if self.error and self.error[section] then %> cbi-value-error<% end %><% if self.last_child then %> cbi-value-last<% end %>" id="cbi-<%=self.config.."-"..section.."-"..self.option%>" data-index="<%=self.index%>" data-depends="<%=pcdata(self:deplist2json(section))%>">
+	<%- if self.title and #self.title > 0 then -%>
+	<label class="cbi-value-title"<%= attr("for", cbid) %>>
+	<%- if self.titleref then -%><a title="<%=self.titledesc or translate('Go to relevant configuration page')%>" class="cbi-title-ref" href="<%=self.titleref%>"><%- end -%>
+			<%-=self.title-%>
+	<%- if self.titleref then -%></a><%- end -%>
+	</label>
+			<div class="cbi-value-field">
+	<%- end -%>
+	<div id="multi_select_<%=id_str%>" class="cbi-input-select selectPickerWrapper hd-input">
+		<input <%=
+		attr("id", cbid) ..
+		attr("name", cbid) ..
+		attr("type", "hidden") ..
+		attr("value", self:cfgvalue(section) or self.default) ..
+		ifattr(self.size, "size") ..
+		ifattr(self.datatype, "data-type", self.datatype) ..
+		ifattr(self.datatype, "data-optional", self.optional or self.rmempty) ..
+		ifattr(self.combobox_manual, "data-manual", self.combobox_manual) ..
+		ifattr(#self.keylist > 0, "data-choices", { self.keylist, self.vallist })
+%> />	
+	<select>
+	</select>
+	</div>
+	<% if self.description and #self.description > 0 then -%>
+	<div class="cbi-value-description">
+			<%=self.description%>
+	</div>
+<%- end %>
+<%- if self.title and #self.title > 0 then -%>
+</div>
+<%- end -%>
+</div>
+<script>			
+	var option_text_list_<%=id_str%>="<%=uci:get("network", self.cpe_section, "freq_text")%>";
+	var option_val_list_<%=id_str%>="<%=uci:get("network", self.cpe_section, "freq_val")%>";
+	var option_multi_<%=id_str%>="<%=uci:get("network", self.cpe_section, "freq_multi")%>";
+	var text_list_<%=id_str%>=option_text_list_<%=id_str%>.split(",");
+	var val_list_<%=id_str%>=option_val_list_<%=id_str%>.split(",");
+	var data_list_<%=id_str%>=[];
+	var idx_<%=id_str%>= "<%=cbid%>";
+	idx_<%=id_str%>=idx_<%=id_str%>.replace(/\./g, "\\.");
+	if ($("#"+idx_<%=id_str%>).val()){
+		data_list_<%=id_str%>=$("#"+idx_<%=id_str%>).val().split(",");
+	}
+	
+	$("#multi_select_<%=id_str%>").SelfSelect({text_list:text_list_<%=id_str%>,value_list:val_list_<%=id_str%>,data_list:data_list_<%=id_str%>,multi:option_multi_<%=id_str%>,msg:{"auto_msg":"<%=translate("AUTO")%>"},targetObj:$("#"+idx_<%=id_str%>)});
+</script>

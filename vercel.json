@@ -1,0 +1,31 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/40-server-web/mayebano-support/index.html"
+    },
+    {
+      "source": "/wechat-donate.png",
+      "destination": "/40-server-web/mayebano-support/wechat-donate.png"
+    },
+    {
+      "source": "/ssh-nradio-plugin-installer.sh",
+      "destination": "/00-current/ssh-nradio-plugin-installer.sh"
+    },
+    {
+      "source": "/ssh-nradio-plugin-installer-2.0.0beta.sh",
+      "destination": "/00-current/ssh-nradio-plugin-installer-2.0.0beta.sh"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*).sh",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        }
+      ]
+    }
+  ]
+}
