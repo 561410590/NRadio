@@ -57,6 +57,12 @@ Path    00-current/ssh-nradio-plugin-installer.sh
 
 更多校验值见 [CHECKSUMS.txt](CHECKSUMS.txt)。
 
+## 开源许可证
+
+本项目使用 [MIT License](LICENSE) 开源。
+
+你可以自由使用、复制、修改、分发本仓库公开文件；保留许可证和版权声明即可。
+
 ## 目录说明
 
 | 目录 | 内容 |

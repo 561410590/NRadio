@@ -19,6 +19,7 @@ jobs:
           test -f README.md
           test -f CHANGELOG.md
           test -f CHECKSUMS.txt
+          test -f LICENSE
 
       - name: Verify V2.0.0 script state
         run: |
@@ -43,3 +44,9 @@ jobs:
         run: |
           grep -q '19e75fb79571a318b91c7926306850c4e42c1f8000fcca2042d91b16b7ff7a4a' CHECKSUMS.txt
           printf '%s  %s\n' '19e75fb79571a318b91c7926306850c4e42c1f8000fcca2042d91b16b7ff7a4a' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+
+      - name: Verify license
+        run: |
+          grep -q 'MIT License' LICENSE
+          grep -q 'Copyright (c) 2026 maye' LICENSE
+          grep -q 'MIT License' README.md
