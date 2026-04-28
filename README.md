@@ -51,7 +51,7 @@ sh ssh-nradio-plugin-installer.sh
 当前正式脚本校验：
 
 ```text
-SHA256  bc09cf43d7358ec985e1b7b6ade7cfe763e45754757d45b830897f82cad0cfee
+SHA256  41eb1476f02d2e7f51be04dcff409129290b16e96a6ec622193f60e230504ae9
 Bytes   849454
 Path    00-current/ssh-nradio-plugin-installer.sh
 ```

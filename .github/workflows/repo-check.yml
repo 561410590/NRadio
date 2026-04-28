@@ -24,6 +24,7 @@ jobs:
       - name: Verify V2.0.1 script state
         run: |
           grep -q 'SCRIPT_VERSION="V2.0.1"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_RELEASE_DATE="2026-04-29"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
@@ -44,8 +45,8 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q 'bc09cf43d7358ec985e1b7b6ade7cfe763e45754757d45b830897f82cad0cfee' CHECKSUMS.txt
-          printf '%s  %s\n' 'bc09cf43d7358ec985e1b7b6ade7cfe763e45754757d45b830897f82cad0cfee' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          grep -q '41eb1476f02d2e7f51be04dcff409129290b16e96a6ec622193f60e230504ae9' CHECKSUMS.txt
+          printf '%s  %s\n' '41eb1476f02d2e7f51be04dcff409129290b16e96a6ec622193f60e230504ae9' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
 
       - name: Verify license
         run: |
