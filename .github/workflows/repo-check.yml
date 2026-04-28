@@ -20,10 +20,13 @@ jobs:
           test -f CHANGELOG.md
           test -f CHECKSUMS.txt
           test -f LICENSE
+          test -f CONTRIBUTING.md
+          test -f SECURITY.md
+          test -f .github/ISSUE_TEMPLATE/bug_report.yml
 
-      - name: Verify V2.0.1 script state
+      - name: Verify V2.0.2 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V2.0.1"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V2.0.2"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-04-29"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
@@ -31,10 +34,13 @@ jobs:
           grep -q "printf '2. 雷神加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-688|NRadio_C2000MAX' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-688 / C2000MAX 风扇控制' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'open_route = "nradioadv/system/fanctrl";' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '奇游入口脚本 SHA256' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '雷神官方安装脚本 SHA256' 00-current/ssh-nradio-plugin-installer.sh
 
       - name: Verify support page state
         run: |
-          grep -q 'V2.0.1' 40-server-web/mayebano-support/index.html
+          grep -q 'V2.0.2' 40-server-web/mayebano-support/index.html
           grep -q 'script release date refresh' 40-server-web/mayebano-support/index.html
           grep -q '2026-04-29' 40-server-web/mayebano-support/index.html
           grep -q '安装前提' 40-server-web/mayebano-support/index.html
@@ -51,11 +57,17 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '41eb1476f02d2e7f51be04dcff409129290b16e96a6ec622193f60e230504ae9' CHECKSUMS.txt
-          printf '%s  %s\n' '41eb1476f02d2e7f51be04dcff409129290b16e96a6ec622193f60e230504ae9' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          grep -q '888fb8294bb5c087a58d94e13fc751bda7493cdf681f494912062c89aed35d18' CHECKSUMS.txt
+          printf '%s  %s\n' '888fb8294bb5c087a58d94e13fc751bda7493cdf681f494912062c89aed35d18' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
 
       - name: Verify license
         run: |
           grep -q 'MIT License' LICENSE
           grep -q 'Copyright (c) 2026 maye' LICENSE
           grep -q 'MIT License' README.md
+
+      - name: Verify repository docs
+        run: |
+          grep -q 'GitHub main -> Vercel Production' CONTRIBUTING.md
+          grep -q 'Only the current public script is maintained' SECURITY.md
+          grep -q 'Do not include router passwords' .github/ISSUE_TEMPLATE/bug_report.yml

@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a reproducible problem with the NRadio plugin assistant
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include router passwords, cookies, private keys, public SSH addresses, or full live backups.
+  - type: input
+    id: model
+    attributes:
+      label: Device model
+      description: Example: NRadio_C2000MAX
+      placeholder: NRadio_C2000MAX
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware version
+      description: Example: NROS2.1.8.n0.c1
+      placeholder: NROS2.1.8.n0.c1
+    validations:
+      required: true
+  - type: input
+    id: script_version
+    attributes:
+      label: Script version
+      placeholder: V2.0.2
+    validations:
+      required: true
+  - type: input
+    id: menu_path
+    attributes:
+      label: Menu path
+      description: Example: 设备维护与检测 -> 风扇控制
+      placeholder: 设备维护与检测 -> 风扇控制
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Sanitized output
+      description: Paste the relevant terminal output after removing sensitive values.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+

@@ -2,7 +2,7 @@
 
 NRadio 插件助手公开仓库。这里保存当前正式脚本、公开支持页、应用商店页面素材和版本记录。
 
-当前正式版本：`V2.0.1`
+当前正式版本：`V2.0.2`
 
 公网入口：[https://nradio.mayebano.shop/](https://nradio.mayebano.shop/)
 
@@ -31,28 +31,32 @@ sh ssh-nradio-plugin-installer.sh
 
 | 文件 | 用途 |
 | --- | --- |
-| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.1 正式总脚本，公网默认下载入口 |
+| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.2 正式总脚本，公网默认下载入口 |
 | `00-current/ssh-nradio-plugin-installer-2.0.0beta.sh` | V2.0.0-beta 历史备份，不作为当前下载渠道 |
 | `00-current/nradio-fanctrl-plugin.sh` | 风扇控制独立脚本 |
 | `00-current/qiyou-nradio-temp-installer.sh` | 奇游联机宝历史临时脚本 |
 | `00-current/leigod-nradio-temp-installer.sh` | 雷神加速器历史临时脚本 |
 | `40-server-web/mayebano-support/index.html` | 公网支持页 |
 | `40-server-web/mayebano-support/wechat-donate.png` | 自愿支持图片 |
+| `CONTRIBUTING.md` | 反馈和贡献说明 |
+| `SECURITY.md` | 安全反馈边界 |
 
-## V2.0.1 状态
+## V2.0.2 状态
 
-- 默认下载脚本已切换为 `V2.0.1`。
+- 默认下载脚本已切换为 `V2.0.2`。
 - 旧 beta 独立短下载入口已取消。
 - 主菜单改为 5 个功能分类。
 - 奇游联机宝和雷神加速器已并入正式菜单，菜单不再标注“测试中”。
 - 设备维护与检测中的风扇控制已扩展到 `NRadio_C8-688` / `NRadio_C2000MAX`。
+- 应用商店 FanControl 打开路由统一为 `nradioadv/system/fanctrl`，并保留旧路由迁移逻辑。
+- 奇游/雷神安装阶段号、官方脚本 SHA256 日志和雷神依赖失败提示已补齐。
 - 公网页由 GitHub `main` 分支通过 Vercel 发布。
 
 当前正式脚本校验：
 
 ```text
-SHA256  41eb1476f02d2e7f51be04dcff409129290b16e96a6ec622193f60e230504ae9
-Bytes   849454
+SHA256  888fb8294bb5c087a58d94e13fc751bda7493cdf681f494912062c89aed35d18
+Bytes   850477
 Path    00-current/ssh-nradio-plugin-installer.sh
 ```
 
@@ -63,6 +67,12 @@ Path    00-current/ssh-nradio-plugin-installer.sh
 本项目使用 [MIT License](LICENSE) 开源。
 
 你可以自由使用、复制、修改、分发本仓库公开文件；保留许可证和版权声明即可。
+
+## 反馈与安全
+
+- 反馈问题前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。
+- 安全相关反馈请阅读 [SECURITY.md](SECURITY.md)。
+- 提交 issue 时不要公开 root 密码、Cookie、SSH 地址、私有密钥或完整现场备份。
 
 ## 目录说明
 

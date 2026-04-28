@@ -2,7 +2,7 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V2.0.1"
+SCRIPT_VERSION="V2.0.2"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
 SCRIPT_RELEASE_DATE="2026-04-29"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
@@ -4708,6 +4708,12 @@ EOF
         log 'warn: OpenVPN fallback block not found after template patch; continue with current template'
     fi
 
+    if grep -q 'nradioadv/system/fanctrl_plus' "$tmp3"; then
+        tmp_fanctrl_route="$WORKDIR/appcenter.fanctrl-route"
+        sed 's#nradioadv/system/fanctrl_plus#nradioadv/system/fanctrl#g' "$tmp3" > "$tmp_fanctrl_route"
+        cp "$tmp_fanctrl_route" "$tmp3"
+    fi
+
     need_openlist_route='1'
     need_zerotier_route='1'
     need_fanctrl_route='1'
@@ -4715,7 +4721,7 @@ EOF
     need_leigod_route='1'
     grep -q 'db.name == "OpenList"' "$tmp3" && need_openlist_route='0'
     grep -q 'db.name == "ZeroTier"' "$tmp3" && need_zerotier_route='0'
-    grep -q 'nradioadv/system/fanctrl_plus' "$tmp3" && need_fanctrl_route='0'
+    grep -q 'open_route = "nradioadv/system/fanctrl";' "$tmp3" && need_fanctrl_route='0'
     grep -q 'db.name == "奇游联机宝"' "$tmp3" && need_qiyou_route='0'
     grep -q 'db.name == "雷神加速器"' "$tmp3" && need_leigod_route='0'
     if [ "$need_openlist_route$need_zerotier_route$need_fanctrl_route$need_qiyou_route$need_leigod_route" != '00000' ]; then
@@ -4735,7 +4741,7 @@ EOF
                     }
                     if (need_fanctrl == "1") {
                         print "            else if (db.name == \"FanControl Plus\" || db.name == \"fanctrl-plus\" || db.name == \"FanControl\" || db.name == \"fanctrl\")"
-                        print "                open_route = \"nradioadv/system/fanctrl_plus\";"
+                        print "                open_route = \"nradioadv/system/fanctrl\";"
                     }
                     if (need_qiyou == "1") {
                         print "            else if (db.name == \"奇游联机宝\" || db.name == \"QiYou\" || db.name == \"qiyou\" || db.name == \"nradio-qiyou\")"
@@ -4804,7 +4810,7 @@ EOF
     verify_template_marker 'open_route = "nradioadv/system/openvpnfull";' 'OpenVPN 打开路由'
     verify_template_marker 'open_route = "nradioadv/system/openlist/basic";' 'OpenList 打开路由'
     verify_template_marker 'open_route = "nradioadv/system/zerotier/basic";' 'ZeroTier 打开路由'
-    verify_template_marker 'open_route = "nradioadv/system/fanctrl_plus";' 'FanControl Plus 打开路由'
+    verify_template_marker 'open_route = "nradioadv/system/fanctrl";' 'FanControl 打开路由'
     verify_template_marker "frame.src.indexOf('/admin/vpn/easytier') === -1" 'EasyTier iframe 白名单'
     verify_template_marker "frame.src.indexOf('/nradioadv/system/webssh') === -1" 'Web SSH iframe 白名单'
     verify_template_marker "action == 'uninstall' && nradio_plugin_uninstall_action(app_name)" '脚本插件异步卸载入口'
@@ -4994,7 +5000,7 @@ patch_appcenter_card_polish() {
 
     cat > "$css_file" <<'EOF_APPCENTER_CARD_POLISH_CSS'
     /* NRadio appcenter card polish: visual-only layer */
-    /* NRadio appcenter card polish V2.0.1 full repair layer */
+    /* NRadio appcenter card polish V2.0.2 full repair layer */
     /* NRadio appcenter visual polish 1-5 safe refinement */
     /* Keep appcontainer/container_left/app_top_menu/container_right layout owned by NRadio OEM CSS. */
     .container_right .app_box{
@@ -5968,7 +5974,7 @@ EOF_APPCENTER_EMPTY_STATE_JS
     fi
 
     verify_template_marker 'NRadio appcenter card polish: visual-only layer' '应用商店卡片美化 CSS'
-    verify_template_marker 'NRadio appcenter card polish V2.0.1 full repair layer' '应用商店 V2.0.1 修复美化 CSS'
+    verify_template_marker 'NRadio appcenter card polish V2.0.2 full repair layer' '应用商店 V2.0.2 修复美化 CSS'
     verify_template_marker '<div class="app_meta_row"' '应用商店卡片状态徽标'
     verify_template_marker 'status_label: db.status_label' '应用商店卡片状态标签数据'
     verify_template_marker 'app_open_badge app_open_1' '应用商店后台状态徽标'
@@ -19596,7 +19602,8 @@ EOF_QIYOU_VIEW
 }
 
 qiyou_install_assets() {
-    log "[3/7] 写入奇游应用商店接入文件"
+    qiyou_assets_log="${1:-写入奇游应用商店接入文件}"
+    log "$qiyou_assets_log"
     qiyou_write_icon
     qiyou_write_uninstall_helper
     write_plugin_uninstall_assets
@@ -19610,16 +19617,19 @@ qiyou_install_integrated() {
     game_accel_require_appcenter
     confirm_or_exit "确认安装奇游联机宝官方脚本并接入 NRadio 应用商店吗？"
     command -v opkg >/dev/null 2>&1 || die "系统没有 opkg，无法按奇游官方方式安装依赖"
-    log "[1/7] 安装奇游依赖"
+    log "[1/3] 安装奇游依赖"
     opkg update || die "opkg update 失败"
     opkg install curl kmod-tun ip-full || die "安装 curl/kmod-tun/ip-full 失败"
-    log "[2/7] 下载并执行奇游官方安装脚本"
+    log "[2/3] 下载并执行奇游官方安装脚本"
     download_file "http://sd.qiyou.cn" "/tmp/qiyou-install.sh" || die "下载奇游入口脚本失败"
     grep -q 'qyplug.sh' /tmp/qiyou-install.sh 2>/dev/null || die "奇游入口脚本内容异常，已停止执行"
+    if command -v sha256sum >/dev/null 2>&1; then
+        log "奇游入口脚本 SHA256: $(sha256sum /tmp/qiyou-install.sh | awk '{print $1}')"
+    fi
     sh /tmp/qiyou-install.sh || die "奇游官方安装脚本执行失败"
     sleep 2
     [ -f /etc/qy/qy_acc.sh ] || die "奇游安装后未发现 /etc/qy/qy_acc.sh"
-    qiyou_install_assets
+    qiyou_install_assets "[3/3] 写入奇游应用商店接入文件"
     qiyou_show_status
     log "完成：奇游联机宝已接入 NRadio 应用商店"
 }
@@ -19800,7 +19810,8 @@ EOF_LEIGOD_VIEW
 }
 
 leigod_install_assets() {
-    log "[3/6] 写入雷神应用商店接入文件"
+    leigod_assets_log="${1:-写入雷神应用商店接入文件}"
+    log "$leigod_assets_log"
     leigod_write_icon
     leigod_write_uninstall_helper
     write_plugin_uninstall_assets
@@ -19826,27 +19837,36 @@ leigod_install_integrated() {
 EOF_LEIGOD_RISK
     confirm_or_exit "确认安装雷神官方脚本并接入 NRadio 应用商店吗？"
     command -v opkg >/dev/null 2>&1 || die "系统没有 opkg，无法自动安装雷神依赖"
-    log "[1/6] 安装雷神依赖"
+    log "[1/3] 安装雷神依赖"
     opkg update || die "opkg update 失败"
+    lg_dep_failed=''
     for lg_pkg in curl libpcap iptables kmod-ipt-nat iptables-mod-tproxy kmod-ipt-ipset ipset kmod-tun kmod-ipt-tproxy kmod-netem tc-full conntrack miniupnpd luci-app-upnp; do
         if ! opkg list-installed 2>/dev/null | grep -q "^$lg_pkg "; then
             log "安装依赖：$lg_pkg"
-            opkg install "$lg_pkg" || true
+            if ! opkg install "$lg_pkg"; then
+                lg_dep_failed="${lg_dep_failed} $lg_pkg"
+            fi
         fi
     done
+    if [ -n "$lg_dep_failed" ]; then
+        log "提示: 以下雷神依赖安装失败或不可用，仍将交由官方脚本继续处理:${lg_dep_failed}"
+    fi
     if [ -f /etc/config/upnpd ]; then
         uci set upnpd.config.enabled='1' >/dev/null 2>&1 || true
         uci commit upnpd >/dev/null 2>&1 || true
         /etc/init.d/miniupnpd start >/dev/null 2>&1 || true
         /etc/init.d/miniupnpd enable >/dev/null 2>&1 || true
     fi
-    log "[2/6] 下载并执行雷神官方安装脚本"
+    log "[2/3] 下载并执行雷神官方安装脚本"
     download_file "http://119.3.40.126/router_plugin_new/plugin_install.sh" "/tmp/leigod-plugin-install.sh" || die "下载雷神官方安装脚本失败"
     grep -q 'leigod\|acc-gw\|accelerator' /tmp/leigod-plugin-install.sh 2>/dev/null || die "雷神官方安装脚本内容异常，已停止执行"
+    if command -v sha256sum >/dev/null 2>&1; then
+        log "雷神官方安装脚本 SHA256: $(sha256sum /tmp/leigod-plugin-install.sh | awk '{print $1}')"
+    fi
     sh /tmp/leigod-plugin-install.sh || die "雷神官方安装脚本执行失败"
     sleep 2
     leigod_installed || die "安装后仍未检测到 /usr/sbin/leigod/acc-gw.router.*"
-    leigod_install_assets
+    leigod_install_assets "[3/3] 写入雷神应用商店接入文件"
     leigod_show_status
     log "完成：雷神加速器已接入 NRadio 应用商店"
 }
