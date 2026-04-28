@@ -93,7 +93,7 @@ jobs:
               exit 1
             fi
           else
-            git tag -a v2.0.3 -m "NRadio V2.0.3"
+            git tag -a v2.0.3 -m "ssh-nradio-plugin-installer V2.0.3"
             git push origin v2.0.3
           fi
 
@@ -116,5 +116,5 @@ jobs:
             "00-current/ssh-nradio-plugin-installer.sh#ssh-nradio-plugin-installer.sh" \
             "CHECKSUMS.txt#CHECKSUMS.txt" \
             --repo "$GITHUB_REPOSITORY" \
-            --title "NRadio V2.0.3" \
+            --title "ssh-nradio-plugin-installer V2.0.3" \
             --notes-file /tmp/v203-release-notes.md
