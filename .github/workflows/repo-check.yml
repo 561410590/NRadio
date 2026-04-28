@@ -24,9 +24,9 @@ jobs:
           test -f SECURITY.md
           test -f .github/ISSUE_TEMPLATE/bug_report.yml
 
-      - name: Verify V2.0.2 script state
+      - name: Verify V2.0.3 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V2.0.2"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V2.0.3"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-04-29"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
@@ -34,19 +34,24 @@ jobs:
           grep -q "printf '2. 雷神加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-688|NRadio_C2000MAX' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-688 / C2000MAX 风扇控制' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '温度来源' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'Smart 最低风速' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '过热保护温度' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '检测间隔' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'open_route = "nradioadv/system/fanctrl";' 00-current/ssh-nradio-plugin-installer.sh
           grep -q '奇游入口脚本 SHA256' 00-current/ssh-nradio-plugin-installer.sh
           grep -q '雷神官方安装脚本 SHA256' 00-current/ssh-nradio-plugin-installer.sh
 
       - name: Verify support page state
         run: |
-          grep -q 'V2.0.2' 40-server-web/mayebano-support/index.html
-          grep -q 'script release date refresh' 40-server-web/mayebano-support/index.html
+          grep -q 'V2.0.3' 40-server-web/mayebano-support/index.html
+          grep -q 'fan control smart release' 40-server-web/mayebano-support/index.html
           grep -q '2026-04-29' 40-server-web/mayebano-support/index.html
           grep -q '安装前提' 40-server-web/mayebano-support/index.html
           grep -q '详细教程在右侧' 40-server-web/mayebano-support/index.html
           grep -q 'MobaXterm' 40-server-web/mayebano-support/index.html
           grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
+          grep -q 'Smart 多段温控' 40-server-web/mayebano-support/index.html
           ! grep -q '安装方式提醒' 40-server-web/mayebano-support/index.html
           ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
 
@@ -57,8 +62,8 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '888fb8294bb5c087a58d94e13fc751bda7493cdf681f494912062c89aed35d18' CHECKSUMS.txt
-          printf '%s  %s\n' '888fb8294bb5c087a58d94e13fc751bda7493cdf681f494912062c89aed35d18' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          grep -q '4aaa62e0793b4e47769f233a78e1c4ef7dfbb71d9900e2fa242e25e349d25fe1' CHECKSUMS.txt
+          printf '%s  %s\n' '4aaa62e0793b4e47769f233a78e1c4ef7dfbb71d9900e2fa242e25e349d25fe1' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
 
       - name: Verify license
         run: |

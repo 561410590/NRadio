@@ -2,7 +2,7 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V2.0.2"
+SCRIPT_VERSION="V2.0.3"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
 SCRIPT_RELEASE_DATE="2026-04-29"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
@@ -5000,7 +5000,7 @@ patch_appcenter_card_polish() {
 
     cat > "$css_file" <<'EOF_APPCENTER_CARD_POLISH_CSS'
     /* NRadio appcenter card polish: visual-only layer */
-    /* NRadio appcenter card polish V2.0.2 full repair layer */
+    /* NRadio appcenter card polish V2.0.3 full repair layer */
     /* NRadio appcenter visual polish 1-5 safe refinement */
     /* Keep appcontainer/container_left/app_top_menu/container_right layout owned by NRadio OEM CSS. */
     .container_right .app_box{
@@ -5974,7 +5974,7 @@ EOF_APPCENTER_EMPTY_STATE_JS
     fi
 
     verify_template_marker 'NRadio appcenter card polish: visual-only layer' '应用商店卡片美化 CSS'
-    verify_template_marker 'NRadio appcenter card polish V2.0.2 full repair layer' '应用商店 V2.0.2 修复美化 CSS'
+    verify_template_marker 'NRadio appcenter card polish V2.0.3 full repair layer' '应用商店 V2.0.3 修复美化 CSS'
     verify_template_marker '<div class="app_meta_row"' '应用商店卡片状态徽标'
     verify_template_marker 'status_label: db.status_label' '应用商店卡片状态标签数据'
     verify_template_marker 'app_open_badge app_open_1' '应用商店后台状态徽标'
@@ -10123,6 +10123,21 @@ install_easytier() {
 }
 
 write_fanctrl_plugin_files() {
+    fanctrl_model="${1:-}"
+    fanctrl_tempsource='max'
+    fanctrl_interval='12'
+
+    case "$fanctrl_model" in
+        NRadio_C8-688)
+            fanctrl_tempsource='cpu'
+            fanctrl_interval='10'
+            ;;
+        NRadio_C2000MAX)
+            fanctrl_tempsource='max'
+            fanctrl_interval='12'
+            ;;
+    esac
+
     mkdir -p \
         "$(dirname "$FANCTRL_CONTROLLER")" \
         "$(dirname "$FANCTRL_CBI")" \
@@ -10162,6 +10177,60 @@ local function mode_label(mode)
     return "Smart"
 end
 
+local function read_int_file(path, divisor)
+    local fs = require "nixio.fs"
+    local raw = fs.readfile(path) or ""
+    local num = tonumber((raw:gsub("%s+", "")) or "") or 0
+    if divisor and divisor > 1 and num > 0 then
+        num = math.floor(num / divisor)
+    end
+    return num
+end
+
+local function read_cpe_temp()
+    local sys = require "luci.sys"
+    local raw = sys.exec("/etc/cpetools/quectel.sh -c temp 2>/dev/null") or ""
+    return tonumber((raw:gsub("%s+", "")) or "") or 0
+end
+
+local function choose_temp(source, cpu_temp, cpe_temp)
+    if source == "cpu" then
+        return cpu_temp
+    elseif source == "cpe" then
+        if cpe_temp > 0 then
+            return cpe_temp
+        end
+        return cpu_temp
+    end
+
+    if cpe_temp > cpu_temp then
+        return cpe_temp
+    end
+    return cpu_temp
+end
+
+local function temp_source_label(source)
+    if source == "cpu" then
+        return "CPU"
+    elseif source == "cpe" then
+        return "CPE"
+    end
+    return "CPU/CPE 取高值"
+end
+
+local function pwm_to_percent(pwm_num)
+    if pwm_num >= 255 then
+        return "100"
+    elseif pwm_num >= 204 then
+        return "80"
+    elseif pwm_num >= 127 then
+        return "50"
+    elseif pwm_num >= 76 then
+        return "30"
+    end
+    return "0"
+end
+
 function action_get_temperature()
     local fs = require "nixio.fs"
     local data = {}
@@ -10170,29 +10239,29 @@ function action_get_temperature()
     data.mode = uci:get("fanctrl", "fanctrl", "mode") or "4"
     data.mode_label = mode_label(data.mode)
     data.enabled = uci:get("fanctrl", "fanctrl", "enabled") or "0"
+    data.temp_source = uci:get("fanctrl", "fanctrl", "tempsource") or "max"
+    data.temp_source_label = temp_source_label(data.temp_source)
+    data.interval = uci:get("fanctrl", "fanctrl", "interval") or "12"
+    data.protecttemp = uci:get("fanctrl", "fanctrl", "protecttemp") or "85"
 
-    local temp_raw = fs.readfile("/sys/class/thermal/thermal_zone0/temp") or ""
     local pwm_raw = fs.readfile("/sys/devices/platform/pwm-fan/hwmon/hwmon0/pwm1") or ""
-    local temp_num = tonumber((temp_raw:gsub("%s+", "")) or "") or 0
+    local gpio_raw = fs.readfile("/sys/class/gpio/fan-hw/value") or ""
+    local cpu_temp = read_int_file("/sys/class/thermal/thermal_zone0/temp", 1000)
+    local cpe_temp = read_cpe_temp()
+    local temp_num = choose_temp(data.temp_source, cpu_temp, cpe_temp)
     local pwm_num = tonumber((pwm_raw:gsub("%s+", "")) or "") or 0
 
     if temp_num > 0 then
-        data.temp = tostring(math.floor(temp_num / 1000))
+        data.temp = tostring(temp_num)
     else
         data.temp = ""
     end
 
-    if pwm_num >= 255 then
-        data.fan = "100"
-    elseif pwm_num >= 204 then
-        data.fan = "80"
-    elseif pwm_num >= 127 then
-        data.fan = "50"
-    elseif pwm_num >= 76 then
-        data.fan = "30"
-    else
-        data.fan = "0"
-    end
+    data.cpu_temp = cpu_temp > 0 and tostring(cpu_temp) or ""
+    data.cpe_temp = cpe_temp > 0 and tostring(cpe_temp) or ""
+    data.pwm = pwm_num > 0 and tostring(pwm_num) or "0"
+    data.gpio = (gpio_raw:gsub("%s+", "")) or ""
+    data.fan = pwm_to_percent(pwm_num)
 
     luci.nradio.luci_call_result(data)
 end
@@ -10224,10 +10293,53 @@ mode:value("4", translate("Smart"))
 mode.default = "4"
 mode:depends("enabled", "1")
 
-smarttemp = s:option(Value, "smarttemp", translate("SmartTemp"))
-smarttemp.default = "60"
-smarttemp.datatype = "uinteger"
-smarttemp:depends("mode", "4")
+tempsource = s:option(ListValue, "tempsource", translate("温度来源"))
+tempsource:value("max", translate("CPU/CPE 取高值"))
+tempsource:value("cpu", translate("CPU"))
+tempsource:value("cpe", translate("CPE"))
+tempsource.default = "max"
+tempsource:depends("enabled", "1")
+
+smartmin = s:option(ListValue, "smartmin", translate("Smart 最低风速"))
+smartmin:value("0", translate("关闭"))
+smartmin:value("30", translate("30%"))
+smartmin:value("50", translate("50%"))
+smartmin.default = "30"
+smartmin:depends("mode", "4")
+
+smarttemp_low = s:option(Value, "smarttemp_low", translate("Smart 30% 温度"))
+smarttemp_low.default = "50"
+smarttemp_low.datatype = "uinteger"
+smarttemp_low:depends("mode", "4")
+
+smarttemp_mid = s:option(Value, "smarttemp_mid", translate("Smart 50% 温度"))
+smarttemp_mid.default = "60"
+smarttemp_mid.datatype = "uinteger"
+smarttemp_mid:depends("mode", "4")
+
+smarttemp_high = s:option(Value, "smarttemp_high", translate("Smart 80% 温度"))
+smarttemp_high.default = "70"
+smarttemp_high.datatype = "uinteger"
+smarttemp_high:depends("mode", "4")
+
+smarttemp_full = s:option(Value, "smarttemp_full", translate("Smart 100% 温度"))
+smarttemp_full.default = "80"
+smarttemp_full.datatype = "uinteger"
+smarttemp_full:depends("mode", "4")
+
+protecttemp = s:option(Value, "protecttemp", translate("过热保护温度"))
+protecttemp.default = "85"
+protecttemp.datatype = "uinteger"
+protecttemp:depends("enabled", "1")
+
+interval = s:option(ListValue, "interval", translate("检测间隔"))
+interval:value("5", translate("5s"))
+interval:value("10", translate("10s"))
+interval:value("12", translate("12s"))
+interval:value("15", translate("15s"))
+interval:value("30", translate("30s"))
+interval.default = "12"
+interval:depends("enabled", "1")
 
 function m.on_after_commit(map)
     os.execute("/etc/init.d/fanctrl restart >/dev/null 2>&1")
@@ -10254,20 +10366,18 @@ EOF_FANCTRL_CBI
 			var temp = rv.result.temp || '';
 			var fan = rv.result.fan || '0';
 			var mode = rv.result.mode || '4';
+			var modeLabel = rv.result.mode_label || 'Smart';
 			var enabled = rv.result.enabled || '0';
+			var sourceLabel = rv.result.temp_source_label || '';
 
-			var tempLabel = temp ? (temp + ' °C') : '<em>暂无数据</em>';
+			var tempLabel = temp ? (temp + ' °C' + (sourceLabel ? (' / ' + sourceLabel) : '')) : '<em>暂无数据</em>';
 			var fanLabel = '关闭';
 
 			if (enabled === '1') {
-				if (mode === '1')
-					fanLabel = fan + '% / Low';
-				else if (mode === '2')
-					fanLabel = fan + '% / Medium';
-				else if (mode === '3')
-					fanLabel = fan + '% / High';
+				if (mode === '0')
+					fanLabel = '关闭';
 				else
-					fanLabel = fan + '% / Smart';
+					fanLabel = fan + '% / ' + modeLabel;
 			}
 
 			update_fanctrl_value('tempdesdevice-temperature-status', tempLabel);
@@ -10297,7 +10407,7 @@ EOF_FANCTRL_TEMP
 
 GPIO_FAN="/sys/class/gpio/fan-hw/value"
 PWM_FAN="/sys/devices/platform/pwm-fan/hwmon/hwmon0/pwm1"
-WAIT=12
+DEFAULT_WAIT=12
 
 set_pwm_by_percent() {
     case "$1" in
@@ -10331,13 +10441,44 @@ get_model_temp() {
     echo "$cur" | grep -qE '^[0-9]+$' && echo "$cur" || true
 }
 
-get_drive_temp() {
-    model_temp="$(get_model_temp)"
-    if [ -n "$model_temp" ]; then
-        echo "$model_temp"
+is_uint() {
+    echo "$1" | grep -qE '^[0-9]+$'
+}
+
+safe_uint() {
+    value="$1"
+    fallback="$2"
+    if is_uint "$value"; then
+        echo "$value"
     else
-        get_cpu_temp
+        echo "$fallback"
     fi
+}
+
+get_drive_temp() {
+    source="$1"
+    cpu_temp="$(get_cpu_temp)"
+    model_temp="$(get_model_temp)"
+
+    case "$source" in
+        cpu)
+            echo "${cpu_temp:-0}"
+            ;;
+        cpe)
+            if [ -n "$model_temp" ]; then
+                echo "$model_temp"
+            else
+                echo "${cpu_temp:-0}"
+            fi
+            ;;
+        *)
+            if [ -n "$model_temp" ] && [ "$model_temp" -gt "${cpu_temp:-0}" ]; then
+                echo "$model_temp"
+            else
+                echo "${cpu_temp:-0}"
+            fi
+            ;;
+    esac
 }
 
 disable_fan() {
@@ -10354,17 +10495,40 @@ enable_fan() {
 
 smart_percent() {
     temp="$1"
-    threshold="$2"
-    [ -n "$threshold" ] || threshold=60
-    if [ "$temp" -ge 80 ]; then
-        echo 100
-    elif [ "$temp" -ge 70 ]; then
-        echo 80
-    elif [ "$temp" -ge "$threshold" ]; then
-        echo 50
+    smart_min="$2"
+    smart_low="$3"
+    smart_mid="$4"
+    smart_high="$5"
+    smart_full="$6"
+    percent=0
+
+    [ -n "$smart_min" ] || smart_min=30
+    [ -n "$smart_low" ] || smart_low=50
+    [ -n "$smart_mid" ] || smart_mid=60
+    [ -n "$smart_high" ] || smart_high=70
+    [ -n "$smart_full" ] || smart_full=80
+
+    case "$smart_min" in
+        0|30|50) ;;
+        *) smart_min=30 ;;
+    esac
+
+    if [ "$temp" -ge "$smart_full" ]; then
+        percent=100
+    elif [ "$temp" -ge "$smart_high" ]; then
+        percent=80
+    elif [ "$temp" -ge "$smart_mid" ]; then
+        percent=50
+    elif [ "$temp" -ge "$smart_low" ]; then
+        percent=30
     else
-        echo 30
+        percent="$smart_min"
     fi
+
+    if [ "$percent" -lt "$smart_min" ]; then
+        percent="$smart_min"
+    fi
+    echo "$percent"
 }
 
 report_state() {
@@ -10377,12 +10541,44 @@ report_state() {
 while true; do
     enabled="$(uci -q get fanctrl.fanctrl.enabled 2>/dev/null || echo 1)"
     mode="$(uci -q get fanctrl.fanctrl.mode 2>/dev/null || echo 4)"
-    smarttemp="$(uci -q get fanctrl.fanctrl.smarttemp 2>/dev/null || echo 60)"
+    tempsource="$(uci -q get fanctrl.fanctrl.tempsource 2>/dev/null || echo max)"
+    smartmin="$(uci -q get fanctrl.fanctrl.smartmin 2>/dev/null || echo 30)"
+    smarttemp_low="$(uci -q get fanctrl.fanctrl.smarttemp_low 2>/dev/null || echo 50)"
+    smarttemp_mid="$(uci -q get fanctrl.fanctrl.smarttemp_mid 2>/dev/null || echo 60)"
+    smarttemp_high="$(uci -q get fanctrl.fanctrl.smarttemp_high 2>/dev/null || echo 70)"
+    smarttemp_full="$(uci -q get fanctrl.fanctrl.smarttemp_full 2>/dev/null || echo 80)"
+    protecttemp="$(uci -q get fanctrl.fanctrl.protecttemp 2>/dev/null || echo 85)"
+    wait_time="$(uci -q get fanctrl.fanctrl.interval 2>/dev/null || echo "$DEFAULT_WAIT")"
+
+    smarttemp_low="$(safe_uint "$smarttemp_low" 50)"
+    smarttemp_mid="$(safe_uint "$smarttemp_mid" 60)"
+    smarttemp_high="$(safe_uint "$smarttemp_high" 70)"
+    smarttemp_full="$(safe_uint "$smarttemp_full" 80)"
+    protecttemp="$(safe_uint "$protecttemp" 85)"
+
+    case "$wait_time" in
+        5|10|12|15|30) ;;
+        *) wait_time="$DEFAULT_WAIT" ;;
+    esac
+
+    [ "$smarttemp_mid" -ge "$smarttemp_low" ] || smarttemp_mid="$smarttemp_low"
+    [ "$smarttemp_high" -ge "$smarttemp_mid" ] || smarttemp_high="$smarttemp_mid"
+    [ "$smarttemp_full" -ge "$smarttemp_high" ] || smarttemp_full="$smarttemp_high"
 
     if [ "$enabled" != "1" ]; then
         disable_fan
         report_state
-        sleep "$WAIT"
+        sleep "$wait_time"
+        continue
+    fi
+
+    current_temp="$(get_drive_temp "$tempsource")"
+    [ -n "$current_temp" ] || current_temp=0
+
+    if [ "$current_temp" -ge "$protecttemp" ]; then
+        enable_fan 100
+        report_state
+        sleep "$wait_time"
         continue
     fi
 
@@ -10391,12 +10587,12 @@ while true; do
         1) enable_fan 30 ;;
         2) enable_fan 50 ;;
         3) enable_fan 80 ;;
-        4) enable_fan "$(smart_percent "$(get_drive_temp)" "$smarttemp")" ;;
+        4) enable_fan "$(smart_percent "$current_temp" "$smartmin" "$smarttemp_low" "$smarttemp_mid" "$smarttemp_high" "$smarttemp_full")" ;;
         *) enable_fan 50 ;;
     esac
 
     report_state
-    sleep "$WAIT"
+    sleep "$wait_time"
 done
 EOF_FANCTRL_SERVICE
 
@@ -10414,11 +10610,18 @@ start_service() {
 }
 EOF_FANCTRL_INIT
 
-    cat > "$FANCTRL_CONFIG_FILE" <<'EOF_FANCTRL_UCI'
+    cat > "$FANCTRL_CONFIG_FILE" <<EOF_FANCTRL_UCI
 config service 'fanctrl'
     option enabled '1'
     option mode '4'
-    option smarttemp '60'
+    option tempsource '$fanctrl_tempsource'
+    option smartmin '30'
+    option smarttemp_low '50'
+    option smarttemp_mid '60'
+    option smarttemp_high '70'
+    option smarttemp_full '80'
+    option protecttemp '85'
+    option interval '$fanctrl_interval'
 EOF_FANCTRL_UCI
 
     chmod 644 "$FANCTRL_CONTROLLER" "$FANCTRL_CBI" "$FANCTRL_TEMP_AJAX_VIEW" "$FANCTRL_TEMP_VIEW" "$FANCTRL_CONFIG_FILE"
@@ -10451,7 +10654,7 @@ install_fanctrl() {
     confirm_or_exit "确认继续安装 ${FANCTRL_DISPLAY_NAME} 并修改系统吗？"
 
     log_stage 2 5 "写入原厂风扇控制页面与后台脚本"
-    write_fanctrl_plugin_files
+    write_fanctrl_plugin_files "$current_model"
 
     log_stage 3 5 "启用风扇控制服务并写入默认配置"
     "$FANCTRL_INIT_FILE" enable >/dev/null 2>&1 || true

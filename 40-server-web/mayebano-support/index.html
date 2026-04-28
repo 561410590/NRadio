@@ -309,7 +309,7 @@
     }
 
     .hero-copy::after {
-        content: "V2.0.2";
+        content: "V2.0.3";
       position: absolute;
       right: 28px;
       bottom: 8px;
@@ -2584,7 +2584,7 @@
       <a href="#history">更新记录</a>
       <a href="#install">安装方式</a>
       <a href="#support">自愿支持</a>
-      <span>V2.0.2</span>
+      <span>V2.0.3</span>
     </nav>
 
     <section class="hero">
@@ -2595,24 +2595,24 @@
           <h1>NRadio<br>插件助手</h1>
           <p class="lead">
             面向 NRadio 官方 NROS 设备的 SSH 插件安装助手。
-            当前正式版 <strong>V2.0.2</strong> 已切换为默认下载入口。
+            当前正式版 <strong>V2.0.3</strong> 已切换为默认下载入口。
           </p>
 
           <div class="hero-tags">
-            <span>当前正式 V2.0.2</span>
+            <span>当前正式 V2.0.3</span>
             <span>默认脚本入口</span>
             <span>GitHub / Vercel 发布</span>
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
-            <span><b>当前版本</b>V2.0.2 正式脚本</span>
+            <span><b>当前版本</b>V2.0.3 正式脚本</span>
             <span><b>安装方式</b>SSH 终端执行</span>
             <span><b>入口状态</b>单一下载入口</span>
             <span><b>菜单结构</b>5 个功能分类</span>
           </div>
 
           <div class="hero-links">
-            <a href="#support">下载 V2.0.2</a>
+            <a href="#support">下载 V2.0.3</a>
             <a href="#install">安装方式</a>
             <a href="#history">更新记录</a>
           </div>
@@ -2645,11 +2645,11 @@
           <section class="hero-latest" aria-label="当前里程碑说明">
             <div class="hero-latest-top">
               <div class="hero-latest-label">当前里程碑</div>
-              <div class="hero-latest-version">V2.0.2</div>
+              <div class="hero-latest-version">V2.0.3</div>
             </div>
-            <strong>当前正式脚本已切换到 V2.0.2</strong>
+            <strong>当前正式脚本已切换到 V2.0.3</strong>
             <p>
-              V2.0.2 使用默认文件名下载，继续保留功能分类菜单；FanControl 打开路由、加速器阶段提示和官方脚本校验日志已同步收口。
+              V2.0.3 使用默认文件名下载，继续保留功能分类菜单；风扇控制新增 Smart 多段温控、温度来源、过热保护和检测间隔，并对 C8-688 / C2000MAX 分机型写入默认策略。
               页面只保留当前正式入口，历史版本记录继续放在时间线中。
             </p>
             <div class="hero-milestones">
@@ -2663,6 +2663,7 @@
               <span>V2.0.0 正式脚本默认下载</span>
               <span>V2.0.1 风扇控制支持 C2000MAX</span>
               <span>V2.0.2 入口链与提示收口</span>
+              <span>V2.0.3 风扇控制增强</span>
               <span>脚本发布日期 2026-04-29</span>
               <span>支持页迁入 GitHub / Vercel</span>
             </div>
@@ -2725,10 +2726,15 @@
               <strong>风扇控制支持 C2000MAX</strong>
               <p>14 号风扇控制门禁扩展到 C8-688 与 C2000MAX，菜单和安装提示同步更新。</p>
             </article>
-            <article class="release-card release-card-current">
+            <article class="release-card">
               <b>V2.0.2</b>
               <strong>入口链与提示收口</strong>
               <p>FanControl 打开路由统一到当前页面，奇游和雷神阶段提示、依赖提示与官方脚本 SHA256 日志补齐。</p>
+            </article>
+            <article class="release-card release-card-current">
+              <b>V2.0.3</b>
+              <strong>风扇控制增强</strong>
+              <p>Smart 模式支持多段温控、最低风速、温度来源、过热保护和检测间隔；C8-688 默认按 CPU 温度源与 10s 检测间隔写入，C2000MAX 保持 CPU/CPE 取高值与 12s 检测间隔。</p>
             </article>
           </div>
 
@@ -2761,16 +2767,17 @@
                 <div class="release-panel-kicker">Current Release</div>
                 <h2>公开发布速览</h2>
               </div>
-              <div class="release-panel-version">V2.0.2</div>
+              <div class="release-panel-version">V2.0.3</div>
             </div>
             <p>
-              当前公开入口由 GitHub main 分支发布，Vercel 承载，默认下载脚本为 V2.0.2。
+              当前公开入口由 GitHub main 分支发布，Vercel 承载，默认下载脚本为 V2.0.3。
             </p>
             <div class="release-panel-grid" aria-label="当前公开状态">
-              <span><b>默认脚本</b><em>V2.0.2 使用默认文件名下载</em></span>
+              <span><b>默认脚本</b><em>V2.0.3 使用默认文件名下载</em></span>
               <span><b>旧版入口</b><em>旧 beta 独立下载入口已取消</em></span>
               <span><b>安装方式</b><em>打开 SSH 后在路由器终端执行</em></span>
-              <span><b>菜单结构</b><em>V2.0.2 默认进入功能分类</em></span>
+              <span><b>菜单结构</b><em>V2.0.3 默认进入功能分类</em></span>
+              <span><b>风扇控制</b><em>C8-688 / C2000MAX 分机型默认策略</em></span>
               <span><b>加速器入口</b><em>奇游联机宝与雷神加速器为正式菜单</em></span>
             </div>
             <div class="release-panel-foot" aria-label="公开页状态">
@@ -2808,7 +2815,7 @@
 
             <div class="publish-actions">
               <a href="https://github.com/561410590/ssh-nradio-plugin-installer" target="_blank" rel="noopener">查看 GitHub</a>
-              <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.2</a>
+              <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.3</a>
             </div>
           </section>
 
@@ -2819,12 +2826,12 @@
                 <span>推荐使用带 SSH 终端和 SFTP/SCP 文件管理的软件，先把脚本传到路由器 /root，再在终端执行。</span>
               </div>
               <div class="download-actions">
-                <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.2</a>
+                <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.3</a>
               </div>
             </div>
             <div class="download-facts" aria-label="下载状态">
               <span><b>文件名</b><em>ssh-nradio-plugin-installer.sh</em></span>
-              <span><b>版本</b><em>V2.0.2</em></span>
+              <span><b>版本</b><em>V2.0.3</em></span>
               <span><b>旧入口</b><em>已取消</em></span>
             </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
@@ -2842,7 +2849,7 @@
                 <ul class="download-list">
                   <li>在 NRadio 后台打开 SSH：<code>/cgi-bin/luci/admin/system/security</code>，保存并应用。</li>
                   <li>打开 MobaXterm 这类 SSH 软件，新建 SSH 连接：主机 <code>192.168.66.1</code>，用户 <code>root</code>，密码填你的路由器 root 密码。</li>
-                  <li>点击本卡片右上角“下载 V2.0.2”，把 <code>ssh-nradio-plugin-installer.sh</code> 保存到电脑。</li>
+                  <li>点击本卡片右上角“下载 V2.0.3”，把 <code>ssh-nradio-plugin-installer.sh</code> 保存到电脑。</li>
                   <li>在 SSH 软件的 SFTP/SCP 文件面板进入 <code>/root</code>，把脚本拖进去。</li>
                   <li>在同一个 SSH 终端执行：<code>cd /root</code>，再执行 <code>sh ssh-nradio-plugin-installer.sh</code>。</li>
                 </ul>
@@ -2931,8 +2938,8 @@ sh ssh-nradio-plugin-installer.sh</code>
                 <span>时间线起点，从 V1.0.0 首版闭环开始。</span>
               </div>
               <div>
-                <strong>2026-04-26</strong>
-                <span>当前公开里程碑整理到 V2.0.2。</span>
+                <strong>2026-04-29</strong>
+                <span>当前公开里程碑整理到 V2.0.3。</span>
               </div>
               <div>
                 <strong>持续追加</strong>
@@ -3201,11 +3208,19 @@ sh ssh-nradio-plugin-installer.sh</code>
                   </div>
                 </article>
 
-                <article class="timeline-entry is-current">
+                <article class="timeline-entry">
                   <div class="version">V2.0.2</div>
                   <div class="entry-copy">
                     <strong>入口链与加速器提示收口</strong>
                     <p>FanControl 应用商店打开路由统一为 nradioadv/system/fanctrl；奇游和雷神安装阶段号改为真实 3 阶段，补充官方脚本 SHA256 日志和雷神依赖失败提示。</p>
+                  </div>
+                </article>
+
+                <article class="timeline-entry is-current">
+                  <div class="version">V2.0.3</div>
+                  <div class="entry-copy">
+                    <strong>风扇控制 Smart 多段增强</strong>
+                    <p>风扇控制新增温度来源、Smart 最低风速、30% / 50% / 80% / 100% 多段阈值、过热保护温度和检测间隔；C8-688 与 C2000MAX 分机型写入默认温度源和检测间隔。</p>
                   </div>
                 </article>
               </div>
@@ -3229,7 +3244,7 @@ sh ssh-nradio-plugin-installer.sh</code>
         <section class="next-actions" aria-label="页面闭环入口">
           <a href="#history">
             <b>查看版本时间线</b>
-            <span>从 V1.0.0 到 V2.0.2 的关键节点都整理在这里。</span>
+            <span>从 V1.0.0 到 V2.0.3 的关键节点都整理在这里。</span>
           </a>
           <a href="#support">
             <b>自愿支持维护</b>
@@ -3243,7 +3258,7 @@ sh ssh-nradio-plugin-installer.sh</code>
 
         <footer class="page-signature">
           <div><b>NRadio Plugin Assistant</b><br>更新记录、SSH 安装和支持入口集中在同一个页面。</div>
-          <div>Last updated: 2026-04-29 / V2.0.2 / script release date refresh</div>
+          <div>Last updated: 2026-04-29 / V2.0.3 / fan control smart release</div>
         </footer>
       </div>
     </section>
