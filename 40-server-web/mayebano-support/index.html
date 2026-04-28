@@ -1083,6 +1083,41 @@
       line-height: 1.4;
     }
 
+    .ssh-tool-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .ssh-tool-grid li {
+      min-height: 78px;
+      padding: 11px;
+      border-radius: 14px;
+      background: rgba(4, 36, 26, 0.28);
+      border: 1px solid rgba(220, 255, 244, 0.1);
+    }
+
+    .ssh-tool-grid strong,
+    .ssh-tool-grid span {
+      display: block;
+    }
+
+    .ssh-tool-grid strong {
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .ssh-tool-grid span {
+      margin-top: 6px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
     .download-list {
       display: grid;
       gap: 6px;
@@ -1092,6 +1127,17 @@
       color: rgba(255, 255, 255, 0.74);
       font-size: 12px;
       line-height: 1.7;
+    }
+
+    .download-list code {
+      color: #fff;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 11px;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(220, 255, 244, 0.1);
+      border-radius: 8px;
+      padding: 1px 6px;
+      word-break: break-all;
     }
 
     .download-list li {
@@ -2480,6 +2526,10 @@
         grid-template-columns: 1fr;
       }
 
+      .ssh-tool-grid {
+        grid-template-columns: 1fr;
+      }
+
       .download-actions {
         justify-content: flex-start;
       }
@@ -2791,8 +2841,8 @@
           <section class="download-card" aria-label="最新脚本下载">
             <div class="download-main">
               <div>
-                <strong>下载总脚本</strong>
-                <span>当前默认版本：V2.0.1。下载后通过 SSH 上传或直接在路由器终端执行。</span>
+                <strong>安装教程</strong>
+                <span>推荐使用带 SSH 终端和 SFTP/SCP 文件管理的软件，先把脚本传到路由器 /root，再在终端执行。</span>
               </div>
               <div class="download-actions">
                 <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.1</a>
@@ -2805,16 +2855,26 @@
             </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
               <div class="download-section">
-                <b>安装步骤</b>
-                <ul class="download-list">
-                  <li>先在 NRadio 系统安全页面打开 SSH：/cgi-bin/luci/admin/system/security。</li>
-                  <li>使用 SSH 登录路由器，确认当前设备是带 NRadio 应用商店的官方 NROS 固件。</li>
-                  <li>优先直接在路由器下载脚本；如果路由器不能访问公网，就先下载到电脑，再用 SCP 上传到 /root/。</li>
-                  <li>进入 /root 后执行脚本，阅读首页免责声明，10 秒倒计时结束后按提示同意，再进入 V2.0.1 功能分类菜单。</li>
+                <b>推荐 SSH 软件</b>
+                <ul class="ssh-tool-grid">
+                  <li><strong>MobaXterm</strong><span>推荐给新手。一个窗口里同时有 SSH 终端和左侧 SFTP 文件面板，可直接拖文件到 /root。</span></li>
+                  <li><strong>FinalShell / Xshell + Xftp</strong><span>适合常用 SSH 的用户。能登录 root，也能把脚本上传到路由器目录。</span></li>
+                  <li><strong>PuTTY + WinSCP</strong><span>PuTTY 负责终端，WinSCP 负责传文件；两者配合也能完成安装。</span></li>
+                  <li><strong>路由器 Web SSH</strong><span>如果设备上已有 Web SSH，也可以直接在浏览器终端里下载并执行脚本。</span></li>
                 </ul>
               </div>
               <div class="download-section">
-                <b>路由器在线下载执行</b>
+                <b>电脑下载后上传（推荐）</b>
+                <ul class="download-list">
+                  <li>在 NRadio 后台打开 SSH：<code>/cgi-bin/luci/admin/system/security</code>，保存并应用。</li>
+                  <li>打开 MobaXterm 这类 SSH 软件，新建 SSH 连接：主机 <code>192.168.66.1</code>，用户 <code>root</code>，密码填你的路由器 root 密码。</li>
+                  <li>点击本卡片右上角“下载 V2.0.1”，把 <code>ssh-nradio-plugin-installer.sh</code> 保存到电脑。</li>
+                  <li>在 SSH 软件的 SFTP/SCP 文件面板进入 <code>/root</code>，把脚本拖进去。</li>
+                  <li>在同一个 SSH 终端执行：<code>cd /root</code>，再执行 <code>sh ssh-nradio-plugin-installer.sh</code>。</li>
+                </ul>
+              </div>
+              <div class="download-section">
+                <b>路由器能联网时可直接下载</b>
                 <code class="download-code">cd /root
 wget -O ssh-nradio-plugin-installer.sh https://nradio.mayebano.shop/ssh-nradio-plugin-installer.sh
 sh ssh-nradio-plugin-installer.sh</code>
@@ -2823,6 +2883,7 @@ sh ssh-nradio-plugin-installer.sh</code>
                 <b>注意事项</b>
                 <ul class="download-list">
                   <li>脚本适用于 NRadio_C8-688、C5800-688、NBCPE、C2000MAX 官方 NROS 系统；标准 OpenWrt 不适用。</li>
+                  <li>如果路由器不能访问公网，优先走“电脑下载后上传”的方式，不要反复改路由器网络配置。</li>
                   <li>不要在未确认 IP 和机型的设备上执行；不同路由器、旁路由和服务器不要混用。</li>
                   <li>安装和美化入口只按菜单提示执行；中途关闭终端可能导致插件未完整接入应用商店。</li>
                 </ul>

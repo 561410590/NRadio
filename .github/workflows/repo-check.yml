@@ -37,6 +37,8 @@ jobs:
           grep -q 'V2.0.1' 40-server-web/mayebano-support/index.html
           grep -q 'script release date refresh' 40-server-web/mayebano-support/index.html
           grep -q '2026-04-29' 40-server-web/mayebano-support/index.html
+          grep -q 'MobaXterm' 40-server-web/mayebano-support/index.html
+          grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
           ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
 
       - name: Verify Vercel public routes
