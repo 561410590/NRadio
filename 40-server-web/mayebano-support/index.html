@@ -836,7 +836,7 @@
 
     .install-steps li {
       position: relative;
-      min-height: 96px;
+      min-height: 82px;
       padding: 14px;
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.075);
@@ -886,6 +886,14 @@
         rgba(2, 24, 13, 0.22);
       border: 1px solid rgba(220, 255, 244, 0.14);
       overflow: hidden;
+    }
+
+    .route-code-card p {
+      margin: 0;
+      max-width: 72%;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 12px;
+      line-height: 1.7;
     }
 
     .route-code-card::after {
@@ -1585,37 +1593,6 @@
     .publish-actions a:hover {
       transform: translateY(-1px);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 14px 28px rgba(5, 46, 24, 0.16);
-    }
-
-    .maintenance-principles {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .maintenance-principles div {
-      min-height: 108px;
-      padding: 16px;
-      border-radius: 22px;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.105), rgba(22, 184, 200, 0.04)),
-        rgba(5, 38, 32, 0.16);
-      border: 1px solid rgba(220, 255, 244, 0.1);
-    }
-
-    .maintenance-principles b {
-      display: block;
-      color: #fff;
-      font-size: 15px;
-      margin-bottom: 8px;
-      letter-spacing: 0;
-    }
-
-    .maintenance-principles span {
-      display: block;
-      color: rgba(255, 255, 255, 0.72);
-      font-size: 12px;
-      line-height: 1.72;
     }
 
     .support-side {
@@ -2415,10 +2392,6 @@
         grid-template-columns: 1fr;
       }
 
-      .maintenance-principles {
-        grid-template-columns: 1fr;
-      }
-
       .hero-copy::after {
         right: 18px;
         bottom: 8px;
@@ -2755,27 +2728,22 @@
 
           <section class="install-card" id="install" aria-label="安装提醒">
             <div class="install-card-header">
-              <strong>安装方式提醒</strong>
-              <span>不是应用商店上传安装</span>
+              <strong>安装前提</strong>
+              <span>详细教程在右侧</span>
             </div>
             <p>
-              新设备需要先进入系统安全页面打开 SSH，然后通过 SSH 执行总脚本。
-              脚本会把支持的插件接入 NRadio 应用商店入口。
+              这里不重复完整步骤，只保留安装前必须确认的入口。右侧教程按电脑上传和路由器在线下载两种方式执行。
             </p>
             <ol class="install-steps">
-              <li><b>1</b><span>进入安全页：192.168.66.1 系统安全页面</span></li>
-              <li><b>2</b><span>启用 SSH，勾选声明后保存并应用。</span></li>
-              <li><b>3</b><span>通过 SSH 运行总脚本，再按菜单选择功能。</span></li>
+              <li><b>1</b><span>不是应用商店上传安装，也不是固件升级包。</span></li>
+              <li><b>2</b><span>先在系统安全页开启 SSH，保存并应用。</span></li>
+              <li><b>3</b><span>再按右侧教程上传或在线下载脚本。</span></li>
             </ol>
             <div class="route-code-card">
-              <span>安全页链接</span>
+              <span>SSH 安全页</span>
+              <p>先打开安全页启用 SSH；启用后回到右侧教程选择 MobaXterm 上传或路由器在线下载。</p>
               <code>http://192.168.66.1/cgi-bin/luci/admin/system/security</code>
               <a href="http://192.168.66.1/cgi-bin/luci/admin/system/security" target="_blank" rel="noopener">一键打开 SSH 安全页</a>
-            </div>
-            <div class="maintenance-principles" aria-label="维护原则">
-              <div><b>先验证，再发布</b><span>公开页跟随已落地版本和公网下载入口更新。</span></div>
-              <div><b>少打扰原厂</b><span>尽量接入 NRadio 原有应用商店和页面结构。</span></div>
-              <div><b>外层布局冻结</b><span>应用商店继续美化只动内部视觉，不再改外层网格、左栏和顶部标签。</span></div>
             </div>
           </section>
         </section>
