@@ -69,7 +69,7 @@ jobs:
           grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
-          grep -q 'a358284fb5a250f7c3db4ad820f8671dc422761c77ad1fd9fbd1dcc41b395d67' CHECKSUMS.txt
+          grep -q '1b1f73d0af377b4398969ef7cee93b43664d71d4f075438ab3ed2b565930f915' CHECKSUMS.txt
 
           git push origin HEAD:main
 
@@ -83,7 +83,7 @@ jobs:
 
           grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'a358284fb5a250f7c3db4ad820f8671dc422761c77ad1fd9fbd1dcc41b395d67' CHECKSUMS.txt
+          grep -q '1b1f73d0af377b4398969ef7cee93b43664d71d4f075438ab3ed2b565930f915' CHECKSUMS.txt
 
           if git rev-parse "v2.0.5^{commit}" >/dev/null 2>&1; then
             tag_commit="$(git rev-parse "v2.0.5^{commit}")"
@@ -109,6 +109,7 @@ jobs:
           - Version: V2.0.5
           - Release date: 2026-05-01
           - Based on V2.0.3 fan control enhancements.
+          - C8-688 and C2000MAX keep separate default fan-control strategies during installation.
           - OpenVPN Mk3 page polish, fast status mode, and status pill layout fixes are written back into the main installer.
           - CHECKSUMS.txt is included for public file verification.
           EOF
