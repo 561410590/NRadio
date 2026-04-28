@@ -1,0 +1,121 @@
+name: Scheduled V2.0.5 release
+
+on:
+  schedule:
+    # 2026-05-01 00:00 Asia/Shanghai = 2026-04-30 16:00 UTC
+    - cron: "0 16 30 4 *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Manual override for emergency publish"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scheduled-v205-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard release window
+        run: |
+          set -eu
+          target="$(date -u -d '2026-04-30 16:00:00 UTC' +%s)"
+          latest="$(date -u -d '2026-05-01 04:00:00 UTC' +%s)"
+          now="$(date -u +%s)"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force }}" = "true" ]; then
+            echo "Manual force publish enabled."
+            exit 0
+          fi
+
+          if [ "$now" -lt "$target" ]; then
+            echo "Not time yet. Target UTC: 2026-04-30 16:00:00"
+            exit 1
+          fi
+
+          if [ "$now" -gt "$latest" ]; then
+            echo "Release window expired; refusing yearly re-run."
+            exit 1
+          fi
+
+      - name: Merge prepared release branch into main
+        run: |
+          set -eu
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin main release/v2.0.5-scheduled
+          git checkout -B main origin/main
+
+          if grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh; then
+            echo "V2.0.5 is already published on main."
+            exit 0
+          fi
+
+          git merge --no-ff --no-edit origin/release/v2.0.5-scheduled
+
+          grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
+          grep -q 'a358284fb5a250f7c3db4ad820f8671dc422761c77ad1fd9fbd1dcc41b395d67' CHECKSUMS.txt
+
+          git push origin HEAD:main
+
+      - name: Create GitHub Release V2.0.5
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          git fetch origin main --tags
+          git checkout -B main origin/main
+
+          grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'a358284fb5a250f7c3db4ad820f8671dc422761c77ad1fd9fbd1dcc41b395d67' CHECKSUMS.txt
+
+          if git rev-parse "v2.0.5^{commit}" >/dev/null 2>&1; then
+            tag_commit="$(git rev-parse "v2.0.5^{commit}")"
+            head_commit="$(git rev-parse HEAD)"
+            if [ "$tag_commit" != "$head_commit" ]; then
+              echo "v2.0.5 tag points to $tag_commit, expected $head_commit"
+              exit 1
+            fi
+          else
+            git tag -a v2.0.5 -m "ssh-nradio-plugin-installer V2.0.5"
+            git push origin v2.0.5
+          fi
+
+          if gh release view v2.0.5 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release v2.0.5 already exists."
+            exit 0
+          fi
+
+          cat > /tmp/v205-release-notes.md <<'EOF'
+          V2.0.5 scheduled release.
+
+          - Default download script: ssh-nradio-plugin-installer.sh
+          - Version: V2.0.5
+          - Release date: 2026-05-01
+          - Based on V2.0.3 fan control enhancements.
+          - OpenVPN Mk3 page polish, fast status mode, and status pill layout fixes are written back into the main installer.
+          - CHECKSUMS.txt is included for public file verification.
+          EOF
+
+          gh release create v2.0.5 \
+            "00-current/ssh-nradio-plugin-installer.sh#ssh-nradio-plugin-installer.sh" \
+            "CHECKSUMS.txt#CHECKSUMS.txt" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "ssh-nradio-plugin-installer V2.0.5" \
+            --notes-file /tmp/v205-release-notes.md
