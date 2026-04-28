@@ -35,7 +35,8 @@ jobs:
       - name: Verify support page state
         run: |
           grep -q 'V2.0.1' 40-server-web/mayebano-support/index.html
-          grep -q 'support page visual polish' 40-server-web/mayebano-support/index.html
+          grep -q 'script release date refresh' 40-server-web/mayebano-support/index.html
+          grep -q '2026-04-29' 40-server-web/mayebano-support/index.html
           ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
 
       - name: Verify Vercel public routes
