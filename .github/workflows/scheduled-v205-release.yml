@@ -56,7 +56,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git fetch origin main release/v2.0.5-scheduled
+          git fetch origin \
+            +refs/heads/main:refs/remotes/origin/main \
+            +refs/heads/release/v2.0.5-scheduled:refs/remotes/origin/release/v2.0.5-scheduled
           git checkout -B main origin/main
 
           if grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh; then
@@ -78,7 +80,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -eu
-          git fetch origin main --tags
+          git fetch origin --tags +refs/heads/main:refs/remotes/origin/main
           git checkout -B main origin/main
 
           grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
