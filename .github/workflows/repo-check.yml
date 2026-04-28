@@ -21,17 +21,19 @@ jobs:
           test -f CHECKSUMS.txt
           test -f LICENSE
 
-      - name: Verify V2.0.0 script state
+      - name: Verify V2.0.1 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V2.0.0"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V2.0.1"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '2. 雷神加速器" 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'NRadio_C8-688|NRadio_C2000MAX' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'NRadio_C8-688 / C2000MAX 风扇控制' 00-current/ssh-nradio-plugin-installer.sh
 
       - name: Verify support page state
         run: |
-          grep -q 'V2.0.0' 40-server-web/mayebano-support/index.html
+          grep -q 'V2.0.1' 40-server-web/mayebano-support/index.html
           grep -q 'support page visual polish' 40-server-web/mayebano-support/index.html
           ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
 
@@ -42,8 +44,8 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '19e75fb79571a318b91c7926306850c4e42c1f8000fcca2042d91b16b7ff7a4a' CHECKSUMS.txt
-          printf '%s  %s\n' '19e75fb79571a318b91c7926306850c4e42c1f8000fcca2042d91b16b7ff7a4a' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          grep -q 'bc09cf43d7358ec985e1b7b6ade7cfe763e45754757d45b830897f82cad0cfee' CHECKSUMS.txt
+          printf '%s  %s\n' 'bc09cf43d7358ec985e1b7b6ade7cfe763e45754757d45b830897f82cad0cfee' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
 
       - name: Verify license
         run: |

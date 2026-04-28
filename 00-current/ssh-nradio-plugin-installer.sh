@@ -2,7 +2,7 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V2.0.0"
+SCRIPT_VERSION="V2.0.1"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
 SCRIPT_RELEASE_DATE="2026-04-26"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
@@ -4994,7 +4994,7 @@ patch_appcenter_card_polish() {
 
     cat > "$css_file" <<'EOF_APPCENTER_CARD_POLISH_CSS'
     /* NRadio appcenter card polish: visual-only layer */
-    /* NRadio appcenter card polish V2.0.0 full repair layer */
+    /* NRadio appcenter card polish V2.0.1 full repair layer */
     /* NRadio appcenter visual polish 1-5 safe refinement */
     /* Keep appcontainer/container_left/app_top_menu/container_right layout owned by NRadio OEM CSS. */
     .container_right .app_box{
@@ -5968,7 +5968,7 @@ EOF_APPCENTER_EMPTY_STATE_JS
     fi
 
     verify_template_marker 'NRadio appcenter card polish: visual-only layer' '应用商店卡片美化 CSS'
-    verify_template_marker 'NRadio appcenter card polish V2.0.0 full repair layer' '应用商店 V2.0.0 修复美化 CSS'
+    verify_template_marker 'NRadio appcenter card polish V2.0.1 full repair layer' '应用商店 V2.0.1 修复美化 CSS'
     verify_template_marker '<div class="app_meta_row"' '应用商店卡片状态徽标'
     verify_template_marker 'status_label: db.status_label' '应用商店卡片状态标签数据'
     verify_template_marker 'app_open_badge app_open_1' '应用商店后台状态徽标'
@@ -10427,17 +10427,21 @@ install_fanctrl() {
     raw_board="$(detect_board_name_raw)"
     raw_compat="$(detect_board_compatible_raw)"
     current_model="$(normalize_nradio_model "$raw_model" "$raw_board" "$raw_compat")"
-    if [ "$current_model" != 'NRadio_C8-688' ]; then
-        log "提示: 14 号风扇控制仅支持 NRadio_C8-688。"
-        log "当前机型: ${current_model:-unknown}"
-        log "原始识别: model=${raw_model:-unknown} board_name=${raw_board:-unknown}"
-        printf '按回车返回上一级菜单...'
-        ui_read_line >/dev/null 2>&1 || true
-        return 2
-    fi
+    case "$current_model" in
+        NRadio_C8-688|NRadio_C2000MAX)
+            ;;
+        *)
+            log "提示: 14 号风扇控制仅支持 NRadio_C8-688 / NRadio_C2000MAX。"
+            log "当前机型: ${current_model:-unknown}"
+            log "原始识别: model=${raw_model:-unknown} board_name=${raw_board:-unknown}"
+            printf '按回车返回上一级菜单...'
+            ui_read_line >/dev/null 2>&1 || true
+            return 2
+            ;;
+    esac
 
-    log_stage 1 5 "NRadio_C8-688 原厂风扇控制页面安装规划"
-    log "提示: 当前机型已识别为 NRadio_C8-688，将按独立脚本逻辑写回原厂“更多-风扇”页面和后台脚本"
+    log_stage 1 5 "NRadio_C8-688 / NRadio_C2000MAX 原厂风扇控制页面安装规划"
+    log "提示: 当前机型已识别为 ${current_model}，将按独立脚本逻辑写回原厂“更多-风扇”页面和后台脚本"
     confirm_or_exit "确认继续安装 ${FANCTRL_DISPLAY_NAME} 并修改系统吗？"
 
     log_stage 2 5 "写入原厂风扇控制页面与后台脚本"
@@ -10466,7 +10470,7 @@ install_fanctrl() {
     log "插件:   $FANCTRL_DISPLAY_NAME"
     log "版本:   builtin"
     log "路由:   $FANCTRL_ROUTE"
-    log "说明:   仅支持 NRadio_C8-688，已按独立脚本逻辑写回原厂“更多-风扇”页面"
+    log "说明:   仅支持 NRadio_C8-688 / NRadio_C2000MAX，已按独立脚本逻辑写回原厂“更多-风扇”页面"
 }
 
 load_easytier_route_state() {
@@ -19938,7 +19942,7 @@ maintenance_test_menu() {
         submenu_feature=''
         printf '\n设备维护与检测:\n'
         printf '1. 统一测试模式\n'
-        printf '2. NRadio_C8-688 风扇控制\n'
+        printf '2. NRadio_C8-688 / C2000MAX 风扇控制\n'
         printf '0. 返回功能分类\n'
         printf '请选择 0、1 或 2: '
         read_category_choice

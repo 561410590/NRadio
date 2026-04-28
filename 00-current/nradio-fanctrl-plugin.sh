@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-APP_NAME="NRadio-C8-688风扇控制插件脚本"
+APP_NAME="NRadio-C8-688/C2000MAX风扇控制插件脚本"
 WORKDIR="/tmp/nradio-fanctrl.$$"
 CFG="/etc/config/appcenter"
 
