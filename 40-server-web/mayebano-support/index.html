@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b3026">
+  <meta name="theme-color" content="#fff1f7">
   <title>NRadio 插件工具更新记录与支持页</title>
   <style>
     :root {
@@ -232,9 +232,9 @@
     }
 
     .floating-nav a:focus-visible,
-    .hero-links a:focus-visible,
     .download-card a:focus-visible,
-    .route-code-card a:focus-visible {
+    .route-code-card a:focus-visible,
+    .next-actions a:focus-visible {
       outline: 2px solid rgba(255, 255, 255, 0.82);
       outline-offset: 3px;
     }
@@ -331,7 +331,7 @@
       grid-column: 1;
       grid-row: 1;
       display: grid;
-      gap: 24px;
+      gap: 22px;
       align-content: center;
       max-width: 900px;
       padding: 44px 48px 42px;
@@ -424,6 +424,7 @@
       text-shadow:
         0 16px 42px rgba(0, 0, 0, 0.34),
         0 0 40px rgba(94, 231, 242, 0.12);
+      text-wrap: balance;
     }
 
     .lead {
@@ -433,6 +434,7 @@
       font-size: clamp(18px, 1.8vw, 22px);
       line-height: 1.74;
       overflow-wrap: anywhere;
+      text-wrap: pretty;
     }
 
     .hero-tags {
@@ -441,13 +443,12 @@
       gap: 12px;
     }
 
-    .hero-tags span,
-    .hero-links a {
+    .hero-tags span {
       display: inline-flex;
       align-items: center;
       gap: 10px;
       min-height: 44px;
-      padding: 0 16px;
+      padding: 0 15px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.14);
       background: rgba(255, 255, 255, 0.075);
@@ -468,11 +469,11 @@
     .hero-status {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
+      gap: 9px;
     }
 
     .hero-status span {
-      min-height: 62px;
+      min-height: 60px;
       padding: 12px 13px;
       border-radius: 18px;
       background:
@@ -493,46 +494,16 @@
       line-height: 1.2;
     }
 
-    .hero-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .hero-links a {
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.045)),
-        rgba(6, 41, 22, 0.24);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-      transition: transform 0.24s ease, background 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
-    }
-
-    .hero-links a:first-child,
-    .hero-links a.hero-github {
-      color: #06341d;
-      background: linear-gradient(135deg, #d8fff0, #ffffff);
-      border-color: rgba(255, 255, 255, 0.62);
-      font-weight: 900;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 18px 34px rgba(5, 46, 24, 0.20);
-    }
-
-    .hero-links a:hover {
-      transform: translateY(-2px);
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.24);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 30px rgba(2, 35, 31, 0.18);
-    }
-
     .signal-strip {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
+      gap: 9px;
     }
 
     .signal-strip span {
       position: relative;
-      min-height: 66px;
-      padding: 13px 14px 13px 38px;
+      min-height: 62px;
+      padding: 14px 14px 14px 38px;
       border-radius: 20px;
       color: rgba(232, 255, 240, 0.78);
       background:
@@ -634,7 +605,7 @@
     }
 
     .hero-latest::after {
-      content: "PUBLIC";
+      content: "V2.0.7";
       position: absolute;
       right: 18px;
       bottom: 12px;
@@ -754,10 +725,10 @@
     .release-cards {
       position: relative;
       display: flex;
-      gap: 12px;
+      gap: 11px;
       align-items: stretch;
-      margin: 2px -6px 0;
-      padding: 2px 6px 14px;
+      margin: 2px -4px 0;
+      padding: 2px 4px 14px;
       overflow-x: auto;
       overscroll-behavior-inline: contain;
       scroll-snap-type: inline mandatory;
@@ -768,11 +739,11 @@
 
     .release-card {
       position: relative;
-      flex: 0 0 clamp(218px, 18vw, 268px);
+      flex: 0 0 clamp(216px, 18vw, 264px);
       display: grid;
       align-content: start;
-      min-height: 156px;
-      padding: 16px;
+      min-height: 154px;
+      padding: 17px;
       border-radius: 22px;
       background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(94, 231, 242, 0.055), rgba(188, 247, 125, 0.035)),
@@ -807,8 +778,9 @@
     }
 
     .release-card-current {
-      flex-basis: clamp(286px, 31vw, 430px);
+      flex-basis: clamp(288px, 31vw, 424px);
       min-height: 172px;
+      padding: 19px;
       border-color: rgba(157, 253, 208, 0.28);
       background:
         linear-gradient(135deg, rgba(216, 255, 240, 0.25), rgba(94, 231, 242, 0.12), rgba(255, 155, 115, 0.045)),
@@ -831,7 +803,7 @@
     }
 
     .release-card-current::before {
-      content: "NOW";
+      content: "最新";
       position: absolute;
       right: 14px;
       top: 14px;
@@ -869,6 +841,7 @@
       color: #fff;
       font-size: 15px;
       line-height: 1.35;
+      text-wrap: balance;
     }
 
     .release-card p {
@@ -876,12 +849,14 @@
       color: rgba(255, 255, 255, 0.72);
       font-size: 11px;
       line-height: 1.66;
+      text-wrap: pretty;
     }
 
     .release-card-current p {
       max-width: 34em;
       color: rgba(255, 255, 255, 0.78);
       font-size: 12px;
+      line-height: 1.74;
     }
 
     .install-steps {
@@ -993,6 +968,7 @@
       line-height: 1.6;
       overflow-wrap: anywhere;
       word-break: normal;
+      user-select: all;
     }
 
     .route-code-card a {
@@ -1019,10 +995,10 @@
     .download-card {
       position: relative;
       display: grid;
-      gap: 16px;
+      gap: 14px;
       align-items: stretch;
-      padding: 20px;
-      border-radius: 26px;
+      padding: 18px;
+      border-radius: 24px;
       background:
         linear-gradient(145deg, rgba(232, 255, 240, 0.18), rgba(94, 231, 242, 0.10)),
         linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent),
@@ -1051,20 +1027,20 @@
     .download-main {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
-      gap: 14px;
+      gap: 12px;
       align-items: center;
     }
 
     .download-facts {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      gap: 9px;
     }
 
     .download-facts span {
-      min-height: 62px;
+      min-height: 64px;
       margin: 0;
-      padding: 12px;
+      padding: 12px 11px;
       border-radius: 16px;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.035)),
@@ -1097,7 +1073,7 @@
     .download-card strong {
       display: block;
       color: #fff;
-      font-size: 17px;
+      font-size: 16px;
       line-height: 1.35;
     }
 
@@ -1106,7 +1082,7 @@
       margin-top: 6px;
       color: rgba(255, 255, 255, 0.70);
       font-size: 12px;
-      line-height: 1.7;
+      line-height: 1.62;
     }
 
     .download-actions {
@@ -1138,30 +1114,44 @@
     }
 
     .download-card a.download-primary {
-      min-height: 48px;
-      padding: 0 20px;
-      border-radius: 18px;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 16px;
       font-size: 14px;
       letter-spacing: 0;
     }
 
     .download-tutorial {
       display: grid;
-      gap: 12px;
+      gap: 11px;
       padding-top: 14px;
       border-top: 1px solid rgba(220, 255, 244, 0.12);
     }
 
     .download-section {
+      position: relative;
       display: grid;
       gap: 8px;
-      padding: 12px;
+      padding: 12px 12px 12px 15px;
       border-radius: 16px;
       background: rgba(216, 255, 240, 0.045);
       border: 1px solid rgba(220, 255, 244, 0.08);
     }
 
+    .download-section::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 14px;
+      bottom: 14px;
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(94, 231, 242, 0.72), rgba(241, 199, 91, 0.46));
+    }
+
     .download-section b {
+      position: relative;
+      z-index: 1;
       color: rgba(232, 255, 240, 0.96);
       font-size: 13px;
       line-height: 1.4;
@@ -1217,6 +1207,10 @@
     }
 
     .path-choice {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
       padding: 11px 13px;
       border-radius: 14px;
       color: rgba(255, 255, 255, 0.74);
@@ -1226,21 +1220,60 @@
       line-height: 1.65;
     }
 
+    .path-choice b,
+    .path-choice span {
+      display: block;
+      min-width: 0;
+    }
+
+    .path-choice b {
+      justify-self: start;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #06341d;
+      background: linear-gradient(135deg, #d8fff0, #ffffff);
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1.25;
+      box-shadow: 0 8px 16px rgba(5, 46, 24, 0.14);
+    }
+
+    .path-choice span {
+      color: inherit;
+    }
+
     .path-card {
+      position: relative;
       display: grid;
       gap: 10px;
       align-content: start;
       min-width: 0;
-      padding: 13px;
+      padding: 14px;
       border-radius: 16px;
       background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.10), rgba(94, 231, 242, 0.045)),
         rgba(4, 36, 26, 0.24);
       border: 1px solid rgba(220, 255, 244, 0.11);
+      overflow: hidden;
+    }
+
+    .path-card::before {
+      content: attr(data-route);
+      position: absolute;
+      right: 12px;
+      top: 10px;
+      color: rgba(232, 255, 240, 0.12);
+      font-family: "DIN Alternate", "Bahnschrift", sans-serif;
+      font-size: 46px;
+      font-weight: 900;
+      line-height: 1;
+      pointer-events: none;
     }
 
     .path-card b,
     .path-card p {
+      position: relative;
+      z-index: 1;
       margin: 0;
     }
 
@@ -1266,6 +1299,7 @@
       position: relative;
       min-width: 0;
       padding-left: 30px;
+      text-wrap: pretty;
     }
 
     .tutorial-steps li::before {
@@ -1310,7 +1344,7 @@
     .tutorial-checks li {
       min-width: 0;
       min-height: 70px;
-      padding: 12px;
+      padding: 13px;
       border-radius: 14px;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.035)),
@@ -1395,6 +1429,7 @@
       overflow-wrap: normal;
       word-break: keep-all;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      user-select: all;
     }
 
     .download-code::before {
@@ -1449,237 +1484,6 @@
       margin-top: 5px;
     }
 
-    .publish-card {
-      position: relative;
-      display: grid;
-      gap: 16px;
-      padding: 18px;
-      border-radius: 24px;
-      color: rgba(255, 255, 255, 0.82);
-      background:
-        linear-gradient(145deg, rgba(216, 255, 240, 0.15), rgba(32, 105, 201, 0.12), rgba(241, 199, 91, 0.035)),
-        rgba(2, 24, 13, 0.22);
-      border: 1px solid rgba(220, 255, 244, 0.14);
-      box-shadow: 0 24px 54px rgba(5, 46, 24, 0.13);
-      backdrop-filter: blur(16px);
-      overflow: hidden;
-    }
-
-    .publish-card::before {
-      content: "";
-      position: absolute;
-      right: -48px;
-      top: -58px;
-      width: 190px;
-      height: 190px;
-      border-radius: 42px;
-      background:
-        linear-gradient(135deg, rgba(216, 255, 240, 0.18), transparent 58%),
-        rgba(22, 184, 200, 0.10);
-      transform: rotate(12deg);
-      pointer-events: none;
-    }
-
-    .publish-card > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    .publish-card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .publish-kicker {
-      color: rgba(232, 255, 240, 0.64);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .publish-card h2 {
-      margin: 6px 0 0;
-      color: #fff;
-      font-size: 22px;
-      line-height: 1.25;
-      letter-spacing: 0;
-    }
-
-    .publish-live {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 34px;
-      padding: 0 12px;
-      border-radius: 999px;
-      color: #ddfff0;
-      background: rgba(22, 184, 200, 0.12);
-      border: 1px solid rgba(124, 255, 194, 0.18);
-      font-size: 12px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .publish-live::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #39f08f;
-      box-shadow: 0 0 14px rgba(57, 240, 143, 0.68);
-    }
-
-    .publish-domain {
-      display: grid;
-      gap: 6px;
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(216, 255, 240, 0.075);
-      border: 1px solid rgba(220, 255, 244, 0.12);
-    }
-
-    .publish-domain span {
-      color: rgba(232, 255, 240, 0.62);
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .publish-domain a {
-      color: #fff;
-      font-size: 16px;
-      font-weight: 900;
-      line-height: 1.35;
-      word-break: break-all;
-    }
-
-    .publish-summary {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .publish-summary span {
-      min-height: 42px;
-      padding: 10px;
-      border-radius: 14px;
-      color: rgba(232, 255, 240, 0.9);
-      background: rgba(216, 255, 240, 0.065);
-      border: 1px solid rgba(220, 255, 244, 0.11);
-      font-size: 12px;
-      font-weight: 900;
-      line-height: 1.35;
-      text-align: center;
-    }
-
-    .publish-summary span:nth-child(2) {
-      border-color: rgba(94, 231, 242, 0.18);
-      background: rgba(94, 231, 242, 0.075);
-    }
-
-    .publish-summary span:nth-child(3) {
-      border-color: rgba(241, 199, 91, 0.18);
-      background: rgba(241, 199, 91, 0.060);
-    }
-
-    .publish-flow {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      counter-reset: publishStep;
-    }
-
-    .publish-flow span {
-      position: relative;
-      display: grid;
-      gap: 5px;
-      min-width: 0;
-      min-height: 68px;
-      padding: 13px 14px 13px 48px;
-      border-radius: 16px;
-      background: rgba(216, 255, 240, 0.055);
-      border: 1px solid rgba(220, 255, 244, 0.10);
-      color: rgba(255, 255, 255, 0.88);
-      font-size: 13px;
-      font-weight: 900;
-      overflow: hidden;
-    }
-
-    .publish-flow span:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      left: 24px;
-      top: 39px;
-      bottom: -15px;
-      width: 1px;
-      background: linear-gradient(180deg, rgba(216, 255, 240, 0.42), rgba(216, 255, 240, 0));
-    }
-
-    .publish-flow span::before {
-      counter-increment: publishStep;
-      content: counter(publishStep);
-      position: absolute;
-      left: 14px;
-      top: 14px;
-      display: grid;
-      place-items: center;
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      color: #06341d;
-      background: #d8fff0;
-      font-size: 12px;
-      font-weight: 900;
-      box-shadow: 0 0 18px rgba(124, 255, 194, 0.24);
-      z-index: 1;
-    }
-
-    .publish-flow em {
-      color: rgba(255, 255, 255, 0.56);
-      font-size: 11px;
-      font-style: normal;
-      font-weight: 700;
-      line-height: 1.35;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    .publish-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .publish-actions a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 38px;
-      padding: 0 14px;
-      border-radius: 999px;
-      color: #06341d;
-      background: linear-gradient(135deg, #d8fff0, #ffffff);
-      font-size: 12px;
-      font-weight: 900;
-      white-space: nowrap;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .publish-actions a:nth-child(2),
-    .publish-actions a:nth-child(3) {
-      color: #e8fff0;
-      background: rgba(216, 255, 240, 0.08);
-      border: 1px solid rgba(220, 255, 244, 0.13);
-    }
-
-    .publish-actions a:hover {
-      transform: translateY(-1px);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 14px 28px rgba(5, 46, 24, 0.16);
-    }
-
     .support-side {
       position: relative;
       grid-column: 2;
@@ -1719,19 +1523,6 @@
       border: 1px solid rgba(255, 255, 255, 0.78);
       box-shadow: var(--shadow-main);
       overflow: hidden;
-    }
-
-    .support-panel::after {
-      content: "THANKS";
-      position: absolute;
-      right: 18px;
-      bottom: 8px;
-      color: rgba(15, 95, 55, 0.055);
-      font-family: "DIN Alternate", "Bahnschrift", sans-serif;
-      font-size: 68px;
-      font-weight: 800;
-      letter-spacing: 0;
-      pointer-events: none;
     }
 
     .support-panel::before {
@@ -1938,49 +1729,6 @@
       font-size: 12px;
     }
 
-    .support-url {
-      padding: 16px;
-      border-radius: 20px;
-      background:
-        linear-gradient(135deg, rgba(16, 158, 86, 0.08), rgba(22, 184, 200, 0.05), rgba(255, 255, 255, 0.68));
-      border: 1px solid rgba(16, 158, 86, 0.13);
-      color: var(--ink-700);
-      font-size: 13px;
-      line-height: 1.72;
-    }
-
-    .support-url code {
-      display: inline-block;
-      margin-top: 5px;
-      color: #0f5f37;
-      font-family: Consolas, "Courier New", monospace;
-      font-size: 12px;
-      word-break: break-all;
-    }
-
-    .support-note-strip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 18px;
-      color: #0c6b3d;
-      background: rgba(216, 255, 230, 0.72);
-      border: 1px solid rgba(16, 158, 86, 0.13);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .support-note-strip::before {
-      content: "";
-      flex: none;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #18c963;
-      box-shadow: 0 0 0 7px rgba(24, 201, 99, 0.12);
-    }
-
     .feature-board {
       position: relative;
       z-index: 2;
@@ -1992,7 +1740,7 @@
       position: relative;
       display: grid;
       grid-template-columns: 280px minmax(0, 1fr);
-      gap: 22px;
+      gap: 20px;
       width: 100%;
       padding: 30px;
       border-radius: 38px;
@@ -2012,9 +1760,9 @@
 
     .hero-copy .feature-shell {
       grid-template-columns: 1fr;
-      gap: 14px;
-      padding: 18px;
-      border-radius: 28px;
+      gap: 13px;
+      padding: 17px;
+      border-radius: 26px;
       box-shadow: 0 22px 58px rgba(2, 35, 31, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
@@ -2037,16 +1785,16 @@
     .feature-brief {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      gap: 9px;
     }
 
     .feature-brief span {
       display: grid;
       align-content: center;
       gap: 2px;
-      min-height: 62px;
+      min-height: 58px;
       padding: 10px 12px;
-      border-radius: 18px;
+      border-radius: 16px;
       background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(94, 231, 242, 0.055), rgba(188, 247, 125, 0.035)),
         rgba(3, 28, 21, 0.30);
@@ -2072,13 +1820,13 @@
 
     .hero-copy .feature-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
+      gap: 9px;
     }
 
     .hero-copy .feature-tile {
-      min-height: 126px;
-      padding: 15px 14px;
-      border-radius: 20px;
+      min-height: 118px;
+      padding: 14px;
+      border-radius: 18px;
     }
 
     .hero-copy .compat-strip {
@@ -2126,19 +1874,20 @@
       font-size: clamp(34px, 3.5vw, 54px);
       line-height: 0.98;
       letter-spacing: 0;
+      text-wrap: balance;
     }
 
     .feature-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
+      gap: 11px;
     }
 
     .feature-tile {
       position: relative;
       display: grid;
       align-content: start;
-      gap: 10px;
+      gap: 9px;
       min-height: 136px;
       padding: 18px;
       border-radius: 26px;
@@ -2176,7 +1925,7 @@
       display: block;
       padding-right: 48px;
       color: #fff;
-      font-size: 18px;
+      font-size: 17px;
       line-height: 1.28;
       letter-spacing: 0;
     }
@@ -2184,7 +1933,7 @@
     .feature-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 7px;
+      gap: 6px;
       margin-top: auto;
     }
 
@@ -2208,7 +1957,7 @@
       grid-column: 1 / -1;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
+      gap: 9px;
       padding-top: 4px;
     }
 
@@ -2216,9 +1965,9 @@
       position: relative;
       display: grid;
       gap: 6px;
-      min-height: 86px;
-      padding: 15px 16px;
-      border-radius: 20px;
+      min-height: 80px;
+      padding: 14px 15px;
+      border-radius: 18px;
       background:
         linear-gradient(135deg, rgba(241, 199, 91, 0.08), transparent 58%),
         rgba(216, 255, 240, 0.06);
@@ -2255,6 +2004,33 @@
       color: rgba(255, 255, 255, 0.68);
       font-size: 12px;
       line-height: 1.65;
+    }
+
+    .model-chip-list {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .model-chip-list span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 31px;
+      padding: 0 9px;
+      border-radius: 999px;
+      color: #e8fff0;
+      background:
+        linear-gradient(135deg, rgba(216, 255, 240, 0.10), rgba(94, 231, 242, 0.045)),
+        rgba(216, 255, 240, 0.07);
+      border: 1px solid rgba(220, 255, 244, 0.13);
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .history {
@@ -2488,7 +2264,7 @@
     }
 
     .timeline-entry.is-current::after {
-      content: "LIVE";
+      content: "当前";
       position: absolute;
       right: 16px;
       bottom: -4px;
@@ -2640,6 +2416,7 @@
       font-size: 28px;
       line-height: 1.06;
       letter-spacing: 0;
+      text-wrap: balance;
     }
 
     .closing p {
@@ -2647,6 +2424,7 @@
       color: var(--ink-700);
       font-size: 15px;
       line-height: 1.82;
+      text-wrap: pretty;
     }
 
     .closing-note {
@@ -2724,6 +2502,21 @@
       }
       to {
         transform: translate3d(4%, 2%, 0) rotate(5deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .scroll-progress {
+        display: none;
       }
     }
 
@@ -3042,13 +2835,11 @@
       }
 
       .hero-tags,
-      .hero-links,
       .hero-milestones {
         gap: 8px;
       }
 
       .hero-tags span,
-      .hero-links a,
       .hero-milestones span {
         min-height: 34px;
         padding: 7px 10px;
@@ -3093,6 +2884,14 @@
         grid-template-columns: 1fr;
       }
 
+      .path-choice {
+        grid-template-columns: 1fr;
+      }
+
+      .model-chip-list span {
+        flex: 1 1 128px;
+      }
+
       .ssh-tool-grid {
         grid-template-columns: 1fr;
       }
@@ -3103,14 +2902,6 @@
 
       .download-card a.download-primary {
         width: 100%;
-      }
-
-      .publish-card-top {
-        flex-direction: column;
-      }
-
-      .publish-summary {
-        grid-template-columns: 1fr;
       }
 
       .feature-board {
@@ -3420,7 +3211,6 @@
     }
 
     .hero-tags span,
-    .hero-links a,
     .hero-status span,
     .signal-strip span,
     .hero-summary div,
@@ -3450,6 +3240,10 @@
     .download-list li::before {
       background: var(--pink-600);
       box-shadow: 0 0 14px rgba(255, 94, 159, 0.48);
+    }
+
+    .download-section::before {
+      background: linear-gradient(180deg, rgba(226, 58, 126, 0.64), rgba(20, 168, 137, 0.42));
     }
 
     .hero-status b,
@@ -3518,8 +3312,6 @@
       overflow-wrap: anywhere;
     }
 
-    .hero-links a:first-child,
-    .hero-links a.hero-github,
     .download-card a,
     .route-code-card a,
     .release-card b {
@@ -3529,16 +3321,6 @@
       box-shadow: 0 14px 28px rgba(184, 37, 95, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
     }
 
-    .hero-links a:not(.hero-github) {
-      color: var(--pink-950);
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 235, 244, 0.68)),
-        rgba(255, 247, 250, 0.70);
-      border-color: rgba(184, 37, 95, 0.12);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 10px 22px rgba(184, 37, 95, 0.08);
-    }
-
-    .hero-links a:hover,
     .download-card a:hover,
     .route-code-card a:hover {
       border-color: rgba(184, 37, 95, 0.22);
@@ -3606,9 +3388,47 @@
     }
 
     .release-card-current::before {
-      content: "LIVE";
+      content: "最新";
       color: #fff7fa;
       background: linear-gradient(135deg, #ff7fb2, #d92a73);
+    }
+
+    .hero-summary div:nth-child(3) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(226, 255, 245, 0.58)),
+        rgba(255, 247, 250, 0.70);
+      border-color: rgba(22, 184, 200, 0.18);
+    }
+
+    .hero-summary div:nth-child(3) strong {
+      color: #0b6f64;
+    }
+
+    .path-choice {
+      color: rgba(93, 18, 50, 0.74);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(226, 255, 245, 0.52)),
+        rgba(255, 247, 250, 0.68);
+      border-color: rgba(22, 184, 200, 0.16);
+    }
+
+    .path-choice b {
+      color: #fff7fa;
+      background: linear-gradient(135deg, #14a889, #0b6f64);
+      box-shadow: 0 10px 20px rgba(11, 111, 100, 0.16);
+    }
+
+    .model-chip-list span {
+      color: var(--pink-950);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 235, 244, 0.66)),
+        rgba(255, 247, 250, 0.70);
+      border-color: rgba(184, 37, 95, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    }
+
+    .path-card::before {
+      color: rgba(226, 58, 126, 0.12);
     }
 
     .route-code-card,
@@ -3715,7 +3535,7 @@
           <div class="eyebrow">NRadio Plugin Tool</div>
           <h1>NRadio<br>插件工具</h1>
           <p class="lead">
-            NRadio NROS 设备 SSH 插件安装脚本。
+            NRadio NROS2.0 设备 SSH 插件安装脚本。
             当前版本 <strong>V2.0.7</strong>，通过 SSH 在路由器执行。
           </p>
 
@@ -3723,7 +3543,7 @@
             <span>V2.0.7</span>
             <span>SSH 执行</span>
             <span>单一脚本入口</span>
-            <span>NROS 设备</span>
+            <span>NROS2.0 设备</span>
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
@@ -3732,12 +3552,6 @@
             <span><b>方式</b>SSH 终端执行</span>
             <span><b>入口</b>单一下载入口</span>
           </div>
-
-        <div class="hero-links">
-          <a class="hero-github" href="https://github.com/561410590/ssh-nradio-plugin-installer" target="_blank" rel="noopener">GitHub 项目</a>
-          <a href="#install">安装方式</a>
-          <a href="#history">更新记录</a>
-        </div>
 
           <div class="signal-strip" aria-label="当前公网页状态">
             <span><b>最新版本</b>V2.0.7</span>
@@ -3756,7 +3570,7 @@
             </div>
             <div>
               <strong>5</strong>
-              <span>功能分类菜单</span>
+              <span>支持机型</span>
             </div>
           </div>
 
@@ -3934,7 +3748,13 @@
               <div class="compat-strip" aria-label="设备与发布适配说明">
                 <div class="compat-item">
                   <b>支持机型</b>
-                  <span>NRadio_C8-688、NRadio_C8-668、C5800-688、NBCPE、C2000MAX。</span>
+                  <div class="model-chip-list" aria-label="支持机型列表">
+                    <span>NRadio_C8-688</span>
+                    <span>NRadio_C8-668</span>
+                    <span>C5800-688</span>
+                    <span>NBCPE</span>
+                    <span>C2000MAX</span>
+                  </div>
                 </div>
                 <div class="compat-item">
                   <b>默认入口</b>
@@ -3997,8 +3817,8 @@
               </div>
 
               <div class="tutorial-paths" aria-label="两种安装路径">
-                <div class="path-choice">3A 和 3B 只选一个：路由器不能访问公网用 3A；路由器能访问公网用 3B。</div>
-                <section class="path-card" aria-label="电脑下载后上传">
+                <div class="path-choice"><b>二选一</b><span>路由器不能访问公网用 3A；路由器能访问公网用 3B。</span></div>
+                <section class="path-card" data-route="A" aria-label="电脑下载后上传">
                   <b>3A. 路由器不能访问公网：电脑上传</b>
                   <p>电脑下载脚本，上传到路由器 /root，再在 SSH 终端执行。</p>
                   <ol class="tutorial-steps">
@@ -4010,7 +3830,7 @@
                   </ol>
                 </section>
 
-                <section class="path-card" aria-label="路由器在线下载">
+                <section class="path-card" data-route="B" aria-label="路由器在线下载">
                   <b>3B. 路由器能访问公网：终端下载</b>
                   <p>不用点下载脚本，也不用 SFTP 上传；SSH 登录后直接粘贴下面命令。</p>
                   <code class="download-code">cd /root
@@ -4032,7 +3852,7 @@ sh ssh-nradio-plugin-installer.sh</code>
                 <b>5. 不要做</b>
                 <ul class="download-list">
                   <li>不要把脚本当应用商店安装包上传，也不要当固件升级包。</li>
-                  <li>脚本适用于 NRadio_C8-688、NRadio_C8-668、C5800-688、NBCPE、C2000MAX 官方 NROS 系统；标准 OpenWrt 不适用。</li>
+                  <li>脚本适用于 NRadio_C8-688、NRadio_C8-668、C5800-688、NBCPE、C2000MAX 官方 NROS2.0 系统；标准 OpenWrt 不适用。</li>
                   <li>如果路由器不能访问公网，使用“电脑下载后上传”的方式。</li>
                   <li>不要在未确认 IP 和机型的设备上执行；不同路由器、旁路由和服务器不要混用。</li>
                   <li>安装和美化入口只按菜单提示执行；终端正在执行时不要直接关闭窗口。</li>
@@ -4046,7 +3866,7 @@ sh ssh-nradio-plugin-installer.sh</code>
             <div class="support-top">
               <div class="support-head">
                 <strong>微信支持入口</strong>
-                <div class="support-badge">WeChat Pay</div>
+                <div class="support-badge">微信扫码</div>
               </div>
               <p>用于脚本维护和页面更新记录整理。</p>
               <div class="support-promise" aria-label="支持说明">
@@ -4076,14 +3896,6 @@ sh ssh-nradio-plugin-installer.sh</code>
                 <li><b>3</b><span>完成支付。</span></li>
               </ol>
 
-              <div class="support-url">
-                当前支持页地址
-                <code>https://nradio.mayebano.shop/</code>
-              </div>
-
-              <div class="support-note-strip">
-                支持入口与脚本执行入口分开显示。
-              </div>
             </div>
           </section>
         </aside>
@@ -4093,7 +3905,7 @@ sh ssh-nradio-plugin-installer.sh</code>
       <div class="container history-shell">
         <div class="history-top">
           <section class="history-intro" aria-label="时间线说明">
-            <div class="history-kicker">Version Timeline</div>
+            <div class="history-kicker">版本时间线</div>
             <h3>版本变化按阶段收好</h3>
             <p>
               时间线按公开版本阶段整理，当前正式版放在最后。
