@@ -1022,7 +1022,8 @@
       font-family: Consolas, "Courier New", monospace;
       font-size: 12px;
       line-height: 1.6;
-      word-break: break-all;
+      overflow-wrap: anywhere;
+      word-break: normal;
     }
 
     .route-code-card a {
@@ -1243,7 +1244,8 @@
       border: 1px solid rgba(220, 255, 244, 0.1);
       border-radius: 8px;
       padding: 1px 6px;
-      word-break: break-all;
+      overflow-wrap: anywhere;
+      word-break: normal;
     }
 
     .download-list li {
@@ -1278,7 +1280,9 @@
       font-size: 12px;
       line-height: 1.72;
       white-space: pre-wrap;
-      word-break: break-all;
+      overflow-x: auto;
+      overflow-wrap: anywhere;
+      word-break: normal;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
@@ -2700,15 +2704,32 @@
         gap: 28px;
       }
 
+      .hero-copy,
+      .support-side {
+        grid-column: 1;
+        grid-row: auto;
+        justify-self: stretch;
+        width: 100%;
+        max-width: none;
+      }
+
       .hero-copy {
         padding: 34px 28px 30px;
+        max-width: none;
       }
 
       .floating-nav {
         top: 12px;
         width: calc(100% - 28px);
-        justify-content: center;
+        justify-content: flex-start;
         border-radius: 24px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .floating-nav::-webkit-scrollbar {
+        display: none;
       }
 
       .hero-status,
@@ -2819,21 +2840,44 @@
       }
 
       .container {
-        width: calc(100% - 28px);
+        width: calc(100% - 24px);
       }
 
       h1 {
-        font-size: clamp(48px, 15vw, 74px);
-        max-width: 8ch;
+        max-width: none;
+        font-size: clamp(42px, 13vw, 62px);
       }
 
       .lead {
-        font-size: 17px;
+        font-size: 16px;
+        line-height: 1.72;
       }
 
       .hero-copy {
-        padding: 28px 22px 24px;
-        border-radius: 28px;
+        gap: 18px;
+        padding: 24px 16px 22px;
+        border-radius: 24px;
+      }
+
+      .hero-copy::before {
+        right: -150px;
+        top: -150px;
+      }
+
+      .hero-copy::after {
+        right: 10px;
+        bottom: 8px;
+        font-size: clamp(54px, 18vw, 86px);
+      }
+
+      .eyebrow {
+        gap: 10px;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+      }
+
+      .eyebrow::before {
+        width: 30px;
       }
 
       .floating-nav a,
@@ -2848,8 +2892,8 @@
       }
 
       .hero {
-        padding-top: 104px;
-        padding-bottom: 102px;
+        padding-top: 88px;
+        padding-bottom: 72px;
         min-height: 100svh;
         overflow: visible;
       }
@@ -2870,21 +2914,45 @@
         align-items: flex-start;
       }
 
+      .hero-tags,
+      .hero-links,
+      .hero-milestones {
+        gap: 8px;
+      }
+
+      .hero-tags span,
+      .hero-links a,
+      .hero-milestones span {
+        min-height: 34px;
+        padding: 7px 10px;
+        white-space: normal;
+      }
+
       .hero-checks {
         grid-template-columns: 1fr;
       }
 
       .release-cards {
-        margin: 4px -14px 0;
-        padding: 2px 14px 16px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin: 4px 0 0;
+        padding: 0;
+        overflow: visible;
+        scroll-snap-type: none;
       }
 
       .release-card {
-        flex-basis: min(78vw, 306px);
+        width: 100%;
+        min-width: 0;
+        min-height: auto;
+        padding: 14px;
+        border-radius: 18px;
+        scroll-snap-align: none;
       }
 
       .release-card-current {
-        flex-basis: min(86vw, 342px);
+        min-height: auto;
       }
 
       .signal-strip span {
@@ -2893,10 +2961,21 @@
 
       .download-card {
         grid-template-columns: 1fr;
+        padding: 16px;
+        border-radius: 22px;
       }
 
       .download-main {
         grid-template-columns: 1fr;
+      }
+
+      .download-main > div,
+      .release-panel-top > div,
+      .route-code-card,
+      .download-section,
+      .release-panel,
+      .support-panel {
+        min-width: 0;
       }
 
       .download-facts {
@@ -2913,6 +2992,8 @@
 
       .release-panel {
         min-height: auto;
+        padding: 18px;
+        border-radius: 24px;
       }
 
       .release-panel-top {
@@ -2937,8 +3018,8 @@
       }
 
       .feature-shell {
-        padding: 22px;
-        border-radius: 28px;
+        padding: 18px 16px;
+        border-radius: 24px;
       }
 
       .feature-grid {
