@@ -71,7 +71,7 @@ jobs:
           grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
-          grep -q '1ba2531e535be2f4a22af9306248c1d9d76f7c156a9724e66866de9499695645' CHECKSUMS.txt
+          grep -q 'b7c053f83781d193519caf0ea664f41adbc6b671a90cbf5246a0d6e80cf3885b' CHECKSUMS.txt
 
           git push origin HEAD:main
 
@@ -85,7 +85,7 @@ jobs:
 
           grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '1ba2531e535be2f4a22af9306248c1d9d76f7c156a9724e66866de9499695645' CHECKSUMS.txt
+          grep -q 'b7c053f83781d193519caf0ea664f41adbc6b671a90cbf5246a0d6e80cf3885b' CHECKSUMS.txt
 
           if git rev-parse "v2.0.5^{commit}" >/dev/null 2>&1; then
             tag_commit="$(git rev-parse "v2.0.5^{commit}")"
