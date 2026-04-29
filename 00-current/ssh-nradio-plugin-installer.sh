@@ -42,6 +42,10 @@ TS="$(date +%Y%m%d-%H%M%S 2>/dev/null || echo now)"
 OPENCLASH_BRANCH="${OPENCLASH_BRANCH:-master}"
 OPENCLASH_DISPLAY_NAME="${OPENCLASH_DISPLAY_NAME:-哈基米}"
 OPENCLASH_SMART_DISPLAY_NAME="${OPENCLASH_SMART_DISPLAY_NAME:-哈基米 smart}"
+QIYOU_INSTALLER_URL="${QIYOU_INSTALLER_URL:-http://sd.qiyou.cn}"
+QIYOU_INSTALLER_SHA256="${QIYOU_INSTALLER_SHA256:-deb8730e598e0cda45ad554127f87f2ee534c8a4a12efc8d4865f81fc12d56f1}"
+LEIGOD_INSTALLER_URL="${LEIGOD_INSTALLER_URL:-http://119.3.40.126/router_plugin_new/plugin_install.sh}"
+LEIGOD_INSTALLER_SHA256="${LEIGOD_INSTALLER_SHA256:-04b52b5c3df51266e6f4d8568cd17679b37fe0cbd4a65ead0aa9958b5dd72f8d}"
 OPENCLASH_MIRRORS="${OPENCLASH_MIRRORS:-https://cdn.jsdelivr.net/gh/vernesong/OpenClash@package/${OPENCLASH_BRANCH} https://fastly.jsdelivr.net/gh/vernesong/OpenClash@package/${OPENCLASH_BRANCH} https://testingcf.jsdelivr.net/gh/vernesong/OpenClash@package/${OPENCLASH_BRANCH}}"
 OPENCLASH_CORE_VERSION_MIRRORS="${OPENCLASH_CORE_VERSION_MIRRORS:-https://cdn.jsdelivr.net/gh/vernesong/OpenClash@core/dev https://fastly.jsdelivr.net/gh/vernesong/OpenClash@core/dev https://testingcf.jsdelivr.net/gh/vernesong/OpenClash@core/dev}"
 OPENCLASH_CORE_SMART_MIRRORS="${OPENCLASH_CORE_SMART_MIRRORS:-https://cdn.jsdelivr.net/gh/vernesong/OpenClash@core/dev/smart https://fastly.jsdelivr.net/gh/vernesong/OpenClash@core/dev/smart https://testingcf.jsdelivr.net/gh/vernesong/OpenClash@core/dev/smart}"
@@ -20546,17 +20550,18 @@ qiyou_install_integrated() {
     game_accel_require_appcenter
     confirm_or_exit "确认安装奇游联机宝官方脚本并接入 NRadio 应用商店吗？"
     command -v opkg >/dev/null 2>&1 || die "系统没有 opkg，无法按奇游官方方式安装依赖"
-    log "[1/3] 安装奇游依赖"
-    opkg update || die "opkg update 失败"
-    opkg install curl kmod-tun ip-full || die "安装 curl/kmod-tun/ip-full 失败"
-    log "[2/3] 下载并执行奇游官方安装脚本"
-    download_file "http://sd.qiyou.cn" "/tmp/qiyou-install.sh" || die "下载奇游入口脚本失败"
+    log "[1/4] 下载并校验奇游官方安装脚本"
+    download_file "$QIYOU_INSTALLER_URL" "/tmp/qiyou-install.sh" || die "下载奇游入口脚本失败"
     grep -q 'qyplug.sh' /tmp/qiyou-install.sh 2>/dev/null || die "奇游入口脚本内容异常，已停止执行"
     verify_remote_script_sha256 "奇游入口脚本" "/tmp/qiyou-install.sh" "${QIYOU_INSTALLER_SHA256:-}" "QIYOU_INSTALLER_SHA256"
+    log "[2/4] 安装奇游依赖"
+    opkg update || die "opkg update 失败"
+    opkg install curl kmod-tun ip-full || die "安装 curl/kmod-tun/ip-full 失败"
+    log "[3/4] 执行奇游官方安装脚本"
     sh /tmp/qiyou-install.sh || die "奇游官方安装脚本执行失败"
     sleep 2
     [ -f /etc/qy/qy_acc.sh ] || die "奇游安装后未发现 /etc/qy/qy_acc.sh"
-    qiyou_install_assets "[3/3] 写入奇游应用商店接入文件"
+    qiyou_install_assets "[4/4] 写入奇游应用商店接入文件"
     qiyou_show_status
     log "完成：奇游联机宝已接入 NRadio 应用商店"
 }
@@ -20764,7 +20769,11 @@ leigod_install_integrated() {
 EOF_LEIGOD_RISK
     confirm_or_exit "确认安装雷神官方脚本并接入 NRadio 应用商店吗？"
     command -v opkg >/dev/null 2>&1 || die "系统没有 opkg，无法自动安装雷神依赖"
-    log "[1/3] 安装雷神依赖"
+    log "[1/4] 下载并校验雷神官方安装脚本"
+    download_file "$LEIGOD_INSTALLER_URL" "/tmp/leigod-plugin-install.sh" || die "下载雷神官方安装脚本失败"
+    grep -q 'leigod\|acc-gw\|accelerator' /tmp/leigod-plugin-install.sh 2>/dev/null || die "雷神官方安装脚本内容异常，已停止执行"
+    verify_remote_script_sha256 "雷神官方安装脚本" "/tmp/leigod-plugin-install.sh" "${LEIGOD_INSTALLER_SHA256:-}" "LEIGOD_INSTALLER_SHA256"
+    log "[2/4] 安装雷神依赖"
     opkg update || die "opkg update 失败"
     lg_dep_failed=''
     for lg_pkg in curl libpcap iptables kmod-ipt-nat iptables-mod-tproxy kmod-ipt-ipset ipset kmod-tun kmod-ipt-tproxy kmod-netem tc-full conntrack miniupnpd luci-app-upnp; do
@@ -20784,14 +20793,11 @@ EOF_LEIGOD_RISK
         /etc/init.d/miniupnpd start >/dev/null 2>&1 || true
         /etc/init.d/miniupnpd enable >/dev/null 2>&1 || true
     fi
-    log "[2/3] 下载并执行雷神官方安装脚本"
-    download_file "http://119.3.40.126/router_plugin_new/plugin_install.sh" "/tmp/leigod-plugin-install.sh" || die "下载雷神官方安装脚本失败"
-    grep -q 'leigod\|acc-gw\|accelerator' /tmp/leigod-plugin-install.sh 2>/dev/null || die "雷神官方安装脚本内容异常，已停止执行"
-    verify_remote_script_sha256 "雷神官方安装脚本" "/tmp/leigod-plugin-install.sh" "${LEIGOD_INSTALLER_SHA256:-}" "LEIGOD_INSTALLER_SHA256"
+    log "[3/4] 执行雷神官方安装脚本"
     sh /tmp/leigod-plugin-install.sh || die "雷神官方安装脚本执行失败"
     sleep 2
     leigod_installed || die "安装后仍未检测到 /usr/sbin/leigod/acc-gw.router.*"
-    leigod_install_assets "[3/3] 写入雷神应用商店接入文件"
+    leigod_install_assets "[4/4] 写入雷神应用商店接入文件"
     leigod_show_status
     log "完成：雷神加速器已接入 NRadio 应用商店"
 }
