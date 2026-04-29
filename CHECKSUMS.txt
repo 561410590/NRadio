@@ -3,7 +3,7 @@
 Generated from local UTF-8 file contents on 2026-04-29.
 
 ```text
-3e6fccee9085ca68221de984946ab9c1f70a1ed9b42368aad093f80d34708b59  882915  00-current/ssh-nradio-plugin-installer.sh
-af4bea1a8b3569bd8c5e44bb5ad3dae0279d7e05c967de6626eb67b68c02a0b7  134207  40-server-web/mayebano-support/index.html
+7e6874a402d915f6c310355b047b09d2ba3f9ca46e320a9e7b6378bb705bac46  883008  00-current/ssh-nradio-plugin-installer.sh
+af91365c6360ffd431d412ebbd06c508d5a98c4003f38e594908bfc8858e12ad  130836  40-server-web/mayebano-support/index.html
 14532b515ea892f02c6f601b9e6b48e98f82004d4c6c8820eb3c10f9980074c6     564  vercel.json
 ```

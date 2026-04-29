@@ -24,14 +24,16 @@ jobs:
           test -f SECURITY.md
           test -f .github/ISSUE_TEMPLATE/bug_report.yml
 
-      - name: Verify V2.0.6 script state
+      - name: Verify V2.0.7 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V2.0.6"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'SCRIPT_RELEASE_DATE="2026-04-29"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V2.0.7"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_RELEASE_DATE="2026-04-30"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '2. 雷神加速器" 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'NRadio_C8-668' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'HC-WT9108' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-688|NRadio_C2000MAX' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-688 / C2000MAX 风扇控制' 00-current/ssh-nradio-plugin-installer.sh
           grep -q '温度来源' 00-current/ssh-nradio-plugin-installer.sh
@@ -50,8 +52,10 @@ jobs:
 
       - name: Verify support page state
         run: |
-          grep -q 'V2.0.6' 40-server-web/mayebano-support/index.html
-          grep -q '奇游联机宝状态查看修复未安装场景返回码' 40-server-web/mayebano-support/index.html
+          grep -q 'V2.0.7' 40-server-web/mayebano-support/index.html
+          grep -q 'NRadio_C8-668' 40-server-web/mayebano-support/index.html
+          grep -q '支持机型扩展为 5 款' 40-server-web/mayebano-support/index.html
+          grep -q '新增 C8-668 设备支持' 40-server-web/mayebano-support/index.html
           grep -q 'OpenVPN 快速状态读取' 40-server-web/mayebano-support/index.html
           grep -q '安装教程' 40-server-web/mayebano-support/index.html
           grep -q '主要功能' 40-server-web/mayebano-support/index.html
@@ -71,10 +75,10 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '3e6fccee9085ca68221de984946ab9c1f70a1ed9b42368aad093f80d34708b59' CHECKSUMS.txt
-          grep -q 'af4bea1a8b3569bd8c5e44bb5ad3dae0279d7e05c967de6626eb67b68c02a0b7' CHECKSUMS.txt
-          printf '%s  %s\n' '3e6fccee9085ca68221de984946ab9c1f70a1ed9b42368aad093f80d34708b59' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
-          printf '%s  %s\n' 'af4bea1a8b3569bd8c5e44bb5ad3dae0279d7e05c967de6626eb67b68c02a0b7' '40-server-web/mayebano-support/index.html' | sha256sum -c -
+          grep -q '7e6874a402d915f6c310355b047b09d2ba3f9ca46e320a9e7b6378bb705bac46' CHECKSUMS.txt
+          grep -q 'af91365c6360ffd431d412ebbd06c508d5a98c4003f38e594908bfc8858e12ad' CHECKSUMS.txt
+          printf '%s  %s\n' '7e6874a402d915f6c310355b047b09d2ba3f9ca46e320a9e7b6378bb705bac46' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          printf '%s  %s\n' 'af91365c6360ffd431d412ebbd06c508d5a98c4003f38e594908bfc8858e12ad' '40-server-web/mayebano-support/index.html' | sha256sum -c -
 
       - name: Verify license
         run: |
