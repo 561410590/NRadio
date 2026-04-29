@@ -54,6 +54,7 @@
 
     html {
       background: #041713;
+      overflow-x: hidden;
     }
 
     body {
@@ -2701,6 +2702,7 @@
       }
 
       .hero-shell {
+        display: block;
         gap: 28px;
       }
 
@@ -2716,6 +2718,10 @@
       .hero-copy {
         padding: 34px 28px 30px;
         max-width: none;
+      }
+
+      .support-side {
+        margin-top: 24px;
       }
 
       .floating-nav {
@@ -2734,6 +2740,7 @@
 
       .hero-status,
       .signal-strip,
+      .hero-checks,
       .next-actions {
         grid-template-columns: 1fr;
       }
@@ -2751,6 +2758,29 @@
       .support-side {
         max-width: none;
         transform: none;
+      }
+
+      .release-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin: 4px 0 0;
+        padding: 0;
+        overflow: visible;
+        scroll-snap-type: none;
+      }
+
+      .release-card {
+        width: 100%;
+        min-width: 0;
+        min-height: auto;
+        padding: 15px;
+        border-radius: 18px;
+        scroll-snap-align: none;
+      }
+
+      .release-card-current {
+        min-height: auto;
       }
 
       .support-promise {
@@ -2830,6 +2860,11 @@
           linear-gradient(232deg, rgba(94, 231, 242, 0.18), transparent 44%),
           linear-gradient(306deg, rgba(255, 155, 115, 0.10), transparent 50%),
           linear-gradient(180deg, #041713 0, #06312d 24rem, #09604f 58rem, #0c8a62 88rem, #dcefe5 118rem, var(--cream-50) 100%);
+        overflow-x: clip;
+      }
+
+      .aurora-layer {
+        display: none;
       }
 
       body::after {
@@ -2885,6 +2920,15 @@
         min-height: 30px;
         padding: 0 10px;
         font-size: 12px;
+      }
+
+      .floating-nav {
+        left: 12px;
+        right: 12px;
+        width: auto;
+        max-width: none;
+        transform: none;
+        animation: none;
       }
 
       .floating-nav span {
