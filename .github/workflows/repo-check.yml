@@ -45,13 +45,17 @@ jobs:
       - name: Verify support page state
         run: |
           grep -q 'V2.0.3' 40-server-web/mayebano-support/index.html
-          grep -q 'fan control smart release' 40-server-web/mayebano-support/index.html
+          grep -q 'V2.0.5 即将发布' 40-server-web/mayebano-support/index.html
+          grep -q 'href="/ssh-nradio-plugin-installer.sh" download>下载 V2.0.3' 40-server-web/mayebano-support/index.html
+          ! grep -q '>立即下载脚本<' 40-server-web/mayebano-support/index.html
+          grep -q '下载 V2.0.3' 40-server-web/mayebano-support/index.html
+          grep -q 'GitHub 项目' 40-server-web/mayebano-support/index.html
           grep -q '2026-04-29' 40-server-web/mayebano-support/index.html
           grep -q '安装前提' 40-server-web/mayebano-support/index.html
           grep -q '详细教程在右侧' 40-server-web/mayebano-support/index.html
           grep -q 'MobaXterm' 40-server-web/mayebano-support/index.html
           grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
-          grep -q 'Smart 多段温控' 40-server-web/mayebano-support/index.html
+          grep -q 'Smart 最低 50%' 40-server-web/mayebano-support/index.html
           ! grep -q '安装方式提醒' 40-server-web/mayebano-support/index.html
           ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
 
