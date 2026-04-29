@@ -937,13 +937,15 @@
     .route-code-card {
       position: relative;
       display: grid;
-      gap: 10px;
-      padding: 14px 16px;
+      align-items: start;
+      gap: 12px;
+      padding: 16px;
       border-radius: 20px;
       background:
         linear-gradient(90deg, rgba(94, 231, 242, 0.07), transparent),
         rgba(2, 24, 13, 0.22);
       border: 1px solid rgba(220, 255, 244, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 30px rgba(3, 35, 23, 0.12);
       overflow: hidden;
     }
 
@@ -979,7 +981,13 @@
     }
 
     .route-code-card code {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
       color: #e9fff1;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(220, 255, 244, 0.12);
       font-family: Consolas, "Courier New", monospace;
       font-size: 12px;
       line-height: 1.6;
@@ -992,12 +1000,12 @@
       align-items: center;
       justify-content: center;
       justify-self: start;
-      min-height: 42px;
-      padding: 0 16px;
+      min-height: 46px;
+      padding: 0 20px;
       border-radius: 999px;
       color: #06341d;
       background: linear-gradient(135deg, #d8fff0, #ffffff);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 900;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94), 0 12px 24px rgba(5, 46, 24, 0.16);
       transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -1204,8 +1212,18 @@
 
     .tutorial-paths {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 10px;
+    }
+
+    .path-choice {
+      padding: 11px 13px;
+      border-radius: 14px;
+      color: rgba(255, 255, 255, 0.74);
+      background: rgba(216, 255, 240, 0.06);
+      border: 1px solid rgba(220, 255, 244, 0.10);
+      font-size: 12px;
+      line-height: 1.65;
     }
 
     .path-card {
@@ -1372,10 +1390,10 @@
       font-family: Consolas, "Courier New", monospace;
       font-size: 12px;
       line-height: 1.72;
-      white-space: pre-wrap;
+      white-space: pre;
       overflow-x: auto;
-      overflow-wrap: anywhere;
-      word-break: normal;
+      overflow-wrap: normal;
+      word-break: keep-all;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
@@ -1416,166 +1434,19 @@
       line-height: 1.7;
     }
 
-    .release-panel {
-      position: relative;
-      display: grid;
-      gap: 16px;
-      min-height: 294px;
-      padding: 22px;
-      border-radius: 34px;
-      overflow: hidden;
-      color: rgba(255, 255, 255, 0.82);
-      background:
-        linear-gradient(142deg, rgba(188, 247, 125, 0.16), transparent 34%),
-        linear-gradient(230deg, rgba(94, 231, 242, 0.14), transparent 44%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.10), transparent),
-        rgba(2, 24, 13, 0.26);
-      border: 1px solid rgba(220, 255, 244, 0.23);
-      box-shadow: 0 28px 68px rgba(2, 35, 31, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.10);
-      backdrop-filter: blur(20px) saturate(1.12);
+    .download-note b,
+    .download-note span {
+      display: block;
     }
 
-    .release-panel::before {
-      content: "";
-      position: absolute;
-      inset: 18px 18px auto auto;
-      width: 118px;
-      height: 118px;
-      border-radius: 34px;
-      border: 1px solid rgba(232, 255, 240, 0.16);
-      box-shadow:
-        inset 0 0 0 16px rgba(232, 255, 240, 0.035),
-        inset 0 0 0 38px rgba(94, 231, 242, 0.030),
-        0 18px 48px rgba(94, 231, 242, 0.08);
-      transform: rotate(10deg);
-      pointer-events: none;
-    }
-
-    .release-panel > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    .release-panel-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .release-panel-kicker {
-      color: rgba(232, 255, 240, 0.64);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .release-panel h2 {
-      margin: 7px 0 0;
+    .download-note b {
       color: #fff;
-      font-size: 25px;
-      line-height: 1.22;
-      letter-spacing: 0;
-    }
-
-    .release-panel-version {
-      display: inline-flex;
-      align-items: center;
-      min-height: 36px;
-      padding: 0 14px;
-      border-radius: 999px;
-      color: #06341d;
-      background: linear-gradient(135deg, #d8fff0, #ffffff);
-      font-size: 14px;
-      font-weight: 900;
-      white-space: nowrap;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    }
-
-    .release-panel p {
-      margin: 0;
-      color: rgba(255, 255, 255, 0.74);
       font-size: 13px;
-      line-height: 1.78;
+      line-height: 1.35;
     }
 
-    .release-panel-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .release-panel-grid span {
-      position: relative;
-      display: grid;
-      gap: 4px;
-      min-height: 74px;
-      padding: 13px;
-      border-radius: 20px;
-      background:
-        linear-gradient(145deg, rgba(216, 255, 240, 0.10), rgba(94, 231, 242, 0.045)),
-        rgba(216, 255, 240, 0.055);
-      border: 1px solid rgba(220, 255, 244, 0.15);
-      overflow: hidden;
-    }
-
-    .release-panel-grid span::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 12px;
-      bottom: 12px;
-      width: 3px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, var(--cyan-400), rgba(241, 199, 91, 0.78));
-    }
-
-    .release-panel-grid b {
-      color: #fff;
-      font-size: 16px;
-      line-height: 1.25;
-    }
-
-    .release-panel-grid em {
-      color: rgba(255, 255, 255, 0.64);
-      font-size: 12px;
-      line-height: 1.45;
-      font-style: normal;
-    }
-
-    .release-panel-foot {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: auto;
-    }
-
-    .release-panel-foot span,
-    .release-panel-foot a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 30px;
-      padding: 0 11px;
-      border-radius: 999px;
-      color: rgba(232, 255, 240, 0.88);
-      background: rgba(216, 255, 240, 0.08);
-      border: 1px solid rgba(220, 255, 244, 0.13);
-      font-size: 12px;
-      font-weight: 800;
-      text-decoration: none;
-    }
-
-    .release-panel-foot a {
-      color: #06341d;
-      background: linear-gradient(135deg, #d8fff0, #ffffff);
-      border-color: rgba(255, 255, 255, 0.62);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 14px 28px rgba(5, 46, 24, 0.18);
-    }
-
-    .release-panel-foot a:hover {
-      background: linear-gradient(135deg, #e7fff7, #ffffff);
-      transform: translateY(-1px);
+    .download-note span {
+      margin-top: 5px;
     }
 
     .publish-card {
@@ -3207,10 +3078,8 @@
       }
 
       .download-main > div,
-      .release-panel-top > div,
       .route-code-card,
       .download-section,
-      .release-panel,
       .support-panel {
         min-width: 0;
       }
@@ -3234,20 +3103,6 @@
 
       .download-card a.download-primary {
         width: 100%;
-      }
-
-      .release-panel {
-        min-height: auto;
-        padding: 18px;
-        border-radius: 24px;
-      }
-
-      .release-panel-top {
-        flex-direction: column;
-      }
-
-      .release-panel-grid {
-        grid-template-columns: 1fr;
       }
 
       .publish-card-top {
@@ -3467,7 +3322,6 @@
     }
 
     .hero-copy,
-    .release-panel,
     .download-card,
     .feature-shell,
     .support-panel,
@@ -3504,7 +3358,6 @@
 
     .eyebrow,
     .hero-latest-label,
-    .release-panel-kicker,
     .feature-kicker {
       color: var(--pink-700);
     }
@@ -3524,7 +3377,6 @@
     .lead,
     .hero-note,
     .hero-latest p,
-    .release-panel p,
     .download-card span {
       color: rgba(93, 18, 50, 0.78);
     }
@@ -3562,7 +3414,6 @@
 
     .lead strong,
     .download-card strong,
-    .release-panel h2,
     .hero-latest strong,
     .feature-intro h2 {
       color: var(--pink-950);
@@ -3576,9 +3427,9 @@
     .hero-latest,
     .hero-checks span,
     .release-card,
-    .release-panel-grid span,
     .download-facts span,
     .download-section,
+    .path-choice,
     .path-card,
     .tutorial-checks li,
     .ssh-tool-grid li,
@@ -3606,7 +3457,6 @@
     .hero-summary strong,
     .hero-checks b,
     .release-card strong,
-    .release-panel-grid b,
     .download-facts em,
     .download-section b,
     .ssh-tool-grid strong,
@@ -3618,9 +3468,9 @@
 
     .hero-summary span,
     .release-card p,
-    .release-panel-grid em,
     .download-facts b,
     .download-list,
+    .path-choice,
     .path-card p,
     .tutorial-steps,
     .tutorial-checks span,
@@ -3672,7 +3522,6 @@
     .hero-links a.hero-github,
     .download-card a,
     .route-code-card a,
-    .release-panel-version,
     .release-card b {
       color: #fff7fa;
       background: linear-gradient(135deg, #ff7fb2, #d92a73);
@@ -3705,12 +3554,27 @@
     }
 
     .hero-latest-version,
-    .hero-milestones span,
-    .release-panel-foot span,
-    .release-panel-foot a {
+    .hero-milestones span {
       color: var(--pink-900);
       background: rgba(255, 255, 255, 0.72);
       border-color: var(--rose-line);
+    }
+
+    .download-note {
+      color: var(--pink-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.84), rgba(255, 232, 243, 0.70)),
+        rgba(255, 247, 250, 0.68);
+      border-color: var(--rose-line);
+      box-shadow: 0 12px 28px rgba(184, 37, 95, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    }
+
+    .download-note b {
+      color: var(--pink-950);
+    }
+
+    .download-note span {
+      color: rgba(93, 18, 50, 0.68);
     }
 
     .release-card-current {
@@ -3751,17 +3615,33 @@
     .download-code {
       color: var(--pink-950);
       background:
-        linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 234, 243, 0.66)),
-        rgba(255, 247, 250, 0.66);
-      border-color: var(--rose-line);
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 232, 243, 0.72)),
+        linear-gradient(90deg, rgba(255, 122, 177, 0.10), transparent 58%),
+        rgba(255, 247, 250, 0.72);
+      border-color: rgba(226, 58, 126, 0.18);
+      box-shadow: 0 14px 30px rgba(184, 37, 95, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.92);
     }
 
     .route-code-card code,
     .download-list code,
     .tutorial-steps code {
       color: var(--pink-950);
-      background: rgba(255, 255, 255, 0.68);
+      background: rgba(255, 255, 255, 0.78);
       border-color: rgba(184, 37, 95, 0.12);
+    }
+
+    .route-code-card span {
+      color: var(--pink-900);
+      font-weight: 900;
+    }
+
+    .route-code-card p {
+      color: rgba(93, 18, 50, 0.70);
+      font-weight: 700;
+    }
+
+    .route-code-card::after {
+      color: rgba(226, 58, 126, 0.08);
     }
 
     .tutorial-steps li::before {
@@ -3860,7 +3740,6 @@
         </div>
 
           <div class="signal-strip" aria-label="当前公网页状态">
-            <span><b>公开入口</b>nradio.mayebano.shop</span>
             <span><b>最新版本</b>V2.0.6</span>
             <span><b>发布状态</b>已发布</span>
             <span><b>下载文件</b>默认脚本</span>
@@ -3879,10 +3758,6 @@
               <strong>5</strong>
               <span>功能分类菜单</span>
             </div>
-          </div>
-
-          <div class="hero-note">
-            旧 beta 独立下载通道已取消。
           </div>
 
           <section class="hero-latest" aria-label="当前里程碑说明">
@@ -3909,13 +3784,10 @@
               <span>V2.0.3 风扇控制增强</span>
               <span>V2.0.6 奇游状态与美化标记收口</span>
               <span>单一脚本入口</span>
-              <span>公开域名访问</span>
             </div>
             <div class="hero-checks" aria-label="当前发布状态">
-              <span><b>公开入口</b>https://nradio.mayebano.shop/</span>
               <span><b>最新版本</b>V2.0.6</span>
               <span><b>脚本文件</b>ssh-nradio-plugin-installer.sh</span>
-              <span><b>旧版入口</b>已取消</span>
             </div>
           </section>
 
@@ -4077,48 +3949,24 @@
         </section>
 
         <aside class="support-side" id="install" aria-label="下载与微信支持">
-          <section class="release-panel" aria-label="安装入口">
-            <div class="release-panel-top">
-              <div>
-                <div class="release-panel-kicker">当前脚本</div>
-                <h2>V2.0.6 安装入口</h2>
-              </div>
-              <div class="release-panel-version">V2.0.6</div>
-            </div>
-            <p>
-              先开 SSH。能联网就在线下载；不能联网就电脑下载后上传。两条路最后都在 /root 执行同一个脚本。
-            </p>
-            <div class="release-panel-grid" aria-label="当前公开状态">
-              <span><b>文件名</b><em>ssh-nradio-plugin-installer.sh</em></span>
-              <span><b>版本</b><em>V2.0.6</em></span>
-              <span><b>执行</b><em>SSH 终端</em></span>
-              <span><b>目录</b><em>/root</em></span>
-            </div>
-            <div class="release-panel-foot" aria-label="公开页状态">
-              <span>先开 SSH</span>
-              <span>/root 执行</span>
-              <span>看到菜单再继续</span>
-            </div>
-          </section>
-
           <section class="download-card" aria-label="最新脚本下载">
             <div class="download-main">
               <div>
                 <strong>安装教程</strong>
-                <span>先确认前提，再下载、上传、执行，看到脚本菜单后继续。</span>
+                <span>从这里开始实际操作：先开 SSH，再选一种下载方式，最后看到脚本菜单。</span>
               </div>
               <div class="download-actions">
                 <a class="download-primary" href="/ssh-nradio-plugin-installer.sh" download>下载脚本</a>
               </div>
             </div>
-            <div class="download-facts" aria-label="下载状态">
-              <span><b>路径 A</b><em>电脑下载后上传</em></span>
-              <span><b>路径 B</b><em>路由器在线下载</em></span>
-              <span><b>完成标志</b><em>终端出现脚本菜单</em></span>
+            <div class="download-facts" aria-label="安装顺序">
+              <span><b>1. 开 SSH</b><em>安全页保存并应用</em></span>
+              <span><b>2. 放脚本</b><em>上传或在线下载到 /root</em></span>
+              <span><b>3. 执行确认</b><em>终端出现脚本菜单</em></span>
             </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
               <div class="download-section tutorial-prereq" id="prereq">
-                <b>执行前确认</b>
+                <b>1. 执行前确认</b>
                 <ol class="install-steps">
                   <li><b>1</b><span>不是应用商店上传安装，也不是固件升级包。</span></li>
                   <li><b>2</b><span>先在系统安全页开启 SSH，保存并应用。</span></li>
@@ -4126,38 +3974,39 @@
                 </ol>
                 <div class="route-code-card">
                   <span>SSH 安全页</span>
-                  <p>先打开安全页启用 SSH，保存并应用。</p>
+                  <p>在 NRadio 后台打开系统安全页，启用 SSH，保存并应用。</p>
                   <code>http://192.168.66.1/cgi-bin/luci/admin/system/security</code>
                   <a href="http://192.168.66.1/cgi-bin/luci/admin/system/security" target="_blank" rel="noopener">一键打开 SSH 安全页</a>
                 </div>
               </div>
 
               <div class="download-section">
-                <b>准备一个 SSH 入口</b>
+                <b>2. 准备 SSH 工具</b>
                 <ul class="ssh-tool-grid">
-                  <li><strong>MobaXterm</strong><span>适合新手，终端和 SFTP 文件面板在同一窗口。</span></li>
-                  <li><strong>FinalShell / Xshell + Xftp</strong><span>适合常用 SSH 的电脑，登录和上传分开处理。</span></li>
+                  <li><strong>MobaXterm</strong><span>终端和 SFTP 文件面板在同一窗口，适合电脑上传。</span></li>
+                  <li><strong>FinalShell / Xshell + Xftp</strong><span>SSH 登录和文件上传分开处理。</span></li>
                   <li><strong>PuTTY + WinSCP</strong><span>PuTTY 负责终端，WinSCP 负责传文件。</span></li>
-                  <li><strong>路由器 Web SSH</strong><span>设备已有 Web SSH 时，直接在浏览器终端执行。</span></li>
+                  <li><strong>路由器 Web SSH</strong><span>设备已有 Web SSH 时，可直接粘贴在线下载命令。</span></li>
                 </ul>
               </div>
 
               <div class="tutorial-paths" aria-label="两种安装路径">
+                <div class="path-choice">3A 和 3B 只选一个：路由器不能访问公网用 3A；路由器能访问公网用 3B。</div>
                 <section class="path-card" aria-label="电脑下载后上传">
-                  <b>路径 A：电脑下载后上传</b>
-                  <p>路由器不能访问公网时走这条，别反复改路由器网络。</p>
+                  <b>3A. 路由器不能访问公网：电脑上传</b>
+                  <p>电脑下载脚本，上传到路由器 /root，再在 SSH 终端执行。</p>
                   <ol class="tutorial-steps">
-                    <li>后台打开 SSH：<code>/cgi-bin/luci/admin/system/security</code>，保存并应用。</li>
-                    <li>点上面的“下载脚本”，把文件保存到电脑。</li>
-                    <li>SSH 登录路由器：主机 <code>192.168.66.1</code>，用户 <code>root</code>。</li>
-                    <li>用 SFTP/SCP 把脚本放进 <code>/root</code>。</li>
+                    <li>点“下载脚本”，把 <code>ssh-nradio-plugin-installer.sh</code> 保存到电脑。</li>
+                    <li>用 SSH 工具连接路由器：主机 <code>192.168.66.1</code>，用户 <code>root</code>。</li>
+                    <li>在 SFTP/SCP 文件面板进入 <code>/root</code>。</li>
+                    <li>把脚本上传到 <code>/root</code>，文件名保持不变。</li>
                     <li>终端执行：<code>cd /root && sh ssh-nradio-plugin-installer.sh</code>。</li>
                   </ol>
                 </section>
 
                 <section class="path-card" aria-label="路由器在线下载">
-                  <b>路径 B：路由器在线下载</b>
-                  <p>路由器能访问公网时走这条，直接粘贴命令。</p>
+                  <b>3B. 路由器能访问公网：终端下载</b>
+                  <p>不用点下载脚本，也不用 SFTP 上传；SSH 登录后直接粘贴下面命令。</p>
                   <code class="download-code">cd /root
 wget -O ssh-nradio-plugin-installer.sh https://nradio.mayebano.shop/ssh-nradio-plugin-installer.sh
 sh ssh-nradio-plugin-installer.sh</code>
@@ -4165,25 +4014,25 @@ sh ssh-nradio-plugin-installer.sh</code>
               </div>
 
               <div class="download-section">
-                <b>执行后看这里</b>
+                <b>4. 执行后确认</b>
                 <ul class="tutorial-checks">
-                  <li><b>终端出现菜单</b><span>看到 NRadio 脚本菜单后，再按编号继续。</span></li>
-                  <li><b>按提示确认</b><span>安装、美化、卸载都按菜单提示走，不跳步骤。</span></li>
+                  <li><b>出现菜单</b><span>终端出现 NRadio 脚本菜单后，再按编号继续。</span></li>
+                  <li><b>按菜单执行</b><span>安装、美化、卸载都按脚本提示确认。</span></li>
                   <li><b>回后台核对</b><span>完成后回应用商店确认入口、图标和状态。</span></li>
                 </ul>
               </div>
 
               <div class="download-section">
-                <b>不要做</b>
+                <b>5. 不要做</b>
                 <ul class="download-list">
                   <li>不要把脚本当应用商店安装包上传，也不要当固件升级包。</li>
                   <li>脚本适用于 NRadio_C8-688、C5800-688、NBCPE、C2000MAX 官方 NROS 系统；标准 OpenWrt 不适用。</li>
-                  <li>如果路由器不能访问公网，优先走“电脑下载后上传”的方式，不要反复改路由器网络配置。</li>
+                  <li>如果路由器不能访问公网，使用“电脑下载后上传”的方式。</li>
                   <li>不要在未确认 IP 和机型的设备上执行；不同路由器、旁路由和服务器不要混用。</li>
-                  <li>安装和美化入口只按菜单提示执行；中途关闭终端可能导致插件未完整接入应用商店。</li>
+                  <li>安装和美化入口只按菜单提示执行；终端正在执行时不要直接关闭窗口。</li>
                 </ul>
               </div>
-              <p class="download-note">闭环：开启 SSH -> 脚本进入 /root -> 执行脚本 -> 出现菜单 -> 按菜单完成安装。</p>
+              <p class="download-note"><b>完成确认</b><span>SSH 已开启，脚本在 /root，终端已执行脚本，并且出现 NRadio 菜单。到这里再按菜单选择需要的功能。</span></p>
             </div>
           </section>
 
@@ -4224,7 +4073,6 @@ sh ssh-nradio-plugin-installer.sh</code>
               <div class="support-url">
                 当前支持页地址
                 <code>https://nradio.mayebano.shop/</code>
-                <br>公开访问以当前 HTTPS 域名为准。
               </div>
 
               <div class="support-note-strip">
@@ -4569,10 +4417,6 @@ sh ssh-nradio-plugin-installer.sh</code>
             <b>微信支持入口</b>
             <span>二维码入口与脚本下载入口分开显示。</span>
           </a>
-          <div>
-            <b>公开入口</b>
-            <span>对外入口使用 nradio.mayebano.shop。</span>
-          </div>
         </section>
 
         <footer class="page-signature">
