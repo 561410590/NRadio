@@ -50,30 +50,16 @@ jobs:
             exit 1
           fi
 
-      - name: Merge prepared release branch into main
+      - name: Validate V2.0.5 main state
         run: |
           set -eu
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git fetch origin \
-            +refs/heads/main:refs/remotes/origin/main \
-            +refs/heads/release/v2.0.5-scheduled:refs/remotes/origin/release/v2.0.5-scheduled
-          git checkout -B main origin/main
-
-          if grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh; then
-            echo "V2.0.5 is already published on main."
-            exit 0
-          fi
-
-          git merge --no-ff --no-edit origin/release/v2.0.5-scheduled
-
           grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
+          grep -q '2026.5.1' 40-server-web/mayebano-support/index.html
+          grep -q '下载 V2.0.5' 40-server-web/mayebano-support/index.html
           grep -q '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' CHECKSUMS.txt
-
-          git push origin HEAD:main
+          grep -q 'b1995924c76cc5916ab37dce584f28ca44bb0882c1a3bd8ba95473b6778a68af' CHECKSUMS.txt
 
       - name: Create GitHub Release V2.0.5
         env:
@@ -82,9 +68,12 @@ jobs:
           set -eu
           git fetch origin --tags +refs/heads/main:refs/remotes/origin/main
           git checkout -B main origin/main
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '下载 V2.0.5' 40-server-web/mayebano-support/index.html
           grep -q '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' CHECKSUMS.txt
 
           if git rev-parse "v2.0.5^{commit}" >/dev/null 2>&1; then
@@ -105,14 +94,15 @@ jobs:
           fi
 
           cat > /tmp/v205-release-notes.md <<'EOF'
-          V2.0.5 scheduled release.
+          V2.0.5 scheduled public release.
 
           - Default download script: ssh-nradio-plugin-installer.sh
           - Version: V2.0.5
           - Release date: 2026-05-01
-          - Based on V2.0.3 fan control enhancements.
+          - Support page and default download entry are switched to V2.0.5.
           - C8-688 and C2000MAX keep separate default fan-control strategies during installation.
           - OpenVPN Mk3 page polish, fast status mode, and status pill layout fixes are written back into the main installer.
+          - The public support page uses the pink V2.0.5 release skin with mobile layout fixes.
           - CHECKSUMS.txt is included for public file verification.
           EOF
 

@@ -2,9 +2,9 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V2.0.3"
+SCRIPT_VERSION="V2.0.5"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
-SCRIPT_RELEASE_DATE="2026-04-29"
+SCRIPT_RELEASE_DATE="2026-05-01"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
 SCRIPT_MODEL_NOTICE="适用机型：NRadio_C8-688/NRadio_C5800-688/NRadio_NBCPE/NRadio_C2000MAX官方NROS2.0系统"
 SCRIPT_SCOPE_NOTICE="适用于带 NRadio 应用商店的官方固件，并非标准 OpenWrt"
@@ -697,7 +697,7 @@ confirm_default_yes() {
 
 confirm_appcenter_polish_risk() {
     cat <<'EOF_APPCENTER_POLISH_CONFIRM'
-高风险警告：15 号会直接覆盖原厂应用商店页面文件，执行后无法通过本脚本一键还原。
+高风险警告：“应用商店与页面美化 -> 美化应用商店”会直接覆盖原厂应用商店页面文件，执行后无法通过本脚本一键还原。
 
 如果美化后页面异常、样式错乱或不兼容当前固件，通常只能通过以下方式恢复：
 1. 恢复出厂设置；
@@ -1067,6 +1067,10 @@ download_file_once() {
     keep_partial="${DOWNLOAD_KEEP_PARTIAL:-0}"
     LAST_DOWNLOAD_TOOL=''
     LAST_DOWNLOAD_RC='0'
+
+    if [ "$keep_partial" != '1' ]; then
+        rm -f "$tmp_out" 2>/dev/null || true
+    fi
 
     if command -v curl >/dev/null 2>&1; then
         LAST_DOWNLOAD_TOOL='curl'
@@ -5000,7 +5004,7 @@ patch_appcenter_card_polish() {
 
     cat > "$css_file" <<'EOF_APPCENTER_CARD_POLISH_CSS'
     /* NRadio appcenter card polish: visual-only layer */
-    /* NRadio appcenter card polish V2.0.3 full repair layer */
+    /* NRadio appcenter card polish V2.0.5 full repair layer */
     /* NRadio appcenter visual polish 1-5 safe refinement */
     /* Keep appcontainer/container_left/app_top_menu/container_right layout owned by NRadio OEM CSS. */
     .container_right .app_box{
@@ -5647,7 +5651,7 @@ EOF_APPCENTER_CARD_POLISH_CSS
         (new XHR()).post('<%=controller%>nradioadv/system/appcenter/sys_status', data, function(xhr){
             if (xhr.getResponseHeader("Content-Type") == "application/json") {
                 try {
-                    var data_res = eval('(' + xhr.responseText + ')');
+                    var data_res = JSON.parse(xhr.responseText || '{}');
                     if(data_res && data_res.result)
                         update_app_status_panel(data_res.result);
                 }
@@ -5974,7 +5978,7 @@ EOF_APPCENTER_EMPTY_STATE_JS
     fi
 
     verify_template_marker 'NRadio appcenter card polish: visual-only layer' '应用商店卡片美化 CSS'
-    verify_template_marker 'NRadio appcenter card polish V2.0.3 full repair layer' '应用商店 V2.0.3 修复美化 CSS'
+    verify_template_marker 'NRadio appcenter card polish V2.0.5 full repair layer' '应用商店 V2.0.5 修复美化 CSS'
     verify_template_marker '<div class="app_meta_row"' '应用商店卡片状态徽标'
     verify_template_marker 'status_label: db.status_label' '应用商店卡片状态标签数据'
     verify_template_marker 'app_open_badge app_open_1' '应用商店后台状态徽标'
@@ -10126,15 +10130,21 @@ write_fanctrl_plugin_files() {
     fanctrl_model="${1:-}"
     fanctrl_tempsource='max'
     fanctrl_interval='12'
+    fanctrl_smartmin='30'
+    fanctrl_protecttemp='85'
 
     case "$fanctrl_model" in
         NRadio_C8-688)
             fanctrl_tempsource='cpu'
             fanctrl_interval='10'
+            fanctrl_smartmin='50'
+            fanctrl_protecttemp='85'
             ;;
         NRadio_C2000MAX)
             fanctrl_tempsource='max'
-            fanctrl_interval='12'
+            fanctrl_interval='5'
+            fanctrl_smartmin='30'
+            fanctrl_protecttemp='80'
             ;;
     esac
 
@@ -10615,12 +10625,12 @@ config service 'fanctrl'
     option enabled '1'
     option mode '4'
     option tempsource '$fanctrl_tempsource'
-    option smartmin '30'
+    option smartmin '$fanctrl_smartmin'
     option smarttemp_low '50'
     option smarttemp_mid '60'
     option smarttemp_high '70'
     option smarttemp_full '80'
-    option protecttemp '85'
+    option protecttemp '$fanctrl_protecttemp'
     option interval '$fanctrl_interval'
 EOF_FANCTRL_UCI
 
@@ -10640,7 +10650,7 @@ install_fanctrl() {
         NRadio_C8-688|NRadio_C2000MAX)
             ;;
         *)
-            log "提示: 14 号风扇控制仅支持 NRadio_C8-688 / NRadio_C2000MAX。"
+            log "提示: 设备维护与检测 -> NRadio_C8-688 / C2000MAX 风扇控制仅支持 NRadio_C8-688 / NRadio_C2000MAX。"
             log "当前机型: ${current_model:-unknown}"
             log "原始识别: model=${raw_model:-unknown} board_name=${raw_board:-unknown}"
             printf '按回车返回上一级菜单...'
@@ -10651,12 +10661,28 @@ install_fanctrl() {
 
     log_stage 1 5 "NRadio_C8-688 / NRadio_C2000MAX 原厂风扇控制页面安装规划"
     log "提示: 当前机型已识别为 ${current_model}，将按独立脚本逻辑写回原厂“更多-风扇”页面和后台脚本"
+    case "$current_model" in
+        NRadio_C8-688)
+            log "适配: C8-688 使用 CPU 温度源，Smart 最低 50%，10s 检测，85°C 过热保护"
+            ;;
+        NRadio_C2000MAX)
+            log "适配: C2000MAX 使用 CPU/CPE 取高值，Smart 最低 30%，5s 检测，80°C 过热保护"
+            ;;
+    esac
     confirm_or_exit "确认继续安装 ${FANCTRL_DISPLAY_NAME} 并修改系统吗？"
 
     log_stage 2 5 "写入原厂风扇控制页面与后台脚本"
     write_fanctrl_plugin_files "$current_model"
 
     log_stage 3 5 "启用风扇控制服务并写入默认配置"
+    case "$current_model" in
+        NRadio_C8-688)
+            log "启用适配: C8-688 风扇策略已写入 fanctrl 配置"
+            ;;
+        NRadio_C2000MAX)
+            log "启用适配: C2000MAX 风扇策略已写入 fanctrl 配置"
+            ;;
+    esac
     "$FANCTRL_INIT_FILE" enable >/dev/null 2>&1 || true
     "$FANCTRL_INIT_FILE" restart >/dev/null 2>&1 || true
 
@@ -10679,7 +10705,7 @@ install_fanctrl() {
     log "插件:   $FANCTRL_DISPLAY_NAME"
     log "版本:   builtin"
     log "路由:   $FANCTRL_ROUTE"
-    log "说明:   仅支持 NRadio_C8-688 / NRadio_C2000MAX，已按独立脚本逻辑写回原厂“更多-风扇”页面"
+    log "说明:   仅支持 NRadio_C8-688 / NRadio_C2000MAX，已按机型写入独立风扇适配"
 }
 
 load_easytier_route_state() {
@@ -11279,7 +11305,9 @@ local function detect_primary_lan_cidr(lan_addr_dump)
     return nil
 end
 
-local function collect_status()
+local function collect_status(opts)
+    opts = opts or {}
+    local fast_probe = opts.fast_probe == true
     local svc = cmd("/etc/init.d/openvpn status 2>/dev/null || true")
     local ps_std = cmd("ps | grep 'openvpn(custom_config)' | grep -v grep")
     local ps_legacy = cmd("ps | grep 'openvpn --config' | grep -v grep")
@@ -11290,8 +11318,15 @@ local function collect_status()
     local rule_dump = cmd("ip rule | grep 'lookup main' 2>/dev/null")
     local nat_dump = cmd("iptables -t nat -S 2>/dev/null")
     local lan_addr_dump = cmd("ip -4 addr show br-lan 2>/dev/null")
-    local log = cmd("tail -40 /tmp/openvpn-client.log 2>/dev/null || logread 2>/dev/null | grep -i openvpn | tail -40")
-    local log_focus = cmd("(tail -120 /tmp/openvpn-client.log 2>/dev/null; logread 2>/dev/null) | grep -i -E 'openvpn|tun0|tls|auth|route|error|fail|warn' | tail -30")
+    local log = nil
+    local log_focus = nil
+    if fast_probe then
+        log = cmd("tail -18 /tmp/openvpn-client.log 2>/dev/null")
+        log_focus = cmd("tail -60 /tmp/openvpn-client.log 2>/dev/null | grep -i -E 'openvpn|tun0|tls|auth|route|error|fail|warn' | tail -16")
+    else
+        log = cmd("tail -40 /tmp/openvpn-client.log 2>/dev/null || logread 2>/dev/null | grep -i openvpn | tail -40")
+        log_focus = cmd("(tail -120 /tmp/openvpn-client.log 2>/dev/null; logread 2>/dev/null) | grep -i -E 'openvpn|tun0|tls|auth|route|error|fail|warn' | tail -30")
+    end
     local cfg = cmd("sed -n '1,180p' /etc/openvpn/client.ovpn 2>/dev/null")
     local tun_ip = tun:match("inet%s+([%d%.]+/%d+)") or "-"
     local remote = cmd("awk '$1==\"remote\"{print $2\" \"$3; exit}' /etc/openvpn/client.ovpn 2>/dev/null")
@@ -11330,8 +11365,11 @@ local function collect_status()
             local to_rule_ok = contains(rule_dump, "to " .. target .. " lookup main")
             local iif_rule_ok = contains(rule_dump, "to " .. target .. " iif br-lan lookup main")
             local proxy_ok = is_host and contains_proxy_target(peer_dump, target) or false
-            local probe_ip = probe_ip_for_target(target)
-            local probe_ok = probe_ping(probe_ip)
+            local probe_ip = fast_probe and "-" or probe_ip_for_target(target)
+            local probe_ok = nil
+            if not fast_probe then
+                probe_ok = probe_ping(probe_ip)
+            end
             route_checks[#route_checks + 1] = {
                 line = line,
                 target = target,
@@ -11341,7 +11379,8 @@ local function collect_status()
                 iif_rule_ok = iif_rule_ok,
                 proxy_ok = proxy_ok,
                 probe_ip = probe_ip or "-",
-                probe_ok = probe_ok
+                probe_ok = probe_ok == true,
+                probe_deferred = fast_probe
             }
             route_targets[#route_targets + 1] = target
             route_count = route_count + 1
@@ -11494,8 +11533,11 @@ local function collect_status()
     end
 
     local startup_label = activation_ready and "可启动" or (profile_ready and "待认证文件" or "待配置")
-    local online_breakdown = "远端 " .. ratio_text(remote_online_count, route_count) .. " · 映射 " .. (map_ip_ok and ratio_text(local_map_online and 1 or 0, 1) or "-")
-    local online_device_ratio = ratio_text(remote_online_count, route_count)
+    local map_ratio = map_ip_ok and ratio_text(local_map_online and 1 or 0, 1) or "-"
+    local remote_online_ratio = fast_probe and "探测中" or ratio_text(remote_online_count, route_count)
+    local online_breakdown = fast_probe and ("远端探测中 · 映射 " .. map_ratio) or ("远端 " .. remote_online_ratio .. " · 映射 " .. map_ratio)
+    local online_device_ratio = fast_probe and "探测中" or remote_online_ratio
+    local online_ratio = fast_probe and "探测中" or ratio_text(remote_online_count + (local_map_online and 1 or 0), route_count + (map_ip_ok and 1 or 0))
     local mode_label = "未启动"
     if ps_std ~= "" then
         mode_label = "LuCI 管理实例"
@@ -11533,8 +11575,8 @@ local function collect_status()
         status_label = connected and "已连接" or "已停止",
         health_ratio = ratio_text(health_ok, health_total),
         online_device_ratio = online_device_ratio,
-        online_ratio = ratio_text(remote_online_count + (local_map_online and 1 or 0), route_count + (map_ip_ok and 1 or 0)),
-        remote_online_ratio = ratio_text(remote_online_count, route_count),
+        online_ratio = online_ratio,
+        remote_online_ratio = remote_online_ratio,
         local_map_online_ratio = map_ip_ok and ratio_text(local_map_online and 1 or 0, 1) or "-",
         route_rule_ratio = ratio_text(route_health_ok, route_health_total),
         tun_ip = tun_ip,
@@ -11587,6 +11629,7 @@ local function collect_status()
         masquerade_hits = masquerade_hits,
         route_targets = route_targets,
         route_checks = route_checks,
+        probe_deferred = fast_probe,
         peer_lines = peer_lines,
         log_focus = log_focus ~= "" and log_focus or "no focus log",
         log = log ~= "" and log or "no log",
@@ -11624,7 +11667,10 @@ function stop()
 end
 
 function status()
-    local ok, data = xpcall(collect_status, debug.traceback)
+    local fast_probe = http.formvalue("fast") == "1"
+    local ok, data = xpcall(function()
+        return collect_status({ fast_probe = fast_probe })
+    end, debug.traceback)
     if not ok then
         http.status(200, "OK")
         http.prepare_content("application/json")
@@ -11655,7 +11701,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
 
 <%+openvpn/ovpn_css%>
 
-<div class="vpn-shell vpn-shell-refined vpn-shell-mk2">
+<div class="vpn-shell vpn-shell-refined vpn-shell-mk2 is-loading">
   <section class="vpn-hero vpn-hero-mk2">
     <div class="vpn-hero-main">
       <div class="vpn-brand-block">
@@ -11691,8 +11737,8 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
           <form id="vpn-stop-form" method="post" action="<%=dispatcher.build_url('nradioadv','system','openvpnfull','stop')%>" style="display:none">
             <input id="vpn-stop-button" class="cbi-button vpn-button-muted" type="submit" value="停止 OpenVPN" />
           </form>
-          <a id="vpn-refresh-button" class="cbi-button vpn-button-muted" href="#" onclick="return vpnManualRefresh();">刷新状态</a>
-          <a id="vpn-copy-button" class="cbi-button vpn-button-muted" href="#" onclick="return vpnCopyConfig();">复制配置</a>
+          <button id="vpn-refresh-button" class="cbi-button vpn-button-muted" type="button">刷新状态</button>
+          <button id="vpn-copy-button" class="cbi-button vpn-button-muted" type="button" aria-disabled="true">复制配置</button>
           <span id="vpn-copy-feedback" class="vpn-copy-feedback" aria-live="polite"></span>
         </div>
         <div id="vpn-action-hint" class="vpn-hero-note">当前页会按配置状态自动切换主操作。</div>
@@ -11825,15 +11871,15 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       </div>
       <span id="vpn-panel-live-badge" class="vpn-panel-live-badge">等待更新</span>
     </div>
-    <div class="vpn-tabbar">
-      <button class="vpn-tab-btn vpn-tab-btn-major is-active" type="button" data-target="vpn-focus-panel">关键日志</button>
-      <button class="vpn-tab-btn vpn-tab-btn-major" type="button" data-target="vpn-route-panel">实时校验</button>
-      <button class="vpn-tab-btn" type="button" data-target="vpn-config-panel">客户端配置</button>
-      <button class="vpn-tab-btn" type="button" data-target="vpn-runtime-panel">运行日志</button>
-      <button class="vpn-tab-btn" type="button" data-target="vpn-tun-panel">隧道信息</button>
+    <div class="vpn-tabbar" role="tablist" aria-label="OpenVPN 诊断面板">
+      <button class="vpn-tab-btn vpn-tab-btn-major is-active" type="button" data-target="vpn-focus-panel" role="tab" aria-selected="true" aria-controls="vpn-focus-panel">关键日志</button>
+      <button class="vpn-tab-btn vpn-tab-btn-major" type="button" data-target="vpn-route-panel" role="tab" aria-selected="false" aria-controls="vpn-route-panel">实时校验</button>
+      <button class="vpn-tab-btn" type="button" data-target="vpn-config-panel" role="tab" aria-selected="false" aria-controls="vpn-config-panel">客户端配置</button>
+      <button class="vpn-tab-btn" type="button" data-target="vpn-runtime-panel" role="tab" aria-selected="false" aria-controls="vpn-runtime-panel">运行日志</button>
+      <button class="vpn-tab-btn" type="button" data-target="vpn-tun-panel" role="tab" aria-selected="false" aria-controls="vpn-tun-panel">隧道信息</button>
     </div>
 
-    <div id="vpn-focus-panel" class="vpn-panel vpn-panel-major is-active">
+    <div id="vpn-focus-panel" class="vpn-panel vpn-panel-major is-active" role="tabpanel" aria-hidden="false">
       <div class="vpn-panel-head">
         <h3>关键日志</h3>
         <span id="vpn-focus-meta">优先展示连接、认证、路由相关行。</span>
@@ -11845,7 +11891,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       <pre id="vpn-focus-log">等待更新</pre>
     </div>
 
-    <div id="vpn-route-panel" class="vpn-panel vpn-panel-major">
+    <div id="vpn-route-panel" class="vpn-panel vpn-panel-major" role="tabpanel" aria-hidden="true">
       <div class="vpn-panel-head">
         <h3>实时校验</h3>
         <span id="vpn-route-meta">基于当前内核状态与目标探测的实时结果。优先看离线和缺规则项。</span>
@@ -11872,7 +11918,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       </div>
     </div>
 
-    <div id="vpn-config-panel" class="vpn-panel">
+    <div id="vpn-config-panel" class="vpn-panel" role="tabpanel" aria-hidden="true">
       <div class="vpn-panel-head">
         <h3>客户端配置</h3>
         <span>只读展示当前写入的 client.ovpn 内容。</span>
@@ -11881,7 +11927,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       <pre id="vpn-config-pre"><%=esc(cfg ~= "" and cfg or "no config")%></pre>
     </div>
 
-    <div id="vpn-runtime-panel" class="vpn-panel">
+    <div id="vpn-runtime-panel" class="vpn-panel" role="tabpanel" aria-hidden="true">
       <div class="vpn-panel-head">
         <h3>运行日志</h3>
         <span id="vpn-runtime-meta">完整日志更适合排查重连、认证和 TLS 问题。</span>
@@ -11889,7 +11935,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       <pre id="vpn-runtime-log">等待更新</pre>
     </div>
 
-    <div id="vpn-tun-panel" class="vpn-panel">
+    <div id="vpn-tun-panel" class="vpn-panel" role="tabpanel" aria-hidden="true">
       <div class="vpn-panel-head">
         <h3>隧道信息</h3>
         <span id="vpn-tun-meta">展示 tun0 与 br-lan 的当前地址信息。</span>
@@ -11910,6 +11956,13 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
 
 <script>
 function vpnCopyConfig() {
+  var copyButton = document.getElementById('vpn-copy-button');
+  if (copyButton && copyButton.getAttribute('aria-disabled') === 'true') {
+    if (window.vpnShowCopyFeedback) {
+      window.vpnShowCopyFeedback('当前没有可复制的 client.ovpn', 'warn');
+    }
+    return false;
+  }
   var source = document.getElementById('vpn-config-copy-source');
   if (!source || !source.value || source.value === 'no config') {
     if (window.vpnShowCopyFeedback) {
@@ -11956,21 +12009,55 @@ function vpnCopyConfig() {
   function activate(targetId) {
     for (var i = 0; i < buttons.length; i++) {
       buttons[i].className = buttons[i].className.replace(/\bis-active\b/g, '').replace(/\s+/g, ' ').replace(/^\s|\s$/g, '');
+      buttons[i].setAttribute('aria-selected', 'false');
       if (buttons[i].getAttribute('data-target') === targetId) {
         buttons[i].className += (buttons[i].className ? ' ' : '') + 'is-active';
+        buttons[i].setAttribute('aria-selected', 'true');
+        buttons[i].setAttribute('tabindex', '0');
+      } else {
+        buttons[i].setAttribute('tabindex', '-1');
       }
     }
     for (var j = 0; j < panels.length; j++) {
       panels[j].className = panels[j].className.replace(/\bis-active\b/g, '').replace(/\s+/g, ' ').replace(/^\s|\s$/g, '');
+      panels[j].setAttribute('aria-hidden', 'true');
       if (panels[j].id === targetId) {
         panels[j].className += (panels[j].className ? ' ' : '') + 'is-active';
+        panels[j].setAttribute('aria-hidden', 'false');
       }
     }
   }
 
   for (var i = 0; i < buttons.length; i++) {
+    buttons[i].setAttribute('tabindex', buttons[i].className.indexOf('is-active') >= 0 ? '0' : '-1');
     buttons[i].onclick = function() {
       activate(this.getAttribute('data-target'));
+      return false;
+    };
+    buttons[i].onkeydown = function(ev) {
+      ev = ev || window.event;
+      var key = ev.key || ev.keyCode;
+      if (key !== 'ArrowLeft' && key !== 'ArrowRight' && key !== 37 && key !== 39) {
+        return;
+      }
+      var current = 0;
+      for (var j = 0; j < buttons.length; j++) {
+        if (buttons[j] === this) {
+          current = j;
+          break;
+        }
+      }
+      var next = (key === 'ArrowLeft' || key === 37) ? current - 1 : current + 1;
+      if (next < 0) {
+        next = buttons.length - 1;
+      } else if (next >= buttons.length) {
+        next = 0;
+      }
+      activate(buttons[next].getAttribute('data-target'));
+      buttons[next].focus();
+      if (ev.preventDefault) {
+        ev.preventDefault();
+      }
       return false;
     };
   }
@@ -12002,6 +12089,7 @@ function vpnCopyConfig() {
   var statusBusy = false;
   var lastGoodStatus = null;
   var pendingManualRefresh = false;
+  var deepRefreshTimer = 0;
 
   function esc(text) {
     return String(text == null ? '' : text)
@@ -12098,7 +12186,12 @@ function vpnCopyConfig() {
       if (aKind !== bKind) {
         return aKind - bKind;
       }
-      if (!!a.probe_ok !== !!b.probe_ok) {
+      var aDeferred = !!(status.probe_deferred || a.probe_deferred);
+      var bDeferred = !!(status.probe_deferred || b.probe_deferred);
+      if (aDeferred !== bDeferred) {
+        return aDeferred ? 1 : -1;
+      }
+      if (!aDeferred && !bDeferred && !!a.probe_ok !== !!b.probe_ok) {
         return a.probe_ok ? 1 : -1;
       }
       return String(a.target || '').localeCompare(String(b.target || ''));
@@ -12109,10 +12202,11 @@ function vpnCopyConfig() {
 
     for (var i = 0; i < ordered.length; i++) {
       var item = ordered[i];
+      var probeDeferred = !!(status.probe_deferred || item.probe_deferred);
       var badges = [
         { label: '主规则', state: item.to_rule_ok ? 'ok' : 'bad' },
         { label: 'LAN规则', state: item.iif_rule_ok ? 'ok' : 'bad' },
-        { label: item.probe_ok ? '在线' : '离线', state: item.probe_ok ? 'ok' : 'bad' }
+        { label: probeDeferred ? '待探测' : (item.probe_ok ? '在线' : '离线'), state: probeDeferred ? 'neutral' : (item.probe_ok ? 'ok' : 'bad') }
       ];
 
       if (item.kind === 'host') {
@@ -12123,7 +12217,7 @@ function vpnCopyConfig() {
         '<div class="vpn-check-row">' +
           '<div class="vpn-check-main">' +
             '<strong>' + esc(item.target) + '</strong>' +
-            '<span>via ' + esc(item.via || '-') + ' · ' + (item.kind === 'host' ? '主机映射' : '网段路由') + ' · 探测 ' + esc(item.probe_ip || '-') + '</span>' +
+            '<span>via ' + esc(item.via || '-') + ' · ' + (item.kind === 'host' ? '主机映射' : '网段路由') + ' · ' + (probeDeferred ? '探测排队 ' : '探测 ') + esc(item.probe_ip || '-') + '</span>' +
           '</div>' +
           '<div class="vpn-check-badges">' + renderBadges(badges) + '</div>' +
         '</div>';
@@ -12349,7 +12443,7 @@ function vpnCopyConfig() {
     setShellState('is-warn');
     setClass('vpn-health-chip', 'vpn-health-chip warn');
     setText('vpn-health-chip', '状态未返回');
-    setText('vpn-live-ts', lastGoodStatus && lastGoodStatus.ts ? ('保留上次 ' + lastGoodStatus.ts) : '等待重新读取');
+    setText('vpn-live-ts', lastGoodStatus && lastGoodStatus.ts ? ('更新 ' + lastGoodStatus.ts) : '等待重试');
     setClass('vpn-orb-ring', 'vpn-orb-ring warn');
     setText('vpn-orb-status', '待查');
     setText('vpn-orb-subtitle', '状态接口未返回');
@@ -12369,7 +12463,9 @@ function vpnCopyConfig() {
     setText('vpn-mini-route-note', '路由状态需要接口返回后确认。');
   }
 
-  function refreshStatus() {
+  function refreshStatus(options) {
+    options = options || {};
+    var fast = !!options.fast;
     if (statusBusy) {
       pendingManualRefresh = true;
       return;
@@ -12377,9 +12473,9 @@ function vpnCopyConfig() {
 
     statusBusy = true;
     pendingManualRefresh = false;
-    setText('vpn-live-ts', lastGoodStatus && lastGoodStatus.ts ? ('刷新中 · 上次 ' + lastGoodStatus.ts) : '刷新中');
+    setText('vpn-live-ts', lastGoodStatus && lastGoodStatus.ts ? ('更新 ' + lastGoodStatus.ts) : '刷新中');
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', statusUrl, true);
+    xhr.open('GET', statusUrl + (fast ? ((statusUrl.indexOf('?') === -1 ? '?' : '&') + 'fast=1') : ''), true);
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.onreadystatechange = function() {
       if (xhr.readyState !== 4) {
@@ -12397,6 +12493,15 @@ function vpnCopyConfig() {
           }
           lastGoodStatus = payload;
           applyStatus(payload);
+          if (fast) {
+            if (deepRefreshTimer) {
+              window.clearTimeout(deepRefreshTimer);
+            }
+            deepRefreshTimer = window.setTimeout(function() {
+              deepRefreshTimer = 0;
+              refreshStatus();
+            }, 900);
+          }
         } catch (e) {
           applyStatusError('状态响应无法解析，保留页面不执行操作。');
         }
@@ -12405,7 +12510,9 @@ function vpnCopyConfig() {
       }
 
       if (pendingManualRefresh) {
-        window.setTimeout(refreshStatus, 80);
+        window.setTimeout(function() {
+          refreshStatus();
+        }, 80);
       }
     };
     xhr.send(null);
@@ -12416,8 +12523,38 @@ function vpnCopyConfig() {
     return false;
   };
 
-  refreshStatus();
-  window.setInterval(refreshStatus, 8000);
+  function bindCommandButtons() {
+    var refreshButton = document.getElementById('vpn-refresh-button');
+    var copyButton = document.getElementById('vpn-copy-button');
+    if (refreshButton) {
+      refreshButton.onclick = function() {
+        return window.vpnManualRefresh();
+      };
+    }
+    if (copyButton) {
+      copyButton.onclick = function() {
+        return window.vpnCopyConfig();
+      };
+    }
+  }
+
+  function startStatusRefresh() {
+    refreshStatus({ fast: true });
+  }
+
+  bindCommandButtons();
+
+  if (window.requestAnimationFrame) {
+    window.requestAnimationFrame(function() {
+      window.setTimeout(startStatusRefresh, 80);
+    });
+  } else {
+    window.setTimeout(startStatusRefresh, 120);
+  }
+
+  window.setInterval(function() {
+    refreshStatus();
+  }, 8000);
 })();
 </script>
 
@@ -14524,6 +14661,573 @@ EOF_OPENVPN_FULL_VIEW
             grid-template-columns: 1fr;
         }
     }
+    /* NRadio OpenVPN Mk2 visual refinement: local hot-update layer */
+    .vpn-shell-mk2,
+    .vpn-shell-mk2 * {
+        letter-spacing: 0;
+    }
+    .vpn-shell-mk2 .vpn-hero h2,
+    .vpn-shell-mk2 .vpn-brand-block h2 {
+        font-size: 38px !important;
+        letter-spacing: 0 !important;
+    }
+    .vpn-shell-mk2 .vpn-command-card {
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.082) 0%, rgba(255,255,255,0.032) 100%);
+    }
+    .vpn-shell-mk2 .vpn-hero-actions .cbi-button,
+    .vpn-shell-mk2 .vpn-hero-actions a.cbi-button {
+        position: relative;
+        overflow: hidden;
+        transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background-color .16s ease;
+    }
+    .vpn-shell-mk2 .vpn-hero-actions .cbi-button:hover:not([disabled]):not(.is-disabled),
+    .vpn-shell-mk2 .vpn-hero-actions a.cbi-button:hover:not([aria-disabled="true"]) {
+        transform: translateY(-1px);
+        border-color: rgba(125, 211, 252, 0.30);
+        box-shadow: 0 12px 22px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.10);
+    }
+    .vpn-shell-mk2 .vpn-hero-actions .cbi-button:focus-visible,
+    .vpn-shell-mk2 .vpn-hero-actions a.cbi-button:focus-visible,
+    .vpn-shell-mk2 .vpn-tab-btn:focus-visible,
+    .vpn-shell-mk2 .vpn-action-tile:focus-visible,
+    .vpn-shell-mk2 .vpn-pill:focus-visible {
+        outline: 2px solid rgba(125, 211, 252, 0.72);
+        outline-offset: 2px;
+    }
+    .vpn-shell-mk2 .vpn-button-muted.is-disabled,
+    .vpn-shell-mk2 .vpn-button-muted[aria-disabled="true"],
+    .vpn-shell-mk2 .vpn-button-muted[disabled] {
+        opacity: .46;
+        filter: saturate(.72);
+    }
+    .vpn-shell-mk2 .vpn-tabbar {
+        gap: 8px;
+    }
+    .vpn-shell-mk2 .vpn-tab-btn {
+        min-height: 38px;
+    }
+    .vpn-shell-mk2 .vpn-tab-btn.is-active {
+        box-shadow: 0 12px 22px rgba(34, 211, 238, 0.16);
+    }
+    .vpn-shell-mk2 .vpn-action-tile:hover {
+        border-color: rgba(125, 211, 252, 0.26);
+        background: rgba(255,255,255,0.06);
+    }
+    .vpn-shell-secondary .vpn-category-rail {
+        margin-bottom: 14px;
+    }
+    .vpn-shell-secondary .vpn-category-rail .vpn-toolbar {
+        align-items: stretch;
+    }
+    .vpn-shell-secondary .vpn-category-rail .vpn-pill,
+    .vpn-shell-secondary .vpn-category-rail .vpn-status-chip {
+        max-width: 100%;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.35;
+    }
+    .vpn-shell-mk2 .vpn-entry-card {
+        position: relative;
+        overflow: hidden;
+    }
+    .vpn-shell-mk2 .vpn-entry-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(125,211,252,0.34), transparent);
+        pointer-events: none;
+    }
+    .vpn-shell-mk2 .vpn-entry-card input[type="file"] {
+        padding: 10px;
+        line-height: 1.4;
+    }
+    .vpn-shell-mk2 .vpn-output {
+        min-height: 32px;
+    }
+    .vpn-shell-mk2 .vpn-output em,
+    .cbi-map .vpn-output em {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        border: 1px solid rgba(251, 191, 36, 0.26);
+        border-radius: 12px;
+        font-style: normal;
+        font-weight: 800;
+    }
+    .vpn-shell-mk2 .vpn-check-row {
+        transition: border-color .16s ease, background-color .16s ease;
+    }
+    .vpn-shell-mk2 .vpn-check-row:hover {
+        border-color: rgba(125, 211, 252, 0.22);
+        background: rgba(255,255,255,0.055);
+    }
+    @media (max-width: 980px) {
+        .vpn-shell-mk2 .vpn-hero h2,
+        .vpn-shell-mk2 .vpn-brand-block h2 {
+            font-size: 30px !important;
+        }
+    }
+    @media (max-width: 640px) {
+        .vpn-shell-mk2,
+        .vpn-shell-secondary,
+        .vpn-shell-secondary + .cbi-map,
+        .cbi-map {
+            border-radius: 18px;
+        }
+        .vpn-shell-mk2 .vpn-hero h2,
+        .vpn-shell-mk2 .vpn-brand-block h2 {
+            font-size: 26px !important;
+            line-height: 1.12;
+        }
+        .vpn-stage-line {
+            gap: 8px;
+        }
+        .vpn-stage-chip {
+            flex: 1 1 calc(50% - 8px);
+            justify-content: center;
+            min-width: 0;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .vpn-shell-mk2 .vpn-orb-wrap {
+            grid-template-columns: 1fr;
+            justify-items: center;
+            text-align: center;
+        }
+        .vpn-shell-mk2 .vpn-orb-copy span {
+            max-width: 34ch;
+        }
+        .vpn-shell-mk2 .vpn-tabbar {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .vpn-shell-mk2 .vpn-tab-btn {
+            width: 100%;
+            min-width: 0;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .vpn-shell-secondary .vpn-hero-actions,
+        .vpn-shell-secondary .vpn-hero-actions a.cbi-button {
+            width: 100%;
+        }
+    }
+    /* NRadio OpenVPN Mk2 visible dashboard refresh: cards and action surface */
+    .vpn-shell-mk2 .vpn-hero-mk2 {
+        background:
+            radial-gradient(circle at 78% 12%, rgba(var(--vpn-state-rgb), 0.28), transparent 32%),
+            radial-gradient(circle at 10% 96%, rgba(34, 211, 238, 0.18), transparent 34%),
+            linear-gradient(145deg, rgba(20, 31, 50, 0.98) 0%, rgba(9, 15, 28, 0.99) 100%);
+    }
+    .vpn-shell-mk2 .vpn-command-card,
+    .vpn-shell-mk2 .vpn-mini-card,
+    .vpn-shell-mk2 .vpn-stat-card {
+        position: relative;
+        overflow: hidden;
+    }
+    .vpn-shell-mk2 .vpn-command-card::before,
+    .vpn-shell-mk2 .vpn-mini-card::before,
+    .vpn-shell-mk2 .vpn-stat-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 3px;
+        background: linear-gradient(90deg, rgba(var(--vpn-state-rgb), 0.12), rgba(var(--vpn-state-rgb), 0.86), rgba(125, 211, 252, 0.20));
+        pointer-events: none;
+    }
+    .vpn-shell-mk2 .vpn-mini-card,
+    .vpn-shell-mk2 .vpn-stat-card {
+        background:
+            linear-gradient(145deg, rgba(255,255,255,0.095) 0%, rgba(255,255,255,0.032) 100%),
+            radial-gradient(circle at 12% 0%, rgba(var(--vpn-state-rgb),0.12), transparent 36%);
+        box-shadow: 0 16px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+    .vpn-shell-mk2 .vpn-mini-card-accent,
+    .vpn-shell-mk2 .vpn-stat-card-emphasis {
+        background:
+            linear-gradient(145deg, rgba(16, 185, 129, 0.20) 0%, rgba(34, 211, 238, 0.075) 46%, rgba(255,255,255,0.035) 100%),
+            radial-gradient(circle at 18% 0%, rgba(134, 239, 172, 0.18), transparent 40%);
+        border-color: rgba(74, 222, 128, 0.34);
+        box-shadow: 0 18px 36px rgba(16, 185, 129, 0.10), inset 0 1px 0 rgba(255,255,255,0.09);
+    }
+    .vpn-shell-mk2 .vpn-mini-card strong,
+    .vpn-shell-mk2 .vpn-stat-value {
+        color: #f8fbff;
+        text-shadow: 0 10px 20px rgba(0,0,0,0.24);
+    }
+    .vpn-shell-mk2 .vpn-mini-card-accent strong,
+    .vpn-shell-mk2 .vpn-stat-card-emphasis .vpn-stat-value {
+        color: #86efac;
+    }
+    .vpn-shell-mk2 .vpn-stat-card-remote .vpn-stat-value {
+        color: #e0f2fe;
+    }
+    .vpn-shell-mk2 .vpn-hero-actions .cbi-button,
+    .vpn-shell-mk2 .vpn-hero-actions a.cbi-button {
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.115) 0%, rgba(255,255,255,0.055) 100%);
+        border-color: rgba(148, 163, 184, 0.22);
+    }
+    .vpn-shell-mk2 .vpn-hero-actions .cbi-button-apply,
+    .vpn-shell-mk2 .vpn-button-passive {
+        background: linear-gradient(135deg, #86efac 0%, #22d3ee 52%, #60a5fa 100%);
+        color: #06111f;
+        box-shadow: 0 16px 30px rgba(34, 211, 238, 0.22);
+    }
+    .vpn-shell-mk2 .vpn-panel-shell {
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.060) 0%, rgba(255,255,255,0.026) 100%),
+            radial-gradient(circle at 20% 0%, rgba(var(--vpn-state-rgb), 0.10), transparent 32%);
+    }
+    .vpn-shell-mk2 .vpn-panel-live-badge {
+        border-color: rgba(var(--vpn-state-rgb), 0.34);
+        color: var(--vpn-state-ink);
+        background: rgba(var(--vpn-state-rgb), 0.11);
+    }
+    /* NRadio OpenVPN Mk2 fast-open polish: deferred diagnostics surface */
+    .vpn-shell-mk2 .vpn-overview-grid,
+    .vpn-shell-mk2 .vpn-quick-rail,
+    .vpn-shell-mk2 .vpn-panel-shell,
+    .vpn-shell-secondary,
+    .vpn-shell-secondary + .cbi-map {
+        content-visibility: auto;
+        contain-intrinsic-size: 320px;
+    }
+    .vpn-shell-mk2 .vpn-toolbar {
+        gap: 10px;
+        align-items: center;
+    }
+    .vpn-shell-mk2 .vpn-pill,
+    .vpn-shell-mk2 .vpn-health-chip,
+    .vpn-shell-mk2 .vpn-inline-note {
+        min-height: 36px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.10);
+    }
+    .vpn-shell-mk2 .vpn-pill::before,
+    .vpn-shell-mk2 .vpn-health-chip::before,
+    .vpn-shell-mk2 .vpn-inline-note::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        flex: 0 0 8px;
+        border-radius: 999px;
+        background: currentColor;
+        box-shadow: 0 0 16px currentColor;
+    }
+    .vpn-shell-mk2 .vpn-pill::before {
+        background: #22d3ee;
+    }
+    .vpn-shell-mk2 .vpn-inline-note {
+        color: #dbeafe;
+        background: rgba(148, 163, 184, 0.13);
+        border-color: rgba(203, 213, 225, 0.20);
+    }
+    .vpn-shell-mk2 .vpn-inline-note::before {
+        background: #7dd3fc;
+        color: #7dd3fc;
+    }
+    .vpn-stage-line {
+        gap: 11px;
+    }
+    .vpn-stage-chip {
+        min-height: 36px;
+        padding: 8px 14px;
+        box-shadow: 0 12px 26px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .vpn-stage-chip.ok {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.20), rgba(20, 184, 166, 0.10));
+    }
+    .vpn-stage-chip.ready {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.20), rgba(96, 165, 250, 0.10));
+    }
+    .vpn-stage-chip.warn {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.20), rgba(250, 204, 21, 0.10));
+    }
+    .vpn-shell-mk2 .vpn-command-card {
+        border-color: rgba(var(--vpn-state-rgb), 0.24);
+        box-shadow: 0 22px 42px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .vpn-shell-mk2 .vpn-orb-ring {
+        box-shadow: 0 18px 38px rgba(0,0,0,0.27), 0 0 42px rgba(var(--vpn-state-rgb), 0.22);
+    }
+    .vpn-shell-mk2 .vpn-hero-actions .cbi-button,
+    .vpn-shell-mk2 .vpn-hero-actions a.cbi-button {
+        min-height: 46px;
+    }
+    .vpn-shell-mk2 .vpn-hero-note {
+        border-left: 3px solid rgba(var(--vpn-state-rgb), 0.62);
+    }
+    .vpn-shell-mk2 .vpn-micro-badge.neutral,
+    .vpn-shell-mk2 .vpn-focus-pill-muted {
+        border-color: rgba(148, 163, 184, 0.24);
+        background: rgba(148, 163, 184, 0.12);
+        color: #dbeafe;
+    }
+    .vpn-shell-mk2 .vpn-panel-shell-head {
+        backdrop-filter: blur(12px);
+    }
+    .vpn-shell-mk2 .vpn-panel pre,
+    .vpn-shell-mk2 .vpn-subcard pre {
+        scrollbar-color: rgba(125, 211, 252, 0.48) rgba(255,255,255,0.05);
+    }
+    /* NRadio OpenVPN Mk3 compact console polish */
+    .vpn-shell-mk2 {
+        padding: 6px 8px 18px;
+    }
+    .vpn-shell-mk2 .vpn-hero-mk2 {
+        margin: 6px 0 12px;
+        padding: 18px 20px 16px;
+        border-radius: 16px;
+    }
+    .vpn-shell-mk2 .vpn-hero-main {
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+        gap: 16px;
+        align-items: stretch;
+    }
+    .vpn-shell-mk2 .vpn-brand-block h2 {
+        margin-top: 16px;
+        font-size: 28px !important;
+        line-height: 1.16;
+        letter-spacing: 0 !important;
+    }
+    .vpn-shell-mk2 .vpn-sub {
+        max-width: 68ch;
+        margin-bottom: 18px;
+        line-height: 1.55;
+    }
+    .vpn-shell-mk2 .vpn-command-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 0;
+        border-radius: 16px;
+    }
+    .vpn-shell-mk2 .vpn-orb-wrap {
+        grid-template-columns: 124px minmax(0, 1fr);
+        gap: 14px;
+        align-items: center;
+    }
+    .vpn-shell-mk2 .vpn-orb-ring {
+        width: 124px;
+        height: 124px;
+        min-width: 124px;
+    }
+    .vpn-shell-mk2 .vpn-orb-copy {
+        min-width: 0;
+        padding-left: 6px;
+    }
+    .vpn-shell-mk2 .vpn-orb-copy strong,
+    .vpn-shell-mk2 .vpn-orb-copy span {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+    .vpn-shell-mk2 .vpn-quick-rail::before,
+    .vpn-shell-mk2 .vpn-command-card::before,
+    .vpn-shell-mk2 .vpn-entry-card::before {
+        display: none !important;
+        content: none !important;
+    }
+    .vpn-shell-mk2 .vpn-quick-rail {
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.048) 0%, rgba(255,255,255,0.024) 100%),
+            radial-gradient(circle at 12% 0%, rgba(var(--vpn-state-rgb), 0.08), transparent 34%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+    }
+    .vpn-shell-mk2 .vpn-toolbar {
+        display: grid;
+        grid-template-columns: max-content max-content max-content;
+        align-items: center;
+        justify-content: start;
+        gap: 12px 16px;
+    }
+    .vpn-shell-mk2 .vpn-pill,
+    .vpn-shell-mk2 .vpn-health-chip,
+    .vpn-shell-mk2 .vpn-inline-note {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        height: 36px;
+        min-height: 36px;
+        padding: 0 14px;
+        line-height: 1;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+    .vpn-shell-mk2 .vpn-pill::before,
+    .vpn-shell-mk2 .vpn-health-chip::before,
+    .vpn-shell-mk2 .vpn-inline-note::before {
+        margin-top: 0;
+    }
+    .vpn-shell-mk2 #vpn-live-ts {
+        position: relative;
+        display: inline-flex;
+        justify-content: center;
+        min-width: 0;
+        width: auto;
+        max-width: none;
+        padding-left: 30px;
+        padding-right: 16px;
+    }
+    .vpn-shell-mk2 #vpn-live-ts::before {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        margin: 0;
+        transform: translateY(-50%);
+    }
+    .vpn-shell-mk2 .vpn-hero-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        align-items: stretch;
+    }
+    .vpn-shell-mk2 .vpn-hero-actions form,
+    .vpn-shell-mk2 .vpn-hero-actions .cbi-button,
+    .vpn-shell-mk2 .vpn-hero-actions button.cbi-button,
+    .vpn-shell-mk2 .vpn-hero-actions a.cbi-button {
+        width: 100%;
+        min-width: 0;
+    }
+    .vpn-shell-mk2 .vpn-hero-actions button.cbi-button {
+        appearance: none;
+        font: inherit;
+        cursor: pointer;
+        text-align: center;
+    }
+    .vpn-shell-mk2 .vpn-hero-actions .is-disabled {
+        opacity: 0.58;
+        cursor: not-allowed;
+    }
+    .vpn-shell-mk2 .vpn-copy-feedback {
+        grid-column: 1 / -1;
+        min-height: 22px;
+    }
+    .vpn-shell-mk2 .vpn-mini-grid,
+    .vpn-shell-mk2 .vpn-stat-grid,
+    .vpn-shell-mk2 .vpn-overview-grid {
+        gap: 12px;
+    }
+    .vpn-shell-mk2 .vpn-mini-card,
+    .vpn-shell-mk2 .vpn-stat-card,
+    .vpn-shell-mk2 .vpn-card {
+        border-radius: 14px;
+    }
+    .vpn-shell-mk2 .vpn-mini-card,
+    .vpn-shell-mk2 .vpn-stat-card {
+        min-height: 112px;
+        padding: 20px;
+    }
+    .vpn-shell-mk2 .vpn-stat-value {
+        font-size: 28px !important;
+        line-height: 1.12;
+        letter-spacing: 0 !important;
+    }
+    .vpn-shell-mk2 .vpn-panel-shell {
+        border-radius: 16px;
+    }
+    .vpn-shell-mk2 .vpn-panel-shell-head,
+    .vpn-shell-mk2 .vpn-tabbar {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+    .vpn-shell-mk2 .vpn-tabbar {
+        padding: 8px;
+        border-radius: 14px;
+        background: rgba(7, 16, 29, 0.86);
+        backdrop-filter: blur(12px);
+    }
+    .vpn-shell-mk2 .vpn-tab-btn {
+        min-height: 38px;
+        letter-spacing: 0;
+    }
+    .vpn-shell-mk2 .vpn-tab-btn:focus,
+    .vpn-shell-mk2 .vpn-tab-btn:focus-visible,
+    .vpn-shell-mk2 .vpn-hero-actions .cbi-button:focus,
+    .vpn-shell-mk2 .vpn-hero-actions .cbi-button:focus-visible {
+        outline: 2px solid rgba(125, 211, 252, 0.72);
+        outline-offset: 2px;
+    }
+    .vpn-shell-mk2.is-loading .vpn-mini-card strong,
+    .vpn-shell-mk2.is-loading .vpn-stat-value,
+    .vpn-shell-mk2.is-loading .vpn-card strong {
+        position: relative;
+        display: inline-block;
+        min-width: 8ch;
+        color: transparent !important;
+        text-shadow: none !important;
+        overflow: hidden;
+        border-radius: 8px;
+        background: rgba(148, 163, 184, 0.14);
+    }
+    .vpn-shell-mk2.is-loading .vpn-mini-card strong::after,
+    .vpn-shell-mk2.is-loading .vpn-stat-value::after,
+    .vpn-shell-mk2.is-loading .vpn-card strong::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.34), transparent);
+        transform: translateX(-100%);
+        animation: vpn-mk3-loading 1.18s ease-in-out infinite;
+    }
+    @keyframes vpn-mk3-loading {
+        100% {
+            transform: translateX(100%);
+        }
+    }
+    @media (min-width: 981px) {
+        .vpn-shell-mk2 .vpn-panel {
+            min-height: 300px;
+        }
+    }
+    @media (max-width: 980px) {
+        .vpn-shell-mk2 .vpn-hero-main {
+            grid-template-columns: 1fr;
+        }
+        .vpn-shell-mk2 .vpn-command-card {
+            min-height: auto;
+        }
+        .vpn-shell-mk2 .vpn-orb-wrap {
+            grid-template-columns: 124px minmax(0, 1fr);
+            justify-items: start;
+            text-align: left;
+        }
+    }
+    @media (max-width: 640px) {
+        .vpn-shell-mk2 {
+            padding: 4px 5px 14px;
+        }
+        .vpn-shell-mk2 .vpn-hero-mk2 {
+            padding: 16px;
+        }
+        .vpn-shell-mk2 .vpn-hero-actions {
+            grid-template-columns: 1fr;
+        }
+        .vpn-shell-mk2 .vpn-orb-wrap {
+            grid-template-columns: 1fr;
+        }
+        .vpn-shell-mk2 .vpn-orb-ring {
+            width: 112px;
+            height: 112px;
+            min-width: 112px;
+        }
+        .vpn-shell-mk2 .vpn-pill,
+        .vpn-shell-mk2 .vpn-health-chip,
+        .vpn-shell-mk2 .vpn-inline-note {
+            height: 34px;
+            min-height: 34px;
+            padding: 0 11px;
+        }
+        .vpn-shell-mk2 .vpn-toolbar {
+            flex-wrap: wrap;
+        }
+        .vpn-stage-chip {
+            min-height: 34px;
+        }
+    }
 </style>
 EOF_OPENVPN_OVPN_CSS
     cat > /usr/lib/lua/luci/view/openvpn/pageswitch.htm <<'EOF_OPENVPN_PAGESWITCH'
@@ -14613,7 +15317,7 @@ end
   </div>
 
   <% if mode == "advanced" then %>
-    <div class="vpn-card vpn-category-rail" style="margin-bottom:14px;">
+    <div class="vpn-card vpn-category-rail">
       <div class="vpn-card-title">高级分类</div>
       <div class="vpn-toolbar">
         <% for i, c in ipairs(self.categories or {}) do %>
@@ -14749,7 +15453,7 @@ EOF_OPENVPN_PAGESWITCH
 	</div>
 </div>
 
-<div class="vpn-output">
+<div class="vpn-output" role="status" aria-live="polite">
 	<span id="vpn_output"></span>
 </div>
 EOF_OPENVPN_SELECT_INPUT_ADD
@@ -18512,7 +19216,11 @@ EOF
 
     [ -f "$view" ] && backup_file "$view"
     cat > "$view" <<'EOF'
-<% if true then %>
+<%
+local webssh_variant_http = require "luci.http"
+local webssh_classic_view = webssh_variant_http.formvalue("classic") == "1"
+%>
+<% if not webssh_classic_view then %>
 <%
 local dsp = require "luci.dispatcher"
 local http = require "luci.http"
@@ -18712,7 +19420,7 @@ local stage_class = embed_mode and "webssh-stage is-embed" or "webssh-stage"
           <span>独立页面：<a id="webssh-url" href="<%=status_data.ttyd_url%>" target="_blank" rel="noopener noreferrer"><%=status_data.ttyd_url%></a></span>
         </div>
         <% else %>
-        <div class="webssh-empty">ttyd 未安装。请先运行总脚本第 3 项安装 Web SSH。</div>
+        <div class="webssh-empty">ttyd 未安装。请先运行“常用插件安装 -> ttyd / Web SSH”。</div>
         <% end %>
       </main>
 
@@ -18943,7 +19651,7 @@ local stage_class = embed_mode and "webssh-stage is-embed" or "webssh-stage"
         <a class="webssh-btn" href="#" onclick="return copy_text('<%=status_data.ssh_cmd%>', 'SSH 命令已复制');">复制 SSH 命令</a>
         <a class="webssh-btn webssh-btn-ghost" href="<%=restart_url%>">重启 ttyd</a>
       <% else %>
-        <div class="webssh-empty">ttyd 还没安装。请先运行总脚本的 `3. ttyd / Web SSH`，然后再回到这里继续使用。</div>
+        <div class="webssh-empty">ttyd 还没安装。请先运行“常用插件安装 -> ttyd / Web SSH”，然后再回到这里继续使用。</div>
       <% end %>
     </div>
   </div>
@@ -19816,6 +20524,24 @@ qiyou_install_assets() {
     refresh_luci_appcenter
 }
 
+verify_remote_script_sha256() {
+    verify_label="$1"
+    verify_file="$2"
+    verify_expected="$3"
+    verify_env_name="$4"
+
+    [ -s "$verify_file" ] || die "$verify_label 下载文件为空，拒绝执行"
+    command -v sha256sum >/dev/null 2>&1 || die "$verify_label 无法校验 SHA256：系统缺少 sha256sum，拒绝执行远程脚本"
+
+    verify_actual="$(sha256sum "$verify_file" | awk '{print $1}')"
+    log "$verify_label SHA256: $verify_actual"
+
+    [ -n "$verify_expected" ] || die "$verify_label 未配置固定 SHA256，拒绝执行远程安装脚本。请确认官方脚本哈希后设置 $verify_env_name 再运行"
+    printf '%s\n' "$verify_expected" | grep -Eq '^[0-9A-Fa-f]{64}$' || die "$verify_label 配置的 $verify_env_name 不是有效 SHA256"
+    verify_expected="$(printf '%s' "$verify_expected" | tr 'A-F' 'a-f')"
+    [ "$verify_actual" = "$verify_expected" ] || die "$verify_label SHA256 不匹配，已停止执行"
+}
+
 qiyou_install_integrated() {
     game_accel_require_appcenter
     confirm_or_exit "确认安装奇游联机宝官方脚本并接入 NRadio 应用商店吗？"
@@ -19826,9 +20552,7 @@ qiyou_install_integrated() {
     log "[2/3] 下载并执行奇游官方安装脚本"
     download_file "http://sd.qiyou.cn" "/tmp/qiyou-install.sh" || die "下载奇游入口脚本失败"
     grep -q 'qyplug.sh' /tmp/qiyou-install.sh 2>/dev/null || die "奇游入口脚本内容异常，已停止执行"
-    if command -v sha256sum >/dev/null 2>&1; then
-        log "奇游入口脚本 SHA256: $(sha256sum /tmp/qiyou-install.sh | awk '{print $1}')"
-    fi
+    verify_remote_script_sha256 "奇游入口脚本" "/tmp/qiyou-install.sh" "${QIYOU_INSTALLER_SHA256:-}" "QIYOU_INSTALLER_SHA256"
     sh /tmp/qiyou-install.sh || die "奇游官方安装脚本执行失败"
     sleep 2
     [ -f /etc/qy/qy_acc.sh ] || die "奇游安装后未发现 /etc/qy/qy_acc.sh"
@@ -20063,9 +20787,7 @@ EOF_LEIGOD_RISK
     log "[2/3] 下载并执行雷神官方安装脚本"
     download_file "http://119.3.40.126/router_plugin_new/plugin_install.sh" "/tmp/leigod-plugin-install.sh" || die "下载雷神官方安装脚本失败"
     grep -q 'leigod\|acc-gw\|accelerator' /tmp/leigod-plugin-install.sh 2>/dev/null || die "雷神官方安装脚本内容异常，已停止执行"
-    if command -v sha256sum >/dev/null 2>&1; then
-        log "雷神官方安装脚本 SHA256: $(sha256sum /tmp/leigod-plugin-install.sh | awk '{print $1}')"
-    fi
+    verify_remote_script_sha256 "雷神官方安装脚本" "/tmp/leigod-plugin-install.sh" "${LEIGOD_INSTALLER_SHA256:-}" "LEIGOD_INSTALLER_SHA256"
     sh /tmp/leigod-plugin-install.sh || die "雷神官方安装脚本执行失败"
     sleep 2
     leigod_installed || die "安装后仍未检测到 /usr/sbin/leigod/acc-gw.router.*"

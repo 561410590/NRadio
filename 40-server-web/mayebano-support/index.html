@@ -2728,6 +2728,7 @@
         top: 12px;
         width: calc(100% - 28px);
         justify-content: flex-start;
+        border-radius: 24px;
         flex-wrap: nowrap;
         overflow-x: auto;
         scrollbar-width: none;
@@ -2997,27 +2998,8 @@
         grid-template-columns: 1fr;
       }
 
-      .release-cards {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 10px;
-        margin: 4px 0 0;
-        padding: 0;
-        overflow: visible;
-        scroll-snap-type: none;
-      }
-
       .release-card {
-        width: 100%;
-        min-width: 0;
-        min-height: auto;
         padding: 14px;
-        border-radius: 18px;
-        scroll-snap-align: none;
-      }
-
-      .release-card-current {
-        min-height: auto;
       }
 
       .signal-strip span {
@@ -3143,6 +3125,368 @@
         display: none;
       }
     }
+
+    /* Pink release skin */
+    :root {
+      --pink-950: #5d1232;
+      --pink-900: #7e1743;
+      --pink-800: #b31f5d;
+      --pink-700: #e23a7e;
+      --pink-600: #ff5e9f;
+      --pink-400: #ff9fc7;
+      --pink-200: #ffd7e8;
+      --pink-100: #ffeaf3;
+      --cream-pink: #fff7fa;
+      --rose-line: rgba(180, 31, 93, 0.16);
+      --rose-shadow: 0 28px 76px rgba(181, 35, 91, 0.22);
+    }
+
+    html {
+      background: #fff1f7;
+    }
+
+    body {
+      color: var(--pink-950);
+      background:
+        radial-gradient(circle at 7% 15%, rgba(255, 255, 255, 0.94) 0 1px, transparent 2px),
+        radial-gradient(circle at 91% 18%, rgba(255, 255, 255, 0.92) 0 2px, transparent 3px),
+        radial-gradient(circle at 76% 8%, rgba(255, 122, 174, 0.26), transparent 13rem),
+        radial-gradient(circle at 14% 32%, rgba(255, 255, 255, 0.90), transparent 11rem),
+        linear-gradient(135deg, #ffe2ee 0%, #fff8fb 35%, #ffd3e5 64%, #ffbad6 100%);
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(184, 37, 95, 0.065) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(184, 37, 95, 0.052) 1px, transparent 1px),
+        radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.52), transparent 23px);
+      background-size: 58px 58px, 58px 58px, 116px 116px;
+      mask-image: linear-gradient(180deg, #000 0, #000 60rem, transparent 96rem);
+      opacity: 0.56;
+    }
+
+    body::after {
+      background:
+        radial-gradient(circle at 12% 17%, rgba(255, 94, 159, 0.18), transparent 6rem),
+        radial-gradient(circle at 88% 15%, rgba(255, 255, 255, 0.70), transparent 9rem),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 236, 246, 0.46));
+      opacity: 0.78;
+    }
+
+    .aurora-layer {
+      opacity: 0.70;
+    }
+
+    .aurora-layer::before,
+    .aurora-layer::after {
+      background:
+        linear-gradient(112deg, transparent 0 31%, rgba(255, 255, 255, 0.62) 35%, transparent 43%),
+        linear-gradient(76deg, transparent 0 43%, rgba(255, 94, 159, 0.18) 48%, transparent 58%),
+        linear-gradient(151deg, transparent 0 52%, rgba(255, 211, 229, 0.34) 56%, transparent 66%);
+    }
+
+    .scroll-progress {
+      background: linear-gradient(90deg, #fff7fa, #ff5e9f, #b31f5d);
+      box-shadow: 0 0 24px rgba(255, 94, 159, 0.44);
+    }
+
+    .floating-nav {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 234, 243, 0.78)),
+        rgba(255, 247, 250, 0.74);
+      border: 1px solid rgba(255, 255, 255, 0.86);
+      box-shadow: 0 18px 48px rgba(184, 37, 95, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+
+    .floating-nav::before {
+      content: "N";
+      display: inline-grid;
+      place-items: center;
+      min-width: 38px;
+      min-height: 38px;
+      border-radius: 999px;
+      color: #fff7fa;
+      background:
+        radial-gradient(circle at 34% 28%, #fff 0 3px, transparent 4px),
+        linear-gradient(135deg, #ff7fb2, #d92a73);
+      font-weight: 1000;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 10px 22px rgba(184, 37, 95, 0.24);
+    }
+
+    .floating-nav a,
+    .floating-nav span {
+      color: var(--pink-950);
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid rgba(184, 37, 95, 0.08);
+      font-weight: 900;
+    }
+
+    .floating-nav span,
+    .floating-nav a:hover {
+      color: #fff7fa;
+      background: linear-gradient(135deg, #ff7fb2, #d92a73);
+      box-shadow: 0 10px 24px rgba(184, 37, 95, 0.22);
+    }
+
+    .hero {
+      background:
+        radial-gradient(circle at 14% 18%, rgba(255, 255, 255, 0.74), transparent 9rem),
+        radial-gradient(circle at 88% 12%, rgba(255, 94, 159, 0.17), transparent 11rem),
+        linear-gradient(180deg, rgba(255, 234, 243, 0.78) 0%, rgba(255, 248, 251, 0.58) 48%, rgba(255, 211, 229, 0.62) 100%);
+    }
+
+    .hero::before {
+      background:
+        repeating-linear-gradient(90deg, rgba(184, 37, 95, 0.06) 0 1px, transparent 1px 44px),
+        repeating-linear-gradient(0deg, rgba(184, 37, 95, 0.045) 0 1px, transparent 1px 44px);
+      opacity: 0.48;
+    }
+
+    .hero::after {
+      background: linear-gradient(180deg, rgba(255, 247, 250, 0) 0%, rgba(255, 211, 229, 0.24) 50%, rgba(255, 247, 250, 0.92) 100%);
+    }
+
+    .hero-copy,
+    .release-panel,
+    .download-card,
+    .install-card,
+    .feature-shell,
+    .support-panel,
+    .history-shell {
+      color: var(--pink-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 235, 244, 0.78)),
+        rgba(255, 247, 250, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.88);
+      box-shadow: var(--rose-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px) saturate(1.08);
+    }
+
+    .hero-copy {
+      border-radius: 46px;
+    }
+
+    .hero-copy::before {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.70), rgba(255, 159, 199, 0.28), transparent 68%);
+    }
+
+    .hero-copy::after {
+      content: "V2.0.5";
+      color: rgba(226, 58, 126, 0.08);
+    }
+
+    .hero-copy .surface-grid {
+      opacity: 0.20;
+      background-image:
+        linear-gradient(rgba(184, 37, 95, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(184, 37, 95, 0.10) 1px, transparent 1px);
+    }
+
+    .eyebrow,
+    .hero-latest-label,
+    .release-panel-kicker,
+    .feature-kicker {
+      color: var(--pink-700);
+    }
+
+    .eyebrow::before {
+      background: rgba(184, 37, 95, 0.24);
+    }
+
+    h1 {
+      color: #ff5e9f;
+      text-shadow:
+        0 3px 0 #fff7fa,
+        0 10px 24px rgba(184, 37, 95, 0.24),
+        0 0 0.75px #7e1743;
+    }
+
+    .lead,
+    .hero-note,
+    .hero-latest p,
+    .release-panel p,
+    .download-card span,
+    .install-card p {
+      color: rgba(93, 18, 50, 0.78);
+    }
+
+    .lead strong,
+    .download-card strong,
+    .release-panel h2,
+    .install-card-header strong,
+    .hero-latest strong,
+    .feature-intro h2 {
+      color: var(--pink-950);
+    }
+
+    .hero-tags span,
+    .hero-links a,
+    .hero-status span,
+    .signal-strip span,
+    .hero-summary div,
+    .hero-latest,
+    .hero-checks span,
+    .release-card,
+    .release-panel-grid span,
+    .download-facts span,
+    .download-section,
+    .ssh-tool-grid li,
+    .feature-tile,
+    .compat-item {
+      color: var(--pink-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 232, 243, 0.70)),
+        rgba(255, 247, 250, 0.64);
+      border: 1px solid var(--rose-line);
+      box-shadow: 0 12px 28px rgba(184, 37, 95, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-tags span::before,
+    .signal-strip span::before,
+    .hero-checks span::before,
+    .download-list li::before {
+      background: var(--pink-600);
+      box-shadow: 0 0 14px rgba(255, 94, 159, 0.48);
+    }
+
+    .hero-status b,
+    .signal-strip b,
+    .hero-summary strong,
+    .hero-checks b,
+    .release-card strong,
+    .release-panel-grid b,
+    .download-facts em,
+    .download-section b,
+    .ssh-tool-grid strong,
+    .feature-tile strong,
+    .compat-item b {
+      color: var(--pink-950);
+    }
+
+    .hero-summary span,
+    .release-card p,
+    .release-panel-grid em,
+    .download-facts b,
+    .download-list,
+    .ssh-tool-grid span,
+    .feature-tags span,
+    .compat-item span {
+      color: rgba(93, 18, 50, 0.68);
+    }
+
+    .hero-links a:first-child,
+    .hero-links a.hero-github,
+    .download-card a,
+    .route-code-card a,
+    .release-panel-version,
+    .release-card b,
+    .install-card-header span {
+      color: #fff7fa;
+      background: linear-gradient(135deg, #ff7fb2, #d92a73);
+      border-color: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 14px 28px rgba(184, 37, 95, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .hero-latest-version,
+    .hero-milestones span,
+    .release-panel-foot span,
+    .release-panel-foot a {
+      color: var(--pink-900);
+      background: rgba(255, 255, 255, 0.72);
+      border-color: var(--rose-line);
+    }
+
+    .release-card-current {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 214, 232, 0.80)),
+        rgba(255, 247, 250, 0.74);
+      border-color: rgba(226, 58, 126, 0.24);
+    }
+
+    .release-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+      gap: 12px;
+      margin: 2px 0 0;
+      padding: 0;
+      overflow: visible;
+      scroll-snap-type: none;
+    }
+
+    .release-card {
+      width: 100%;
+      min-width: 0;
+      min-height: auto;
+      scroll-snap-align: none;
+    }
+
+    .release-card-current {
+      grid-column: span 2;
+    }
+
+    .release-card-current::before {
+      content: "LIVE";
+      color: #fff7fa;
+      background: linear-gradient(135deg, #ff7fb2, #d92a73);
+    }
+
+    .route-code-card,
+    .download-code {
+      color: var(--pink-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 234, 243, 0.66)),
+        rgba(255, 247, 250, 0.66);
+      border-color: var(--rose-line);
+    }
+
+    .route-code-card code,
+    .download-list code {
+      color: var(--pink-950);
+      background: rgba(255, 255, 255, 0.68);
+      border-color: rgba(184, 37, 95, 0.12);
+    }
+
+    .download-code::before {
+      color: rgba(126, 23, 67, 0.62);
+    }
+
+    .download-code::after {
+      background:
+        radial-gradient(circle at 4px 50%, #ff7fb2 0 3px, transparent 3.5px),
+        radial-gradient(circle at 17px 50%, #ffb9d4 0 3px, transparent 3.5px),
+        radial-gradient(circle at 30px 50%, #ffd45f 0 3px, transparent 3.5px);
+    }
+
+    @media (max-width: 760px) {
+      body {
+        background:
+          radial-gradient(circle at 12% 15%, rgba(255, 255, 255, 0.82), transparent 7rem),
+          radial-gradient(circle at 86% 8%, rgba(255, 126, 178, 0.20), transparent 8rem),
+          linear-gradient(160deg, #ffe1ed 0%, #fff8fb 40%, #ffd2e4 100%);
+      }
+
+      .floating-nav a {
+        color: var(--pink-950);
+        background:
+          linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 232, 243, 0.80)),
+          rgba(255, 247, 250, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.86);
+        box-shadow: 0 12px 26px rgba(184, 37, 95, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+      }
+
+      .floating-nav::before {
+        display: none;
+      }
+
+      .release-card-current {
+        grid-column: auto;
+      }
+
+      h1 {
+        font-size: clamp(44px, 13.6vw, 66px);
+      }
+    }
   </style>
 </head>
 <body>
@@ -3154,7 +3498,7 @@
       <a href="#history">更新记录</a>
       <a href="#install">安装方式</a>
       <a href="#support">自愿支持</a>
-      <span>V2.0.3 / V2.0.5</span>
+      <span>V2.0.5 已发布</span>
     </nav>
 
     <section class="hero">
@@ -3165,19 +3509,19 @@
           <h1>NRadio<br>插件助手</h1>
           <p class="lead">
             NRadio 官方 NROS 设备 SSH 插件安装脚本。
-            最新版本 <strong>V2.0.3</strong> 可下载；V2.0.5 即将发布。
+            最新版本 <strong>V2.0.5</strong> 已于 2026.5.1 发布，当前默认入口可直接下载。
           </p>
 
           <div class="hero-tags">
-            <span>最新版本 V2.0.3</span>
-            <span>V2.0.5 即将发布</span>
+            <span>最新版本 V2.0.5</span>
+            <span>2026.5.1 已发布</span>
             <span>默认脚本入口</span>
             <span>公开下载入口</span>
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
-            <span><b>最新版本</b>V2.0.3 正式脚本</span>
-            <span><b>即将发布</b>V2.0.5</span>
+            <span><b>最新版本</b>V2.0.5 正式脚本</span>
+            <span><b>发布时间</b>2026.5.1</span>
             <span><b>安装方式</b>SSH 终端执行</span>
             <span><b>入口状态</b>单一下载入口</span>
           </div>
@@ -3190,8 +3534,8 @@
 
           <div class="signal-strip" aria-label="当前公网页状态">
             <span><b>公开入口</b>nradio.mayebano.shop</span>
-            <span><b>最新版本</b>V2.0.3</span>
-            <span><b>即将发布</b>V2.0.5</span>
+            <span><b>最新版本</b>V2.0.5</span>
+            <span><b>发布时间</b>2026.5.1</span>
             <span><b>下载文件</b>ssh-nradio-plugin-installer.sh</span>
           </div>
 
@@ -3216,12 +3560,12 @@
 
           <section class="hero-latest" aria-label="当前里程碑说明">
             <div class="hero-latest-top">
-              <div class="hero-latest-label">即将发布</div>
+              <div class="hero-latest-label">已发布</div>
               <div class="hero-latest-version">V2.0.5</div>
             </div>
-            <strong>V2.0.5：即将发布</strong>
+            <strong>V2.0.5：当前正式发布版</strong>
             <p>
-              OpenVPN 首屏快速状态读取；风扇控制写入 C8-688 / C2000MAX 分机型默认策略；
+              已于 2026.5.1 发布。OpenVPN 首屏快速状态读取；风扇控制写入 C8-688 / C2000MAX 分机型默认策略；
               支持页补充主要功能、设备适配和下载入口。
             </p>
             <div class="hero-milestones">
@@ -3242,8 +3586,8 @@
             </div>
             <div class="hero-checks" aria-label="当前发布状态">
               <span><b>公开入口</b>https://nradio.mayebano.shop/</span>
-              <span><b>最新版本</b>V2.0.3</span>
-              <span><b>即将发布</b>V2.0.5 / 2026-05-01</span>
+              <span><b>最新版本</b>V2.0.5</span>
+              <span><b>已发布</b>2026.5.1</span>
               <span><b>维护边界</b>旧版本下载入口已取消</span>
             </div>
           </section>
@@ -3343,16 +3687,16 @@
             <div class="release-panel-top">
               <div>
               <div class="release-panel-kicker">最新版本</div>
-              <h2>V2.0.3 下载入口</h2>
+              <h2>V2.0.5 下载入口</h2>
             </div>
-              <div class="release-panel-version">V2.0.3</div>
+              <div class="release-panel-version">V2.0.5</div>
             </div>
             <p>
-              当前公开下载为 V2.0.3；V2.0.5 即将发布。
+              当前公开下载入口已切换为 V2.0.5；发布时间为 2026.5.1。
             </p>
             <div class="release-panel-grid" aria-label="当前公开状态">
-              <span><b>最新版本</b><em>V2.0.3 使用默认文件名下载</em></span>
-              <span><b>即将发布</b><em>V2.0.5</em></span>
+              <span><b>最新版本</b><em>V2.0.5 使用默认文件名下载</em></span>
+              <span><b>发布时间</b><em>2026.5.1</em></span>
               <span><b>旧版入口</b><em>旧 beta 独立下载入口已取消</em></span>
               <span><b>安装方式</b><em>打开 SSH 后在路由器终端执行</em></span>
               <span><b>风扇控制</b><em>C8-688 / C2000MAX 分机型默认策略</em></span>
@@ -3367,17 +3711,17 @@
           <section class="download-card" aria-label="最新脚本下载">
             <div class="download-main">
               <div>
-                <strong>V2.0.3 下载与安装</strong>
-                <span>当前最新版本为 V2.0.3；推荐使用带 SSH 终端和 SFTP/SCP 文件管理的软件，先把脚本传到路由器 /root，再在终端执行。</span>
+                <strong>V2.0.5 下载与安装</strong>
+                <span>当前最新版本为 V2.0.5；推荐使用带 SSH 终端和 SFTP/SCP 文件管理的软件，先把脚本传到路由器 /root，再在终端执行。</span>
               </div>
               <div class="download-actions">
-                <a href="/ssh-nradio-plugin-installer.sh" download>下载 V2.0.3</a>
+                <a href="/ssh-nradio-plugin-installer.sh" download>下载 V2.0.5</a>
               </div>
             </div>
             <div class="download-facts" aria-label="下载状态">
               <span><b>文件名</b><em>ssh-nradio-plugin-installer.sh</em></span>
-              <span><b>最新版本</b><em>V2.0.3</em></span>
-              <span><b>即将发布</b><em>V2.0.5</em></span>
+              <span><b>最新版本</b><em>V2.0.5</em></span>
+              <span><b>发布时间</b><em>2026.5.1</em></span>
             </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
               <div class="download-section">
@@ -3394,7 +3738,7 @@
                 <ul class="download-list">
                   <li>在 NRadio 后台打开 SSH：<code>/cgi-bin/luci/admin/system/security</code>，保存并应用。</li>
                   <li>打开 MobaXterm 这类 SSH 软件，新建 SSH 连接：主机 <code>192.168.66.1</code>，用户 <code>root</code>，密码填你的路由器 root 密码。</li>
-                  <li>点击本卡片右上角“下载 V2.0.3”，把 <code>ssh-nradio-plugin-installer.sh</code> 保存到电脑。</li>
+                  <li>点击本卡片右上角“下载 V2.0.5”，把 <code>ssh-nradio-plugin-installer.sh</code> 保存到电脑。</li>
                   <li>在 SSH 软件的 SFTP/SCP 文件面板进入 <code>/root</code>，把脚本拖进去。</li>
                   <li>在同一个 SSH 终端执行：<code>cd /root</code>，再执行 <code>sh ssh-nradio-plugin-installer.sh</code>。</li>
                 </ul>

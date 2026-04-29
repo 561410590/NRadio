@@ -24,10 +24,10 @@ jobs:
           test -f SECURITY.md
           test -f .github/ISSUE_TEMPLATE/bug_report.yml
 
-      - name: Verify V2.0.3 script state
+      - name: Verify V2.0.5 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V2.0.3"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'SCRIPT_RELEASE_DATE="2026-04-29"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
@@ -39,24 +39,23 @@ jobs:
           grep -q '过热保护温度' 00-current/ssh-nradio-plugin-installer.sh
           grep -q '检测间隔' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'open_route = "nradioadv/system/fanctrl";' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '奇游入口脚本 SHA256' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '雷神官方安装脚本 SHA256' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'verify_remote_script_sha256 "奇游入口脚本"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'verify_remote_script_sha256 "雷神官方安装脚本"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'JSON.parse' 00-current/ssh-nradio-plugin-installer.sh
 
       - name: Verify support page state
         run: |
-          grep -q 'V2.0.3' 40-server-web/mayebano-support/index.html
-          grep -q 'V2.0.5 即将发布' 40-server-web/mayebano-support/index.html
-          grep -q 'href="/ssh-nradio-plugin-installer.sh" download>下载 V2.0.3' 40-server-web/mayebano-support/index.html
-          ! grep -q '>立即下载脚本<' 40-server-web/mayebano-support/index.html
-          grep -q '下载 V2.0.3' 40-server-web/mayebano-support/index.html
+          grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
+          grep -q '2026.5.1' 40-server-web/mayebano-support/index.html
+          grep -q 'href="/ssh-nradio-plugin-installer.sh" download>下载 V2.0.5' 40-server-web/mayebano-support/index.html
+          grep -q 'Pink release skin' 40-server-web/mayebano-support/index.html
           grep -q 'GitHub 项目' 40-server-web/mayebano-support/index.html
-          grep -q '2026-04-29' 40-server-web/mayebano-support/index.html
           grep -q '安装前提' 40-server-web/mayebano-support/index.html
-          grep -q '详细教程在右侧' 40-server-web/mayebano-support/index.html
           grep -q 'MobaXterm' 40-server-web/mayebano-support/index.html
           grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
-          grep -q 'Smart 最低 50%' 40-server-web/mayebano-support/index.html
-          ! grep -q '安装方式提醒' 40-server-web/mayebano-support/index.html
+          ! grep -q '即将发布' 40-server-web/mayebano-support/index.html
+          ! grep -q '下载 V2.0.3' 40-server-web/mayebano-support/index.html
+          ! grep -q '>立即下载脚本<' 40-server-web/mayebano-support/index.html
           ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
 
       - name: Verify Vercel public routes
@@ -66,8 +65,9 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '4aaa62e0793b4e47769f233a78e1c4ef7dfbb71d9900e2fa242e25e349d25fe1' CHECKSUMS.txt
-          printf '%s  %s\n' '4aaa62e0793b4e47769f233a78e1c4ef7dfbb71d9900e2fa242e25e349d25fe1' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          grep -q '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' CHECKSUMS.txt
+          grep -q 'b1995924c76cc5916ab37dce584f28ca44bb0882c1a3bd8ba95473b6778a68af' CHECKSUMS.txt
+          printf '%s  %s\n' '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
 
       - name: Verify license
         run: |
