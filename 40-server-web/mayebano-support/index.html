@@ -1720,7 +1720,7 @@
     .support-side {
       position: relative;
       grid-column: 2;
-      grid-row: 1 / span 2;
+      grid-row: 1;
       justify-self: end;
       width: 100%;
       max-width: 468px;
@@ -2014,19 +2014,19 @@
     .feature-board {
       position: relative;
       z-index: 2;
-      grid-column: 1;
+      grid-column: 1 / -1;
       grid-row: 2;
       padding: 0;
-      margin-top: -56px;
+      margin-top: 26px;
     }
 
     .feature-shell {
       position: relative;
       display: grid;
-      grid-template-columns: 248px minmax(0, 1fr);
+      grid-template-columns: 280px minmax(0, 1fr);
       gap: 22px;
       width: 100%;
-      padding: 24px;
+      padding: 30px;
       border-radius: 38px;
       color: #ecfff3;
       background:
@@ -2087,7 +2087,7 @@
 
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
 
@@ -3311,6 +3311,37 @@
       color: rgba(93, 18, 50, 0.78);
     }
 
+    .install-steps li {
+      color: var(--pink-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 226, 239, 0.76)),
+        rgba(255, 247, 250, 0.76);
+      border-color: rgba(226, 58, 126, 0.18);
+      box-shadow: 0 12px 26px rgba(184, 37, 95, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    }
+
+    .install-steps li::after {
+      background: rgba(255, 122, 177, 0.14);
+      z-index: 0;
+    }
+
+    .install-steps b,
+    .install-steps span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .install-steps b {
+      color: #9a174d;
+      background: linear-gradient(135deg, #fff7fa, #ffd8e8);
+      box-shadow: 0 8px 18px rgba(184, 37, 95, 0.12);
+    }
+
+    .install-steps span {
+      color: rgba(93, 18, 50, 0.82);
+      font-weight: 700;
+    }
+
     .lead strong,
     .download-card strong,
     .release-panel h2,
@@ -3373,6 +3404,43 @@
     .feature-tags span,
     .compat-item span {
       color: rgba(93, 18, 50, 0.68);
+    }
+
+    .signal-strip {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+      gap: 12px;
+    }
+
+    .signal-strip span {
+      min-width: 0;
+      overflow: visible;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .hero-summary {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+      gap: 14px;
+      padding-top: 4px;
+    }
+
+    .hero-summary div {
+      display: grid;
+      align-content: center;
+      min-height: 104px;
+      padding: 18px;
+      border-top: 0;
+      border-radius: 22px;
+    }
+
+    .hero-summary strong {
+      font-size: clamp(28px, 3.2vw, 38px);
+    }
+
+    .hero-summary span {
+      margin-top: 10px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
     }
 
     .hero-links a:first-child,
@@ -3509,19 +3577,19 @@
           <h1>NRadio<br>插件助手</h1>
           <p class="lead">
             NRadio 官方 NROS 设备 SSH 插件安装脚本。
-            最新版本 <strong>V2.0.5</strong> 已于 2026.5.1 发布，当前默认入口可直接下载。
+            最新版本 <strong>V2.0.5</strong> 已发布，当前默认入口可直接下载。
           </p>
 
           <div class="hero-tags">
             <span>最新版本 V2.0.5</span>
-            <span>2026.5.1 已发布</span>
+            <span>V2.0.5 已发布</span>
             <span>默认脚本入口</span>
             <span>公开下载入口</span>
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
             <span><b>最新版本</b>V2.0.5 正式脚本</span>
-            <span><b>发布时间</b>2026.5.1</span>
+            <span><b>发布状态</b>已发布</span>
             <span><b>安装方式</b>SSH 终端执行</span>
             <span><b>入口状态</b>单一下载入口</span>
           </div>
@@ -3535,8 +3603,8 @@
           <div class="signal-strip" aria-label="当前公网页状态">
             <span><b>公开入口</b>nradio.mayebano.shop</span>
             <span><b>最新版本</b>V2.0.5</span>
-            <span><b>发布时间</b>2026.5.1</span>
-            <span><b>下载文件</b>ssh-nradio-plugin-installer.sh</span>
+            <span><b>发布状态</b>已发布</span>
+            <span><b>下载文件</b>默认脚本</span>
           </div>
 
           <div class="hero-summary" aria-label="关键数字">
@@ -3565,7 +3633,7 @@
             </div>
             <strong>V2.0.5：当前正式发布版</strong>
             <p>
-              已于 2026.5.1 发布。OpenVPN 首屏快速状态读取；风扇控制写入 C8-688 / C2000MAX 分机型默认策略；
+              V2.0.5 已发布。OpenVPN 首屏快速状态读取；风扇控制写入 C8-688 / C2000MAX 分机型默认策略；
               支持页补充主要功能、设备适配和下载入口。
             </p>
             <div class="hero-milestones">
@@ -3581,13 +3649,13 @@
               <span>V2.0.2 入口链与提示收口</span>
               <span>V2.0.3 风扇控制增强</span>
               <span>V2.0.5 OpenVPN / 风扇 / 发布页收口</span>
-              <span>脚本发布日期 2026-05-01</span>
+              <span>脚本状态已发布</span>
               <span>支持页迁入公开域名</span>
             </div>
             <div class="hero-checks" aria-label="当前发布状态">
               <span><b>公开入口</b>https://nradio.mayebano.shop/</span>
               <span><b>最新版本</b>V2.0.5</span>
-              <span><b>已发布</b>2026.5.1</span>
+              <span><b>发布状态</b>已发布</span>
               <span><b>维护边界</b>旧版本下载入口已取消</span>
             </div>
           </section>
@@ -3692,11 +3760,11 @@
               <div class="release-panel-version">V2.0.5</div>
             </div>
             <p>
-              当前公开下载入口已切换为 V2.0.5；发布时间为 2026.5.1。
+              当前公开下载入口已切换为 V2.0.5，默认入口可直接下载。
             </p>
             <div class="release-panel-grid" aria-label="当前公开状态">
               <span><b>最新版本</b><em>V2.0.5 使用默认文件名下载</em></span>
-              <span><b>发布时间</b><em>2026.5.1</em></span>
+              <span><b>发布状态</b><em>已发布</em></span>
               <span><b>旧版入口</b><em>旧 beta 独立下载入口已取消</em></span>
               <span><b>安装方式</b><em>打开 SSH 后在路由器终端执行</em></span>
               <span><b>风扇控制</b><em>C8-688 / C2000MAX 分机型默认策略</em></span>
@@ -3721,7 +3789,7 @@
             <div class="download-facts" aria-label="下载状态">
               <span><b>文件名</b><em>ssh-nradio-plugin-installer.sh</em></span>
               <span><b>最新版本</b><em>V2.0.5</em></span>
-              <span><b>发布时间</b><em>2026.5.1</em></span>
+              <span><b>发布状态</b><em>已发布</em></span>
             </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
               <div class="download-section">
@@ -4172,7 +4240,7 @@ sh ssh-nradio-plugin-installer.sh</code>
                   <div class="version">V2.0.1</div>
                   <div class="entry-copy">
                     <strong>风扇控制扩展支持 C2000MAX</strong>
-                    <p>根据 C2000MAX 现场验证结果，14 号风扇控制门禁从 C8-688 扩展到 C8-688 / C2000MAX；菜单、安装提示和独立风扇脚本标题同步更新，正式脚本发布日期调整为 2026-04-29。</p>
+                    <p>根据 C2000MAX 现场验证结果，14 号风扇控制门禁从 C8-688 扩展到 C8-688 / C2000MAX；菜单、安装提示和独立风扇脚本标题同步更新。</p>
                   </div>
                 </article>
 
@@ -4187,7 +4255,7 @@ sh ssh-nradio-plugin-installer.sh</code>
                   <div class="version">V2.0.3</div>
                   <div class="entry-copy">
                     <strong>风扇控制增强</strong>
-                    <p>风扇控制新增温度来源、Smart 最低风速、多段温控阈值、过热保护温度和检测间隔；C8-688 默认按 CPU 温度源与 10s 检测间隔写入，C2000MAX 保持 CPU/CPE 取高值与 12s 检测间隔，发布日期同步为 2026-04-29。</p>
+                    <p>风扇控制新增温度来源、Smart 最低风速、多段温控阈值、过热保护温度和检测间隔；C8-688 默认按 CPU 温度源与 10s 检测间隔写入，C2000MAX 保持 CPU/CPE 取高值与 12s 检测间隔。</p>
                   </div>
                 </article>
                 <article class="timeline-entry is-current">
@@ -4232,7 +4300,7 @@ sh ssh-nradio-plugin-installer.sh</code>
 
         <footer class="page-signature">
           <div><b>NRadio Plugin Assistant</b><br>更新记录、SSH 安装和支持入口集中在同一个页面。</div>
-          <div>Last updated: 2026-05-01 / V2.0.5 / openvpn fast-open and fan defaults refresh</div>
+          <div>Current release: V2.0.5 / openvpn fast-open and fan defaults refresh</div>
         </footer>
       </div>
     </section>

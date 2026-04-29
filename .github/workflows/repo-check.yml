@@ -46,13 +46,17 @@ jobs:
       - name: Verify support page state
         run: |
           grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
-          grep -q '2026.5.1' 40-server-web/mayebano-support/index.html
+          grep -q 'V2.0.5 已发布' 40-server-web/mayebano-support/index.html
           grep -q 'href="/ssh-nradio-plugin-installer.sh" download>下载 V2.0.5' 40-server-web/mayebano-support/index.html
           grep -q 'Pink release skin' 40-server-web/mayebano-support/index.html
           grep -q 'GitHub 项目' 40-server-web/mayebano-support/index.html
           grep -q '安装前提' 40-server-web/mayebano-support/index.html
           grep -q 'MobaXterm' 40-server-web/mayebano-support/index.html
           grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
+          ! grep -q '2026.5.1' 40-server-web/mayebano-support/index.html
+          ! grep -q '2026-05-01' 40-server-web/mayebano-support/index.html
+          ! grep -q '发布时间' 40-server-web/mayebano-support/index.html
+          ! grep -q '发布日期' 40-server-web/mayebano-support/index.html
           ! grep -q '即将发布' 40-server-web/mayebano-support/index.html
           ! grep -q '下载 V2.0.3' 40-server-web/mayebano-support/index.html
           ! grep -q '>立即下载脚本<' 40-server-web/mayebano-support/index.html
@@ -66,7 +70,7 @@ jobs:
       - name: Verify checksum record
         run: |
           grep -q '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' CHECKSUMS.txt
-          grep -q 'b1995924c76cc5916ab37dce584f28ca44bb0882c1a3bd8ba95473b6778a68af' CHECKSUMS.txt
+          grep -q '6163113ee4066c19a8bd6fa1fb95cf32dde9bc9ef8e39b647657a6acaca5bdb4' CHECKSUMS.txt
           printf '%s  %s\n' '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
 
       - name: Verify license
