@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b3026">
-  <title>NRadio 插件助手更新记录与支持页</title>
+  <title>NRadio 插件工具更新记录与支持页</title>
   <style>
     :root {
       --green-950: #083922;
@@ -146,6 +146,14 @@
       text-decoration: none;
     }
 
+    #features,
+    #history,
+    #install,
+    #wechat,
+    #prereq {
+      scroll-margin-top: 96px;
+    }
+
     .site {
       position: relative;
       z-index: 1;
@@ -176,8 +184,9 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 8px;
-      padding: 8px;
+      gap: 6px;
+      max-width: calc(100% - 24px);
+      padding: 7px;
       border-radius: 999px;
       background:
         linear-gradient(135deg, rgba(188, 247, 125, 0.11), transparent 34%),
@@ -195,26 +204,39 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 34px;
-      padding: 0 14px;
+      min-height: 36px;
+      padding: 0 15px;
       border-radius: 999px;
+      border: 1px solid rgba(220, 255, 244, 0.12);
       color: rgba(255, 255, 255, 0.82);
       font-size: 13px;
+      font-weight: 850;
+      line-height: 1;
       white-space: nowrap;
-      transition: background 0.28s ease, color 0.28s ease, transform 0.28s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: background 0.24s ease, border-color 0.24s ease, color 0.24s ease, transform 0.24s ease, box-shadow 0.24s ease;
     }
 
     .floating-nav a:hover {
       color: #fff;
       background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(220, 255, 244, 0.22);
       transform: translateY(-1px);
     }
 
     .floating-nav span {
       color: #06341d;
-      font-weight: 800;
+      font-weight: 950;
       background: linear-gradient(135deg, #d8fff0, #ffffff);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    }
+
+    .floating-nav a:focus-visible,
+    .hero-links a:focus-visible,
+    .download-card a:focus-visible,
+    .route-code-card a:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.82);
+      outline-offset: 3px;
     }
 
     .hero {
@@ -361,7 +383,7 @@
     }
 
     .hero-copy::after {
-      content: "V2.0.5";
+      content: "V2.0.6";
       position: absolute;
       right: 28px;
       bottom: 2px;
@@ -478,8 +500,11 @@
     }
 
     .hero-links a {
-      background: rgba(6, 41, 22, 0.24);
-      transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.045)),
+        rgba(6, 41, 22, 0.24);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: transform 0.24s ease, background 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
     }
 
     .hero-links a:first-child,
@@ -495,6 +520,7 @@
       transform: translateY(-2px);
       background: rgba(255, 255, 255, 0.12);
       border-color: rgba(255, 255, 255, 0.24);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 30px rgba(2, 35, 31, 0.18);
     }
 
     .signal-strip {
@@ -858,72 +884,6 @@
       font-size: 12px;
     }
 
-    .install-card {
-      position: relative;
-      display: grid;
-      gap: 14px;
-      padding: 20px;
-      border-radius: 28px;
-      background:
-        linear-gradient(135deg, rgba(216, 255, 230, 0.15), rgba(94, 231, 242, 0.08)),
-        linear-gradient(90deg, transparent, rgba(241, 199, 91, 0.045)),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.055)),
-        rgba(4, 31, 26, 0.22);
-      border: 1px solid rgba(216, 255, 230, 0.15);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        0 18px 46px rgba(5, 46, 24, 0.12);
-      overflow: hidden;
-    }
-
-    .install-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 4px;
-      background: linear-gradient(180deg, var(--cyan-400), rgba(241, 199, 91, 0.86), transparent);
-      opacity: 0.82;
-    }
-
-    .install-card > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    .install-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .install-card-header strong {
-      color: #fff;
-      font-size: 20px;
-      line-height: 1.25;
-      letter-spacing: 0;
-    }
-
-    .install-card-header span {
-      display: inline-flex;
-      align-items: center;
-      min-height: 30px;
-      padding: 0 11px;
-      border-radius: 999px;
-      color: #06341d;
-      background: #e8fff0;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .install-card p {
-      margin: 0;
-      color: rgba(255, 255, 255, 0.75);
-      font-size: 13px;
-      line-height: 1.78;
-    }
-
     .install-steps {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1032,8 +992,8 @@
       align-items: center;
       justify-content: center;
       justify-self: start;
-      min-height: 38px;
-      padding: 0 15px;
+      min-height: 42px;
+      padding: 0 16px;
       border-radius: 999px;
       color: #06341d;
       background: linear-gradient(135deg, #d8fff0, #ffffff);
@@ -1152,8 +1112,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 40px;
-      padding: 0 16px;
+      min-height: 42px;
+      padding: 0 17px;
       border-radius: 999px;
       color: #06341d;
       background: linear-gradient(135deg, #d8fff0, #ffffff);
@@ -1167,6 +1127,14 @@
     .download-card a:hover {
       transform: translateY(-1px);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 16px 30px rgba(5, 46, 24, 0.18);
+    }
+
+    .download-card a.download-primary {
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 18px;
+      font-size: 14px;
+      letter-spacing: 0;
     }
 
     .download-tutorial {
@@ -1189,6 +1157,14 @@
       color: rgba(232, 255, 240, 0.96);
       font-size: 13px;
       line-height: 1.4;
+    }
+
+    .tutorial-prereq .install-steps {
+      grid-template-columns: 1fr;
+    }
+
+    .tutorial-prereq .route-code-card p {
+      max-width: none;
     }
 
     .ssh-tool-grid {
@@ -1220,6 +1196,122 @@
     }
 
     .ssh-tool-grid span {
+      margin-top: 6px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .tutorial-paths {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .path-card {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      min-width: 0;
+      padding: 13px;
+      border-radius: 16px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.10), rgba(94, 231, 242, 0.045)),
+        rgba(4, 36, 26, 0.24);
+      border: 1px solid rgba(220, 255, 244, 0.11);
+    }
+
+    .path-card b,
+    .path-card p {
+      margin: 0;
+    }
+
+    .path-card p {
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .tutorial-steps {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: tutorial-step;
+      color: rgba(255, 255, 255, 0.74);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .tutorial-steps li {
+      position: relative;
+      min-width: 0;
+      padding-left: 30px;
+    }
+
+    .tutorial-steps li::before {
+      counter-increment: tutorial-step;
+      content: counter(tutorial-step);
+      position: absolute;
+      left: 0;
+      top: 0.18em;
+      display: inline-grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      color: #06341d;
+      background: linear-gradient(135deg, #d8fff0, #ffffff);
+      font-size: 11px;
+      font-weight: 900;
+      box-shadow: 0 8px 16px rgba(5, 46, 24, 0.14);
+    }
+
+    .tutorial-steps code {
+      color: #fff;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 11px;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(220, 255, 244, 0.1);
+      border-radius: 8px;
+      padding: 1px 6px;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .tutorial-checks {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tutorial-checks li {
+      min-width: 0;
+      min-height: 70px;
+      padding: 12px;
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.035)),
+        rgba(3, 25, 18, 0.24);
+      border: 1px solid rgba(220, 255, 244, 0.10);
+    }
+
+    .tutorial-checks b,
+    .tutorial-checks span {
+      display: block;
+    }
+
+    .tutorial-checks b {
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .tutorial-checks span {
       margin-top: 6px;
       color: rgba(255, 255, 255, 0.68);
       font-size: 11px;
@@ -1730,6 +1822,13 @@
       animation: rise 0.95s ease-out 0.12s both;
     }
 
+    .support-side:target,
+    .support-side:has(:target) {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
     .support-side .download-card {
       position: relative;
       z-index: 1;
@@ -2014,10 +2113,8 @@
     .feature-board {
       position: relative;
       z-index: 2;
-      grid-column: 1 / -1;
-      grid-row: 2;
       padding: 0;
-      margin-top: 26px;
+      margin-top: 6px;
     }
 
     .feature-shell {
@@ -2040,6 +2137,81 @@
       overflow: hidden;
       backdrop-filter: blur(22px) saturate(1.10);
       scroll-margin-top: 96px;
+    }
+
+    .hero-copy .feature-shell {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 18px;
+      border-radius: 28px;
+      box-shadow: 0 22px 58px rgba(2, 35, 31, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .hero-copy .feature-intro {
+      grid-template-columns: minmax(0, 1fr) minmax(230px, 0.78fr);
+      align-items: end;
+      gap: 14px;
+      padding: 0 2px 3px;
+    }
+
+    .hero-copy .feature-intro h2 {
+      font-size: clamp(28px, 3.1vw, 42px);
+    }
+
+    .feature-heading {
+      display: grid;
+      gap: 9px;
+    }
+
+    .feature-brief {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .feature-brief span {
+      display: grid;
+      align-content: center;
+      gap: 2px;
+      min-height: 62px;
+      padding: 10px 12px;
+      border-radius: 18px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(94, 231, 242, 0.055), rgba(188, 247, 125, 0.035)),
+        rgba(3, 28, 21, 0.30);
+      border: 1px solid rgba(220, 255, 244, 0.15);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+    }
+
+    .feature-brief b {
+      color: #fff;
+      font-family: "DIN Alternate", "Bahnschrift", sans-serif;
+      font-size: 26px;
+      line-height: 0.95;
+    }
+
+    .feature-brief em {
+      color: rgba(232, 255, 240, 0.70);
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 850;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .hero-copy .feature-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .hero-copy .feature-tile {
+      min-height: 126px;
+      padding: 15px 14px;
+      border-radius: 20px;
+    }
+
+    .hero-copy .compat-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .feature-shell::before {
@@ -2788,13 +2960,26 @@
       }
 
       .feature-board {
-        margin-top: -46px;
-        padding-bottom: 54px;
+        margin-top: 8px;
+        padding-bottom: 0;
       }
 
       .feature-shell {
         padding: 28px;
         gap: 26px;
+      }
+
+      .hero-copy .feature-intro {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      .hero-copy .feature-brief {
+        max-width: 520px;
+      }
+
+      .hero-copy .feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .feature-grid {
@@ -2917,39 +3102,44 @@
 
       .floating-nav a,
       .floating-nav span {
-        min-height: 34px;
-        padding: 0 11px;
+        min-height: 36px;
+        padding: 0 12px;
         font-size: 12px;
+        flex: 0 0 auto;
       }
 
       .floating-nav {
         left: 12px;
         right: 12px;
+        top: 12px;
         width: auto;
         max-width: none;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        padding: 0;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        box-shadow: none;
-        backdrop-filter: none;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+        padding: 6px;
+        border-radius: 999px;
+        background:
+          linear-gradient(135deg, rgba(188, 247, 125, 0.11), transparent 34%),
+          linear-gradient(255deg, rgba(94, 231, 242, 0.14), transparent 44%),
+          rgba(3, 28, 25, 0.78);
+        border: 1px solid rgba(220, 255, 244, 0.24);
+        box-shadow: 0 18px 42px rgba(2, 34, 31, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+        backdrop-filter: blur(22px) saturate(1.14);
         transform: none;
         animation: none;
-        overflow: visible;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+      }
+
+      .floating-nav::-webkit-scrollbar {
+        display: none;
       }
 
       .floating-nav a {
         min-width: 0;
-        border-radius: 16px;
-        color: rgba(232, 255, 240, 0.92);
-        background:
-          linear-gradient(145deg, rgba(216, 255, 240, 0.16), rgba(94, 231, 242, 0.06)),
-          rgba(3, 28, 25, 0.82);
-        border: 1px solid rgba(220, 255, 244, 0.22);
-        box-shadow: 0 12px 26px rgba(2, 34, 31, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        border-radius: 999px;
         text-align: center;
       }
 
@@ -3029,12 +3219,21 @@
         grid-template-columns: 1fr;
       }
 
+      .tutorial-paths,
+      .tutorial-checks {
+        grid-template-columns: 1fr;
+      }
+
       .ssh-tool-grid {
         grid-template-columns: 1fr;
       }
 
       .download-actions {
-        justify-content: flex-start;
+        justify-content: stretch;
+      }
+
+      .download-card a.download-primary {
+        width: 100%;
       }
 
       .release-panel {
@@ -3060,13 +3259,27 @@
       }
 
       .feature-board {
-        margin-top: -24px;
-        padding-bottom: 42px;
+        margin-top: 4px;
+        padding-bottom: 0;
       }
 
       .feature-shell {
         padding: 18px 16px;
         border-radius: 24px;
+      }
+
+      .hero-copy .feature-brief,
+      .hero-copy .feature-grid,
+      .hero-copy .compat-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-brief span {
+        min-height: 52px;
+      }
+
+      .feature-brief b {
+        font-size: 23px;
       }
 
       .feature-grid {
@@ -3097,11 +3310,6 @@
 
       .qr-stage {
         padding: 8px;
-      }
-
-      .install-card-header {
-        align-items: flex-start;
-        flex-direction: column;
       }
 
       .timeline-entry {
@@ -3192,10 +3400,10 @@
 
     .floating-nav {
       background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 234, 243, 0.78)),
-        rgba(255, 247, 250, 0.74);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 235, 244, 0.84)),
+        rgba(255, 247, 250, 0.82);
       border: 1px solid rgba(255, 255, 255, 0.86);
-      box-shadow: 0 18px 48px rgba(184, 37, 95, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+      box-shadow: 0 18px 42px rgba(184, 37, 95, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.98);
     }
 
     .floating-nav::before {
@@ -3216,16 +3424,28 @@
     .floating-nav a,
     .floating-nav span {
       color: var(--pink-950);
-      background: rgba(255, 255, 255, 0.56);
-      border: 1px solid rgba(184, 37, 95, 0.08);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 245, 249, 0.58)),
+        rgba(255, 255, 255, 0.54);
+      border: 1px solid rgba(184, 37, 95, 0.10);
       font-weight: 900;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96);
     }
 
-    .floating-nav span,
     .floating-nav a:hover {
+      color: var(--pink-950);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 232, 243, 0.78)),
+        rgba(255, 255, 255, 0.72);
+      border-color: rgba(184, 37, 95, 0.18);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 10px 22px rgba(184, 37, 95, 0.12);
+    }
+
+    .floating-nav span {
       color: #fff7fa;
-      background: linear-gradient(135deg, #ff7fb2, #d92a73);
-      box-shadow: 0 10px 24px rgba(184, 37, 95, 0.22);
+      background: linear-gradient(135deg, #ff6da9, #d92a73);
+      border-color: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 10px 24px rgba(184, 37, 95, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.42);
     }
 
     .hero {
@@ -3249,7 +3469,6 @@
     .hero-copy,
     .release-panel,
     .download-card,
-    .install-card,
     .feature-shell,
     .support-panel,
     .history-shell {
@@ -3272,7 +3491,7 @@
     }
 
     .hero-copy::after {
-      content: "V2.0.5";
+      content: "V2.0.6";
       color: rgba(226, 58, 126, 0.08);
     }
 
@@ -3306,8 +3525,7 @@
     .hero-note,
     .hero-latest p,
     .release-panel p,
-    .download-card span,
-    .install-card p {
+    .download-card span {
       color: rgba(93, 18, 50, 0.78);
     }
 
@@ -3345,7 +3563,6 @@
     .lead strong,
     .download-card strong,
     .release-panel h2,
-    .install-card-header strong,
     .hero-latest strong,
     .feature-intro h2 {
       color: var(--pink-950);
@@ -3362,7 +3579,10 @@
     .release-panel-grid span,
     .download-facts span,
     .download-section,
+    .path-card,
+    .tutorial-checks li,
     .ssh-tool-grid li,
+    .feature-brief span,
     .feature-tile,
     .compat-item {
       color: var(--pink-950);
@@ -3390,6 +3610,7 @@
     .download-facts em,
     .download-section b,
     .ssh-tool-grid strong,
+    .feature-brief b,
     .feature-tile strong,
     .compat-item b {
       color: var(--pink-950);
@@ -3400,7 +3621,11 @@
     .release-panel-grid em,
     .download-facts b,
     .download-list,
+    .path-card p,
+    .tutorial-steps,
+    .tutorial-checks span,
     .ssh-tool-grid span,
+    .feature-brief em,
     .feature-tags span,
     .compat-item span {
       color: rgba(93, 18, 50, 0.68);
@@ -3448,12 +3673,35 @@
     .download-card a,
     .route-code-card a,
     .release-panel-version,
-    .release-card b,
-    .install-card-header span {
+    .release-card b {
       color: #fff7fa;
       background: linear-gradient(135deg, #ff7fb2, #d92a73);
       border-color: rgba(255, 255, 255, 0.72);
       box-shadow: 0 14px 28px rgba(184, 37, 95, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .hero-links a:not(.hero-github) {
+      color: var(--pink-950);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 235, 244, 0.68)),
+        rgba(255, 247, 250, 0.70);
+      border-color: rgba(184, 37, 95, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 10px 22px rgba(184, 37, 95, 0.08);
+    }
+
+    .hero-links a:hover,
+    .download-card a:hover,
+    .route-code-card a:hover {
+      border-color: rgba(184, 37, 95, 0.22);
+      box-shadow: 0 18px 34px rgba(184, 37, 95, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.52);
+    }
+
+    .download-card a.download-primary {
+      color: #fff7fa;
+      background:
+        linear-gradient(135deg, #ff6da9 0%, #e23a7e 48%, #b31f5d 100%);
+      border-color: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 18px 36px rgba(184, 37, 95, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.46);
     }
 
     .hero-latest-version,
@@ -3509,10 +3757,17 @@
     }
 
     .route-code-card code,
-    .download-list code {
+    .download-list code,
+    .tutorial-steps code {
       color: var(--pink-950);
       background: rgba(255, 255, 255, 0.68);
       border-color: rgba(184, 37, 95, 0.12);
+    }
+
+    .tutorial-steps li::before {
+      color: #9a174d;
+      background: linear-gradient(135deg, #fff7fa, #ffd8e8);
+      box-shadow: 0 8px 18px rgba(184, 37, 95, 0.12);
     }
 
     .download-code::before {
@@ -3537,14 +3792,18 @@
       .floating-nav a {
         color: var(--pink-950);
         background:
-          linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 232, 243, 0.80)),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 239, 246, 0.76)),
           rgba(255, 247, 250, 0.78);
-        border: 1px solid rgba(255, 255, 255, 0.86);
-        box-shadow: 0 12px 26px rgba(184, 37, 95, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(184, 37, 95, 0.12);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.98), 0 8px 18px rgba(184, 37, 95, 0.10);
       }
 
       .floating-nav::before {
-        display: none;
+        display: inline-grid;
+        flex: 0 0 34px;
+        min-width: 34px;
+        min-height: 34px;
+        font-size: 15px;
       }
 
       .release-card-current {
@@ -3562,36 +3821,36 @@
   <div class="aurora-layer" aria-hidden="true"></div>
   <main class="site">
     <nav class="floating-nav" aria-label="页面快速导航">
-      <a href="#features">功能全景</a>
+      <a href="#features">功能清单</a>
       <a href="#history">更新记录</a>
       <a href="#install">安装方式</a>
-      <a href="#support">自愿支持</a>
-      <span>V2.0.5 已发布</span>
+      <a href="#wechat">微信支持</a>
+      <span>V2.0.6 已发布</span>
     </nav>
 
     <section class="hero">
       <div class="container hero-shell">
         <section class="hero-copy" aria-label="页面说明">
           <div class="surface-grid" aria-hidden="true"></div>
-          <div class="eyebrow">NRadio Plugin Assistant</div>
-          <h1>NRadio<br>插件助手</h1>
+          <div class="eyebrow">NRadio Plugin Tool</div>
+          <h1>NRadio<br>插件工具</h1>
           <p class="lead">
-            NRadio 官方 NROS 设备 SSH 插件安装脚本。
-            最新版本 <strong>V2.0.5</strong> 已发布，当前默认入口可直接下载。
+            NRadio NROS 设备 SSH 插件安装脚本。
+            当前版本 <strong>V2.0.6</strong>，通过 SSH 在路由器执行。
           </p>
 
           <div class="hero-tags">
-            <span>最新版本 V2.0.5</span>
-            <span>V2.0.5 已发布</span>
-            <span>默认脚本入口</span>
-            <span>公开下载入口</span>
+            <span>V2.0.6</span>
+            <span>SSH 执行</span>
+            <span>单一脚本入口</span>
+            <span>NROS 设备</span>
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
-            <span><b>最新版本</b>V2.0.5 正式脚本</span>
-            <span><b>发布状态</b>已发布</span>
-            <span><b>安装方式</b>SSH 终端执行</span>
-            <span><b>入口状态</b>单一下载入口</span>
+            <span><b>版本</b>V2.0.6</span>
+            <span><b>文件</b>ssh-nradio-plugin-installer.sh</span>
+            <span><b>方式</b>SSH 终端执行</span>
+            <span><b>入口</b>单一下载入口</span>
           </div>
 
         <div class="hero-links">
@@ -3602,7 +3861,7 @@
 
           <div class="signal-strip" aria-label="当前公网页状态">
             <span><b>公开入口</b>nradio.mayebano.shop</span>
-            <span><b>最新版本</b>V2.0.5</span>
+            <span><b>最新版本</b>V2.0.6</span>
             <span><b>发布状态</b>已发布</span>
             <span><b>下载文件</b>默认脚本</span>
           </div>
@@ -3623,18 +3882,18 @@
           </div>
 
           <div class="hero-note">
-            默认入口只保留当前正式脚本；旧 beta 独立下载通道已取消。
+            旧 beta 独立下载通道已取消。
           </div>
 
           <section class="hero-latest" aria-label="当前里程碑说明">
             <div class="hero-latest-top">
               <div class="hero-latest-label">已发布</div>
-              <div class="hero-latest-version">V2.0.5</div>
+              <div class="hero-latest-version">V2.0.6</div>
             </div>
-            <strong>V2.0.5：当前正式发布版</strong>
+            <strong>V2.0.6</strong>
             <p>
-              V2.0.5 已发布。OpenVPN 首屏快速状态读取；风扇控制写入 C8-688 / C2000MAX 分机型默认策略；
-              支持页补充主要功能、设备适配和下载入口。
+              奇游联机宝状态查看修复未安装场景返回码；应用商店美化内部标记同步到 V2.0.6。
+              OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。
             </p>
             <div class="hero-milestones">
               <span>V1.50.1 卸载提示对齐原厂</span>
@@ -3648,23 +3907,23 @@
               <span>V2.0.1 风扇控制支持 C2000MAX</span>
               <span>V2.0.2 入口链与提示收口</span>
               <span>V2.0.3 风扇控制增强</span>
-              <span>V2.0.5 OpenVPN / 风扇 / 发布页收口</span>
-              <span>脚本状态已发布</span>
-              <span>支持页迁入公开域名</span>
+              <span>V2.0.6 奇游状态与美化标记收口</span>
+              <span>单一脚本入口</span>
+              <span>公开域名访问</span>
             </div>
             <div class="hero-checks" aria-label="当前发布状态">
               <span><b>公开入口</b>https://nradio.mayebano.shop/</span>
-              <span><b>最新版本</b>V2.0.5</span>
-              <span><b>发布状态</b>已发布</span>
-              <span><b>维护边界</b>旧版本下载入口已取消</span>
+              <span><b>最新版本</b>V2.0.6</span>
+              <span><b>脚本文件</b>ssh-nradio-plugin-installer.sh</span>
+              <span><b>旧版入口</b>已取消</span>
             </div>
           </section>
 
           <div class="release-cards" id="history" aria-label="最新更新摘要">
             <article class="release-card release-card-current">
-              <b>V2.0.5</b>
-              <strong>OpenVPN 页面美化与快速打开</strong>
-              <p>OpenVPN 首屏快速打开；C8-688 使用 CPU / 10s / Smart 50% / 85°C，C2000MAX 使用 CPU+CPE 取高值 / 5s / Smart 30% / 80°C；支持页同步补上功能全景、设备适配和下载入口。</p>
+              <b>V2.0.6</b>
+              <strong>奇游状态与应用商店标记收口</strong>
+              <p>奇游联机宝状态查看修复未安装场景返回码；应用商店美化内部标记同步到 V2.0.6。OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。</p>
             </article>
             <article class="release-card">
               <b>V2.0.3</b>
@@ -3728,126 +3987,224 @@
             </article>
           </div>
 
-          <section class="install-card" id="install" aria-label="安装提醒">
-            <div class="install-card-header">
-              <strong>安装前提</strong>
-              <span>详细教程在右侧</span>
-            </div>
-            <p>
-              这里不重复完整步骤，只保留安装前必须确认的入口。右侧教程按电脑上传和路由器在线下载两种方式执行。
-            </p>
-            <ol class="install-steps">
-              <li><b>1</b><span>不是应用商店上传安装，也不是固件升级包。</span></li>
-              <li><b>2</b><span>先在系统安全页开启 SSH，保存并应用。</span></li>
-              <li><b>3</b><span>再按右侧教程上传或在线下载脚本。</span></li>
-            </ol>
-            <div class="route-code-card">
-              <span>SSH 安全页</span>
-              <p>先打开安全页启用 SSH；启用后回到右侧教程选择 MobaXterm 上传或路由器在线下载。</p>
-              <code>http://192.168.66.1/cgi-bin/luci/admin/system/security</code>
-              <a href="http://192.168.66.1/cgi-bin/luci/admin/system/security" target="_blank" rel="noopener">一键打开 SSH 安全页</a>
+          <section class="feature-board" aria-label="脚本功能清单">
+            <div class="feature-shell" id="features">
+              <section class="feature-intro" aria-label="功能说明">
+                <div class="feature-heading">
+                  <div class="feature-kicker">功能清单</div>
+                  <h2>主要功能</h2>
+                </div>
+                <div class="feature-brief" aria-label="功能概览">
+                  <span><b>6</b><em>功能组</em></span>
+                  <span><b>4</b><em>支持机型</em></span>
+                  <span><b>1</b><em>脚本入口</em></span>
+                </div>
+              </section>
+
+              <div class="feature-grid">
+                <article class="feature-tile" data-code="01">
+                  <strong>常用插件安装</strong>
+                  <div class="feature-tags">
+                    <span>Web SSH</span>
+                    <span>OpenList</span>
+                    <span>AdGuardHome</span>
+                    <span>哈基米</span>
+                  </div>
+                </article>
+                <article class="feature-tile" data-code="02">
+                  <strong>网络与异地组网</strong>
+                  <div class="feature-tags">
+                    <span>EasyTier</span>
+                    <span>ZeroTier</span>
+                    <span>OpenVPN</span>
+                  </div>
+                </article>
+                <article class="feature-tile" data-code="03">
+                  <strong>应用商店美化</strong>
+                  <div class="feature-tags">
+                    <span>卡片视觉</span>
+                    <span>状态徽标</span>
+                    <span>只读面板</span>
+                  </div>
+                </article>
+                <article class="feature-tile" data-code="04">
+                  <strong>系统维护能力</strong>
+                  <div class="feature-tags">
+                    <span>swap</span>
+                    <span>自检</span>
+                    <span>卸载链</span>
+                  </div>
+                </article>
+                <article class="feature-tile" data-code="05">
+                  <strong>风扇控制</strong>
+                  <div class="feature-tags">
+                    <span>C8-688</span>
+                    <span>C2000MAX</span>
+                    <span>Smart PWM</span>
+                  </div>
+                </article>
+                <article class="feature-tile" data-code="06">
+                  <strong>游戏加速器入口</strong>
+                  <div class="feature-tags">
+                    <span>奇游</span>
+                    <span>雷神</span>
+                    <span>状态读取</span>
+                  </div>
+                </article>
+              </div>
+
+              <div class="compat-strip" aria-label="设备与发布适配说明">
+                <div class="compat-item">
+                  <b>支持机型</b>
+                  <span>NRadio_C8-688、C5800-688、NBCPE、C2000MAX。</span>
+                </div>
+                <div class="compat-item">
+                  <b>默认入口</b>
+                  <span>ssh-nradio-plugin-installer.sh。</span>
+                </div>
+                <div class="compat-item">
+                  <b>执行方式</b>
+                  <span>开启 SSH 后上传到 /root，或在线下载执行。</span>
+                </div>
+                <div class="compat-item">
+                  <b>维护原则</b>
+                  <span>脚本内按菜单确认后执行。</span>
+                </div>
+              </div>
             </div>
           </section>
+
         </section>
 
-        <aside class="support-side" id="support" aria-label="下载与微信支持">
-          <section class="release-panel" aria-label="当前发布速览">
+        <aside class="support-side" id="install" aria-label="下载与微信支持">
+          <section class="release-panel" aria-label="安装入口">
             <div class="release-panel-top">
               <div>
-              <div class="release-panel-kicker">最新版本</div>
-              <h2>V2.0.5 下载入口</h2>
-            </div>
-              <div class="release-panel-version">V2.0.5</div>
+                <div class="release-panel-kicker">当前脚本</div>
+                <h2>V2.0.6 安装入口</h2>
+              </div>
+              <div class="release-panel-version">V2.0.6</div>
             </div>
             <p>
-              当前公开下载入口已切换为 V2.0.5，默认入口可直接下载。
+              先开 SSH。能联网就在线下载；不能联网就电脑下载后上传。两条路最后都在 /root 执行同一个脚本。
             </p>
             <div class="release-panel-grid" aria-label="当前公开状态">
-              <span><b>最新版本</b><em>V2.0.5 使用默认文件名下载</em></span>
-              <span><b>发布状态</b><em>已发布</em></span>
-              <span><b>旧版入口</b><em>旧 beta 独立下载入口已取消</em></span>
-              <span><b>安装方式</b><em>打开 SSH 后在路由器终端执行</em></span>
-              <span><b>风扇控制</b><em>C8-688 / C2000MAX 分机型默认策略</em></span>
-              <span><b>加速器入口</b><em>奇游联机宝与雷神加速器为正式菜单</em></span>
-          </div>
-          <div class="release-panel-foot" aria-label="公开页状态">
-            <span>公开域名</span>
-            <span>默认入口</span>
-          </div>
+              <span><b>文件名</b><em>ssh-nradio-plugin-installer.sh</em></span>
+              <span><b>版本</b><em>V2.0.6</em></span>
+              <span><b>执行</b><em>SSH 终端</em></span>
+              <span><b>目录</b><em>/root</em></span>
+            </div>
+            <div class="release-panel-foot" aria-label="公开页状态">
+              <span>先开 SSH</span>
+              <span>/root 执行</span>
+              <span>看到菜单再继续</span>
+            </div>
           </section>
 
           <section class="download-card" aria-label="最新脚本下载">
             <div class="download-main">
               <div>
-                <strong>V2.0.5 下载与安装</strong>
-                <span>当前最新版本为 V2.0.5；推荐使用带 SSH 终端和 SFTP/SCP 文件管理的软件，先把脚本传到路由器 /root，再在终端执行。</span>
+                <strong>安装教程</strong>
+                <span>先确认前提，再下载、上传、执行，看到脚本菜单后继续。</span>
               </div>
               <div class="download-actions">
-                <a href="/ssh-nradio-plugin-installer.sh" download>下载 V2.0.5</a>
+                <a class="download-primary" href="/ssh-nradio-plugin-installer.sh" download>下载脚本</a>
               </div>
             </div>
             <div class="download-facts" aria-label="下载状态">
-              <span><b>文件名</b><em>ssh-nradio-plugin-installer.sh</em></span>
-              <span><b>最新版本</b><em>V2.0.5</em></span>
-              <span><b>发布状态</b><em>已发布</em></span>
+              <span><b>路径 A</b><em>电脑下载后上传</em></span>
+              <span><b>路径 B</b><em>路由器在线下载</em></span>
+              <span><b>完成标志</b><em>终端出现脚本菜单</em></span>
             </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
+              <div class="download-section tutorial-prereq" id="prereq">
+                <b>执行前确认</b>
+                <ol class="install-steps">
+                  <li><b>1</b><span>不是应用商店上传安装，也不是固件升级包。</span></li>
+                  <li><b>2</b><span>先在系统安全页开启 SSH，保存并应用。</span></li>
+                  <li><b>3</b><span>脚本放到 /root 后执行。</span></li>
+                </ol>
+                <div class="route-code-card">
+                  <span>SSH 安全页</span>
+                  <p>先打开安全页启用 SSH，保存并应用。</p>
+                  <code>http://192.168.66.1/cgi-bin/luci/admin/system/security</code>
+                  <a href="http://192.168.66.1/cgi-bin/luci/admin/system/security" target="_blank" rel="noopener">一键打开 SSH 安全页</a>
+                </div>
+              </div>
+
               <div class="download-section">
-                <b>推荐 SSH 软件</b>
+                <b>准备一个 SSH 入口</b>
                 <ul class="ssh-tool-grid">
-                  <li><strong>MobaXterm</strong><span>推荐给新手。一个窗口里同时有 SSH 终端和左侧 SFTP 文件面板，可直接拖文件到 /root。</span></li>
-                  <li><strong>FinalShell / Xshell + Xftp</strong><span>适合常用 SSH 的用户。能登录 root，也能把脚本上传到路由器目录。</span></li>
-                  <li><strong>PuTTY + WinSCP</strong><span>PuTTY 负责终端，WinSCP 负责传文件；两者配合也能完成安装。</span></li>
-                  <li><strong>路由器 Web SSH</strong><span>如果设备上已有 Web SSH，也可以直接在浏览器终端里下载并执行脚本。</span></li>
+                  <li><strong>MobaXterm</strong><span>适合新手，终端和 SFTP 文件面板在同一窗口。</span></li>
+                  <li><strong>FinalShell / Xshell + Xftp</strong><span>适合常用 SSH 的电脑，登录和上传分开处理。</span></li>
+                  <li><strong>PuTTY + WinSCP</strong><span>PuTTY 负责终端，WinSCP 负责传文件。</span></li>
+                  <li><strong>路由器 Web SSH</strong><span>设备已有 Web SSH 时，直接在浏览器终端执行。</span></li>
                 </ul>
               </div>
-              <div class="download-section">
-                <b>电脑下载后上传（推荐）</b>
-                <ul class="download-list">
-                  <li>在 NRadio 后台打开 SSH：<code>/cgi-bin/luci/admin/system/security</code>，保存并应用。</li>
-                  <li>打开 MobaXterm 这类 SSH 软件，新建 SSH 连接：主机 <code>192.168.66.1</code>，用户 <code>root</code>，密码填你的路由器 root 密码。</li>
-                  <li>点击本卡片右上角“下载 V2.0.5”，把 <code>ssh-nradio-plugin-installer.sh</code> 保存到电脑。</li>
-                  <li>在 SSH 软件的 SFTP/SCP 文件面板进入 <code>/root</code>，把脚本拖进去。</li>
-                  <li>在同一个 SSH 终端执行：<code>cd /root</code>，再执行 <code>sh ssh-nradio-plugin-installer.sh</code>。</li>
-                </ul>
-              </div>
-              <div class="download-section">
-                <b>路由器能联网时可直接下载</b>
-                <code class="download-code">cd /root
+
+              <div class="tutorial-paths" aria-label="两种安装路径">
+                <section class="path-card" aria-label="电脑下载后上传">
+                  <b>路径 A：电脑下载后上传</b>
+                  <p>路由器不能访问公网时走这条，别反复改路由器网络。</p>
+                  <ol class="tutorial-steps">
+                    <li>后台打开 SSH：<code>/cgi-bin/luci/admin/system/security</code>，保存并应用。</li>
+                    <li>点上面的“下载脚本”，把文件保存到电脑。</li>
+                    <li>SSH 登录路由器：主机 <code>192.168.66.1</code>，用户 <code>root</code>。</li>
+                    <li>用 SFTP/SCP 把脚本放进 <code>/root</code>。</li>
+                    <li>终端执行：<code>cd /root && sh ssh-nradio-plugin-installer.sh</code>。</li>
+                  </ol>
+                </section>
+
+                <section class="path-card" aria-label="路由器在线下载">
+                  <b>路径 B：路由器在线下载</b>
+                  <p>路由器能访问公网时走这条，直接粘贴命令。</p>
+                  <code class="download-code">cd /root
 wget -O ssh-nradio-plugin-installer.sh https://nradio.mayebano.shop/ssh-nradio-plugin-installer.sh
 sh ssh-nradio-plugin-installer.sh</code>
+                </section>
               </div>
+
               <div class="download-section">
-                <b>注意事项</b>
+                <b>执行后看这里</b>
+                <ul class="tutorial-checks">
+                  <li><b>终端出现菜单</b><span>看到 NRadio 脚本菜单后，再按编号继续。</span></li>
+                  <li><b>按提示确认</b><span>安装、美化、卸载都按菜单提示走，不跳步骤。</span></li>
+                  <li><b>回后台核对</b><span>完成后回应用商店确认入口、图标和状态。</span></li>
+                </ul>
+              </div>
+
+              <div class="download-section">
+                <b>不要做</b>
                 <ul class="download-list">
+                  <li>不要把脚本当应用商店安装包上传，也不要当固件升级包。</li>
                   <li>脚本适用于 NRadio_C8-688、C5800-688、NBCPE、C2000MAX 官方 NROS 系统；标准 OpenWrt 不适用。</li>
                   <li>如果路由器不能访问公网，优先走“电脑下载后上传”的方式，不要反复改路由器网络配置。</li>
                   <li>不要在未确认 IP 和机型的设备上执行；不同路由器、旁路由和服务器不要混用。</li>
                   <li>安装和美化入口只按菜单提示执行；中途关闭终端可能导致插件未完整接入应用商店。</li>
                 </ul>
               </div>
-              <p class="download-note">脚本保持公开下载；自愿支持不绑定任何功能权限。</p>
+              <p class="download-note">闭环：开启 SSH -> 脚本进入 /root -> 执行脚本 -> 出现菜单 -> 按菜单完成安装。</p>
             </div>
           </section>
 
-          <section class="support-panel" aria-label="微信支持">
+          <section class="support-panel" id="wechat" aria-label="微信支持">
             <div class="support-top">
               <div class="support-head">
-                <strong>微信扫码支持</strong>
+                <strong>微信支持入口</strong>
                 <div class="support-badge">WeChat Pay</div>
               </div>
-              <p>支持完全自愿，仅用于脚本维护、更新记录整理与后续适配推进，不影响脚本功能使用。</p>
+              <p>用于脚本维护和页面更新记录整理。</p>
               <div class="support-promise" aria-label="支持说明">
-                <span>完全自愿</span>
-                <span>不影响功能</span>
-                <span>持续维护</span>
+                <span>微信扫码</span>
+                <span>维护支持</span>
+                <span>页面记录</span>
               </div>
             </div>
 
             <div class="qr-shell">
               <div class="qr-stage">
                 <div class="qr-box">
-                  <img src="./wechat-donate.png" alt="NRadio 插件助手微信收款码">
+                  <img src="./wechat-donate.png" alt="NRadio 微信支持二维码">
                 </div>
               </div>
             </div>
@@ -3855,13 +4212,13 @@ sh ssh-nradio-plugin-installer.sh</code>
             <div class="support-meta">
               <div class="support-owner">
                 收款人：<strong>Bano马野(*野)</strong><br>
-                打开微信扫一扫即可直接支持脚本后续维护与更新。
+                打开微信扫一扫。
               </div>
 
               <ol class="support-steps">
                 <li><b>1</b><span>打开微信扫一扫，直接扫描右侧收款码。</span></li>
-                <li><b>2</b><span>输入你愿意支持的金额，纯自愿即可。</span></li>
-                <li><b>3</b><span>支付完成后无需额外操作，感谢持续支持。</span></li>
+                <li><b>2</b><span>输入金额。</span></li>
+                <li><b>3</b><span>完成支付。</span></li>
               </ol>
 
               <div class="support-url">
@@ -3871,91 +4228,11 @@ sh ssh-nradio-plugin-installer.sh</code>
               </div>
 
               <div class="support-note-strip">
-                支持不绑定任何功能权限，脚本功能保持免费分享与持续维护。
+                支持入口与脚本执行入口分开显示。
               </div>
             </div>
           </section>
         </aside>
-
-        <section class="feature-board" aria-label="脚本功能全景">
-          <div class="feature-shell" id="features">
-            <section class="feature-intro" aria-label="功能说明">
-              <div class="feature-kicker">功能概览</div>
-              <h2>主要功能</h2>
-            </section>
-
-            <div class="feature-grid">
-              <article class="feature-tile" data-code="01">
-                <strong>常用插件安装</strong>
-                <div class="feature-tags">
-                  <span>Web SSH</span>
-                  <span>OpenList</span>
-                  <span>AdGuardHome</span>
-                  <span>哈基米</span>
-                </div>
-              </article>
-              <article class="feature-tile" data-code="02">
-                <strong>网络与异地组网</strong>
-                <div class="feature-tags">
-                  <span>EasyTier</span>
-                  <span>ZeroTier</span>
-                  <span>OpenVPN</span>
-                </div>
-              </article>
-              <article class="feature-tile" data-code="03">
-                <strong>应用商店美化</strong>
-                <div class="feature-tags">
-                  <span>卡片视觉</span>
-                  <span>状态徽标</span>
-                  <span>只读面板</span>
-                </div>
-              </article>
-              <article class="feature-tile" data-code="04">
-                <strong>系统维护能力</strong>
-                <div class="feature-tags">
-                  <span>swap</span>
-                  <span>自检</span>
-                  <span>卸载链</span>
-                </div>
-              </article>
-              <article class="feature-tile" data-code="05">
-                <strong>风扇控制</strong>
-                <div class="feature-tags">
-                  <span>C8-688</span>
-                  <span>C2000MAX</span>
-                  <span>Smart PWM</span>
-                </div>
-              </article>
-              <article class="feature-tile" data-code="06">
-                <strong>游戏加速器入口</strong>
-                <div class="feature-tags">
-                  <span>奇游</span>
-                  <span>雷神</span>
-                  <span>状态读取</span>
-                </div>
-              </article>
-            </div>
-
-            <div class="compat-strip" aria-label="设备与发布适配说明">
-              <div class="compat-item">
-                <b>支持机型</b>
-                <span>NRadio_C8-688、C5800-688、NBCPE、C2000MAX。</span>
-              </div>
-              <div class="compat-item">
-                <b>默认入口</b>
-                <span>ssh-nradio-plugin-installer.sh。</span>
-              </div>
-              <div class="compat-item">
-                <b>执行方式</b>
-                <span>开启 SSH 后上传到 /root，或在线下载执行。</span>
-              </div>
-              <div class="compat-item">
-                <b>维护原则</b>
-                <span>脚本内按菜单确认后执行。</span>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
     </section>
     <section class="history" aria-hidden="true" hidden>
@@ -3975,7 +4252,7 @@ sh ssh-nradio-plugin-installer.sh</code>
               </div>
               <div>
                 <strong>2026-04-26</strong>
-                <span>当前公开里程碑整理到 V2.0.5。</span>
+                <span>当前公开里程碑整理到 V2.0.6。</span>
               </div>
               <div>
                 <strong>持续追加</strong>
@@ -4259,10 +4536,10 @@ sh ssh-nradio-plugin-installer.sh</code>
                   </div>
                 </article>
                 <article class="timeline-entry is-current">
-                  <div class="version">V2.0.5</div>
+                  <div class="version">V2.0.6</div>
                   <div class="entry-copy">
-                    <strong>OpenVPN、风扇策略与支持页收口</strong>
-                    <p>在 V2.0.3 基础上回写 OpenVPN 热更新成果：状态接口新增快速模式，页面先完成首屏绘制，再补完整诊断；连接中枢、状态卡和标准 OpenVPN 子页同步美化。风扇控制更新为 C8-688 使用 CPU 温度源、10s 检测、Smart 最低 50%、85°C 保护；C2000MAX 使用 CPU/CPE 取高值、5s 检测、Smart 最低 30%、80°C 保护。支持页同步补上功能全景、设备适配和下载入口。</p>
+                    <strong>奇游状态与应用商店标记收口</strong>
+                    <p>奇游联机宝状态查看修复未安装场景返回码；应用商店美化内部标记同步到 V2.0.6。OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。</p>
                   </div>
                 </article>
               </div>
@@ -4286,11 +4563,11 @@ sh ssh-nradio-plugin-installer.sh</code>
         <section class="next-actions" aria-label="页面闭环入口">
           <a href="#history">
             <b>查看版本时间线</b>
-            <span>从 V1.0.0 到 V2.0.5 的关键节点都整理在这里。</span>
+            <span>从 V1.0.0 到 V2.0.6 的关键节点都整理在这里。</span>
           </a>
-          <a href="#support">
-            <b>自愿支持维护</b>
-            <span>扫码支持完全自愿，不影响脚本功能使用。</span>
+          <a href="#wechat">
+            <b>微信支持入口</b>
+            <span>二维码入口与脚本下载入口分开显示。</span>
           </a>
           <div>
             <b>公开入口</b>
@@ -4299,8 +4576,8 @@ sh ssh-nradio-plugin-installer.sh</code>
         </section>
 
         <footer class="page-signature">
-          <div><b>NRadio Plugin Assistant</b><br>更新记录、SSH 安装和支持入口集中在同一个页面。</div>
-          <div>Current release: V2.0.5 / openvpn fast-open and fan defaults refresh</div>
+          <div><b>NRadio Plugin Tool</b><br>更新记录、SSH 安装和支持入口集中在同一个页面。</div>
+          <div>当前版本：V2.0.6 / 奇游状态返回码修复 / 应用商店美化标记同步</div>
         </footer>
       </div>
     </section>
