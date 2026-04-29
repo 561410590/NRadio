@@ -69,9 +69,9 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' CHECKSUMS.txt
+          grep -q '10075726e97a9935df8d401f145cc8e677748956368399ee4b67b8207bb1865e' CHECKSUMS.txt
           grep -q '6163113ee4066c19a8bd6fa1fb95cf32dde9bc9ef8e39b647657a6acaca5bdb4' CHECKSUMS.txt
-          printf '%s  %s\n' '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          printf '%s  %s\n' '10075726e97a9935df8d401f145cc8e677748956368399ee4b67b8207bb1865e' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
 
       - name: Verify license
         run: |
