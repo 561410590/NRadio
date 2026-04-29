@@ -33,8 +33,6 @@
       --line-mid: rgba(255, 255, 255, 0.16);
       --shadow-main: 0 34px 90px rgba(6, 52, 37, 0.24);
       --shadow-soft: 0 18px 42px rgba(8, 56, 48, 0.14);
-      --glass-panel: rgba(6, 40, 34, 0.42);
-      --glass-border: rgba(220, 255, 244, 0.16);
     }
 
     * {
@@ -146,6 +144,16 @@
       text-decoration: none;
     }
 
+    .hero-summary strong,
+    .hero-latest-version,
+    .release-card b,
+    .download-facts b,
+    .download-facts em,
+    .feature-brief b,
+    .version {
+      font-variant-numeric: tabular-nums;
+    }
+
     #features,
     #history,
     #install,
@@ -233,8 +241,7 @@
 
     .floating-nav a:focus-visible,
     .download-card a:focus-visible,
-    .route-code-card a:focus-visible,
-    .next-actions a:focus-visible {
+    .route-code-card a:focus-visible {
       outline: 2px solid rgba(255, 255, 255, 0.82);
       outline-offset: 3px;
     }
@@ -286,7 +293,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1.08fr) 468px;
       gap: 38px;
-      align-items: start;
+      align-items: stretch;
     }
 
     .hero-shell::before,
@@ -332,8 +339,9 @@
       grid-row: 1;
       display: grid;
       gap: 22px;
-      align-content: center;
+      align-content: start;
       max-width: 900px;
+      min-height: 100%;
       padding: 44px 48px 42px;
       border-radius: 42px;
       background:
@@ -494,47 +502,6 @@
       line-height: 1.2;
     }
 
-    .signal-strip {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 9px;
-    }
-
-    .signal-strip span {
-      position: relative;
-      min-height: 62px;
-      padding: 14px 14px 14px 38px;
-      border-radius: 20px;
-      color: rgba(232, 255, 240, 0.78);
-      background:
-        linear-gradient(145deg, rgba(188, 247, 125, 0.10), rgba(94, 231, 242, 0.05), rgba(255, 255, 255, 0.055)),
-        rgba(4, 31, 26, 0.20);
-      border: 1px solid rgba(220, 255, 244, 0.16);
-      font-size: 12px;
-      line-height: 1.45;
-      overflow: hidden;
-    }
-
-    .signal-strip span::before {
-      content: "";
-      position: absolute;
-      left: 15px;
-      top: 18px;
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: var(--cyan-400);
-      box-shadow: 0 0 18px rgba(94, 231, 242, 0.62);
-    }
-
-    .signal-strip b {
-      display: block;
-      margin-bottom: 4px;
-      color: #fff;
-      font-size: 13px;
-      line-height: 1.25;
-    }
-
     .hero-summary {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -564,20 +531,6 @@
       line-height: 1.65;
     }
 
-    .hero-note {
-      position: relative;
-      max-width: 38rem;
-      padding: 14px 16px 14px 18px;
-      border-left: 3px solid rgba(157, 253, 208, 0.82);
-      border-radius: 0 18px 18px 0;
-      color: rgba(255, 255, 255, 0.80);
-      background:
-        linear-gradient(90deg, rgba(157, 253, 208, 0.12), rgba(94, 231, 242, 0.04)),
-        rgba(255, 255, 255, 0.045);
-      font-size: 14px;
-      line-height: 1.78;
-    }
-
     .hero-latest {
       position: relative;
       display: grid;
@@ -601,20 +554,6 @@
       border-radius: 34px;
       background: linear-gradient(155deg, rgba(255, 255, 255, 0.12), transparent 72%);
       transform: rotate(-18deg);
-      pointer-events: none;
-    }
-
-    .hero-latest::after {
-      content: "V2.0.7";
-      position: absolute;
-      right: 18px;
-      bottom: 12px;
-      color: rgba(232, 255, 240, 0.055);
-      font-family: "DIN Alternate", "Bahnschrift", sans-serif;
-      font-size: 54px;
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: 0;
       pointer-events: none;
     }
 
@@ -683,43 +622,6 @@
       color: rgba(255, 255, 255, 0.82);
       font-size: 12px;
       border: 1px solid rgba(255, 255, 255, 0.11);
-    }
-
-    .hero-checks {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .hero-checks span {
-      position: relative;
-      min-height: 58px;
-      padding: 12px 12px 12px 15px;
-      border-radius: 18px;
-      background:
-        linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(94, 231, 242, 0.050), rgba(188, 247, 125, 0.035)),
-        rgba(5, 42, 27, 0.18);
-      border: 1px solid rgba(221, 255, 234, 0.16);
-      color: rgba(255, 255, 255, 0.78);
-      font-size: 12px;
-      line-height: 1.55;
-      overflow: hidden;
-    }
-
-    .hero-checks span::before {
-      content: "";
-      position: absolute;
-      inset: 12px auto 12px 0;
-      width: 3px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, var(--cyan-400), rgba(241, 199, 91, 0.78));
-    }
-
-    .hero-checks b {
-      display: block;
-      margin-bottom: 4px;
-      color: #fff;
-      font-size: 13px;
     }
 
     .release-cards {
@@ -1040,8 +942,8 @@
     .download-facts span {
       min-height: 64px;
       margin: 0;
-      padding: 12px 11px;
-      border-radius: 16px;
+      padding: 12px;
+      border-radius: 14px;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.035)),
         rgba(3, 25, 18, 0.28);
@@ -1132,8 +1034,8 @@
       position: relative;
       display: grid;
       gap: 8px;
-      padding: 12px 12px 12px 15px;
-      border-radius: 16px;
+      padding: 15px 12px 12px;
+      border-radius: 14px;
       background: rgba(216, 255, 240, 0.045);
       border: 1px solid rgba(220, 255, 244, 0.08);
     }
@@ -1141,12 +1043,12 @@
     .download-section::before {
       content: "";
       position: absolute;
-      left: 0;
-      top: 14px;
-      bottom: 14px;
-      width: 3px;
+      left: 13px;
+      top: 0;
+      width: 64px;
+      height: 2px;
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(94, 231, 242, 0.72), rgba(241, 199, 91, 0.46));
+      background: linear-gradient(90deg, rgba(94, 231, 242, 0.72), rgba(241, 199, 91, 0.46), transparent);
     }
 
     .download-section b {
@@ -1249,12 +1151,24 @@
       align-content: start;
       min-width: 0;
       padding: 14px;
-      border-radius: 16px;
+      border-radius: 14px;
       background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.10), rgba(94, 231, 242, 0.045)),
         rgba(4, 36, 26, 0.24);
       border: 1px solid rgba(220, 255, 244, 0.11);
       overflow: hidden;
+    }
+
+    .path-card[data-route="A"] {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(241, 199, 91, 0.060), rgba(94, 231, 242, 0.035)),
+        rgba(4, 36, 26, 0.24);
+    }
+
+    .path-card[data-route="B"] {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(94, 231, 242, 0.070), rgba(188, 247, 125, 0.040)),
+        rgba(4, 36, 26, 0.24);
     }
 
     .path-card::before {
@@ -1345,7 +1259,7 @@
       min-width: 0;
       min-height: 70px;
       padding: 13px;
-      border-radius: 14px;
+      border-radius: 13px;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.035)),
         rgba(3, 25, 18, 0.24);
@@ -1398,6 +1312,11 @@
       padding-left: 16px;
     }
 
+    .download-list li.model-scope {
+      display: grid;
+      gap: 7px;
+    }
+
     .download-list li::before {
       content: "";
       position: absolute;
@@ -1408,6 +1327,37 @@
       border-radius: 999px;
       background: #7cffc2;
       box-shadow: 0 0 12px rgba(124, 255, 194, 0.45);
+    }
+
+    .model-scope-label,
+    .model-scope-tail {
+      display: block;
+      margin: 0;
+      color: inherit;
+    }
+
+    .inline-models {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 0;
+      min-width: 0;
+    }
+
+    .inline-models span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      margin: 0;
+      padding: 0 9px;
+      border-radius: 999px;
+      color: #e8fff0;
+      background: rgba(216, 255, 240, 0.08);
+      border: 1px solid rgba(220, 255, 244, 0.12);
+      font-size: 11px;
+      font-weight: 850;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .download-code {
@@ -1461,7 +1411,7 @@
     .download-note {
       margin: 0;
       padding: 10px 12px;
-      border-radius: 14px;
+      border-radius: 13px;
       color: rgba(255, 255, 255, 0.74);
       background: rgba(216, 255, 240, 0.07);
       border: 1px solid rgba(220, 255, 244, 0.11);
@@ -1492,7 +1442,7 @@
       width: 100%;
       max-width: 468px;
       display: grid;
-      gap: 18px;
+      gap: 16px;
       align-content: start;
       animation: rise 0.95s ease-out 0.12s both;
     }
@@ -1515,7 +1465,7 @@
       position: relative;
       width: 100%;
       border-radius: 34px;
-      padding: 26px;
+      padding: 22px;
       background:
         linear-gradient(155deg, rgba(255, 255, 255, 0.96), rgba(235, 250, 244, 0.96)),
         linear-gradient(90deg, rgba(94, 231, 242, 0.08), transparent 38%, rgba(241, 199, 91, 0.055)),
@@ -1544,8 +1494,8 @@
       position: relative;
       z-index: 1;
       display: grid;
-      gap: 14px;
-      margin-bottom: 16px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .support-head {
@@ -1556,8 +1506,8 @@
     }
 
     .support-head strong {
-      font-size: 28px;
-      line-height: 1.06;
+      font-size: 26px;
+      line-height: 1.08;
       color: var(--ink-950);
       letter-spacing: 0;
     }
@@ -1567,8 +1517,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 44px;
-      padding: 0 16px;
+      min-height: 38px;
+      padding: 0 14px;
       border-radius: 999px;
       background: rgba(16, 158, 86, 0.1);
       color: #0b7c45;
@@ -1577,39 +1527,11 @@
       letter-spacing: 0.02em;
     }
 
-    .support-top p {
-      margin: 0;
-      color: var(--ink-700);
-      font-size: 14px;
-      line-height: 1.75;
-    }
-
-    .support-promise {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .support-promise span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 34px;
-      padding: 0 10px;
-      border-radius: 999px;
-      color: #0b7c45;
-      background: rgba(16, 158, 86, 0.08);
-      border: 1px solid rgba(16, 158, 86, 0.1);
-      font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
     .qr-shell {
       position: relative;
       z-index: 1;
-      margin-bottom: 20px;
-      padding: 12px;
+      margin-bottom: 14px;
+      padding: 10px;
       border-radius: 30px;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 252, 249, 0.98));
@@ -1627,7 +1549,7 @@
       position: relative;
       border-radius: 28px;
       overflow: hidden;
-      padding: 10px;
+      padding: 8px;
       text-align: center;
       background:
         linear-gradient(155deg, rgba(22, 184, 200, 0.07), transparent 38%),
@@ -1641,7 +1563,7 @@
     .qr-box {
       position: relative;
       z-index: 1;
-      width: min(100%, 316px);
+      width: min(100%, 276px);
       margin: 0 auto;
       padding: 0;
       border-radius: 26px;
@@ -1657,39 +1579,19 @@
       border-radius: 24px;
     }
 
-    .payline {
-      display: none;
-      align-items: center;
-      gap: 10px;
-      margin-top: 16px;
-      color: rgba(14, 43, 30, 0.82);
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .payline::before {
-      content: "";
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 35% 30%, #e0ffec 0 16%, #23d06f 17% 68%, #109d57 69% 100%);
-      box-shadow: inset -8px -8px 0 rgba(8, 101, 52, 0.17);
-    }
-
     .support-meta {
       position: relative;
       z-index: 1;
       display: grid;
-      gap: 14px;
+      gap: 10px;
       color: var(--ink-700);
       font-size: 14px;
-      line-height: 1.8;
+      line-height: 1.68;
     }
 
     .support-owner {
-      padding: 14px 16px;
-      border-radius: 20px;
+      padding: 12px 14px;
+      border-radius: 18px;
       background: rgba(255, 255, 255, 0.72);
       border: 1px solid rgba(18, 58, 35, 0.08);
     }
@@ -1701,7 +1603,7 @@
 
     .support-steps {
       display: grid;
-      gap: 8px;
+      gap: 7px;
       margin: 0;
       padding: 0;
       list-style: none;
@@ -1712,7 +1614,7 @@
       grid-template-columns: 30px 1fr;
       gap: 12px;
       align-items: center;
-      min-height: 42px;
+      min-height: 38px;
       padding: 6px 10px 6px 6px;
       border-radius: 18px;
       background: rgba(16, 158, 86, 0.045);
@@ -1921,6 +1823,19 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.075), 0 18px 42px rgba(2, 35, 31, 0.16);
     }
 
+    .feature-tile:nth-child(1) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(94, 231, 242, 0.080), rgba(188, 247, 125, 0.060)),
+        rgba(3, 28, 21, 0.38);
+    }
+
+    .feature-tile:nth-child(3),
+    .feature-tile:nth-child(6) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(241, 199, 91, 0.070), rgba(94, 231, 242, 0.040)),
+        rgba(3, 28, 21, 0.36);
+    }
+
     .feature-tile strong {
       display: block;
       padding-right: 48px;
@@ -2127,25 +2042,6 @@
       line-height: 1.7;
     }
 
-    .history-note-card {
-      padding: 18px;
-      border-radius: 20px;
-      background:
-        linear-gradient(135deg, rgba(16, 158, 86, 0.08), rgba(22, 184, 200, 0.05), rgba(255, 255, 255, 0.72));
-      border: 1px solid rgba(16, 158, 86, 0.12);
-      color: var(--ink-700);
-      font-size: 13px;
-      line-height: 1.78;
-    }
-
-    .history-note-card strong {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--ink-950);
-      font-size: 16px;
-      letter-spacing: 0;
-    }
-
     .timeline {
       position: relative;
       padding-bottom: 14px;
@@ -2328,111 +2224,6 @@
       line-height: 1.82;
     }
 
-    .closing {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 320px;
-      gap: 40px;
-      padding: 24px 42px 42px;
-      border-top: 1px solid var(--line-light);
-    }
-
-    .next-actions {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      padding: 0 42px 42px;
-    }
-
-    .next-actions a,
-    .next-actions div {
-      position: relative;
-      min-height: 118px;
-      padding: 18px;
-      border-radius: 24px;
-      background:
-        linear-gradient(145deg, rgba(16, 158, 86, 0.09), rgba(22, 184, 200, 0.045), rgba(255, 255, 255, 0.8));
-      border: 1px solid rgba(16, 158, 86, 0.12);
-      box-shadow: 0 14px 34px rgba(8, 56, 48, 0.07);
-      overflow: hidden;
-      transition: transform 0.28s ease, box-shadow 0.28s ease;
-    }
-
-    .next-actions a::after,
-    .next-actions div::after {
-      content: "";
-      position: absolute;
-      right: -18px;
-      top: -24px;
-      width: 72px;
-      height: 118px;
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(16, 158, 86, 0.10), transparent);
-      transform: rotate(24deg);
-      pointer-events: none;
-    }
-
-    .next-actions a:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 22px 42px rgba(8, 56, 31, 0.12);
-    }
-
-    .next-actions b {
-      display: block;
-      color: var(--ink-950);
-      font-size: 17px;
-      line-height: 1.3;
-      letter-spacing: 0;
-      margin-bottom: 8px;
-    }
-
-    .next-actions span {
-      display: block;
-      color: var(--ink-700);
-      font-size: 13px;
-      line-height: 1.72;
-    }
-
-    .page-signature {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 24px 42px 46px;
-      color: var(--ink-500);
-      font-size: 13px;
-      line-height: 1.7;
-      border-top: 1px solid var(--line-light);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(237, 246, 239, 0.7));
-    }
-
-    .page-signature b {
-      color: var(--ink-950);
-      font-size: 14px;
-    }
-
-    .closing strong {
-      display: block;
-      margin-bottom: 10px;
-      font-size: 28px;
-      line-height: 1.06;
-      letter-spacing: 0;
-      text-wrap: balance;
-    }
-
-    .closing p {
-      margin: 0;
-      color: var(--ink-700);
-      font-size: 15px;
-      line-height: 1.82;
-      text-wrap: pretty;
-    }
-
-    .closing-note {
-      color: var(--ink-500);
-      font-size: 13px;
-      line-height: 1.75;
-    }
-
     @keyframes rise {
       from {
         opacity: 0;
@@ -2441,16 +2232,6 @@
       to {
         opacity: 1;
         transform: translateY(0);
-      }
-    }
-
-    @keyframes drift {
-      0%,
-      100% {
-        transform: translate3d(0, 0, 0);
-      }
-      50% {
-        transform: translate3d(0, -20px, 0);
       }
     }
 
@@ -2532,8 +2313,7 @@
 
       .hero-shell,
       .feature-shell,
-      .history-top,
-      .closing {
+      .history-top {
         grid-template-columns: 1fr;
       }
 
@@ -2554,6 +2334,7 @@
       .hero-copy {
         padding: 34px 28px 30px;
         max-width: none;
+        min-height: auto;
       }
 
       .support-side {
@@ -2574,10 +2355,7 @@
         display: none;
       }
 
-      .hero-status,
-      .signal-strip,
-      .hero-checks,
-      .next-actions {
+      .hero-status {
         grid-template-columns: 1fr;
       }
 
@@ -2617,10 +2395,6 @@
 
       .release-card-current {
         min-height: auto;
-      }
-
-      .support-promise {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .feature-board {
@@ -2687,19 +2461,6 @@
         right: auto;
       }
 
-      .closing {
-        padding: 18px 28px 34px;
-      }
-
-      .next-actions {
-        padding: 0 28px 34px;
-      }
-
-      .page-signature {
-        align-items: flex-start;
-        flex-direction: column;
-        padding: 20px 28px 34px;
-      }
     }
 
     @media (max-width: 760px) {
@@ -2846,16 +2607,8 @@
         white-space: normal;
       }
 
-      .hero-checks {
-        grid-template-columns: 1fr;
-      }
-
       .release-card {
         padding: 14px;
-      }
-
-      .signal-strip span {
-        min-height: 58px;
       }
 
       .download-card {
@@ -2948,10 +2701,6 @@
       .support-head {
         flex-direction: column;
         align-items: flex-start;
-      }
-
-      .support-promise {
-        grid-template-columns: 1fr;
       }
 
       .qr-stage {
@@ -3166,7 +2915,6 @@
     }
 
     .lead,
-    .hero-note,
     .hero-latest p,
     .download-card span {
       color: rgba(93, 18, 50, 0.78);
@@ -3212,10 +2960,8 @@
 
     .hero-tags span,
     .hero-status span,
-    .signal-strip span,
     .hero-summary div,
     .hero-latest,
-    .hero-checks span,
     .release-card,
     .download-facts span,
     .download-section,
@@ -3235,8 +2981,6 @@
     }
 
     .hero-tags span::before,
-    .signal-strip span::before,
-    .hero-checks span::before,
     .download-list li::before {
       background: var(--pink-600);
       box-shadow: 0 0 14px rgba(255, 94, 159, 0.48);
@@ -3247,9 +2991,7 @@
     }
 
     .hero-status b,
-    .signal-strip b,
     .hero-summary strong,
-    .hero-checks b,
     .release-card strong,
     .download-facts em,
     .download-section b,
@@ -3273,18 +3015,6 @@
     .feature-tags span,
     .compat-item span {
       color: rgba(93, 18, 50, 0.68);
-    }
-
-    .signal-strip {
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
-      gap: 12px;
-    }
-
-    .signal-strip span {
-      min-width: 0;
-      overflow: visible;
-      overflow-wrap: anywhere;
-      word-break: normal;
     }
 
     .hero-summary {
@@ -3325,6 +3055,12 @@
     .route-code-card a:hover {
       border-color: rgba(184, 37, 95, 0.22);
       box-shadow: 0 18px 34px rgba(184, 37, 95, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.52);
+    }
+
+    .floating-nav a:focus-visible,
+    .download-card a:focus-visible,
+    .route-code-card a:focus-visible {
+      outline-color: rgba(184, 37, 95, 0.46);
     }
 
     .download-card a.download-primary {
@@ -3418,7 +3154,45 @@
       box-shadow: 0 10px 20px rgba(11, 111, 100, 0.16);
     }
 
+    .path-card[data-route="A"] {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 236, 209, 0.62)),
+        rgba(255, 247, 250, 0.68);
+      border-color: rgba(206, 137, 38, 0.18);
+    }
+
+    .path-card[data-route="B"] {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(226, 255, 245, 0.58)),
+        rgba(255, 247, 250, 0.68);
+      border-color: rgba(22, 184, 200, 0.16);
+    }
+
+    .feature-tile:nth-child(1) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(226, 255, 245, 0.58), rgba(255, 232, 243, 0.64)),
+        rgba(255, 247, 250, 0.70);
+      border-color: rgba(22, 184, 200, 0.18);
+    }
+
+    .feature-tile:nth-child(3),
+    .feature-tile:nth-child(6) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 236, 209, 0.54), rgba(255, 232, 243, 0.64)),
+        rgba(255, 247, 250, 0.70);
+      border-color: rgba(206, 137, 38, 0.16);
+    }
+
     .model-chip-list span {
+      color: var(--pink-950);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 235, 244, 0.66)),
+        rgba(255, 247, 250, 0.70);
+      border-color: rgba(184, 37, 95, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    }
+
+    .inline-models span {
       color: var(--pink-950);
       background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 235, 244, 0.66)),
@@ -3523,7 +3297,7 @@
     <nav class="floating-nav" aria-label="页面快速导航">
       <a href="#features">功能清单</a>
       <a href="#history">更新记录</a>
-      <a href="#install">安装方式</a>
+      <a href="#install">安装教程</a>
       <a href="#wechat">微信支持</a>
       <span>V2.0.7 已发布</span>
     </nav>
@@ -3553,12 +3327,6 @@
             <span><b>入口</b>单一下载入口</span>
           </div>
 
-          <div class="signal-strip" aria-label="当前公网页状态">
-            <span><b>最新版本</b>V2.0.7</span>
-            <span><b>发布状态</b>已发布</span>
-            <span><b>下载文件</b>默认脚本</span>
-          </div>
-
           <div class="hero-summary" aria-label="关键数字">
             <div>
               <strong>V2</strong>
@@ -3585,13 +3353,6 @@
               V2.0.6 的奇游状态返回码修复、应用商店美化标记同步、OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。
             </p>
             <div class="hero-milestones">
-              <span>V1.50.1 卸载提示对齐原厂</span>
-              <span>V1.50.2 图标缓存刷新</span>
-              <span>V1.50.3 swap 重复接入修复</span>
-              <span>V1.50.4 ttyd 美化与 14 号门禁</span>
-              <span>V1.50.5 OpenVPN Mk2 回写</span>
-              <span>V1.60.0 应用商店美化菜单</span>
-              <span>V1.60.5 应用商店修复与安全微调</span>
               <span>V2.0.0 正式脚本默认下载</span>
               <span>V2.0.1 风扇控制支持 C2000MAX</span>
               <span>V2.0.2 入口链与提示收口</span>
@@ -3599,10 +3360,6 @@
               <span>V2.0.6 奇游状态与美化标记收口</span>
               <span>V2.0.7 新增 C8-668 支持</span>
               <span>单一脚本入口</span>
-            </div>
-            <div class="hero-checks" aria-label="当前发布状态">
-              <span><b>最新版本</b>V2.0.7</span>
-              <span><b>脚本文件</b>ssh-nradio-plugin-installer.sh</span>
             </div>
           </section>
 
@@ -3636,46 +3393,6 @@
               <b>V2.0.0</b>
               <strong>正式切换默认下载脚本</strong>
               <p>默认脚本升级为 V2.0.0，保留分类菜单与加速器入口；加速器菜单改为正式入口。</p>
-            </article>
-            <article class="release-card">
-              <b>V2.0.0-beta</b>
-              <strong>分类菜单与加速器入口</strong>
-              <p>主菜单改为功能分类，奇游联机宝和雷神加速器并入总脚本，为 V2.0.0 正式版铺路。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.60.5</b>
-              <strong>稳定闭环脚本保留下载</strong>
-              <p>修复旧 CSS 残留、进度条占比、图标兜底和空描述问题，是当前稳定闭环版本。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.60.0</b>
-              <strong>15 号应用商店美化独立成项</strong>
-              <p>应用卡片、状态徽标、后台标记和系统状态面板统一优化，独立执行不影响插件链路。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.50.5</b>
-              <strong>OpenVPN Mk2 页面正式回写</strong>
-              <p>连接中枢和标准 OpenVPN 二级配置页统一暗色控制台风格，功能链路不动。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.50.4</b>
-              <strong>ttyd 美化与 14 号风扇防误装</strong>
-              <p>Web SSH 改成更清晰的控制台界面，14 号仅允许 C8-688 继续安装。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.50.3</b>
-              <strong>2~8 swap 链路去重</strong>
-              <p>重复安装会复用现有虚拟内存配置，不再堆 fstab.@swap。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.50.2</b>
-              <strong>图标缓存不再拖后腿</strong>
-              <p>图标 URL 带版本参数，避免 Web SSH / OpenVPN 继续显示旧图。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.50.1</b>
-              <strong>卸载体验回到原厂口径</strong>
-              <p>确认框、卸载中、卸载完成提示统一走应用商店风格。</p>
             </article>
           </div>
 
@@ -3852,7 +3569,17 @@ sh ssh-nradio-plugin-installer.sh</code>
                 <b>5. 不要做</b>
                 <ul class="download-list">
                   <li>不要把脚本当应用商店安装包上传，也不要当固件升级包。</li>
-                  <li>脚本适用于 NRadio_C8-688、NRadio_C8-668、C5800-688、NBCPE、C2000MAX 官方 NROS2.0 系统；标准 OpenWrt 不适用。</li>
+                  <li class="model-scope">
+                    <span class="model-scope-label">脚本适用于</span>
+                    <span class="inline-models" aria-label="适用机型">
+                      <span>NRadio_C8-688</span>
+                      <span>NRadio_C8-668</span>
+                      <span>C5800-688</span>
+                      <span>NBCPE</span>
+                      <span>C2000MAX</span>
+                    </span>
+                    <span class="model-scope-tail">官方 NROS2.0 系统；标准 OpenWrt 不适用。</span>
+                  </li>
                   <li>如果路由器不能访问公网，使用“电脑下载后上传”的方式。</li>
                   <li>不要在未确认 IP 和机型的设备上执行；不同路由器、旁路由和服务器不要混用。</li>
                   <li>安装和美化入口只按菜单提示执行；终端正在执行时不要直接关闭窗口。</li>
@@ -3867,12 +3594,6 @@ sh ssh-nradio-plugin-installer.sh</code>
               <div class="support-head">
                 <strong>微信支持入口</strong>
                 <div class="support-badge">微信扫码</div>
-              </div>
-              <p>用于脚本维护和页面更新记录整理。</p>
-              <div class="support-promise" aria-label="支持说明">
-                <span>微信扫码</span>
-                <span>维护支持</span>
-                <span>页面记录</span>
               </div>
             </div>
 
@@ -3891,7 +3612,7 @@ sh ssh-nradio-plugin-installer.sh</code>
               </div>
 
               <ol class="support-steps">
-                <li><b>1</b><span>打开微信扫一扫，直接扫描右侧收款码。</span></li>
+                <li><b>1</b><span>打开微信扫一扫，扫描收款码。</span></li>
                 <li><b>2</b><span>输入金额。</span></li>
                 <li><b>3</b><span>完成支付。</span></li>
               </ol>
@@ -3920,15 +3641,6 @@ sh ssh-nradio-plugin-installer.sh</code>
                 <strong>持续更新</strong>
                 <span>当前公开里程碑整理到 V2.0.7。</span>
               </div>
-              <div>
-                <strong>持续追加</strong>
-                <span>以后有新版本，会继续直接追加在这里。</span>
-              </div>
-            </div>
-
-            <div class="history-note-card">
-              <strong>更新方式</strong>
-              后续版本继续追加在当前时间线末尾，默认下载入口保持为正式脚本。
             </div>
           </section>
 
@@ -4220,34 +3932,6 @@ sh ssh-nradio-plugin-installer.sh</code>
           </section>
         </div>
 
-        <section class="closing" aria-label="补充说明">
-          <div>
-            <strong>后续发版会继续追加到这条时间线</strong>
-            <p>
-              当前已经把之前主脚本里明确留下记录的版本节点整理进来，后续继续沿着这份时间线往下追加。
-            </p>
-          </div>
-
-          <div class="closing-note">
-            当前页面保留下载入口、安装提醒和版本时间线。脚本功能免费使用，自愿支持不影响任何功能。
-          </div>
-        </section>
-
-        <section class="next-actions" aria-label="页面闭环入口">
-          <a href="#history">
-            <b>查看版本时间线</b>
-            <span>从 V1.0.0 到 V2.0.7 的关键节点都整理在这里。</span>
-          </a>
-          <a href="#wechat">
-            <b>微信支持入口</b>
-            <span>二维码入口与脚本下载入口分开显示。</span>
-          </a>
-        </section>
-
-        <footer class="page-signature">
-          <div><b>NRadio Plugin Tool</b><br>更新记录、SSH 安装和支持入口集中在同一个页面。</div>
-          <div>当前版本：V2.0.7 / 新增 NRadio_C8-668 设备支持 / 支持机型扩展为 5 款</div>
-        </footer>
       </div>
     </section>
   </main>
