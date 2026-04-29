@@ -16,6 +16,8 @@
       --cyan-400: #5ee7f2;
       --blue-700: #2069c9;
       --amber-500: #f1c75b;
+      --lime-300: #bcf77d;
+      --coral-400: #ff9b73;
       --steel-900: #0d1c24;
       --steel-800: #122934;
       --mint-100: #e8f9ee;
@@ -50,13 +52,18 @@
       min-height: 100%;
     }
 
+    html {
+      background: #041713;
+    }
+
     body {
       font-family: "HarmonyOS Sans SC", "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
       color: var(--ink-950);
       background:
-        linear-gradient(118deg, rgba(94, 231, 242, 0.15), transparent 32%),
-        linear-gradient(252deg, rgba(32, 105, 201, 0.18), transparent 42%),
-        linear-gradient(180deg, #061611 0, #07352e 14rem, #0c6b4e 31rem, #20aa69 43rem, #dfeee7 58rem, var(--cream-50) 100%);
+        linear-gradient(126deg, rgba(188, 247, 125, 0.18), transparent 28%),
+        linear-gradient(232deg, rgba(94, 231, 242, 0.20), transparent 40%),
+        linear-gradient(306deg, rgba(255, 155, 115, 0.12), transparent 48%),
+        linear-gradient(180deg, #041713 0, #073531 15rem, #0a7657 34rem, #2dbc79 48rem, #dcefe5 66rem, var(--cream-50) 100%);
       overflow-x: hidden;
     }
 
@@ -71,20 +78,51 @@
     body::before {
       inset: 0;
       background-image:
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-        linear-gradient(120deg, transparent 0 38%, rgba(94, 231, 242, 0.055) 38% 39%, transparent 39% 100%);
-      background-size: 64px 64px;
+        linear-gradient(123deg, transparent 0 36%, rgba(94, 231, 242, 0.065) 36% 37%, transparent 37% 100%),
+        linear-gradient(74deg, transparent 0 58%, rgba(241, 199, 91, 0.055) 58% 59%, transparent 59% 100%);
+      background-size: 58px 58px, 58px 58px, 320px 320px, 420px 420px;
       mask-image: linear-gradient(180deg, #000 0, #000 34rem, transparent 62rem);
-      opacity: 0.46;
+      opacity: 0.52;
     }
 
     body::after {
       inset: 0;
       background:
         linear-gradient(155deg, rgba(255, 255, 255, 0.13), transparent 36%),
-        linear-gradient(0deg, rgba(255, 255, 255, 0.72) 0, transparent 24rem);
+        linear-gradient(0deg, rgba(255, 255, 255, 0.62) 0, transparent 32rem);
       opacity: 0.58;
+    }
+
+    .aurora-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 0.86;
+    }
+
+    .aurora-layer::before,
+    .aurora-layer::after {
+      content: "";
+      position: absolute;
+      inset: -24% -18%;
+      background:
+        linear-gradient(112deg, transparent 0 28%, rgba(94, 231, 242, 0.14) 34%, transparent 43% 100%),
+        linear-gradient(78deg, transparent 0 44%, rgba(188, 247, 125, 0.13) 49%, transparent 57% 100%),
+        linear-gradient(151deg, transparent 0 52%, rgba(255, 155, 115, 0.08) 56%, transparent 64% 100%);
+      filter: blur(0.2px);
+      transform: translate3d(0, 0, 0) rotate(-3deg);
+      animation: auroraSweep 18s ease-in-out infinite alternate;
+    }
+
+    .aurora-layer::after {
+      opacity: 0.55;
+      transform: translate3d(-5%, 2%, 0) rotate(7deg);
+      animation-duration: 23s;
+      animation-direction: alternate-reverse;
     }
 
     .scroll-progress {
@@ -135,16 +173,18 @@
       top: 18px;
       z-index: 20;
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 8px;
       padding: 8px;
       border-radius: 999px;
       background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent),
-        rgba(4, 31, 28, 0.72);
-      border: 1px solid rgba(220, 255, 244, 0.18);
-      box-shadow: 0 18px 48px rgba(5, 43, 22, 0.18);
-      backdrop-filter: blur(18px);
+        linear-gradient(135deg, rgba(188, 247, 125, 0.11), transparent 34%),
+        linear-gradient(255deg, rgba(94, 231, 242, 0.14), transparent 44%),
+        rgba(3, 28, 25, 0.78);
+      border: 1px solid rgba(220, 255, 244, 0.24);
+      box-shadow: 0 22px 58px rgba(2, 34, 31, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(22px) saturate(1.14);
       transform: translateX(-50%);
       animation: navDrop 0.7s ease-out both;
     }
@@ -184,9 +224,10 @@
       padding: 128px 0 154px;
       overflow: hidden;
       background:
-        linear-gradient(145deg, rgba(94, 231, 242, 0.13), transparent 36%),
-        linear-gradient(220deg, rgba(32, 105, 201, 0.17), transparent 44%),
-        linear-gradient(180deg, rgba(5, 28, 21, 0.97) 0%, rgba(8, 74, 63, 0.94) 42%, rgba(22, 185, 102, 0.70) 74%, rgba(225, 241, 232, 0) 100%);
+        linear-gradient(118deg, rgba(188, 247, 125, 0.17), transparent 30%),
+        linear-gradient(216deg, rgba(94, 231, 242, 0.22), transparent 47%),
+        linear-gradient(300deg, rgba(255, 155, 115, 0.10), transparent 48%),
+        linear-gradient(180deg, rgba(3, 23, 21, 0.98) 0%, rgba(5, 56, 51, 0.95) 38%, rgba(17, 143, 95, 0.76) 72%, rgba(5, 68, 55, 0.98) 100%);
     }
 
     .hero::before {
@@ -195,9 +236,11 @@
       inset: 0;
       pointer-events: none;
       background:
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 34px),
-        linear-gradient(110deg, transparent 0 48%, rgba(241, 199, 91, 0.08) 48% 49%, transparent 49% 100%);
-      opacity: 0.42;
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.052) 0 1px, transparent 1px 34px),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 34px),
+        linear-gradient(110deg, transparent 0 48%, rgba(241, 199, 91, 0.11) 48% 49%, transparent 49% 100%),
+        linear-gradient(64deg, transparent 0 58%, rgba(94, 231, 242, 0.10) 58% 59%, transparent 59% 100%);
+      opacity: 0.50;
       mask-image: linear-gradient(180deg, #000 0, #000 44rem, transparent 70rem);
     }
 
@@ -210,7 +253,7 @@
       height: 58vh;
       pointer-events: none;
       background:
-        linear-gradient(180deg, rgba(238, 245, 239, 0) 0%, rgba(238, 245, 239, 0.22) 42%, rgba(238, 245, 239, 0.78) 74%, var(--cream-50) 100%);
+        linear-gradient(180deg, rgba(238, 245, 239, 0) 0%, rgba(94, 231, 242, 0.06) 44%, rgba(5, 68, 55, 0.72) 100%);
       z-index: 0;
     }
 
@@ -218,8 +261,8 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: minmax(0, 1.04fr) 468px;
-      gap: 34px;
+      grid-template-columns: minmax(0, 1.08fr) 468px;
+      gap: 38px;
       align-items: start;
     }
 
@@ -237,12 +280,13 @@
       height: 520px;
       left: -110px;
       bottom: -160px;
-      border-radius: 58px;
-      border: 1px solid rgba(220, 255, 244, 0.12);
+      border-radius: 72px;
+      border: 1px solid rgba(220, 255, 244, 0.15);
       box-shadow:
-        inset 0 0 0 48px rgba(220, 255, 244, 0.025),
-        inset 0 0 0 112px rgba(220, 255, 244, 0.018);
-      transform: rotate(-10deg);
+        inset 0 0 0 42px rgba(220, 255, 244, 0.030),
+        inset 0 0 0 118px rgba(94, 231, 242, 0.024),
+        0 34px 90px rgba(6, 52, 37, 0.15);
+      transform: rotate(-13deg);
     }
 
     .hero-shell::after {
@@ -250,8 +294,10 @@
       height: 220px;
       right: 420px;
       top: 12px;
-      border-radius: 34px;
-      background: linear-gradient(135deg, rgba(220, 255, 232, 0.2), rgba(22, 184, 200, 0.08));
+      border-radius: 42px;
+      background:
+        linear-gradient(135deg, rgba(220, 255, 232, 0.22), rgba(94, 231, 242, 0.10), rgba(255, 155, 115, 0.055));
+      border: 1px solid rgba(220, 255, 244, 0.10);
       filter: blur(1px);
       transform: rotate(16deg);
       animation: pulse 9s ease-in-out infinite;
@@ -259,19 +305,24 @@
 
     .hero-copy {
       position: relative;
+      grid-column: 1;
+      grid-row: 1;
       display: grid;
       gap: 24px;
       align-content: center;
       max-width: 900px;
-      padding: 40px 44px 38px;
-      border-radius: 34px;
+      padding: 44px 48px 42px;
+      border-radius: 42px;
       background:
-        linear-gradient(145deg, rgba(7, 31, 29, 0.78), rgba(8, 78, 57, 0.42)),
-        linear-gradient(90deg, rgba(94, 231, 242, 0.08), transparent 36%, rgba(241, 199, 91, 0.045)),
-        rgba(255, 255, 255, 0.045);
-      border: 1px solid rgba(220, 255, 244, 0.18);
-      box-shadow: 0 34px 92px rgba(5, 46, 39, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.075);
-      backdrop-filter: blur(18px);
+        linear-gradient(145deg, rgba(5, 24, 23, 0.86), rgba(8, 80, 65, 0.50)),
+        linear-gradient(106deg, rgba(188, 247, 125, 0.13), transparent 30%, rgba(94, 231, 242, 0.11) 66%, rgba(255, 155, 115, 0.05)),
+        rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(220, 255, 244, 0.24);
+      box-shadow:
+        0 42px 110px rgba(2, 35, 31, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.11),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(22px) saturate(1.12);
       overflow: hidden;
       animation: rise 0.85s ease-out both;
     }
@@ -281,20 +332,20 @@
       position: absolute;
       right: -90px;
       top: -120px;
-      width: 260px;
-      height: 260px;
-      border-radius: 46px;
+      width: 320px;
+      height: 320px;
+      border-radius: 58px;
       background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.14), transparent 62%),
-        linear-gradient(90deg, rgba(94, 231, 242, 0.10), transparent);
-      transform: rotate(18deg);
+        linear-gradient(135deg, rgba(255, 255, 255, 0.17), transparent 58%),
+        linear-gradient(90deg, rgba(94, 231, 242, 0.13), rgba(188, 247, 125, 0.055), transparent);
+      transform: rotate(21deg);
       pointer-events: none;
     }
 
     .hero-copy .surface-grid {
       position: absolute;
       inset: 0;
-      opacity: 0.12;
+      opacity: 0.16;
       pointer-events: none;
       background-image:
         linear-gradient(rgba(255, 255, 255, 0.28) 1px, transparent 1px),
@@ -309,11 +360,11 @@
     }
 
     .hero-copy::after {
-        content: "V2.0.3";
+      content: "V2.0.5";
       position: absolute;
       right: 28px;
-      bottom: 8px;
-      color: rgba(255, 255, 255, 0.06);
+      bottom: 2px;
+      color: rgba(255, 255, 255, 0.075);
       font-family: "DIN Alternate", "Bahnschrift", sans-serif;
       font-size: clamp(92px, 11vw, 176px);
       line-height: 1;
@@ -347,7 +398,9 @@
       font-size: clamp(66px, 7vw, 112px);
       line-height: 0.98;
       letter-spacing: 0;
-      text-shadow: 0 16px 42px rgba(0, 0, 0, 0.26);
+      text-shadow:
+        0 16px 42px rgba(0, 0, 0, 0.34),
+        0 0 40px rgba(94, 231, 242, 0.12);
     }
 
     .lead {
@@ -356,6 +409,7 @@
       color: rgba(255, 255, 255, 0.9);
       font-size: clamp(18px, 1.8vw, 22px);
       line-height: 1.74;
+      overflow-wrap: anywhere;
     }
 
     .hero-tags {
@@ -398,11 +452,14 @@
       min-height: 62px;
       padding: 12px 13px;
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.075);
-      border: 1px solid rgba(220, 255, 244, 0.11);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(94, 231, 242, 0.045)),
+        rgba(255, 255, 255, 0.052);
+      border: 1px solid rgba(220, 255, 244, 0.15);
       color: rgba(255, 255, 255, 0.78);
       font-size: 12px;
       line-height: 1.45;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
 
     .hero-status b {
@@ -424,7 +481,8 @@
       transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
     }
 
-    .hero-links a:first-child {
+    .hero-links a:first-child,
+    .hero-links a.hero-github {
       color: #06341d;
       background: linear-gradient(135deg, #d8fff0, #ffffff);
       border-color: rgba(255, 255, 255, 0.62);
@@ -448,12 +506,12 @@
       position: relative;
       min-height: 66px;
       padding: 13px 14px 13px 38px;
-      border-radius: 18px;
+      border-radius: 20px;
       color: rgba(232, 255, 240, 0.78);
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(94, 231, 242, 0.035)),
+        linear-gradient(145deg, rgba(188, 247, 125, 0.10), rgba(94, 231, 242, 0.05), rgba(255, 255, 255, 0.055)),
         rgba(4, 31, 26, 0.20);
-      border: 1px solid rgba(220, 255, 244, 0.12);
+      border: 1px solid rgba(220, 255, 244, 0.16);
       font-size: 12px;
       line-height: 1.45;
       overflow: hidden;
@@ -527,12 +585,12 @@
       display: grid;
       gap: 16px;
       padding: 22px 22px 20px;
-      border-radius: 26px;
+      border-radius: 30px;
       background:
-        linear-gradient(135deg, rgba(221, 255, 234, 0.16), rgba(22, 184, 200, 0.08)),
-        rgba(6, 37, 20, 0.2);
-      border: 1px solid rgba(221, 255, 234, 0.18);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        linear-gradient(135deg, rgba(188, 247, 125, 0.15), rgba(94, 231, 242, 0.105), rgba(255, 155, 115, 0.04)),
+        rgba(6, 37, 20, 0.24);
+      border: 1px solid rgba(221, 255, 234, 0.22);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 20px 48px rgba(2, 35, 31, 0.20);
       overflow: hidden;
     }
 
@@ -621,10 +679,12 @@
       min-height: 34px;
       padding: 0 12px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(188, 247, 125, 0.055)),
+        rgba(255, 255, 255, 0.07);
       color: rgba(255, 255, 255, 0.82);
       font-size: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.11);
     }
 
     .hero-checks {
@@ -639,9 +699,9 @@
       padding: 12px 12px 12px 15px;
       border-radius: 18px;
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.045)),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(94, 231, 242, 0.050), rgba(188, 247, 125, 0.035)),
         rgba(5, 42, 27, 0.18);
-      border: 1px solid rgba(221, 255, 234, 0.12);
+      border: 1px solid rgba(221, 255, 234, 0.16);
       color: rgba(255, 255, 255, 0.78);
       font-size: 12px;
       line-height: 1.55;
@@ -665,23 +725,36 @@
     }
 
     .release-cards {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      position: relative;
+      display: flex;
       gap: 12px;
       align-items: stretch;
+      margin: 2px -6px 0;
+      padding: 2px 6px 14px;
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      scroll-snap-type: inline mandatory;
+      scroll-margin-top: 110px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(216, 255, 240, 0.26) rgba(216, 255, 240, 0.06);
     }
 
     .release-card {
       position: relative;
-      min-height: 118px;
+      flex: 0 0 clamp(218px, 18vw, 268px);
+      display: grid;
+      align-content: start;
+      min-height: 156px;
       padding: 16px;
       border-radius: 22px;
       background:
-        linear-gradient(155deg, rgba(255, 255, 255, 0.12), rgba(22, 184, 200, 0.045)),
-        rgba(4, 31, 26, 0.18);
-      border: 1px solid rgba(220, 255, 244, 0.12);
+        linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(94, 231, 242, 0.055), rgba(188, 247, 125, 0.035)),
+        rgba(4, 31, 26, 0.22);
+      border: 1px solid rgba(220, 255, 244, 0.16);
       overflow: hidden;
-      transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+      scroll-snap-align: start;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+      transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
     }
 
     .release-card::after {
@@ -700,17 +773,34 @@
     .release-card:hover {
       transform: translateY(-4px);
       border-color: rgba(216, 255, 230, 0.24);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.075), 0 18px 42px rgba(2, 35, 31, 0.20);
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(22, 184, 200, 0.07)),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(94, 231, 242, 0.08), rgba(188, 247, 125, 0.045)),
         rgba(4, 31, 26, 0.24);
     }
 
     .release-card-current {
+      flex-basis: clamp(286px, 31vw, 430px);
+      min-height: 172px;
       border-color: rgba(157, 253, 208, 0.28);
       background:
-        linear-gradient(155deg, rgba(232, 255, 240, 0.18), rgba(22, 184, 200, 0.08)),
+        linear-gradient(135deg, rgba(216, 255, 240, 0.25), rgba(94, 231, 242, 0.12), rgba(255, 155, 115, 0.045)),
+        linear-gradient(270deg, rgba(255, 255, 255, 0.12), transparent 58%),
         rgba(4, 31, 26, 0.24);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 38px rgba(5, 46, 24, 0.12);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.10),
+        inset 0 0 0 1px rgba(216, 255, 240, 0.06),
+        0 24px 54px rgba(5, 46, 24, 0.18);
+    }
+
+    .release-card-current::after {
+      right: -42px;
+      bottom: -54px;
+      width: 142px;
+      height: 188px;
+      border-radius: 42px;
+      background:
+        linear-gradient(180deg, rgba(216, 255, 240, 0.30), rgba(94, 231, 242, 0.10), transparent 74%);
     }
 
     .release-card-current::before {
@@ -748,15 +838,21 @@
       display: block;
       margin-top: 12px;
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       line-height: 1.35;
     }
 
     .release-card p {
       margin: 8px 0 0;
       color: rgba(255, 255, 255, 0.72);
+      font-size: 11px;
+      line-height: 1.66;
+    }
+
+    .release-card-current p {
+      max-width: 34em;
+      color: rgba(255, 255, 255, 0.78);
       font-size: 12px;
-      line-height: 1.7;
     }
 
     .install-card {
@@ -1225,17 +1321,19 @@
       position: relative;
       display: grid;
       gap: 16px;
-      min-height: 318px;
+      min-height: 294px;
       padding: 22px;
-      border-radius: 28px;
+      border-radius: 34px;
       overflow: hidden;
       color: rgba(255, 255, 255, 0.82);
       background:
-        linear-gradient(145deg, rgba(232, 255, 240, 0.16), rgba(94, 231, 242, 0.07), rgba(241, 199, 91, 0.035)),
-        rgba(2, 24, 13, 0.22);
-      border: 1px solid rgba(220, 255, 244, 0.18);
-      box-shadow: 0 24px 54px rgba(5, 46, 24, 0.14);
-      backdrop-filter: blur(16px);
+        linear-gradient(142deg, rgba(188, 247, 125, 0.16), transparent 34%),
+        linear-gradient(230deg, rgba(94, 231, 242, 0.14), transparent 44%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.10), transparent),
+        rgba(2, 24, 13, 0.26);
+      border: 1px solid rgba(220, 255, 244, 0.23);
+      box-shadow: 0 28px 68px rgba(2, 35, 31, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(20px) saturate(1.12);
     }
 
     .release-panel::before {
@@ -1244,12 +1342,13 @@
       inset: 18px 18px auto auto;
       width: 118px;
       height: 118px;
-      border-radius: 28px;
-      border: 1px solid rgba(232, 255, 240, 0.13);
+      border-radius: 34px;
+      border: 1px solid rgba(232, 255, 240, 0.16);
       box-shadow:
-        inset 0 0 0 18px rgba(232, 255, 240, 0.03),
-        inset 0 0 0 38px rgba(94, 231, 242, 0.026);
-      transform: rotate(8deg);
+        inset 0 0 0 16px rgba(232, 255, 240, 0.035),
+        inset 0 0 0 38px rgba(94, 231, 242, 0.030),
+        0 18px 48px rgba(94, 231, 242, 0.08);
+      transform: rotate(10deg);
       pointer-events: none;
     }
 
@@ -1288,7 +1387,7 @@
       padding: 0 14px;
       border-radius: 999px;
       color: #06341d;
-      background: #e8fff0;
+      background: linear-gradient(135deg, #d8fff0, #ffffff);
       font-size: 14px;
       font-weight: 900;
       white-space: nowrap;
@@ -1314,9 +1413,11 @@
       gap: 4px;
       min-height: 74px;
       padding: 13px;
-      border-radius: 18px;
-      background: rgba(216, 255, 240, 0.075);
-      border: 1px solid rgba(220, 255, 244, 0.12);
+      border-radius: 20px;
+      background:
+        linear-gradient(145deg, rgba(216, 255, 240, 0.10), rgba(94, 231, 242, 0.045)),
+        rgba(216, 255, 240, 0.055);
+      border: 1px solid rgba(220, 255, 244, 0.15);
       overflow: hidden;
     }
 
@@ -1351,7 +1452,8 @@
       margin-top: auto;
     }
 
-    .release-panel-foot span {
+    .release-panel-foot span,
+    .release-panel-foot a {
       display: inline-flex;
       align-items: center;
       min-height: 30px;
@@ -1362,6 +1464,19 @@
       border: 1px solid rgba(220, 255, 244, 0.13);
       font-size: 12px;
       font-weight: 800;
+      text-decoration: none;
+    }
+
+    .release-panel-foot a {
+      color: #06341d;
+      background: linear-gradient(135deg, #d8fff0, #ffffff);
+      border-color: rgba(255, 255, 255, 0.62);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 14px 28px rgba(5, 46, 24, 0.18);
+    }
+
+    .release-panel-foot a:hover {
+      background: linear-gradient(135deg, #e7fff7, #ffffff);
+      transform: translateY(-1px);
     }
 
     .publish-card {
@@ -1597,6 +1712,8 @@
 
     .support-side {
       position: relative;
+      grid-column: 2;
+      grid-row: 1 / span 2;
       justify-self: end;
       width: 100%;
       max-width: 468px;
@@ -1885,6 +2002,209 @@
       border-radius: 50%;
       background: #18c963;
       box-shadow: 0 0 0 7px rgba(24, 201, 99, 0.12);
+    }
+
+    .feature-board {
+      position: relative;
+      z-index: 2;
+      grid-column: 1;
+      grid-row: 2;
+      padding: 0;
+      margin-top: -56px;
+    }
+
+    .feature-shell {
+      position: relative;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 22px;
+      width: 100%;
+      padding: 24px;
+      border-radius: 38px;
+      color: #ecfff3;
+      background:
+        linear-gradient(135deg, rgba(241, 199, 91, 0.12), transparent 24%),
+        linear-gradient(220deg, rgba(94, 231, 242, 0.16), transparent 36%),
+        linear-gradient(56deg, rgba(188, 247, 125, 0.11), transparent 44%),
+        linear-gradient(180deg, rgba(5, 28, 26, 0.94), rgba(6, 67, 50, 0.88)),
+        rgba(4, 31, 26, 0.86);
+      border: 1px solid rgba(220, 255, 244, 0.22);
+      box-shadow: 0 38px 98px rgba(2, 35, 31, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      backdrop-filter: blur(22px) saturate(1.10);
+      scroll-margin-top: 96px;
+    }
+
+    .feature-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(90deg, #000 0, #000 70%, transparent 100%);
+      opacity: 0.42;
+    }
+
+    .feature-intro,
+    .feature-grid,
+    .compat-strip {
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-intro {
+      display: grid;
+      align-content: start;
+      gap: 14px;
+      padding: 4px 0;
+    }
+
+    .feature-kicker {
+      color: rgba(232, 255, 240, 0.66);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .feature-intro h2 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(34px, 3.5vw, 54px);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .feature-tile {
+      position: relative;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+      min-height: 136px;
+      padding: 18px;
+      border-radius: 26px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(94, 231, 242, 0.055), rgba(188, 247, 125, 0.035)),
+        rgba(3, 28, 21, 0.36);
+      border: 1px solid rgba(220, 255, 244, 0.16);
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+      transition: transform 0.28s ease, border-color 0.28s ease, background 0.28s ease;
+    }
+
+    .feature-tile::before {
+      content: attr(data-code);
+      position: absolute;
+      right: 14px;
+      top: 10px;
+      color: rgba(232, 255, 240, 0.10);
+      font-family: "DIN Alternate", "Bahnschrift", sans-serif;
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .feature-tile:hover {
+      transform: translateY(-4px);
+      border-color: rgba(216, 255, 230, 0.30);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.17), rgba(94, 231, 242, 0.080), rgba(241, 199, 91, 0.055)),
+        rgba(3, 28, 21, 0.42);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.075), 0 18px 42px rgba(2, 35, 31, 0.16);
+    }
+
+    .feature-tile strong {
+      display: block;
+      padding-right: 48px;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.28;
+      letter-spacing: 0;
+    }
+
+    .feature-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: auto;
+    }
+
+    .feature-tags span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 0 10px;
+      border-radius: 999px;
+      color: #e8fff0;
+      background:
+        linear-gradient(135deg, rgba(216, 255, 240, 0.10), rgba(94, 231, 242, 0.045)),
+        rgba(216, 255, 240, 0.07);
+      border: 1px solid rgba(220, 255, 244, 0.13);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .compat-strip {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .compat-item {
+      position: relative;
+      display: grid;
+      gap: 6px;
+      min-height: 86px;
+      padding: 15px 16px;
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, rgba(241, 199, 91, 0.08), transparent 58%),
+        rgba(216, 255, 240, 0.06);
+      border: 1px solid rgba(220, 255, 244, 0.11);
+      overflow: hidden;
+    }
+
+    .compat-item::after {
+      content: "";
+      position: absolute;
+      right: -20px;
+      top: -34px;
+      width: 76px;
+      height: 118px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(94, 231, 242, 0.12), transparent);
+      transform: rotate(20deg);
+      pointer-events: none;
+    }
+
+    .compat-item b,
+    .compat-item span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .compat-item b {
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .compat-item span {
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 12px;
+      line-height: 1.65;
     }
 
     .history {
@@ -2348,6 +2668,15 @@
       }
     }
 
+    @keyframes auroraSweep {
+      from {
+        transform: translate3d(-3%, -1%, 0) rotate(-3deg);
+      }
+      to {
+        transform: translate3d(4%, 2%, 0) rotate(5deg);
+      }
+    }
+
     @media (max-width: 1120px) {
       .container {
         width: min(100%, calc(100% - 36px));
@@ -2359,6 +2688,7 @@
       }
 
       .hero-shell,
+      .feature-shell,
       .history-top,
       .closing {
         grid-template-columns: 1fr;
@@ -2376,10 +2706,7 @@
         top: 12px;
         width: calc(100% - 28px);
         justify-content: center;
-      }
-
-      .release-cards {
-        grid-template-columns: 1fr;
+        border-radius: 24px;
       }
 
       .hero-status,
@@ -2405,6 +2732,24 @@
 
       .support-promise {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .feature-board {
+        margin-top: -46px;
+        padding-bottom: 54px;
+      }
+
+      .feature-shell {
+        padding: 28px;
+        gap: 26px;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .compat-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .history-top {
@@ -2456,6 +2801,21 @@
     }
 
     @media (max-width: 760px) {
+      body {
+        background:
+          linear-gradient(126deg, rgba(188, 247, 125, 0.16), transparent 30%),
+          linear-gradient(232deg, rgba(94, 231, 242, 0.18), transparent 44%),
+          linear-gradient(306deg, rgba(255, 155, 115, 0.10), transparent 50%),
+          linear-gradient(180deg, #041713 0, #06312d 24rem, #09604f 58rem, #0c8a62 88rem, #dcefe5 118rem, var(--cream-50) 100%);
+      }
+
+      body::after {
+        background:
+          linear-gradient(155deg, rgba(255, 255, 255, 0.10), transparent 38%),
+          linear-gradient(0deg, rgba(255, 255, 255, 0.22) 0, transparent 54rem);
+        opacity: 0.40;
+      }
+
       .container {
         width: calc(100% - 28px);
       }
@@ -2474,6 +2834,35 @@
         border-radius: 28px;
       }
 
+      .floating-nav a,
+      .floating-nav span {
+        min-height: 30px;
+        padding: 0 10px;
+        font-size: 12px;
+      }
+
+      .floating-nav span {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 104px;
+        padding-bottom: 102px;
+        min-height: 100svh;
+        overflow: visible;
+      }
+
+      .hero::after {
+        display: none;
+      }
+
+      .hero-copy,
+      .support-side,
+      .history-shell,
+      .feature-shell {
+        min-width: 0;
+      }
+
       .hero-latest-top {
         flex-direction: column;
         align-items: flex-start;
@@ -2481,6 +2870,19 @@
 
       .hero-checks {
         grid-template-columns: 1fr;
+      }
+
+      .release-cards {
+        margin: 4px -14px 0;
+        padding: 2px 14px 16px;
+      }
+
+      .release-card {
+        flex-basis: min(78vw, 306px);
+      }
+
+      .release-card-current {
+        flex-basis: min(86vw, 342px);
       }
 
       .signal-strip span {
@@ -2524,6 +2926,24 @@
       }
 
       .publish-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-board {
+        margin-top: -24px;
+        padding-bottom: 42px;
+      }
+
+      .feature-shell {
+        padding: 22px;
+        border-radius: 28px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .compat-strip {
         grid-template-columns: 1fr;
       }
 
@@ -2579,12 +2999,14 @@
 </head>
 <body>
   <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="aurora-layer" aria-hidden="true"></div>
   <main class="site">
     <nav class="floating-nav" aria-label="页面快速导航">
+      <a href="#features">功能全景</a>
       <a href="#history">更新记录</a>
       <a href="#install">安装方式</a>
       <a href="#support">自愿支持</a>
-      <span>V2.0.3</span>
+      <span>V2.0.3 / V2.0.5</span>
     </nav>
 
     <section class="hero">
@@ -2594,33 +3016,36 @@
           <div class="eyebrow">NRadio Plugin Assistant</div>
           <h1>NRadio<br>插件助手</h1>
           <p class="lead">
-            面向 NRadio 官方 NROS 设备的 SSH 插件安装助手。
-            当前正式版 <strong>V2.0.3</strong> 已切换为默认下载入口。
+            NRadio 官方 NROS 设备 SSH 插件安装脚本。
+            最新版本 <strong>V2.0.3</strong> 可下载；V2.0.5 即将发布。
           </p>
 
           <div class="hero-tags">
-            <span>当前正式 V2.0.3</span>
+            <span>最新版本 V2.0.3</span>
+            <span>V2.0.5 即将发布</span>
             <span>默认脚本入口</span>
-            <span>GitHub / Vercel 发布</span>
+            <span>公开下载入口</span>
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
-            <span><b>当前版本</b>V2.0.3 正式脚本</span>
+            <span><b>最新版本</b>V2.0.3 正式脚本</span>
+            <span><b>即将发布</b>V2.0.5</span>
             <span><b>安装方式</b>SSH 终端执行</span>
             <span><b>入口状态</b>单一下载入口</span>
-            <span><b>菜单结构</b>5 个功能分类</span>
           </div>
 
-          <div class="hero-links">
-            <a href="#support">下载 V2.0.3</a>
-            <a href="#install">安装方式</a>
-            <a href="#history">更新记录</a>
-          </div>
+        <div class="hero-links">
+          <a href="#support">立即下载脚本</a>
+          <a class="hero-github" href="https://github.com/561410590/ssh-nradio-plugin-installer" target="_blank" rel="noopener">GitHub 项目</a>
+          <a href="#install">安装方式</a>
+          <a href="#history">更新记录</a>
+        </div>
 
           <div class="signal-strip" aria-label="当前公网页状态">
-            <span><b>GitHub Main</b>脚本与页面已同步</span>
-            <span><b>Vercel Ready</b>Production 部署在线</span>
-            <span><b>HTTPS Domain</b>nradio.mayebano.shop</span>
+            <span><b>公开入口</b>nradio.mayebano.shop</span>
+            <span><b>最新版本</b>V2.0.3</span>
+            <span><b>即将发布</b>V2.0.5</span>
+            <span><b>下载文件</b>ssh-nradio-plugin-installer.sh</span>
           </div>
 
           <div class="hero-summary" aria-label="关键数字">
@@ -2639,18 +3064,18 @@
           </div>
 
           <div class="hero-note">
-            默认入口只保留当前正式脚本。旧 beta 独立下载通道已取消，后续版本继续沿用这条公开发布链路。
+            默认入口只保留当前正式脚本；旧 beta 独立下载通道已取消。
           </div>
 
           <section class="hero-latest" aria-label="当前里程碑说明">
             <div class="hero-latest-top">
-              <div class="hero-latest-label">当前里程碑</div>
-              <div class="hero-latest-version">V2.0.3</div>
+              <div class="hero-latest-label">即将发布</div>
+              <div class="hero-latest-version">V2.0.5</div>
             </div>
-            <strong>当前正式脚本已切换到 V2.0.3</strong>
+            <strong>V2.0.5：即将发布</strong>
             <p>
-              V2.0.3 使用默认文件名下载，继续保留功能分类菜单；风扇控制新增 Smart 多段温控、温度来源、过热保护和检测间隔，并对 C8-688 / C2000MAX 分机型写入默认策略。
-              页面只保留当前正式入口，历史版本记录继续放在时间线中。
+              OpenVPN 首屏快速状态读取；风扇控制写入 C8-688 / C2000MAX 分机型默认策略；
+              支持页补充主要功能、设备适配和下载入口。
             </p>
             <div class="hero-milestones">
               <span>V1.50.1 卸载提示对齐原厂</span>
@@ -2664,62 +3089,33 @@
               <span>V2.0.1 风扇控制支持 C2000MAX</span>
               <span>V2.0.2 入口链与提示收口</span>
               <span>V2.0.3 风扇控制增强</span>
-              <span>脚本发布日期 2026-04-29</span>
-              <span>支持页迁入 GitHub / Vercel</span>
+              <span>V2.0.5 OpenVPN / 风扇 / 发布页收口</span>
+              <span>脚本发布日期 2026-05-01</span>
+              <span>支持页迁入公开域名</span>
             </div>
             <div class="hero-checks" aria-label="当前发布状态">
               <span><b>公开入口</b>https://nradio.mayebano.shop/</span>
-              <span><b>发布状态</b>GitHub main 推送后由 Vercel 自动部署</span>
-              <span><b>脚本日期</b>2026-04-29</span>
+              <span><b>最新版本</b>V2.0.3</span>
+              <span><b>即将发布</b>V2.0.5 / 2026-05-01</span>
               <span><b>维护边界</b>旧版本下载入口已取消</span>
             </div>
           </section>
 
-          <div class="release-cards" aria-label="最新更新摘要">
-            <article class="release-card">
-              <b>V1.50.1</b>
-              <strong>卸载体验回到原厂口径</strong>
-              <p>确认框、卸载中、卸载完成提示统一走应用商店风格。</p>
+          <div class="release-cards" id="history" aria-label="最新更新摘要">
+            <article class="release-card release-card-current">
+              <b>V2.0.5</b>
+              <strong>OpenVPN 页面美化与快速打开</strong>
+              <p>OpenVPN 首屏快速打开；C8-688 使用 CPU / 10s / Smart 50% / 85°C，C2000MAX 使用 CPU+CPE 取高值 / 5s / Smart 30% / 80°C；支持页同步补上功能全景、设备适配和下载入口。</p>
             </article>
             <article class="release-card">
-              <b>V1.50.2</b>
-              <strong>图标缓存不再拖后腿</strong>
-              <p>图标 URL 带版本参数，避免 Web SSH / OpenVPN 继续显示旧图。</p>
+              <b>V2.0.3</b>
+              <strong>风扇控制增强</strong>
+              <p>新增温度来源、Smart 最低风速、多段温控阈值、过热保护和检测间隔；C8-688 与 C2000MAX 分机型写入默认策略。</p>
             </article>
             <article class="release-card">
-              <b>V1.50.3</b>
-              <strong>2~8 swap 链路去重</strong>
-              <p>重复安装会复用现有虚拟内存配置，不再堆 fstab.@swap。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.50.4</b>
-              <strong>ttyd 美化与 14 号风扇防误装</strong>
-              <p>Web SSH 改成更清晰的控制台界面，14 号仅允许 C8-688 继续安装。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.50.5</b>
-              <strong>OpenVPN Mk2 页面正式回写</strong>
-              <p>连接中枢和标准 OpenVPN 二级配置页统一暗色控制台风格，功能链路不动。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.60.0</b>
-              <strong>15 号应用商店美化独立成项</strong>
-              <p>应用卡片、状态徽标、后台标记和系统状态面板统一优化，独立执行不影响插件链路。</p>
-            </article>
-            <article class="release-card">
-              <b>V1.60.5</b>
-              <strong>稳定闭环脚本保留下载</strong>
-              <p>修复旧 CSS 残留、进度条占比、图标兜底和空描述问题，是当前稳定闭环版本。</p>
-            </article>
-            <article class="release-card">
-              <b>V2.0.0-beta</b>
-              <strong>分类菜单与加速器入口</strong>
-              <p>主菜单改为功能分类，奇游联机宝和雷神加速器并入总脚本，为 V2.0.0 正式版铺路。</p>
-            </article>
-            <article class="release-card">
-              <b>V2.0.0</b>
-              <strong>正式切换默认下载脚本</strong>
-              <p>默认脚本升级为 V2.0.0，保留分类菜单与加速器入口；加速器菜单改为正式入口。</p>
+              <b>V2.0.2</b>
+              <strong>入口链与提示收口</strong>
+              <p>FanControl 打开路由统一到当前页面，奇游和雷神阶段提示、依赖提示与官方脚本 SHA256 日志补齐。</p>
             </article>
             <article class="release-card">
               <b>V2.0.1</b>
@@ -2727,14 +3123,49 @@
               <p>14 号风扇控制门禁扩展到 C8-688 与 C2000MAX，菜单和安装提示同步更新。</p>
             </article>
             <article class="release-card">
-              <b>V2.0.2</b>
-              <strong>入口链与提示收口</strong>
-              <p>FanControl 打开路由统一到当前页面，奇游和雷神阶段提示、依赖提示与官方脚本 SHA256 日志补齐。</p>
+              <b>V2.0.0</b>
+              <strong>正式切换默认下载脚本</strong>
+              <p>默认脚本升级为 V2.0.0，保留分类菜单与加速器入口；加速器菜单改为正式入口。</p>
             </article>
-            <article class="release-card release-card-current">
-              <b>V2.0.3</b>
-              <strong>风扇控制增强</strong>
-              <p>Smart 模式支持多段温控、最低风速、温度来源、过热保护和检测间隔；C8-688 默认按 CPU 温度源与 10s 检测间隔写入，C2000MAX 保持 CPU/CPE 取高值与 12s 检测间隔。</p>
+            <article class="release-card">
+              <b>V2.0.0-beta</b>
+              <strong>分类菜单与加速器入口</strong>
+              <p>主菜单改为功能分类，奇游联机宝和雷神加速器并入总脚本，为 V2.0.0 正式版铺路。</p>
+            </article>
+            <article class="release-card">
+              <b>V1.60.5</b>
+              <strong>稳定闭环脚本保留下载</strong>
+              <p>修复旧 CSS 残留、进度条占比、图标兜底和空描述问题，是当前稳定闭环版本。</p>
+            </article>
+            <article class="release-card">
+              <b>V1.60.0</b>
+              <strong>15 号应用商店美化独立成项</strong>
+              <p>应用卡片、状态徽标、后台标记和系统状态面板统一优化，独立执行不影响插件链路。</p>
+            </article>
+            <article class="release-card">
+              <b>V1.50.5</b>
+              <strong>OpenVPN Mk2 页面正式回写</strong>
+              <p>连接中枢和标准 OpenVPN 二级配置页统一暗色控制台风格，功能链路不动。</p>
+            </article>
+            <article class="release-card">
+              <b>V1.50.4</b>
+              <strong>ttyd 美化与 14 号风扇防误装</strong>
+              <p>Web SSH 改成更清晰的控制台界面，14 号仅允许 C8-688 继续安装。</p>
+            </article>
+            <article class="release-card">
+              <b>V1.50.3</b>
+              <strong>2~8 swap 链路去重</strong>
+              <p>重复安装会复用现有虚拟内存配置，不再堆 fstab.@swap。</p>
+            </article>
+            <article class="release-card">
+              <b>V1.50.2</b>
+              <strong>图标缓存不再拖后腿</strong>
+              <p>图标 URL 带版本参数，避免 Web SSH / OpenVPN 继续显示旧图。</p>
+            </article>
+            <article class="release-card">
+              <b>V1.50.1</b>
+              <strong>卸载体验回到原厂口径</strong>
+              <p>确认框、卸载中、卸载完成提示统一走应用商店风格。</p>
             </article>
           </div>
 
@@ -2764,66 +3195,34 @@
           <section class="release-panel" aria-label="当前发布速览">
             <div class="release-panel-top">
               <div>
-                <div class="release-panel-kicker">Current Release</div>
-                <h2>公开发布速览</h2>
-              </div>
+              <div class="release-panel-kicker">最新版本</div>
+              <h2>V2.0.3 下载入口</h2>
+            </div>
               <div class="release-panel-version">V2.0.3</div>
             </div>
             <p>
-              当前公开入口由 GitHub main 分支发布，Vercel 承载，默认下载脚本为 V2.0.3。
+              当前公开下载为 V2.0.3；V2.0.5 即将发布。
             </p>
             <div class="release-panel-grid" aria-label="当前公开状态">
-              <span><b>默认脚本</b><em>V2.0.3 使用默认文件名下载</em></span>
+              <span><b>最新版本</b><em>V2.0.3 使用默认文件名下载</em></span>
+              <span><b>即将发布</b><em>V2.0.5</em></span>
               <span><b>旧版入口</b><em>旧 beta 独立下载入口已取消</em></span>
               <span><b>安装方式</b><em>打开 SSH 后在路由器终端执行</em></span>
-              <span><b>菜单结构</b><em>V2.0.3 默认进入功能分类</em></span>
               <span><b>风扇控制</b><em>C8-688 / C2000MAX 分机型默认策略</em></span>
               <span><b>加速器入口</b><em>奇游联机宝与雷神加速器为正式菜单</em></span>
-            </div>
-            <div class="release-panel-foot" aria-label="公开页状态">
-              <span>GitHub 开源</span>
-              <span>Vercel 承载</span>
-              <span>下载入口已开放</span>
-            </div>
-          </section>
-
-          <section class="publish-card" aria-label="公开发布链路">
-            <div class="publish-card-top">
-              <div>
-                <div class="publish-kicker">Public Delivery</div>
-                <h2>公开发布链路</h2>
-              </div>
-              <div class="publish-live">ONLINE</div>
-            </div>
-
-            <div class="publish-domain">
-              <span>当前公开域名</span>
-              <a href="https://nradio.mayebano.shop/" target="_blank" rel="noopener">https://nradio.mayebano.shop/</a>
-            </div>
-
-            <div class="publish-summary" aria-label="当前发布状态">
-              <span>GitHub 已同步</span>
-              <span>Vercel 已上线</span>
-              <span>HTTPS 可访问</span>
-            </div>
-
-            <div class="publish-flow" aria-label="维护发布流程">
-              <span>提交仓库<em>GitHub main 分支</em></span>
-              <span>自动构建<em>Vercel Production 部署</em></span>
-              <span>公网访问<em>nradio.mayebano.shop</em></span>
-            </div>
-
-            <div class="publish-actions">
-              <a href="https://github.com/561410590/ssh-nradio-plugin-installer" target="_blank" rel="noopener">查看 GitHub</a>
-              <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.3</a>
-            </div>
+          </div>
+          <div class="release-panel-foot" aria-label="公开页状态">
+            <a href="https://github.com/561410590/ssh-nradio-plugin-installer" target="_blank" rel="noopener">一键打开 GitHub 项目</a>
+            <span>公开域名</span>
+            <span>默认入口</span>
+          </div>
           </section>
 
           <section class="download-card" aria-label="最新脚本下载">
             <div class="download-main">
               <div>
-                <strong>安装教程</strong>
-                <span>推荐使用带 SSH 终端和 SFTP/SCP 文件管理的软件，先把脚本传到路由器 /root，再在终端执行。</span>
+                <strong>V2.0.3 下载与安装</strong>
+                <span>当前最新版本为 V2.0.3；推荐使用带 SSH 终端和 SFTP/SCP 文件管理的软件，先把脚本传到路由器 /root，再在终端执行。</span>
               </div>
               <div class="download-actions">
                 <a href="./ssh-nradio-plugin-installer.sh" download>下载 V2.0.3</a>
@@ -2831,8 +3230,8 @@
             </div>
             <div class="download-facts" aria-label="下载状态">
               <span><b>文件名</b><em>ssh-nradio-plugin-installer.sh</em></span>
-              <span><b>版本</b><em>V2.0.3</em></span>
-              <span><b>旧入口</b><em>已取消</em></span>
+              <span><b>最新版本</b><em>V2.0.3</em></span>
+              <span><b>即将发布</b><em>V2.0.5</em></span>
             </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
               <div class="download-section">
@@ -2919,10 +3318,89 @@ sh ssh-nradio-plugin-installer.sh</code>
             </div>
           </section>
         </aside>
+
+        <section class="feature-board" aria-label="脚本功能全景">
+          <div class="feature-shell" id="features">
+            <section class="feature-intro" aria-label="功能说明">
+              <div class="feature-kicker">功能概览</div>
+              <h2>主要功能</h2>
+            </section>
+
+            <div class="feature-grid">
+              <article class="feature-tile" data-code="01">
+                <strong>常用插件安装</strong>
+                <div class="feature-tags">
+                  <span>Web SSH</span>
+                  <span>OpenList</span>
+                  <span>AdGuardHome</span>
+                  <span>哈基米</span>
+                </div>
+              </article>
+              <article class="feature-tile" data-code="02">
+                <strong>网络与异地组网</strong>
+                <div class="feature-tags">
+                  <span>EasyTier</span>
+                  <span>ZeroTier</span>
+                  <span>OpenVPN</span>
+                </div>
+              </article>
+              <article class="feature-tile" data-code="03">
+                <strong>应用商店美化</strong>
+                <div class="feature-tags">
+                  <span>卡片视觉</span>
+                  <span>状态徽标</span>
+                  <span>只读面板</span>
+                </div>
+              </article>
+              <article class="feature-tile" data-code="04">
+                <strong>系统维护能力</strong>
+                <div class="feature-tags">
+                  <span>swap</span>
+                  <span>自检</span>
+                  <span>卸载链</span>
+                </div>
+              </article>
+              <article class="feature-tile" data-code="05">
+                <strong>风扇控制</strong>
+                <div class="feature-tags">
+                  <span>C8-688</span>
+                  <span>C2000MAX</span>
+                  <span>Smart PWM</span>
+                </div>
+              </article>
+              <article class="feature-tile" data-code="06">
+                <strong>游戏加速器入口</strong>
+                <div class="feature-tags">
+                  <span>奇游</span>
+                  <span>雷神</span>
+                  <span>状态读取</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="compat-strip" aria-label="设备与发布适配说明">
+              <div class="compat-item">
+                <b>支持机型</b>
+                <span>NRadio_C8-688、C5800-688、NBCPE、C2000MAX。</span>
+              </div>
+              <div class="compat-item">
+                <b>默认入口</b>
+                <span>ssh-nradio-plugin-installer.sh。</span>
+              </div>
+              <div class="compat-item">
+                <b>执行方式</b>
+                <span>开启 SSH 后上传到 /root，或在线下载执行。</span>
+              </div>
+              <div class="compat-item">
+                <b>维护原则</b>
+                <span>脚本内按菜单确认后执行。</span>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
-
-    <section class="history" id="history">
+    <section class="history" aria-hidden="true" hidden>
       <div class="container history-shell">
         <div class="history-top">
           <section class="history-intro" aria-label="时间线说明">
@@ -2938,8 +3416,8 @@ sh ssh-nradio-plugin-installer.sh</code>
                 <span>时间线起点，从 V1.0.0 首版闭环开始。</span>
               </div>
               <div>
-                <strong>2026-04-29</strong>
-                <span>当前公开里程碑整理到 V2.0.3。</span>
+                <strong>2026-04-26</strong>
+                <span>当前公开里程碑整理到 V2.0.5。</span>
               </div>
               <div>
                 <strong>持续追加</strong>
@@ -3012,7 +3490,7 @@ sh ssh-nradio-plugin-installer.sh</code>
                   <div class="version">V1.0.5</div>
                   <div class="entry-copy">
                     <strong>OpenList 与哈基米阶段完成收口</strong>
-                    <p>OpenList 安装、图标、应用商店残留清理完成收口；OpenClash 对外显示统一改成“哈基米”，按钮修复逻辑保留。</p>
+                    <p>OpenList 安装、图标、应用商店残留清理完成收口；哈基米显示口径与按钮修复逻辑保留。</p>
                   </div>
                 </article>
 
@@ -3215,12 +3693,18 @@ sh ssh-nradio-plugin-installer.sh</code>
                     <p>FanControl 应用商店打开路由统一为 nradioadv/system/fanctrl；奇游和雷神安装阶段号改为真实 3 阶段，补充官方脚本 SHA256 日志和雷神依赖失败提示。</p>
                   </div>
                 </article>
-
-                <article class="timeline-entry is-current">
+                <article class="timeline-entry">
                   <div class="version">V2.0.3</div>
                   <div class="entry-copy">
-                    <strong>风扇控制 Smart 多段增强</strong>
-                    <p>风扇控制新增温度来源、Smart 最低风速、30% / 50% / 80% / 100% 多段阈值、过热保护温度和检测间隔；C8-688 与 C2000MAX 分机型写入默认温度源和检测间隔。</p>
+                    <strong>风扇控制增强</strong>
+                    <p>风扇控制新增温度来源、Smart 最低风速、多段温控阈值、过热保护温度和检测间隔；C8-688 默认按 CPU 温度源与 10s 检测间隔写入，C2000MAX 保持 CPU/CPE 取高值与 12s 检测间隔，发布日期同步为 2026-04-29。</p>
+                  </div>
+                </article>
+                <article class="timeline-entry is-current">
+                  <div class="version">V2.0.5</div>
+                  <div class="entry-copy">
+                    <strong>OpenVPN、风扇策略与支持页收口</strong>
+                    <p>在 V2.0.3 基础上回写 OpenVPN 热更新成果：状态接口新增快速模式，页面先完成首屏绘制，再补完整诊断；连接中枢、状态卡和标准 OpenVPN 子页同步美化。风扇控制更新为 C8-688 使用 CPU 温度源、10s 检测、Smart 最低 50%、85°C 保护；C2000MAX 使用 CPU/CPE 取高值、5s 检测、Smart 最低 30%、80°C 保护。支持页同步补上功能全景、设备适配和下载入口。</p>
                   </div>
                 </article>
               </div>
@@ -3244,21 +3728,21 @@ sh ssh-nradio-plugin-installer.sh</code>
         <section class="next-actions" aria-label="页面闭环入口">
           <a href="#history">
             <b>查看版本时间线</b>
-            <span>从 V1.0.0 到 V2.0.3 的关键节点都整理在这里。</span>
+            <span>从 V1.0.0 到 V2.0.5 的关键节点都整理在这里。</span>
           </a>
           <a href="#support">
             <b>自愿支持维护</b>
             <span>扫码支持完全自愿，不影响脚本功能使用。</span>
           </a>
           <div>
-            <b>GitHub / Vercel 发布</b>
-            <span>当前公开页由 GitHub main 分支触发 Vercel 部署，对外入口使用 nradio.mayebano.shop。</span>
+            <b>公开入口</b>
+            <span>对外入口使用 nradio.mayebano.shop。</span>
           </div>
         </section>
 
         <footer class="page-signature">
           <div><b>NRadio Plugin Assistant</b><br>更新记录、SSH 安装和支持入口集中在同一个页面。</div>
-          <div>Last updated: 2026-04-29 / V2.0.3 / fan control smart release</div>
+          <div>Last updated: 2026-05-01 / V2.0.5 / openvpn fast-open and fan defaults refresh</div>
         </footer>
       </div>
     </section>
