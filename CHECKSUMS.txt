@@ -6,6 +6,6 @@ Generated from local UTF-8 file contents on 2026-04-29.
 4aaa62e0793b4e47769f233a78e1c4ef7dfbb71d9900e2fa242e25e349d25fe1  857098  00-current/ssh-nradio-plugin-installer.sh
 0c4d683d573328f78ee8da23d0e4fd79ee9b425c6fa1ac8ec117ff5d8beb253d  849223  00-current/ssh-nradio-plugin-installer-2.0.0beta.sh
 c9a5ccd639c0a979ff509a6e4836fe86fd4889b3c9203df929f761c933bbe21d   12710  00-current/nradio-fanctrl-plugin.sh
-ee8235d79b0c2ec2d57f42b7439dbda3c19667909385a00e87f5ced7df3dbb73  115162  40-server-web/mayebano-support/index.html
+9db3a691327f6e4332e2c0c43cdd10a371f35f846fac31802f5f0dc863185eb4  115859  40-server-web/mayebano-support/index.html
 14532b515ea892f02c6f601b9e6b48e98f82004d4c6c8820eb3c10f9980074c6     564  vercel.json
 ```

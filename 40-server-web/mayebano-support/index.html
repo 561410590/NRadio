@@ -2728,7 +2728,6 @@
         top: 12px;
         width: calc(100% - 28px);
         justify-content: flex-start;
-        border-radius: 24px;
         flex-wrap: nowrap;
         overflow-x: auto;
         scrollbar-width: none;
@@ -2917,8 +2916,8 @@
 
       .floating-nav a,
       .floating-nav span {
-        min-height: 30px;
-        padding: 0 10px;
+        min-height: 34px;
+        padding: 0 11px;
         font-size: 12px;
       }
 
@@ -2927,8 +2926,30 @@
         right: 12px;
         width: auto;
         max-width: none;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
         transform: none;
         animation: none;
+        overflow: visible;
+      }
+
+      .floating-nav a {
+        min-width: 0;
+        border-radius: 16px;
+        color: rgba(232, 255, 240, 0.92);
+        background:
+          linear-gradient(145deg, rgba(216, 255, 240, 0.16), rgba(94, 231, 242, 0.06)),
+          rgba(3, 28, 25, 0.82);
+        border: 1px solid rgba(220, 255, 244, 0.22);
+        box-shadow: 0 12px 26px rgba(2, 34, 31, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        text-align: center;
       }
 
       .floating-nav span {
@@ -2936,7 +2957,7 @@
       }
 
       .hero {
-        padding-top: 88px;
+        padding-top: 124px;
         padding-bottom: 72px;
         min-height: 100svh;
         overflow: visible;
