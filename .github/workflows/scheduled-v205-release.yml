@@ -58,7 +58,7 @@ jobs:
           grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
           grep -q 'V2.0.5 已发布' 40-server-web/mayebano-support/index.html
           grep -q '下载 V2.0.5' 40-server-web/mayebano-support/index.html
-          grep -q '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' CHECKSUMS.txt
+          grep -q '10075726e97a9935df8d401f145cc8e677748956368399ee4b67b8207bb1865e' CHECKSUMS.txt
           grep -q '6163113ee4066c19a8bd6fa1fb95cf32dde9bc9ef8e39b647657a6acaca5bdb4' CHECKSUMS.txt
 
       - name: Create GitHub Release V2.0.5
@@ -74,7 +74,7 @@ jobs:
           grep -q 'SCRIPT_VERSION="V2.0.5"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q '下载 V2.0.5' 40-server-web/mayebano-support/index.html
-          grep -q '58c01d90c9518616c6bedb3ef1338a0eee9b99f869ab83e83ccd9ba93cb8c91e' CHECKSUMS.txt
+          grep -q '10075726e97a9935df8d401f145cc8e677748956368399ee4b67b8207bb1865e' CHECKSUMS.txt
 
           if git rev-parse "v2.0.5^{commit}" >/dev/null 2>&1; then
             tag_commit="$(git rev-parse "v2.0.5^{commit}")"
