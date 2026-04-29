@@ -391,7 +391,7 @@
     }
 
     .hero-copy::after {
-      content: "V2.0.7";
+      content: "V2.0.10";
       position: absolute;
       right: 28px;
       bottom: 2px;
@@ -2885,7 +2885,7 @@
     }
 
     .hero-copy::after {
-      content: "V2.0.7";
+      content: "V2.0.10";
       color: rgba(226, 58, 126, 0.08);
     }
 
@@ -3299,7 +3299,7 @@
       <a href="#history">更新记录</a>
       <a href="#install">安装教程</a>
       <a href="#wechat">微信支持</a>
-      <span>V2.0.7 已发布</span>
+      <span>V2.0.10 已发布</span>
     </nav>
 
     <section class="hero">
@@ -3310,18 +3310,18 @@
           <h1>NRadio<br>插件工具</h1>
           <p class="lead">
             NRadio NROS2.0 设备 SSH 插件安装脚本。
-            当前版本 <strong>V2.0.7</strong>，通过 SSH 在路由器执行。
+            当前版本 <strong>V2.0.10</strong>，通过 SSH 在路由器执行。
           </p>
 
           <div class="hero-tags">
-            <span>V2.0.7</span>
+            <span>V2.0.10</span>
             <span>SSH 执行</span>
             <span>单一脚本入口</span>
             <span>NROS2.0 设备</span>
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
-            <span><b>版本</b>V2.0.7</span>
+            <span><b>版本</b>V2.0.10</span>
             <span><b>文件</b>ssh-nradio-plugin-installer.sh</span>
             <span><b>方式</b>SSH 终端执行</span>
             <span><b>入口</b>单一下载入口</span>
@@ -3345,26 +3345,31 @@
           <section class="hero-latest" aria-label="当前里程碑说明">
             <div class="hero-latest-top">
               <div class="hero-latest-label">已发布</div>
-              <div class="hero-latest-version">V2.0.7</div>
+              <div class="hero-latest-version">V2.0.10</div>
             </div>
-            <strong>V2.0.7</strong>
+            <strong>V2.0.10</strong>
             <p>
-              新增 NRadio_C8-668 设备支持，支持机型扩展为 5 款。
-              V2.0.6 的奇游状态返回码修复、应用商店美化标记同步、OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。
+              风扇控制页面新增定时策略。
+              开启后可设置开始时间、结束时间和定时期间模式，适合夜间低噪、固定低速或继续 Smart 自动控制。
             </p>
             <div class="hero-milestones">
               <span>V2.0.0 正式脚本默认下载</span>
               <span>V2.0.1 风扇控制支持 C2000MAX</span>
               <span>V2.0.2 入口链与提示收口</span>
               <span>V2.0.3 风扇控制增强</span>
-              <span>V2.0.6 奇游状态与美化标记收口</span>
               <span>V2.0.7 新增 C8-668 支持</span>
+              <span>V2.0.10 风扇定时策略</span>
               <span>单一脚本入口</span>
             </div>
           </section>
 
           <div class="release-cards" id="history" aria-label="最新更新摘要">
             <article class="release-card release-card-current">
+              <b>V2.0.10</b>
+              <strong>风扇定时策略</strong>
+              <p>风扇控制页面开启后，可设置开始时间、结束时间和定时期间模式。适合夜间低噪、固定低速或继续 Smart 自动控制。</p>
+            </article>
+            <article class="release-card">
               <b>V2.0.7</b>
               <strong>新增 C8-668 设备支持</strong>
               <p>新增 NRadio_C8-668 设备支持；支持机型扩展为 5 款。V2.0.6 的奇游状态返回码修复、应用商店美化标记同步、OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。</p>
@@ -3639,7 +3644,7 @@ sh ssh-nradio-plugin-installer.sh</code>
               </div>
               <div>
                 <strong>持续更新</strong>
-                <span>当前公开里程碑整理到 V2.0.7。</span>
+                <span>当前公开里程碑整理到 V2.0.10。</span>
               </div>
             </div>
           </section>
@@ -3920,11 +3925,18 @@ sh ssh-nradio-plugin-installer.sh</code>
                     <p>奇游联机宝状态查看修复未安装场景返回码；应用商店美化内部标记同步到 V2.0.6。OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。</p>
                   </div>
                 </article>
-                <article class="timeline-entry is-current">
+                <article class="timeline-entry">
                   <div class="version">V2.0.7</div>
                   <div class="entry-copy">
                     <strong>新增 C8-668 设备支持</strong>
                     <p>新增 NRadio_C8-668 设备支持；支持机型扩展为 5 款。V2.0.6 的奇游状态返回码修复、应用商店美化标记同步、OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。</p>
+                  </div>
+                </article>
+                <article class="timeline-entry is-current">
+                  <div class="version">V2.0.10</div>
+                  <div class="entry-copy">
+                    <strong>风扇定时策略</strong>
+                    <p>风扇控制页面开启后，可设置开始时间、结束时间和定时期间模式。适合夜间低噪、固定低速或继续 Smart 自动控制。</p>
                   </div>
                 </article>
               </div>

@@ -2,7 +2,7 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V2.0.7"
+SCRIPT_VERSION="V2.0.10"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
 SCRIPT_RELEASE_DATE="2026-04-30"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
@@ -5011,7 +5011,7 @@ patch_appcenter_card_polish() {
 
     cat > "$css_file" <<'EOF_APPCENTER_CARD_POLISH_CSS'
     /* NRadio appcenter card polish: visual-only layer */
-    /* NRadio appcenter card polish V2.0.7 full repair layer */
+    /* NRadio appcenter card polish V2.0.10 full repair layer */
     /* NRadio appcenter visual polish 1-5 safe refinement */
     /* Keep appcontainer/container_left/app_top_menu/container_right layout owned by NRadio OEM CSS. */
     .container_right .app_box{
@@ -5985,7 +5985,7 @@ EOF_APPCENTER_EMPTY_STATE_JS
     fi
 
     verify_template_marker 'NRadio appcenter card polish: visual-only layer' '应用商店卡片美化 CSS'
-    verify_template_marker 'NRadio appcenter card polish V2.0.7 full repair layer' '应用商店 V2.0.7 修复美化 CSS'
+    verify_template_marker 'NRadio appcenter card polish V2.0.10 full repair layer' '应用商店 V2.0.10 修复美化 CSS'
     verify_template_marker '<div class="app_meta_row"' '应用商店卡片状态徽标'
     verify_template_marker 'status_label: db.status_label' '应用商店卡片状态标签数据'
     verify_template_marker 'app_open_badge app_open_1' '应用商店后台状态徽标'
@@ -10235,6 +10235,44 @@ local function temp_source_label(source)
     return "CPU/CPE 取高值"
 end
 
+local function valid_hhmm(value)
+    if type(value) ~= "string" then
+        return false
+    end
+
+    local hour, minute = value:match("^(%d%d):(%d%d)$")
+    hour = tonumber(hour or "")
+    minute = tonumber(minute or "")
+    return hour ~= nil and minute ~= nil and hour >= 0 and hour <= 23 and minute >= 0 and minute <= 59
+end
+
+local function hhmm_minutes(value)
+    local hour, minute = value:match("^(%d%d):(%d%d)$")
+    return (tonumber(hour) or 0) * 60 + (tonumber(minute) or 0)
+end
+
+local function system_time_reliable()
+    return (tonumber(os.date("%Y") or "0") or 0) >= 2024
+end
+
+local function schedule_active(start_value, end_value)
+    if not system_time_reliable() or not valid_hhmm(start_value) or not valid_hhmm(end_value) then
+        return false
+    end
+
+    local now = (tonumber(os.date("%H") or "0") or 0) * 60 + (tonumber(os.date("%M") or "0") or 0)
+    local start_min = hhmm_minutes(start_value)
+    local end_min = hhmm_minutes(end_value)
+
+    if start_min == end_min then
+        return false
+    elseif start_min < end_min then
+        return now >= start_min and now < end_min
+    end
+
+    return now >= start_min or now < end_min
+end
+
 local function pwm_to_percent(pwm_num)
     if pwm_num >= 255 then
         return "100"
@@ -10254,12 +10292,29 @@ function action_get_temperature()
     local uci = require "luci.model.uci".cursor()
 
     data.mode = uci:get("fanctrl", "fanctrl", "mode") or "4"
-    data.mode_label = mode_label(data.mode)
+    data.config_mode = data.mode
     data.enabled = uci:get("fanctrl", "fanctrl", "enabled") or "0"
     data.temp_source = uci:get("fanctrl", "fanctrl", "tempsource") or "max"
     data.temp_source_label = temp_source_label(data.temp_source)
     data.interval = uci:get("fanctrl", "fanctrl", "interval") or "12"
     data.protecttemp = uci:get("fanctrl", "fanctrl", "protecttemp") or "85"
+    data.schedule_enabled = uci:get("fanctrl", "fanctrl", "schedule_enabled") or "0"
+    data.schedule_start = uci:get("fanctrl", "fanctrl", "schedule_start") or "23:00"
+    data.schedule_end = uci:get("fanctrl", "fanctrl", "schedule_end") or "07:00"
+    data.schedule_mode = uci:get("fanctrl", "fanctrl", "schedule_mode") or "1"
+    data.schedule_active = "0"
+
+    if data.schedule_mode ~= "0" and data.schedule_mode ~= "1" and data.schedule_mode ~= "2" and data.schedule_mode ~= "3" and data.schedule_mode ~= "4" then
+        data.schedule_mode = "1"
+    end
+
+    if data.enabled == "1" and data.schedule_enabled == "1" and schedule_active(data.schedule_start, data.schedule_end) then
+        data.schedule_active = "1"
+        data.mode = data.schedule_mode
+        data.mode_label = "定时 " .. mode_label(data.mode)
+    else
+        data.mode_label = mode_label(data.mode)
+    end
 
     local pwm_raw = fs.readfile("/sys/devices/platform/pwm-fan/hwmon/hwmon0/pwm1") or ""
     local gpio_raw = fs.readfile("/sys/class/gpio/fan-hw/value") or ""
@@ -10288,6 +10343,20 @@ EOF_FANCTRL_CONTROLLER
 m = Map("fanctrl", translate("FanSetting"))
 
 s = m:section(NamedSection, "fanctrl", "service")
+
+local function validate_hhmm(self, value)
+    if not value or not value:match("^%d%d:%d%d$") then
+        return nil, translate("请输入 HH:MM 格式")
+    end
+
+    local hour = tonumber(value:sub(1, 2))
+    local minute = tonumber(value:sub(4, 5))
+    if not hour or not minute or hour > 23 or minute > 59 then
+        return nil, translate("请输入 00:00 到 23:59 之间的时间")
+    end
+
+    return value
+end
 
 enabled = s:option(Flag, "enabled", translate("FanSwitch"))
 enabled.rmempty = false
@@ -10357,6 +10426,33 @@ interval:value("15", translate("15s"))
 interval:value("30", translate("30s"))
 interval.default = "12"
 interval:depends("enabled", "1")
+
+schedule_enabled = s:option(Flag, "schedule_enabled", translate("定时策略"))
+schedule_enabled.rmempty = false
+schedule_enabled.default = "0"
+schedule_enabled.description = translate("开启后，设定时间段内临时使用定时模式；过热保护仍优先。")
+schedule_enabled:depends("enabled", "1")
+
+schedule_start = s:option(Value, "schedule_start", translate("开始时间"))
+schedule_start.default = "23:00"
+schedule_start.placeholder = "23:00"
+schedule_start.validate = validate_hhmm
+schedule_start:depends("schedule_enabled", "1")
+
+schedule_end = s:option(Value, "schedule_end", translate("结束时间"))
+schedule_end.default = "07:00"
+schedule_end.placeholder = "07:00"
+schedule_end.validate = validate_hhmm
+schedule_end:depends("schedule_enabled", "1")
+
+schedule_mode = s:option(ListValue, "schedule_mode", translate("定时期间风扇模式"))
+schedule_mode:value("0", translate("Close"))
+schedule_mode:value("1", translate("Low"))
+schedule_mode:value("2", translate("Medium"))
+schedule_mode:value("3", translate("High"))
+schedule_mode:value("4", translate("Smart"))
+schedule_mode.default = "1"
+schedule_mode:depends("schedule_enabled", "1")
 
 function m.on_after_commit(map)
     os.execute("/etc/init.d/fanctrl restart >/dev/null 2>&1")
@@ -10555,6 +10651,63 @@ report_state() {
     ubus call infocdp passthrough "{'name':'temperature','parameter':{'device':'$cpu_temp','cpe':'$model_temp','fan':'$fan_percent'}}" >/dev/null 2>&1 || true
 }
 
+normalize_time_part() {
+    part="$1"
+    part="$(printf '%s\n' "$part" | sed 's/^0*//')"
+    [ -n "$part" ] || part=0
+    echo "$part"
+}
+
+is_hhmm() {
+    value="$1"
+    echo "$value" | grep -qE '^[0-9][0-9]:[0-9][0-9]$' || return 1
+    hour="$(normalize_time_part "${value%:*}")"
+    minute="$(normalize_time_part "${value#*:}")"
+    is_uint "$hour" || return 1
+    is_uint "$minute" || return 1
+    [ "$hour" -le 23 ] || return 1
+    [ "$minute" -le 59 ] || return 1
+}
+
+hhmm_minutes() {
+    value="$1"
+    is_hhmm "$value" || return 1
+    hour="$(normalize_time_part "${value%:*}")"
+    minute="$(normalize_time_part "${value#*:}")"
+    echo $((hour * 60 + minute))
+}
+
+system_time_reliable() {
+    year="$(date +%Y 2>/dev/null || echo 0)"
+    is_uint "$year" || return 1
+    [ "$year" -ge 2024 ]
+}
+
+schedule_is_active() {
+    start_time="$1"
+    end_time="$2"
+
+    system_time_reliable || return 1
+    start_min="$(hhmm_minutes "$start_time" 2>/dev/null || true)"
+    end_min="$(hhmm_minutes "$end_time" 2>/dev/null || true)"
+    [ -n "$start_min" ] || return 1
+    [ -n "$end_min" ] || return 1
+    [ "$start_min" != "$end_min" ] || return 1
+
+    now_hour="$(normalize_time_part "$(date +%H 2>/dev/null || echo 0)")"
+    now_minute="$(normalize_time_part "$(date +%M 2>/dev/null || echo 0)")"
+    is_uint "$now_hour" || return 1
+    is_uint "$now_minute" || return 1
+    now_min=$((now_hour * 60 + now_minute))
+
+    if [ "$start_min" -lt "$end_min" ]; then
+        [ "$now_min" -ge "$start_min" ] && [ "$now_min" -lt "$end_min" ]
+        return $?
+    fi
+
+    [ "$now_min" -ge "$start_min" ] || [ "$now_min" -lt "$end_min" ]
+}
+
 while true; do
     enabled="$(uci -q get fanctrl.fanctrl.enabled 2>/dev/null || echo 1)"
     mode="$(uci -q get fanctrl.fanctrl.mode 2>/dev/null || echo 4)"
@@ -10566,6 +10719,10 @@ while true; do
     smarttemp_full="$(uci -q get fanctrl.fanctrl.smarttemp_full 2>/dev/null || echo 80)"
     protecttemp="$(uci -q get fanctrl.fanctrl.protecttemp 2>/dev/null || echo 85)"
     wait_time="$(uci -q get fanctrl.fanctrl.interval 2>/dev/null || echo "$DEFAULT_WAIT")"
+    schedule_enabled="$(uci -q get fanctrl.fanctrl.schedule_enabled 2>/dev/null || echo 0)"
+    schedule_start="$(uci -q get fanctrl.fanctrl.schedule_start 2>/dev/null || echo 23:00)"
+    schedule_end="$(uci -q get fanctrl.fanctrl.schedule_end 2>/dev/null || echo 07:00)"
+    schedule_mode="$(uci -q get fanctrl.fanctrl.schedule_mode 2>/dev/null || echo 1)"
 
     smarttemp_low="$(safe_uint "$smarttemp_low" 50)"
     smarttemp_mid="$(safe_uint "$smarttemp_mid" 60)"
@@ -10576,6 +10733,16 @@ while true; do
     case "$wait_time" in
         5|10|12|15|30) ;;
         *) wait_time="$DEFAULT_WAIT" ;;
+    esac
+
+    case "$mode" in
+        0|1|2|3|4) ;;
+        *) mode=4 ;;
+    esac
+
+    case "$schedule_mode" in
+        0|1|2|3|4) ;;
+        *) schedule_mode=1 ;;
     esac
 
     [ "$smarttemp_mid" -ge "$smarttemp_low" ] || smarttemp_mid="$smarttemp_low"
@@ -10597,6 +10764,10 @@ while true; do
         report_state
         sleep "$wait_time"
         continue
+    fi
+
+    if [ "$schedule_enabled" = "1" ] && schedule_is_active "$schedule_start" "$schedule_end"; then
+        mode="$schedule_mode"
     fi
 
     case "$mode" in
@@ -10639,6 +10810,10 @@ config service 'fanctrl'
     option smarttemp_full '80'
     option protecttemp '$fanctrl_protecttemp'
     option interval '$fanctrl_interval'
+    option schedule_enabled '0'
+    option schedule_start '23:00'
+    option schedule_end '07:00'
+    option schedule_mode '1'
 EOF_FANCTRL_UCI
 
     chmod 644 "$FANCTRL_CONTROLLER" "$FANCTRL_CBI" "$FANCTRL_TEMP_AJAX_VIEW" "$FANCTRL_TEMP_VIEW" "$FANCTRL_CONFIG_FILE"

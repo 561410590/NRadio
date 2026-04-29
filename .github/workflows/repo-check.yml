@@ -24,9 +24,9 @@ jobs:
           test -f SECURITY.md
           test -f .github/ISSUE_TEMPLATE/bug_report.yml
 
-      - name: Verify V2.0.7 script state
+      - name: Verify V2.0.10 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V2.0.7"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V2.0.10"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-04-30"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
@@ -49,13 +49,23 @@ jobs:
           grep -q 'NRadio OpenVPN Mk2 fast-open polish' 00-current/ssh-nradio-plugin-installer.sh
           grep -q '哈基米 打开路由' 00-current/ssh-nradio-plugin-installer.sh
           grep -Fq '[ -f /tmp/qy/etc/PKG_INFO ] && cat /tmp/qy/etc/PKG_INFO || true' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'schedule_enabled' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'schedule_start' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'schedule_end' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'schedule_mode' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '定时策略' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '定时期间' 00-current/ssh-nradio-plugin-installer.sh
 
       - name: Verify support page state
         run: |
-          grep -q 'V2.0.7' 40-server-web/mayebano-support/index.html
+          grep -q 'V2.0.10' 40-server-web/mayebano-support/index.html
           grep -q 'NRadio_C8-668' 40-server-web/mayebano-support/index.html
-          grep -q '支持机型扩展为 5 款' 40-server-web/mayebano-support/index.html
-          grep -q '新增 C8-668 设备支持' 40-server-web/mayebano-support/index.html
+          grep -q '风扇定时策略' 40-server-web/mayebano-support/index.html
+          grep -q '开始时间' 40-server-web/mayebano-support/index.html
+          grep -q '结束时间' 40-server-web/mayebano-support/index.html
+          grep -q '定时期间模式' 40-server-web/mayebano-support/index.html
+          grep -q '夜间低噪' 40-server-web/mayebano-support/index.html
+          grep -q 'Smart 自动控制' 40-server-web/mayebano-support/index.html
           grep -q 'OpenVPN 快速状态读取' 40-server-web/mayebano-support/index.html
           grep -q '安装教程' 40-server-web/mayebano-support/index.html
           grep -q '主要功能' 40-server-web/mayebano-support/index.html
@@ -64,6 +74,7 @@ jobs:
           grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
           grep -q '哈基米' 40-server-web/mayebano-support/index.html
           ! grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
+          ! grep -q 'HC-WT9108' 40-server-web/mayebano-support/index.html
           ! grep -q '安装方式提醒' 40-server-web/mayebano-support/index.html
           ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
           ! grep -q 'install-card' 40-server-web/mayebano-support/index.html
@@ -75,10 +86,10 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '7e6874a402d915f6c310355b047b09d2ba3f9ca46e320a9e7b6378bb705bac46' CHECKSUMS.txt
-          grep -q '466de709b24a62b879bb389695a8109666121604581762565f929052c1e695b7' CHECKSUMS.txt
-          printf '%s  %s\n' '7e6874a402d915f6c310355b047b09d2ba3f9ca46e320a9e7b6378bb705bac46' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
-          printf '%s  %s\n' '466de709b24a62b879bb389695a8109666121604581762565f929052c1e695b7' '40-server-web/mayebano-support/index.html' | sha256sum -c -
+          grep -q 'a599b915f165a229ca901ac57b8ffc043ca4dc8aeb8391da75cc6dcc6ad523dc' CHECKSUMS.txt
+          grep -q '28097b34e893349b426da34f2736e0cbe2aeb66d24c4c61c42d4425009e200b2' CHECKSUMS.txt
+          printf '%s  %s\n' 'a599b915f165a229ca901ac57b8ffc043ca4dc8aeb8391da75cc6dcc6ad523dc' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          printf '%s  %s\n' '28097b34e893349b426da34f2736e0cbe2aeb66d24c4c61c42d4425009e200b2' '40-server-web/mayebano-support/index.html' | sha256sum -c -
 
       - name: Verify license
         run: |

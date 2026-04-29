@@ -2,7 +2,7 @@
 
 NRadio 插件助手公开仓库。这里保存当前正式脚本、公开支持页、应用商店页面素材和版本记录。
 
-当前正式版本：`V2.0.7`
+当前正式版本：`V2.0.10`
 
 公网入口：[https://nradio.mayebano.shop/](https://nradio.mayebano.shop/)
 
@@ -32,7 +32,7 @@ sh ssh-nradio-plugin-installer.sh
 
 | 文件 | 用途 |
 | --- | --- |
-| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.7 正式总脚本，公网默认下载入口 |
+| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.10 正式总脚本，公网默认下载入口 |
 | `00-current/ssh-nradio-plugin-installer-2.0.0beta.sh` | V2.0.0-beta 历史备份，不作为当前下载渠道 |
 | `00-current/nradio-fanctrl-plugin.sh` | 风扇控制独立脚本 |
 | `00-current/qiyou-nradio-temp-installer.sh` | 奇游联机宝历史临时脚本 |
@@ -42,9 +42,9 @@ sh ssh-nradio-plugin-installer.sh
 | `CONTRIBUTING.md` | 反馈和贡献说明 |
 | `SECURITY.md` | 安全反馈边界 |
 
-## V2.0.7 状态
+## V2.0.10 状态
 
-- 默认下载脚本已切换为 `V2.0.7`。
+- 默认下载脚本已切换为 `V2.0.10`。
 - 旧 beta 独立短下载入口已取消。
 - 主菜单改为 5 个功能分类。
 - 设备识别新增 `NRadio_C8-668`，对应硬件型号 `HC-WT9108`。
@@ -53,17 +53,18 @@ sh ssh-nradio-plugin-installer.sh
 - 应用商店 FanControl 打开路由统一为 `nradioadv/system/fanctrl`，并保留旧路由迁移逻辑。
 - 奇游/雷神安装阶段号、官方脚本 SHA256 日志和雷神依赖失败提示已补齐。
 - 风扇控制保留 V2.0.3 的温度来源、Smart 阈值、最低风速、过热保护和检测间隔增强，并写入 `NRadio_C8-688` / `NRadio_C2000MAX` 分机型默认策略。
+- 风扇控制页面新增定时策略，开启后可设置开始时间、结束时间和定时期间模式，适合夜间低噪、固定低速或继续 Smart 自动控制。
 - OpenVPN 连接中枢 Mk2 美化层已回写总脚本，首次状态读取改为快速模式，完整诊断随后自动补齐。
 - 奇游联机宝状态查看在未安装场景下不再因 `set -e` 异常退出。
 - 应用商店美化用户可见口径统一为“哈基米”。
-- 公网页已同步 V2.0.7 版本口径和 `NRadio_C8-668` 支持说明。
+- 公网页已同步 V2.0.10 风扇定时策略说明。
 - 公网页由 GitHub `main` 分支通过 Vercel 发布。
 
 当前正式脚本校验：
 
 ```text
-SHA256  7e6874a402d915f6c310355b047b09d2ba3f9ca46e320a9e7b6378bb705bac46
-Bytes   883008
+SHA256  a599b915f165a229ca901ac57b8ffc043ca4dc8aeb8391da75cc6dcc6ad523dc
+Bytes   889057
 Path    00-current/ssh-nradio-plugin-installer.sh
 ```
 
