@@ -59,7 +59,7 @@ jobs:
           grep -q 'SCRIPT_VERSION="V2.0.15"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q '36908f940697380b7dadab94321a381f7465868a95aadbd5bcde43f3b1f0bbf3' CHECKSUMS.txt
-          grep -q '1e76f901f63143c0d2fa69edd5cbdcf309b37302d064dc182b3d33eb3f1e5aa5' CHECKSUMS.txt
+          grep -q '1f997f040af24c5012439f81186c58577a6091d96a314cfafc347dbd8a29340c' CHECKSUMS.txt
           grep -q 'V2.0.15' 40-server-web/mayebano-support/index.html
           grep -q '奇游 / 雷神源切换' 40-server-web/mayebano-support/index.html
           grep -q '奇游、雷神安装前复用哈基米软件源检查流程' 40-server-web/mayebano-support/index.html
