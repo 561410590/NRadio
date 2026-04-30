@@ -70,11 +70,13 @@ jobs:
           grep -q '安装教程' 40-server-web/mayebano-support/index.html
           grep -q '主要功能' 40-server-web/mayebano-support/index.html
           grep -q 'feature-brief' 40-server-web/mayebano-support/index.html
+          grep -q 'GitHub 开源' 40-server-web/mayebano-support/index.html
           grep -q 'MobaXterm' 40-server-web/mayebano-support/index.html
           grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
           grep -q '哈基米' 40-server-web/mayebano-support/index.html
           ! grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
           ! grep -q 'HC-WT9108' 40-server-web/mayebano-support/index.html
+          ! grep -q '我的项目' 40-server-web/mayebano-support/index.html
           ! grep -q '安装方式提醒' 40-server-web/mayebano-support/index.html
           ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
           ! grep -q 'install-card' 40-server-web/mayebano-support/index.html
@@ -87,9 +89,9 @@ jobs:
       - name: Verify checksum record
         run: |
           grep -q 'a599b915f165a229ca901ac57b8ffc043ca4dc8aeb8391da75cc6dcc6ad523dc' CHECKSUMS.txt
-          grep -q '28097b34e893349b426da34f2736e0cbe2aeb66d24c4c61c42d4425009e200b2' CHECKSUMS.txt
+          grep -q 'd6f416bac449896edffa8674bd2a35d8402fea089197dac763b61026d00ddf6d' CHECKSUMS.txt
           printf '%s  %s\n' 'a599b915f165a229ca901ac57b8ffc043ca4dc8aeb8391da75cc6dcc6ad523dc' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
-          printf '%s  %s\n' '28097b34e893349b426da34f2736e0cbe2aeb66d24c4c61c42d4425009e200b2' '40-server-web/mayebano-support/index.html' | sha256sum -c -
+          printf '%s  %s\n' 'd6f416bac449896edffa8674bd2a35d8402fea089197dac763b61026d00ddf6d' '40-server-web/mayebano-support/index.html' | sha256sum -c -
 
       - name: Verify license
         run: |
