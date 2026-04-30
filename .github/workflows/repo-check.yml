@@ -73,12 +73,17 @@ jobs:
           grep -q 'feature-brief' 40-server-web/mayebano-support/index.html
           grep -q 'GitHub 开源' 40-server-web/mayebano-support/index.html
           grep -q 'MobaXterm' 40-server-web/mayebano-support/index.html
-          grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
+          grep -q '3. 路由器在线下载' 40-server-web/mayebano-support/index.html
+          grep -q 'wget -O ssh-nradio-plugin-installer.sh https://nradio.mayebano.shop/ssh-nradio-plugin-installer.sh' 40-server-web/mayebano-support/index.html
           grep -q '哈基米' 40-server-web/mayebano-support/index.html
           ! grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
           ! grep -q 'HC-WT9108' 40-server-web/mayebano-support/index.html
           ! grep -q '我的项目' 40-server-web/mayebano-support/index.html
           ! grep -q '安装方式提醒' 40-server-web/mayebano-support/index.html
+          ! grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
+          ! grep -q 'SFTP' 40-server-web/mayebano-support/index.html
+          ! grep -q 'data-route="A"' 40-server-web/mayebano-support/index.html
+          ! grep -q 'data-route="B"' 40-server-web/mayebano-support/index.html
           ! grep -q 'ssh-nradio-plugin-installer-2.0.0beta.sh' 40-server-web/mayebano-support/index.html
           ! grep -q 'install-card' 40-server-web/mayebano-support/index.html
 
