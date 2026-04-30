@@ -392,7 +392,7 @@
     }
 
     .hero-copy::after {
-      content: "V2.0.10";
+      content: "V2.0.15";
       position: absolute;
       right: 28px;
       bottom: 2px;
@@ -1207,15 +1207,9 @@
       overflow: hidden;
     }
 
-    .path-card[data-route="A"] {
+    .path-card[data-route="3"] {
       background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(241, 199, 91, 0.060), rgba(94, 231, 242, 0.035)),
-        rgba(4, 36, 26, 0.24);
-    }
-
-    .path-card[data-route="B"] {
-      background:
-        linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(94, 231, 242, 0.070), rgba(188, 247, 125, 0.040)),
         rgba(4, 36, 26, 0.24);
     }
 
@@ -1406,54 +1400,6 @@
       font-weight: 850;
       line-height: 1;
       white-space: nowrap;
-    }
-
-    .download-code {
-      position: relative;
-      display: block;
-      padding: 38px 14px 12px;
-      border-radius: 16px;
-      color: #e9fff1;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 38px),
-        linear-gradient(135deg, rgba(94, 231, 242, 0.08), transparent 48%),
-        rgba(0, 0, 0, 0.34);
-      border: 1px solid rgba(220, 255, 244, 0.16);
-      font-family: Consolas, "Courier New", monospace;
-      font-size: 12px;
-      line-height: 1.72;
-      white-space: pre;
-      overflow-x: auto;
-      overflow-wrap: normal;
-      word-break: keep-all;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-      user-select: all;
-    }
-
-    .download-code::before {
-      content: "root@nradio";
-      position: absolute;
-      left: 12px;
-      top: 10px;
-      color: rgba(232, 255, 240, 0.56);
-      font-family: "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-    }
-
-    .download-code::after {
-      content: "";
-      position: absolute;
-      right: 12px;
-      top: 14px;
-      width: 34px;
-      height: 7px;
-      border-radius: 999px;
-      background:
-        radial-gradient(circle at 4px 50%, #78ffd0 0 3px, transparent 3.5px),
-        radial-gradient(circle at 17px 50%, rgba(94, 231, 242, 0.9) 0 3px, transparent 3.5px),
-        radial-gradient(circle at 30px 50%, rgba(241, 199, 91, 0.9) 0 3px, transparent 3.5px);
     }
 
     .download-note {
@@ -2934,7 +2880,7 @@
     }
 
     .hero-copy::after {
-      content: "V2.0.10";
+      content: "V2.0.15";
       color: rgba(226, 58, 126, 0.08);
     }
 
@@ -3225,18 +3171,11 @@
       box-shadow: 0 10px 20px rgba(11, 111, 100, 0.16);
     }
 
-    .path-card[data-route="A"] {
+    .path-card[data-route="3"] {
       background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 236, 209, 0.62)),
         rgba(255, 247, 250, 0.68);
       border-color: rgba(206, 137, 38, 0.18);
-    }
-
-    .path-card[data-route="B"] {
-      background:
-        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(226, 255, 245, 0.58)),
-        rgba(255, 247, 250, 0.68);
-      border-color: rgba(22, 184, 200, 0.16);
     }
 
     .feature-tile:nth-child(1) {
@@ -3276,8 +3215,7 @@
       color: rgba(226, 58, 126, 0.12);
     }
 
-    .route-code-card,
-    .download-code {
+    .route-code-card {
       color: var(--pink-950);
       background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 232, 243, 0.72)),
@@ -3315,17 +3253,6 @@
       box-shadow: 0 8px 18px rgba(184, 37, 95, 0.12);
     }
 
-    .download-code::before {
-      color: rgba(126, 23, 67, 0.62);
-    }
-
-    .download-code::after {
-      background:
-        radial-gradient(circle at 4px 50%, #ff7fb2 0 3px, transparent 3.5px),
-        radial-gradient(circle at 17px 50%, #ffb9d4 0 3px, transparent 3.5px),
-        radial-gradient(circle at 30px 50%, #ffd45f 0 3px, transparent 3.5px);
-    }
-
     @media (max-width: 760px) {
       body {
         background:
@@ -3359,6 +3286,1340 @@
         font-size: clamp(44px, 13.6vw, 66px);
       }
     }
+
+    /* May Day fresh skin disabled. Pink skin is locked by user request.
+    :root {
+      --may-950: #102c22;
+      --may-900: #164936;
+      --may-800: #127457;
+      --may-700: #16a36f;
+      --may-600: #22c986;
+      --may-mint: #dfffd0;
+      --may-leaf: #a7ef5f;
+      --may-cyan: #32c7b8;
+      --may-sun: #ffd45f;
+      --may-coral: #ff7f62;
+      --may-paper: #fbfff6;
+      --may-line: rgba(18, 116, 87, 0.16);
+      --may-shadow: 0 28px 72px rgba(18, 116, 87, 0.18);
+    }
+
+    html {
+      background: #f5ffe9;
+    }
+
+    body {
+      color: var(--may-950);
+      background:
+        linear-gradient(120deg, rgba(167, 239, 95, 0.24), transparent 28%),
+        linear-gradient(236deg, rgba(50, 199, 184, 0.18), transparent 42%),
+        linear-gradient(316deg, rgba(255, 212, 95, 0.22), transparent 48%),
+        linear-gradient(180deg, #f7ffe9 0%, #fbfff6 31%, #e8ffdc 62%, #d8f7f0 100%);
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(18, 116, 87, 0.075) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 116, 87, 0.055) 1px, transparent 1px),
+        linear-gradient(135deg, transparent 0 44%, rgba(255, 212, 95, 0.22) 44% 45%, transparent 45% 100%),
+        linear-gradient(45deg, transparent 0 58%, rgba(50, 199, 184, 0.16) 58% 59%, transparent 59% 100%);
+      background-size: 54px 54px, 54px 54px, 260px 260px, 320px 320px;
+      mask-image: linear-gradient(180deg, #000 0, #000 68rem, transparent 104rem);
+      opacity: 0.55;
+    }
+
+    body::after {
+      background:
+        linear-gradient(112deg, rgba(255, 255, 255, 0.72), transparent 42%),
+        linear-gradient(180deg, rgba(251, 255, 246, 0.10), rgba(251, 255, 246, 0.72));
+      opacity: 0.78;
+    }
+
+    .aurora-layer {
+      opacity: 0.58;
+    }
+
+    .aurora-layer::before,
+    .aurora-layer::after {
+      background:
+        linear-gradient(106deg, transparent 0 25%, rgba(255, 255, 255, 0.72) 29%, transparent 38%),
+        linear-gradient(72deg, transparent 0 42%, rgba(167, 239, 95, 0.24) 47%, transparent 58%),
+        linear-gradient(146deg, transparent 0 55%, rgba(50, 199, 184, 0.18) 60%, transparent 69%);
+    }
+
+    .scroll-progress {
+      background: linear-gradient(90deg, #f9ffe9, var(--may-leaf), var(--may-cyan), var(--may-coral));
+      box-shadow: 0 0 24px rgba(34, 201, 134, 0.38);
+    }
+
+    .floating-nav {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 255, 232, 0.88)),
+        rgba(251, 255, 246, 0.84);
+      border-color: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 20px 48px rgba(18, 116, 87, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+
+    .floating-nav::before {
+      color: #f8fff0;
+      background:
+        linear-gradient(135deg, var(--may-600), var(--may-800));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52), 0 10px 24px rgba(18, 116, 87, 0.22);
+    }
+
+    .floating-nav a,
+    .floating-nav span {
+      color: var(--may-950);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(240, 255, 224, 0.66)),
+        rgba(255, 255, 255, 0.58);
+      border-color: rgba(18, 116, 87, 0.10);
+    }
+
+    .floating-nav a:hover {
+      color: var(--may-950);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(228, 255, 205, 0.78));
+      border-color: rgba(18, 116, 87, 0.20);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 10px 24px rgba(18, 116, 87, 0.12);
+    }
+
+    .floating-nav span {
+      color: #f9ffe9;
+      background: linear-gradient(135deg, var(--may-700), var(--may-cyan));
+      border-color: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 10px 24px rgba(18, 116, 87, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+    }
+
+    .hero {
+      background:
+        linear-gradient(126deg, rgba(167, 239, 95, 0.28), transparent 28%),
+        linear-gradient(222deg, rgba(50, 199, 184, 0.20), transparent 44%),
+        linear-gradient(308deg, rgba(255, 212, 95, 0.26), transparent 46%),
+        linear-gradient(180deg, #fbfff3 0%, #f8fff7 42%, #e7ffcf 72%, #d4f7ef 100%);
+    }
+
+    .hero::before {
+      background:
+        repeating-linear-gradient(90deg, rgba(18, 116, 87, 0.058) 0 1px, transparent 1px 46px),
+        repeating-linear-gradient(0deg, rgba(18, 116, 87, 0.042) 0 1px, transparent 1px 46px),
+        linear-gradient(120deg, transparent 0 50%, rgba(255, 212, 95, 0.18) 50% 51%, transparent 51% 100%);
+      opacity: 0.56;
+    }
+
+    .hero::after {
+      background: linear-gradient(180deg, rgba(251, 255, 246, 0) 0%, rgba(232, 255, 220, 0.34) 52%, rgba(251, 255, 246, 0.94) 100%);
+    }
+
+    .hero-shell::before {
+      border-radius: 48px;
+      border-color: rgba(18, 116, 87, 0.12);
+      box-shadow:
+        inset 0 0 0 42px rgba(255, 255, 255, 0.20),
+        inset 0 0 0 118px rgba(167, 239, 95, 0.09),
+        0 34px 82px rgba(18, 116, 87, 0.10);
+    }
+
+    .hero-shell::after {
+      background:
+        linear-gradient(135deg, rgba(255, 212, 95, 0.30), rgba(167, 239, 95, 0.18), rgba(50, 199, 184, 0.12));
+      border-color: rgba(255, 255, 255, 0.62);
+    }
+
+    .hero-copy,
+    .download-card,
+    .feature-shell,
+    .support-panel,
+    .history-shell {
+      color: var(--may-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(241, 255, 226, 0.78)),
+        rgba(251, 255, 246, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: var(--may-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+
+    .hero-copy {
+      border-radius: 38px;
+    }
+
+    .hero-copy::before {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(167, 239, 95, 0.28), transparent 68%);
+    }
+
+    .hero-copy::after {
+      color: rgba(18, 116, 87, 0.065);
+    }
+
+    .hero-copy .surface-grid {
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(18, 116, 87, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 116, 87, 0.08) 1px, transparent 1px);
+    }
+
+    .eyebrow,
+    .hero-latest-label,
+    .feature-kicker {
+      color: var(--may-800);
+    }
+
+    .eyebrow::before {
+      background: rgba(18, 116, 87, 0.24);
+    }
+
+    h1 {
+      color: var(--may-900);
+      text-shadow:
+        0 3px 0 #ffffff,
+        0 12px 28px rgba(18, 116, 87, 0.18),
+        0 0 0.75px var(--may-950);
+    }
+
+    .lead,
+    .hero-latest p,
+    .download-card span {
+      color: rgba(16, 44, 34, 0.78);
+    }
+
+    .lead strong,
+    .download-card strong,
+    .hero-latest strong,
+    .feature-intro h2 {
+      color: var(--may-950);
+    }
+
+    .hero-tags span,
+    .hero-status span,
+    .hero-summary div,
+    .hero-latest,
+    .release-card,
+    .download-facts span,
+    .download-section,
+    .path-choice,
+    .path-card,
+    .tutorial-checks li,
+    .ssh-tool-grid li,
+    .feature-brief span,
+    .feature-tile,
+    .compat-item {
+      color: var(--may-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(237, 255, 221, 0.68)),
+        rgba(251, 255, 246, 0.66);
+      border: 1px solid var(--may-line);
+      box-shadow: 0 12px 28px rgba(18, 116, 87, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .hero-tags span::before,
+    .download-list li::before {
+      background: var(--may-600);
+      box-shadow: 0 0 14px rgba(34, 201, 134, 0.42);
+    }
+
+    .hero-status b,
+    .hero-summary strong,
+    .release-card strong,
+    .download-facts em,
+    .download-section b,
+    .ssh-tool-grid strong,
+    .feature-brief b,
+    .feature-tile strong,
+    .compat-item b {
+      color: var(--may-950);
+    }
+
+    .hero-summary span,
+    .release-card p,
+    .download-facts b,
+    .download-list,
+    .path-choice,
+    .path-card p,
+    .tutorial-steps,
+    .tutorial-checks span,
+    .ssh-tool-grid span,
+    .feature-brief em,
+    .feature-tags span,
+    .compat-item span {
+      color: rgba(16, 44, 34, 0.66);
+    }
+
+    .hero-action {
+      color: var(--may-950);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.90), rgba(241, 255, 226, 0.66)),
+        rgba(255, 255, 255, 0.62);
+      border-color: rgba(18, 116, 87, 0.12);
+      box-shadow: 0 12px 26px rgba(18, 116, 87, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+
+    .hero-action:hover {
+      border-color: rgba(18, 116, 87, 0.24);
+      box-shadow: 0 16px 30px rgba(18, 116, 87, 0.16), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .hero-action-primary,
+    .download-card a.download-primary,
+    .download-card a,
+    .route-code-card a,
+    .release-card b,
+    .path-choice b {
+      color: #f9ffe9;
+      background: linear-gradient(135deg, var(--may-700), var(--may-cyan));
+      border-color: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 14px 30px rgba(18, 116, 87, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    }
+
+    .download-card a:hover,
+    .route-code-card a:hover {
+      border-color: rgba(18, 116, 87, 0.22);
+      box-shadow: 0 18px 34px rgba(18, 116, 87, 0.21), inset 0 1px 0 rgba(255, 255, 255, 0.52);
+    }
+
+    .hero-latest-version,
+    .hero-milestones span {
+      color: var(--may-900);
+      background: rgba(255, 255, 255, 0.76);
+      border-color: var(--may-line);
+    }
+
+    .release-card-current {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(224, 255, 207, 0.78)),
+        linear-gradient(312deg, rgba(255, 212, 95, 0.18), transparent 54%),
+        rgba(251, 255, 246, 0.76);
+      border-color: rgba(18, 116, 87, 0.20);
+      box-shadow: 0 20px 48px rgba(18, 116, 87, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    }
+
+    .release-card-current::before {
+      color: #f9ffe9;
+      background: linear-gradient(135deg, var(--may-coral), var(--may-sun));
+    }
+
+    .hero-summary div:nth-child(2) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(224, 252, 255, 0.58)),
+        rgba(251, 255, 246, 0.70);
+      border-color: rgba(50, 199, 184, 0.18);
+    }
+
+    .hero-summary div:nth-child(2) strong {
+      color: #10786f;
+    }
+
+    .hero-summary div:nth-child(3) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 241, 196, 0.62)),
+        rgba(251, 255, 246, 0.70);
+      border-color: rgba(255, 180, 51, 0.22);
+    }
+
+    .hero-summary div:nth-child(3) strong {
+      color: #bd6d13;
+    }
+
+    .download-note,
+    .route-code-card {
+      color: var(--may-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(240, 255, 224, 0.74)),
+        rgba(251, 255, 246, 0.72);
+      border-color: var(--may-line);
+      box-shadow: 0 14px 30px rgba(18, 116, 87, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .route-code-card code,
+    .download-list code,
+    .tutorial-steps code {
+      color: var(--may-950);
+      background: rgba(255, 255, 255, 0.80);
+      border-color: rgba(18, 116, 87, 0.12);
+    }
+
+    .path-card[data-route="3"] {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 241, 196, 0.58)),
+        rgba(251, 255, 246, 0.70);
+      border-color: rgba(255, 180, 51, 0.22);
+    }
+
+    .feature-tile:nth-child(1) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(224, 252, 255, 0.58)),
+        rgba(251, 255, 246, 0.70);
+      border-color: rgba(50, 199, 184, 0.18);
+    }
+
+    .model-chip-list span,
+    .inline-models span {
+      color: var(--may-950);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.90), rgba(237, 255, 221, 0.68)),
+        rgba(251, 255, 246, 0.72);
+      border-color: rgba(18, 116, 87, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    }
+
+    @media (max-width: 760px) {
+      body {
+        background:
+          linear-gradient(128deg, rgba(167, 239, 95, 0.24), transparent 30%),
+          linear-gradient(232deg, rgba(50, 199, 184, 0.18), transparent 42%),
+          linear-gradient(180deg, #fbfff3 0%, #f7ffec 48%, #dff7ef 100%);
+      }
+
+      .floating-nav a {
+        color: var(--may-950);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(241, 255, 226, 0.76)),
+          rgba(251, 255, 246, 0.80);
+        border-color: rgba(18, 116, 87, 0.12);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.98), 0 8px 18px rgba(18, 116, 87, 0.09);
+      }
+    }
+    */
+
+    /* Pink May polish */
+    :root {
+      --pink-950: #52102d;
+      --pink-900: #77153f;
+      --pink-800: #a91c58;
+      --pink-700: #d92d76;
+      --pink-600: #ff5b9d;
+      --pink-400: #ff9fc7;
+      --pink-200: #ffd8e8;
+      --pink-100: #fff0f6;
+      --cream-pink: #fff9fc;
+      --rose-line: rgba(180, 31, 93, 0.14);
+      --rose-shadow: 0 30px 82px rgba(181, 35, 91, 0.18);
+      --rose-hairline: rgba(255, 255, 255, 0.92);
+    }
+
+    body {
+      background:
+        linear-gradient(118deg, rgba(255, 255, 255, 0.74), transparent 28%),
+        linear-gradient(242deg, rgba(255, 126, 178, 0.22), transparent 44%),
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0 1px, transparent 1px 34px),
+        linear-gradient(128deg, rgba(255, 255, 255, 0.24), transparent 34%),
+        linear-gradient(146deg, #ffe2ee 0%, #fff9fc 36%, #ffd6e8 68%, #ffc0da 100%);
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(184, 37, 95, 0.052) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(184, 37, 95, 0.044) 1px, transparent 1px),
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.20) 0 1px, transparent 1px 28px),
+        linear-gradient(135deg, transparent 0 46%, rgba(255, 159, 199, 0.16) 46% 47%, transparent 47% 100%);
+      background-size: 56px 56px, 56px 56px, 112px 112px, 300px 300px;
+      opacity: 0.52;
+    }
+
+    body::after {
+      background:
+        linear-gradient(105deg, rgba(255, 94, 159, 0.12), transparent 34%),
+        linear-gradient(252deg, rgba(255, 255, 255, 0.64), transparent 42%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.30), rgba(255, 236, 246, 0.50));
+    }
+
+    .aurora-layer::before,
+    .aurora-layer::after {
+      background:
+        linear-gradient(112deg, transparent 0 31%, rgba(255, 255, 255, 0.66) 35%, transparent 43%),
+        linear-gradient(76deg, transparent 0 43%, rgba(255, 94, 159, 0.15) 48%, transparent 58%),
+        linear-gradient(151deg, transparent 0 52%, rgba(255, 216, 232, 0.38) 56%, transparent 66%);
+    }
+
+    .floating-nav {
+      padding: 8px;
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 238, 246, 0.86)),
+        rgba(255, 249, 252, 0.86);
+      border-color: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 20px 48px rgba(184, 37, 95, 0.16), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .floating-nav::before {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.82), transparent 36%),
+        linear-gradient(135deg, #ff8fbc, #d92a73 64%, #b31f5d);
+    }
+
+    .hero {
+      background:
+        linear-gradient(112deg, rgba(255, 255, 255, 0.72), transparent 34%),
+        linear-gradient(238deg, rgba(255, 94, 159, 0.14), transparent 46%),
+        linear-gradient(314deg, rgba(255, 216, 232, 0.34), transparent 58%),
+        linear-gradient(180deg, rgba(255, 238, 246, 0.84) 0%, rgba(255, 250, 253, 0.64) 46%, rgba(255, 214, 232, 0.68) 100%);
+    }
+
+    .hero::before {
+      background:
+        repeating-linear-gradient(90deg, rgba(184, 37, 95, 0.048) 0 1px, transparent 1px 42px),
+        repeating-linear-gradient(0deg, rgba(184, 37, 95, 0.036) 0 1px, transparent 1px 42px),
+        linear-gradient(118deg, transparent 0 49%, rgba(255, 255, 255, 0.34) 49% 50%, transparent 50% 100%),
+        linear-gradient(62deg, transparent 0 59%, rgba(255, 159, 199, 0.16) 59% 60%, transparent 60% 100%);
+      opacity: 0.54;
+    }
+
+    .hero-shell {
+      gap: 34px;
+    }
+
+    .hero-shell::before {
+      border-radius: 54px;
+      border-color: rgba(226, 58, 126, 0.12);
+      box-shadow:
+        inset 0 0 0 42px rgba(255, 255, 255, 0.24),
+        inset 0 0 0 116px rgba(255, 159, 199, 0.10),
+        0 34px 88px rgba(184, 37, 95, 0.12);
+    }
+
+    .hero-copy,
+    .download-card,
+    .feature-shell,
+    .support-panel,
+    .history-shell {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 236, 246, 0.82)),
+        linear-gradient(320deg, rgba(255, 216, 232, 0.28), transparent 54%),
+        rgba(255, 249, 252, 0.74);
+      border-color: var(--rose-hairline);
+      box-shadow: var(--rose-shadow), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .hero-copy {
+      border-radius: 40px;
+      padding-top: 42px;
+    }
+
+    .hero-copy::before {
+      right: -116px;
+      top: -132px;
+      width: 360px;
+      height: 360px;
+      border-radius: 76px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(255, 159, 199, 0.30), transparent 68%),
+        linear-gradient(45deg, rgba(255, 216, 232, 0.34), transparent 60%);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+    }
+
+    .hero-copy .surface-grid {
+      opacity: 0.16;
+      background-size: 42px 42px;
+      mask-image: linear-gradient(90deg, transparent, #000 14%, #000 76%, transparent);
+    }
+
+    h1 {
+      color: #f04f92;
+      text-shadow:
+        0 3px 0 #fff9fc,
+        0 12px 28px rgba(184, 37, 95, 0.22),
+        0 0 0.75px #7e1743;
+    }
+
+    .lead {
+      max-width: 27em;
+    }
+
+    .hero-tags span,
+    .hero-status span,
+    .hero-summary div,
+    .hero-latest,
+    .release-card,
+    .download-facts span,
+    .download-section,
+    .path-choice,
+    .path-card,
+    .tutorial-checks li,
+    .ssh-tool-grid li,
+    .feature-brief span,
+    .feature-tile,
+    .compat-item {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 236, 246, 0.72)),
+        rgba(255, 249, 252, 0.68);
+      border-color: rgba(180, 31, 93, 0.13);
+      box-shadow: 0 12px 28px rgba(184, 37, 95, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .hero-status span,
+    .download-facts span,
+    .feature-brief span {
+      min-height: 66px;
+    }
+
+    .hero-action-primary,
+    .download-card a.download-primary,
+    .download-card a,
+    .route-code-card a,
+    .release-card b {
+      background: linear-gradient(135deg, #ff7fb2 0%, #e23a7e 54%, #b31f5d 100%);
+      box-shadow: 0 16px 34px rgba(184, 37, 95, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .hero-action-primary {
+      min-width: 154px;
+    }
+
+    .hero-latest {
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .hero-latest::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.46), transparent 26%),
+        linear-gradient(248deg, rgba(255, 127, 178, 0.14), transparent 46%);
+      opacity: 0.82;
+    }
+
+    .hero-latest > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .release-cards {
+      gap: 13px;
+    }
+
+    .release-card {
+      border-radius: 18px;
+      transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
+    }
+
+    .release-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(226, 58, 126, 0.22);
+      box-shadow: 0 18px 34px rgba(184, 37, 95, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    }
+
+    .release-card-current {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 216, 232, 0.82)),
+        linear-gradient(315deg, rgba(255, 159, 199, 0.24), transparent 58%),
+        rgba(255, 249, 252, 0.78);
+      border-color: rgba(226, 58, 126, 0.22);
+      box-shadow: 0 22px 48px rgba(184, 37, 95, 0.14), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .download-card::before,
+    .support-panel::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+    }
+
+    .download-card::before {
+      left: 18px;
+      right: 18px;
+      top: 0;
+      height: 2px;
+      opacity: 0.92;
+    }
+
+    .support-panel::after {
+      left: 20px;
+      right: 20px;
+      top: 0;
+      height: 1px;
+      opacity: 0.86;
+    }
+
+    .qr-shell {
+      border-color: rgba(180, 31, 93, 0.12);
+      box-shadow: 0 20px 48px rgba(184, 37, 95, 0.12);
+    }
+
+    .model-chip-list span,
+    .inline-models span {
+      border-radius: 999px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 238, 246, 0.70)),
+        rgba(255, 249, 252, 0.72);
+    }
+
+    html {
+      background: #fff1f7;
+    }
+
+    ::selection {
+      color: #fff9fc;
+      background: #d92d76;
+    }
+
+    .scroll-progress {
+      height: 4px;
+      background: linear-gradient(90deg, #fff7fb, #ff9fc7 32%, #e23a7e 68%, #77153f);
+      box-shadow: 0 0 24px rgba(226, 58, 126, 0.42);
+    }
+
+    .floating-nav a,
+    .floating-nav span {
+      min-height: 38px;
+      color: var(--pink-900);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 241, 247, 0.78)),
+        rgba(255, 249, 252, 0.70);
+      border-color: rgba(180, 31, 93, 0.10);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    }
+
+    .floating-nav a:hover {
+      color: var(--pink-950);
+      background:
+        linear-gradient(180deg, #fff, rgba(255, 232, 243, 0.90)),
+        rgba(255, 249, 252, 0.88);
+      border-color: rgba(226, 58, 126, 0.22);
+      box-shadow: 0 10px 22px rgba(184, 37, 95, 0.12), inset 0 1px 0 #fff;
+    }
+
+    .floating-nav span {
+      color: #fff9fc;
+      background: linear-gradient(135deg, #ff7fb2 0%, #d92d76 62%, #9f1b52 100%);
+      border-color: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 12px 26px rgba(184, 37, 95, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.44);
+    }
+
+    .hero-copy {
+      background:
+        linear-gradient(150deg, rgba(255, 255, 255, 0.94), rgba(255, 236, 246, 0.86) 48%, rgba(255, 216, 232, 0.74)),
+        linear-gradient(320deg, rgba(255, 159, 199, 0.30), transparent 56%),
+        rgba(255, 249, 252, 0.78);
+      border-color: rgba(255, 255, 255, 0.96);
+      box-shadow:
+        0 34px 86px rgba(184, 37, 95, 0.17),
+        0 10px 28px rgba(184, 37, 95, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .hero-copy::before {
+      opacity: 0.86;
+    }
+
+    .hero-copy::after {
+      right: 20px;
+      bottom: -8px;
+      color: rgba(184, 37, 95, 0.055);
+    }
+
+    .eyebrow {
+      color: var(--pink-800);
+    }
+
+    .eyebrow::before {
+      background: linear-gradient(90deg, rgba(217, 45, 118, 0.40), rgba(217, 45, 118, 0));
+    }
+
+    .lead {
+      color: rgba(82, 16, 45, 0.78);
+    }
+
+    .lead strong {
+      color: var(--pink-950);
+    }
+
+    .hero-tags span,
+    .hero-milestones span,
+    .feature-tags span {
+      color: var(--pink-900);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 239, 246, 0.72)),
+        rgba(255, 249, 252, 0.70);
+      border-color: rgba(180, 31, 93, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .hero-tags span::before {
+      background: #e23a7e;
+      box-shadow: 0 0 0 5px rgba(226, 58, 126, 0.10), 0 0 16px rgba(226, 58, 126, 0.30);
+    }
+
+    .hero-action-primary {
+      min-height: 50px;
+      padding: 0 24px;
+      color: #fff9fc;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 48%),
+        linear-gradient(135deg, #ff84b6 0%, #e23a7e 54%, #9f1b52 100%);
+      border-color: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 18px 38px rgba(184, 37, 95, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.48);
+    }
+
+    .hero-action-primary:hover {
+      box-shadow: 0 22px 42px rgba(184, 37, 95, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.52);
+    }
+
+    .hero-status span,
+    .download-facts span,
+    .feature-brief span {
+      border-color: rgba(180, 31, 93, 0.12);
+      box-shadow: 0 10px 24px rgba(184, 37, 95, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    }
+
+    .hero-summary div {
+      padding: 16px;
+      border-top: 0;
+      border-radius: 18px;
+    }
+
+    .hero-latest {
+      padding: 24px;
+      border-color: rgba(226, 58, 126, 0.18);
+      box-shadow: 0 18px 44px rgba(184, 37, 95, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+
+    .hero-latest-version {
+      color: #fff9fc;
+      background: linear-gradient(135deg, #ff84b6, #d92d76);
+      border-color: rgba(255, 255, 255, 0.74);
+      box-shadow: 0 10px 22px rgba(184, 37, 95, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    }
+
+    .release-cards {
+      padding-bottom: 18px;
+      scrollbar-color: rgba(217, 45, 118, 0.34) rgba(255, 216, 232, 0.44);
+    }
+
+    .release-card {
+      min-height: 166px;
+      padding: 18px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 239, 246, 0.76)),
+        rgba(255, 249, 252, 0.72);
+    }
+
+    .release-card-current {
+      min-height: 184px;
+      border-color: rgba(226, 58, 126, 0.26);
+      box-shadow: 0 24px 54px rgba(184, 37, 95, 0.16), inset 0 1px 0 #fff;
+    }
+
+    .download-card,
+    .support-panel,
+    .feature-shell {
+      border-color: rgba(255, 255, 255, 0.96);
+      box-shadow:
+        0 30px 74px rgba(184, 37, 95, 0.15),
+        0 8px 24px rgba(184, 37, 95, 0.07),
+        inset 0 1px 0 #fff;
+    }
+
+    .download-main {
+      align-items: start;
+    }
+
+    .download-actions {
+      align-self: start;
+    }
+
+    .download-card a.download-primary,
+    .download-card a,
+    .route-code-card a {
+      color: #fff9fc;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 48%),
+        linear-gradient(135deg, #ff84b6 0%, #d92d76 58%, #9f1b52 100%);
+      border-color: rgba(255, 255, 255, 0.78);
+    }
+
+    .download-section,
+    .path-card,
+    .route-code-card,
+    .tutorial-checks li,
+    .ssh-tool-grid li,
+    .compat-item,
+    .feature-tile {
+      border-color: rgba(180, 31, 93, 0.12);
+      box-shadow: 0 12px 28px rgba(184, 37, 95, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .download-section {
+      padding: 18px;
+    }
+
+    .path-choice {
+      border-color: rgba(226, 58, 126, 0.16);
+    }
+
+    .path-card {
+      padding: 19px;
+    }
+
+    .path-card[data-route="3"] {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 242, 225, 0.62)),
+        rgba(255, 249, 252, 0.72);
+    }
+
+    .route-code-card code,
+    .download-list code,
+    .tutorial-steps code {
+      color: #5b1635;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 244, 249, 0.78)),
+        rgba(255, 249, 252, 0.72);
+      border-color: rgba(180, 31, 93, 0.14);
+    }
+
+    .download-code {
+      position: relative;
+      display: block;
+      max-width: 100%;
+      min-width: 0;
+      padding: 18px 18px 20px;
+      border-radius: 16px;
+      color: #5b1635;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 244, 249, 0.78)),
+        rgba(255, 249, 252, 0.76);
+      border: 1px solid rgba(180, 31, 93, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 12px 26px rgba(184, 37, 95, 0.08);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.78;
+      white-space: pre-wrap;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      font-variant-ligatures: none;
+      user-select: all;
+    }
+
+    .download-code::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(217, 45, 118, 0.42), transparent);
+    }
+
+    .path-card[data-route="3"] {
+      gap: 14px;
+      border-color: rgba(217, 45, 118, 0.20);
+      box-shadow: 0 18px 38px rgba(184, 37, 95, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    }
+
+    .path-card[data-route="3"] > b {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 32px;
+      padding: 0 13px;
+      border-radius: 999px;
+      color: #fff9fc;
+      background: linear-gradient(135deg, #ff84b6, #d92d76 58%, #9f1b52);
+      box-shadow: 0 12px 24px rgba(184, 37, 95, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    }
+
+    .path-card[data-route="3"] .tutorial-steps {
+      gap: 9px;
+    }
+
+    .path-card[data-route="3"] .tutorial-steps li {
+      min-height: 42px;
+      padding-left: 42px;
+      padding-top: 7px;
+      padding-bottom: 7px;
+      padding-right: 10px;
+      border-radius: 13px;
+    }
+
+    .path-card[data-route="3"] .tutorial-steps li::before {
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .path-card[data-route="3"] .download-code {
+      margin-top: 4px;
+      border-color: rgba(217, 45, 118, 0.18);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.96),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.48),
+        0 16px 34px rgba(184, 37, 95, 0.10);
+    }
+
+    .download-note {
+      border-color: rgba(226, 58, 126, 0.16);
+      box-shadow: 0 14px 30px rgba(184, 37, 95, 0.10), inset 0 1px 0 #fff;
+    }
+
+    .feature-grid {
+      gap: 13px;
+    }
+
+    .feature-tile {
+      min-height: 142px;
+    }
+
+    .feature-tile::before {
+      color: rgba(184, 37, 95, 0.08);
+    }
+
+    .feature-tile:hover,
+    .release-card:hover {
+      border-color: rgba(226, 58, 126, 0.24);
+      box-shadow: 0 18px 38px rgba(184, 37, 95, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    }
+
+    .qr-shell {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 240, 247, 0.80)),
+        rgba(255, 249, 252, 0.84);
+    }
+
+    .floating-nav a:focus-visible,
+    .hero-action:focus-visible,
+    .download-card a:focus-visible,
+    .route-code-card a:focus-visible {
+      outline: 2px solid rgba(217, 45, 118, 0.58);
+      outline-offset: 4px;
+      box-shadow: 0 0 0 6px rgba(255, 159, 199, 0.24), 0 16px 34px rgba(184, 37, 95, 0.16);
+    }
+
+    .feature-intro h2,
+    .feature-tile strong,
+    .compat-item b,
+    .download-section b,
+    .path-card b,
+    .path-choice b,
+    .ssh-tool-grid strong,
+    .tutorial-checks b,
+    .download-note b,
+    .support-head strong,
+    .support-meta strong {
+      color: var(--pink-950);
+    }
+
+    .feature-kicker,
+    .hero-latest-label {
+      color: var(--pink-800);
+    }
+
+    .hero-summary strong,
+    .download-facts b,
+    .feature-brief b {
+      color: var(--pink-900);
+    }
+
+    .hero-summary span,
+    .release-card p,
+    .download-facts em,
+    .download-card span,
+    .path-card p,
+    .tutorial-steps,
+    .tutorial-checks span,
+    .ssh-tool-grid span,
+    .compat-item span,
+    .support-meta,
+    .download-note span {
+      color: rgba(82, 16, 45, 0.68);
+    }
+
+    .install-steps li,
+    .tutorial-steps li,
+    .support-steps li {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 239, 246, 0.72)),
+        rgba(255, 249, 252, 0.72);
+      border: 1px solid rgba(180, 31, 93, 0.11);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .install-steps b,
+    .tutorial-steps li::before,
+    .support-steps b {
+      color: #fff9fc;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 48%),
+        linear-gradient(135deg, #ff84b6, #d92d76 58%, #9f1b52);
+      box-shadow: 0 10px 22px rgba(184, 37, 95, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    }
+
+    .download-list li::before {
+      background: #d92d76;
+      box-shadow: 0 0 0 5px rgba(217, 45, 118, 0.10), 0 0 16px rgba(217, 45, 118, 0.26);
+    }
+
+    .support-panel::before {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 159, 199, 0.22), transparent 70%),
+        linear-gradient(45deg, rgba(255, 216, 232, 0.28), transparent 62%);
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+    }
+
+    .support-badge {
+      color: #fff9fc;
+      background: linear-gradient(135deg, #ff84b6, #d92d76);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      box-shadow: 0 12px 24px rgba(184, 37, 95, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    }
+
+    .qr-shell {
+      padding: 12px;
+      border-color: rgba(180, 31, 93, 0.12);
+      box-shadow: 0 22px 52px rgba(184, 37, 95, 0.12), inset 0 1px 0 #fff;
+    }
+
+    .qr-shell:hover {
+      box-shadow: 0 28px 62px rgba(184, 37, 95, 0.18), inset 0 1px 0 #fff;
+    }
+
+    .qr-stage {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 239, 246, 0.74)),
+        repeating-linear-gradient(135deg, rgba(255, 159, 199, 0.09) 0 1px, transparent 1px 24px);
+      border: 1px solid rgba(180, 31, 93, 0.10);
+    }
+
+    .qr-box {
+      box-shadow: 0 22px 48px rgba(184, 37, 95, 0.16);
+    }
+
+    .support-owner {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 239, 246, 0.72)),
+        rgba(255, 249, 252, 0.72);
+      border-color: rgba(180, 31, 93, 0.11);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .feature-tile,
+    .compat-item {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 239, 246, 0.72)),
+        linear-gradient(320deg, rgba(255, 159, 199, 0.12), transparent 58%),
+        rgba(255, 249, 252, 0.72);
+    }
+
+    .feature-tile:hover {
+      transform: translateY(-4px);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(255, 232, 243, 0.82)),
+        linear-gradient(320deg, rgba(255, 159, 199, 0.18), transparent 58%),
+        rgba(255, 249, 252, 0.82);
+    }
+
+    .feature-tags span {
+      color: var(--pink-900);
+      border-color: rgba(180, 31, 93, 0.12);
+    }
+
+    .model-chip-list span,
+    .inline-models span {
+      color: var(--pink-900);
+      border-color: rgba(180, 31, 93, 0.11);
+    }
+
+    .download-tutorial {
+      gap: 14px;
+    }
+
+    .download-section,
+    .path-card {
+      isolation: isolate;
+    }
+
+    .download-section::after,
+    .path-card::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.86), transparent);
+      pointer-events: none;
+    }
+
+    .download-facts {
+      gap: 9px;
+    }
+
+    .download-facts span {
+      align-content: center;
+      border-radius: 16px;
+    }
+
+    .download-facts b {
+      font-size: 13px;
+    }
+
+    .download-facts em {
+      margin-top: 3px;
+    }
+
+    .install-steps,
+    .ssh-tool-grid,
+    .tutorial-checks,
+    .download-list {
+      gap: 9px;
+    }
+
+    .install-steps li {
+      min-height: 44px;
+      align-items: center;
+    }
+
+    .ssh-tool-grid li,
+    .tutorial-checks li {
+      border-radius: 15px;
+    }
+
+    .ssh-tool-grid strong,
+    .tutorial-checks b {
+      line-height: 1.28;
+    }
+
+    .path-card[data-route="3"] {
+      padding: 21px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 238, 246, 0.78)),
+        linear-gradient(312deg, rgba(255, 159, 199, 0.16), transparent 58%),
+        rgba(255, 249, 252, 0.78);
+    }
+
+    .path-card[data-route="3"]::before {
+      right: 16px;
+      top: 12px;
+      color: rgba(184, 37, 95, 0.10);
+      font-size: 54px;
+    }
+
+    .path-card[data-route="3"] p {
+      max-width: 34em;
+    }
+
+    .path-card[data-route="3"] .tutorial-steps {
+      counter-reset: tutorial-step;
+      position: relative;
+    }
+
+    .path-card[data-route="3"] .tutorial-steps::before {
+      content: "";
+      position: absolute;
+      left: 22px;
+      top: 12px;
+      bottom: 12px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(217, 45, 118, 0.20), rgba(217, 45, 118, 0.04));
+      pointer-events: none;
+    }
+
+    .path-card[data-route="3"] .tutorial-steps li {
+      box-shadow: 0 10px 22px rgba(184, 37, 95, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .download-code {
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 242, 248, 0.82)),
+        repeating-linear-gradient(135deg, rgba(255, 159, 199, 0.08) 0 1px, transparent 1px 24px),
+        rgba(255, 249, 252, 0.80);
+    }
+
+    .download-code::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.64);
+      pointer-events: none;
+    }
+
+    @media (max-width: 760px) {
+      .hero-copy {
+        border-radius: 30px;
+        padding-top: 26px;
+      }
+
+      .hero-status span,
+      .download-facts span,
+      .feature-brief span {
+        min-height: 0;
+      }
+
+      .release-card,
+      .hero-latest {
+        border-radius: 18px;
+      }
+
+      .floating-nav {
+        gap: 5px;
+        padding: 7px;
+      }
+
+      .floating-nav a,
+      .floating-nav span {
+        min-height: 34px;
+        padding: 0 11px;
+      }
+
+      .hero-summary div,
+      .download-section,
+      .path-card {
+        padding: 15px;
+      }
+
+      .hero-action-primary,
+      .download-card a.download-primary,
+      .download-card a,
+      .route-code-card a {
+        min-height: 46px;
+      }
+
+      .feature-tile {
+        min-height: 124px;
+      }
+
+      .support-head {
+        align-items: flex-start;
+      }
+
+      .support-badge {
+        min-height: 34px;
+        padding: 0 11px;
+      }
+
+      .install-steps li,
+      .tutorial-steps li,
+      .support-steps li {
+        border-radius: 15px;
+      }
+
+      .qr-shell {
+        padding: 9px;
+      }
+
+      .path-card[data-route="3"] {
+        padding: 16px;
+      }
+
+      .path-card[data-route="3"]::before {
+        font-size: 42px;
+      }
+
+      .path-card[data-route="3"] .tutorial-steps::before {
+        left: 20px;
+      }
+
+      .download-code {
+        padding: 16px 13px;
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -3370,7 +4631,7 @@
       <a href="#history">更新记录</a>
       <a href="#install">安装教程</a>
       <a href="#wechat">微信支持</a>
-      <span>V2.0.10 已发布</span>
+      <span>V2.0.15 已发布</span>
     </nav>
 
     <section class="hero">
@@ -3381,11 +4642,11 @@
           <h1>NRadio<br>插件工具</h1>
           <p class="lead">
             NRadio NROS2.0 设备 SSH 插件安装脚本。
-            当前版本 <strong>V2.0.10</strong>，通过 SSH 在路由器执行。
+            当前版本 <strong>V2.0.15</strong>，通过 SSH 在路由器执行。
           </p>
 
           <div class="hero-tags">
-            <span>V2.0.10</span>
+            <span>V2.0.15</span>
             <span>SSH 执行</span>
             <span>单一脚本入口</span>
             <span>NROS2.0 设备</span>
@@ -3396,7 +4657,7 @@
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
-            <span><b>版本</b>V2.0.10</span>
+            <span><b>版本</b>V2.0.15</span>
             <span><b>文件</b>ssh-nradio-plugin-installer.sh</span>
             <span><b>方式</b>SSH 终端执行</span>
             <span><b>入口</b>单一下载入口</span>
@@ -3420,12 +4681,12 @@
           <section class="hero-latest" aria-label="当前里程碑说明">
             <div class="hero-latest-top">
               <div class="hero-latest-label">已发布</div>
-              <div class="hero-latest-version">V2.0.10</div>
+              <div class="hero-latest-version">V2.0.15</div>
             </div>
-            <strong>V2.0.10</strong>
+            <strong>V2.0.15</strong>
             <p>
-              风扇控制页面新增定时策略。
-              开启后可设置开始时间、结束时间和定时期间模式，适合夜间低噪、固定低速或继续 Smart 自动控制。
+              奇游、雷神安装前复用哈基米软件源检查流程。
+              未切到 OpenWrt 21.02.7 清华源时自动备份并切换，再继续安装。
             </p>
             <div class="hero-milestones">
               <span>V2.0.0 正式脚本默认下载</span>
@@ -3434,12 +4695,18 @@
               <span>V2.0.3 风扇控制增强</span>
               <span>V2.0.7 新增 C8-668 支持</span>
               <span>V2.0.10 风扇定时策略</span>
+              <span>V2.0.15 奇游 / 雷神源切换</span>
               <span>单一脚本入口</span>
             </div>
           </section>
 
           <div class="release-cards" id="history" aria-label="最新更新摘要">
             <article class="release-card release-card-current">
+              <b>V2.0.15</b>
+              <strong>奇游 / 雷神源切换</strong>
+              <p>奇游、雷神安装前复用哈基米软件源检查流程；未切到 OpenWrt 21.02.7 清华源时自动备份并切换，再继续安装。</p>
+            </article>
+            <article class="release-card">
               <b>V2.0.10</b>
               <strong>风扇定时策略</strong>
               <p>风扇控制页面开启后，可设置开始时间、结束时间和定时期间模式。适合夜间低噪、固定低速或继续 Smart 自动控制。</p>
@@ -3559,7 +4826,7 @@
                 </div>
                 <div class="compat-item">
                   <b>执行方式</b>
-                  <span>开启 SSH 后上传到 /root，或在线下载执行。</span>
+                  <span>开启 SSH 后在终端下载到 /root 执行。</span>
                 </div>
                 <div class="compat-item">
                   <b>维护原则</b>
@@ -3576,7 +4843,7 @@
             <div class="download-main">
               <div>
                 <strong>安装教程</strong>
-                <span>从这里开始实际操作：先开 SSH，再选一种下载方式，最后看到脚本菜单。</span>
+                <span>从这里开始实际操作：先开 SSH，再在终端下载脚本，最后看到脚本菜单。</span>
               </div>
               <div class="download-actions">
                 <a class="download-primary" href="/ssh-nradio-plugin-installer.sh" download>下载脚本</a>
@@ -3584,7 +4851,7 @@
             </div>
             <div class="download-facts" aria-label="安装顺序">
               <span><b>1. 开 SSH</b><em>安全页保存并应用</em></span>
-              <span><b>2. 放脚本</b><em>上传或在线下载到 /root</em></span>
+              <span><b>2. 下载脚本</b><em>终端下载到 /root</em></span>
               <span><b>3. 执行确认</b><em>终端出现脚本菜单</em></span>
             </div>
             <div class="download-tutorial" aria-label="安装教程和注意事项">
@@ -3593,7 +4860,7 @@
                 <ol class="install-steps">
                   <li><b>1</b><span>不是应用商店上传安装，也不是固件升级包。</span></li>
                   <li><b>2</b><span>先在系统安全页开启 SSH，保存并应用。</span></li>
-                  <li><b>3</b><span>脚本放到 /root 后执行。</span></li>
+                  <li><b>3</b><span>脚本下载到 /root 后执行。</span></li>
                 </ol>
                 <div class="route-code-card">
                   <span>SSH 安全页</span>
@@ -3606,30 +4873,23 @@
               <div class="download-section">
                 <b>2. 准备 SSH 工具</b>
                 <ul class="ssh-tool-grid">
-                  <li><strong>MobaXterm</strong><span>终端和 SFTP 文件面板在同一窗口，适合电脑上传。</span></li>
-                  <li><strong>FinalShell / Xshell + Xftp</strong><span>SSH 登录和文件上传分开处理。</span></li>
-                  <li><strong>PuTTY + WinSCP</strong><span>PuTTY 负责终端，WinSCP 负责传文件。</span></li>
-                  <li><strong>路由器 Web SSH</strong><span>设备已有 Web SSH 时，可直接粘贴在线下载命令。</span></li>
+                  <li><strong>MobaXterm</strong><span>使用 SSH 终端登录路由器后粘贴命令。</span></li>
+                  <li><strong>FinalShell / Xshell</strong><span>使用 SSH 终端连接 root 后执行下载命令。</span></li>
+                  <li><strong>PuTTY</strong><span>登录路由器终端后粘贴下面三行命令。</span></li>
+                  <li><strong>路由器 Web SSH</strong><span>设备已有 Web SSH 时，可直接粘贴终端下载命令。</span></li>
                 </ul>
               </div>
 
-              <div class="tutorial-paths" aria-label="两种安装路径">
-                <div class="path-choice"><b>二选一</b><span>路由器不能访问公网用 3A；路由器能访问公网用 3B。</span></div>
-                <section class="path-card" data-route="A" aria-label="电脑下载后上传">
-                  <b>3A. 路由器不能访问公网：电脑上传</b>
-                  <p>电脑下载脚本，上传到路由器 /root，再在 SSH 终端执行。</p>
+              <div class="tutorial-paths" aria-label="安装路径">
+                <section class="path-card" data-route="3" aria-label="路由器在线下载">
+                  <b>3. 路由器在线下载</b>
+                  <p>SSH 登录路由器后，在终端里粘贴下面命令，脚本会下载到 /root 并立即执行。</p>
                   <ol class="tutorial-steps">
-                    <li>点“下载脚本”，把 <code>ssh-nradio-plugin-installer.sh</code> 保存到电脑。</li>
-                    <li>用 SSH 工具连接路由器：主机 <code>192.168.66.1</code>，用户 <code>root</code>。</li>
-                    <li>在 SFTP/SCP 文件面板进入 <code>/root</code>。</li>
-                    <li>把脚本上传到 <code>/root</code>，文件名保持不变。</li>
-                    <li>终端执行：<code>cd /root && sh ssh-nradio-plugin-installer.sh</code>。</li>
+                    <li>SSH 新建连接：主机 <code>192.168.66.1</code>，用户 <code>root</code>，密码填路由器 root 密码。</li>
+                    <li>进入终端后先确认是在路由器命令行，不是在浏览器地址栏或 SSH 软件的本地终端。</li>
+                    <li>一次性复制下面三行命令，粘贴到 SSH 终端后回车执行。</li>
+                    <li>看到 NRadio 脚本菜单后，表示下载和启动完成，再按菜单编号继续。</li>
                   </ol>
-                </section>
-
-                <section class="path-card" data-route="B" aria-label="路由器在线下载">
-                  <b>3B. 路由器能访问公网：终端下载</b>
-                  <p>不用点下载脚本，也不用 SFTP 上传；SSH 登录后直接粘贴下面命令。</p>
                   <code class="download-code">cd /root
 wget -O ssh-nradio-plugin-installer.sh https://nradio.mayebano.shop/ssh-nradio-plugin-installer.sh
 sh ssh-nradio-plugin-installer.sh</code>
@@ -3660,7 +4920,7 @@ sh ssh-nradio-plugin-installer.sh</code>
                     </span>
                     <span class="model-scope-tail">官方 NROS2.0 系统；标准 OpenWrt 不适用。</span>
                   </li>
-                  <li>如果路由器不能访问公网，使用“电脑下载后上传”的方式。</li>
+                  <li>执行终端下载命令前，先确认路由器可以访问公网。</li>
                   <li>不要在未确认 IP 和机型的设备上执行；不同路由器、旁路由和服务器不要混用。</li>
                   <li>安装和美化入口只按菜单提示执行；终端正在执行时不要直接关闭窗口。</li>
                 </ul>
@@ -3719,7 +4979,7 @@ sh ssh-nradio-plugin-installer.sh</code>
               </div>
               <div>
                 <strong>持续更新</strong>
-                <span>当前公开里程碑整理到 V2.0.10。</span>
+                <span>当前公开里程碑整理到 V2.0.15。</span>
               </div>
             </div>
           </section>
@@ -4007,11 +5267,18 @@ sh ssh-nradio-plugin-installer.sh</code>
                     <p>新增 NRadio_C8-668 设备支持；支持机型扩展为 5 款。V2.0.6 的奇游状态返回码修复、应用商店美化标记同步、OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。</p>
                   </div>
                 </article>
-                <article class="timeline-entry is-current">
+                <article class="timeline-entry">
                   <div class="version">V2.0.10</div>
                   <div class="entry-copy">
                     <strong>风扇定时策略</strong>
                     <p>风扇控制页面开启后，可设置开始时间、结束时间和定时期间模式。适合夜间低噪、固定低速或继续 Smart 自动控制。</p>
+                  </div>
+                </article>
+                <article class="timeline-entry is-current">
+                  <div class="version">V2.0.15</div>
+                  <div class="entry-copy">
+                    <strong>奇游 / 雷神源切换</strong>
+                    <p>奇游、雷神安装前复用哈基米软件源检查流程；未切到 OpenWrt 21.02.7 清华源时自动备份并切换，再继续安装。</p>
                   </div>
                 </article>
               </div>

@@ -2,9 +2,9 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V2.0.10"
+SCRIPT_VERSION="V2.0.15"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
-SCRIPT_RELEASE_DATE="2026-04-30"
+SCRIPT_RELEASE_DATE="2026-05-01"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
 SCRIPT_MODEL_NOTICE="适用机型：NRadio_C8-668/NRadio_C8-688/NRadio_C5800-688/NRadio_NBCPE/NRadio_C2000MAX 官方NROS2.x系统"
 SCRIPT_SCOPE_NOTICE="适用于带 NRadio 应用商店的官方固件，并非标准 OpenWrt"
@@ -3441,7 +3441,10 @@ src/gz openwrt_routing https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/21.
 src/gz openwrt_telephony https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/21.02.7/packages/aarch64_cortex-a53/telephony
 EOF
 
-    if ! cmp -s "$feeds_tmp" "$FEEDS"; then
+    if cmp -s "$feeds_tmp" "$FEEDS"; then
+        log "软件源: 已是 OpenWrt 21.02.7 清华源"
+    else
+        log "软件源: 当前不是 OpenWrt 21.02.7 清华源，正在备份并切换"
         backup_file "$FEEDS"
         cp "$feeds_tmp" "$FEEDS"
     fi
@@ -3455,7 +3458,7 @@ ensure_opkg_update() {
         return 0
     fi
 
-    log "警告: 当前软件源执行 opkg update 失败，保持现有源配置不变"
+    log "警告: 当前软件源执行 opkg update 失败，请查看 /tmp/nradio-plugin-opkg.update.log"
 }
 
 ensure_packages() {
@@ -5011,7 +5014,7 @@ patch_appcenter_card_polish() {
 
     cat > "$css_file" <<'EOF_APPCENTER_CARD_POLISH_CSS'
     /* NRadio appcenter card polish: visual-only layer */
-    /* NRadio appcenter card polish V2.0.10 full repair layer */
+    /* NRadio appcenter card polish V2.0.15 full repair layer */
     /* NRadio appcenter visual polish 1-5 safe refinement */
     /* Keep appcontainer/container_left/app_top_menu/container_right layout owned by NRadio OEM CSS. */
     .container_right .app_box{
@@ -5985,7 +5988,7 @@ EOF_APPCENTER_EMPTY_STATE_JS
     fi
 
     verify_template_marker 'NRadio appcenter card polish: visual-only layer' '应用商店卡片美化 CSS'
-    verify_template_marker 'NRadio appcenter card polish V2.0.10 full repair layer' '应用商店 V2.0.10 修复美化 CSS'
+    verify_template_marker 'NRadio appcenter card polish V2.0.15 full repair layer' '应用商店 V2.0.15 修复美化 CSS'
     verify_template_marker '<div class="app_meta_row"' '应用商店卡片状态徽标'
     verify_template_marker 'status_label: db.status_label' '应用商店卡片状态标签数据'
     verify_template_marker 'app_open_badge app_open_1' '应用商店后台状态徽标'
@@ -20733,7 +20736,7 @@ qiyou_install_integrated() {
     grep -q 'qyplug.sh' /tmp/qiyou-install.sh 2>/dev/null || die "奇游入口脚本内容异常，已停止执行"
     verify_remote_script_sha256 "奇游入口脚本" "/tmp/qiyou-install.sh" "${QIYOU_INSTALLER_SHA256:-}" "QIYOU_INSTALLER_SHA256"
     log "[2/4] 安装奇游依赖"
-    opkg update || die "opkg update 失败"
+    ensure_opkg_update
     opkg install curl kmod-tun ip-full || die "安装 curl/kmod-tun/ip-full 失败"
     log "[3/4] 执行奇游官方安装脚本"
     sh /tmp/qiyou-install.sh || die "奇游官方安装脚本执行失败"
@@ -20952,7 +20955,7 @@ EOF_LEIGOD_RISK
     grep -q 'leigod\|acc-gw\|accelerator' /tmp/leigod-plugin-install.sh 2>/dev/null || die "雷神官方安装脚本内容异常，已停止执行"
     verify_remote_script_sha256 "雷神官方安装脚本" "/tmp/leigod-plugin-install.sh" "${LEIGOD_INSTALLER_SHA256:-}" "LEIGOD_INSTALLER_SHA256"
     log "[2/4] 安装雷神依赖"
-    opkg update || die "opkg update 失败"
+    ensure_opkg_update
     lg_dep_failed=''
     for lg_pkg in curl libpcap iptables kmod-ipt-nat iptables-mod-tproxy kmod-ipt-ipset ipset kmod-tun kmod-ipt-tproxy kmod-netem tc-full conntrack miniupnpd luci-app-upnp; do
         if ! opkg list-installed 2>/dev/null | grep -q "^$lg_pkg "; then
