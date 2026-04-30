@@ -1,5 +1,15 @@
 # Changelog
 
+## V2.0.15 - 2026-05-01
+
+- `SCRIPT_VERSION` 更新为 `V2.0.15`。
+- `SCRIPT_RELEASE_DATE` 更新为 `2026-05-01`。
+- 奇游联机宝安装前改为调用 `ensure_opkg_update`，复用哈基米的软件源检查和切换流程。
+- 雷神加速器安装前改为调用 `ensure_opkg_update`，复用哈基米的软件源检查和切换流程。
+- 如果软件源不是 OpenWrt 21.02.7 清华源，会先备份原配置并切换，再继续安装依赖。
+- `opkg update` 失败提示统一指向 `/tmp/nradio-plugin-opkg.update.log`。
+- 公网页同步 V2.0.15 奇游 / 雷神源切换说明。
+
 ## V2.0.10 - 2026-04-30
 
 - `SCRIPT_VERSION` 更新为 `V2.0.10`。

@@ -24,10 +24,10 @@ jobs:
           test -f SECURITY.md
           test -f .github/ISSUE_TEMPLATE/bug_report.yml
 
-      - name: Verify V2.0.10 script state
+      - name: Verify V2.0.15 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V2.0.10"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'SCRIPT_RELEASE_DATE="2026-04-30"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V2.0.15"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
@@ -55,17 +55,18 @@ jobs:
           grep -q 'schedule_mode' 00-current/ssh-nradio-plugin-installer.sh
           grep -q '定时策略' 00-current/ssh-nradio-plugin-installer.sh
           grep -q '定时期间' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'OpenWrt 21.02.7 清华源' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '软件源: 当前不是 OpenWrt 21.02.7 清华源' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'ensure_opkg_update' 00-current/ssh-nradio-plugin-installer.sh
+          ! grep -q 'opkg update || die "opkg update 失败"' 00-current/ssh-nradio-plugin-installer.sh
 
       - name: Verify support page state
         run: |
-          grep -q 'V2.0.10' 40-server-web/mayebano-support/index.html
+          grep -q 'V2.0.15' 40-server-web/mayebano-support/index.html
           grep -q 'NRadio_C8-668' 40-server-web/mayebano-support/index.html
-          grep -q '风扇定时策略' 40-server-web/mayebano-support/index.html
-          grep -q '开始时间' 40-server-web/mayebano-support/index.html
-          grep -q '结束时间' 40-server-web/mayebano-support/index.html
-          grep -q '定时期间模式' 40-server-web/mayebano-support/index.html
-          grep -q '夜间低噪' 40-server-web/mayebano-support/index.html
-          grep -q 'Smart 自动控制' 40-server-web/mayebano-support/index.html
+          grep -q '奇游 / 雷神源切换' 40-server-web/mayebano-support/index.html
+          grep -q '奇游、雷神安装前复用哈基米软件源检查流程' 40-server-web/mayebano-support/index.html
+          grep -q 'OpenWrt 21.02.7 清华源' 40-server-web/mayebano-support/index.html
           grep -q 'OpenVPN 快速状态读取' 40-server-web/mayebano-support/index.html
           grep -q '安装教程' 40-server-web/mayebano-support/index.html
           grep -q '主要功能' 40-server-web/mayebano-support/index.html
@@ -88,10 +89,10 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q 'a599b915f165a229ca901ac57b8ffc043ca4dc8aeb8391da75cc6dcc6ad523dc' CHECKSUMS.txt
-          grep -q 'd6f416bac449896edffa8674bd2a35d8402fea089197dac763b61026d00ddf6d' CHECKSUMS.txt
-          printf '%s  %s\n' 'a599b915f165a229ca901ac57b8ffc043ca4dc8aeb8391da75cc6dcc6ad523dc' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
-          printf '%s  %s\n' 'd6f416bac449896edffa8674bd2a35d8402fea089197dac763b61026d00ddf6d' '40-server-web/mayebano-support/index.html' | sha256sum -c -
+          grep -q '36908f940697380b7dadab94321a381f7465868a95aadbd5bcde43f3b1f0bbf3' CHECKSUMS.txt
+          grep -q '1e76f901f63143c0d2fa69edd5cbdcf309b37302d064dc182b3d33eb3f1e5aa5' CHECKSUMS.txt
+          printf '%s  %s\n' '36908f940697380b7dadab94321a381f7465868a95aadbd5bcde43f3b1f0bbf3' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          printf '%s  %s\n' '1e76f901f63143c0d2fa69edd5cbdcf309b37302d064dc182b3d33eb3f1e5aa5' '40-server-web/mayebano-support/index.html' | sha256sum -c -
 
       - name: Verify license
         run: |

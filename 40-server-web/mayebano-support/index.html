@@ -392,7 +392,7 @@
     }
 
     .hero-copy::after {
-      content: "V2.0.10";
+      content: "V2.0.15";
       position: absolute;
       right: 28px;
       bottom: 2px;
@@ -2934,7 +2934,7 @@
     }
 
     .hero-copy::after {
-      content: "V2.0.10";
+      content: "V2.0.15";
       color: rgba(226, 58, 126, 0.08);
     }
 
@@ -3359,6 +3359,694 @@
         font-size: clamp(44px, 13.6vw, 66px);
       }
     }
+
+    /* May Day fresh skin disabled. Pink skin is locked by user request.
+    :root {
+      --may-950: #102c22;
+      --may-900: #164936;
+      --may-800: #127457;
+      --may-700: #16a36f;
+      --may-600: #22c986;
+      --may-mint: #dfffd0;
+      --may-leaf: #a7ef5f;
+      --may-cyan: #32c7b8;
+      --may-sun: #ffd45f;
+      --may-coral: #ff7f62;
+      --may-paper: #fbfff6;
+      --may-line: rgba(18, 116, 87, 0.16);
+      --may-shadow: 0 28px 72px rgba(18, 116, 87, 0.18);
+    }
+
+    html {
+      background: #f5ffe9;
+    }
+
+    body {
+      color: var(--may-950);
+      background:
+        linear-gradient(120deg, rgba(167, 239, 95, 0.24), transparent 28%),
+        linear-gradient(236deg, rgba(50, 199, 184, 0.18), transparent 42%),
+        linear-gradient(316deg, rgba(255, 212, 95, 0.22), transparent 48%),
+        linear-gradient(180deg, #f7ffe9 0%, #fbfff6 31%, #e8ffdc 62%, #d8f7f0 100%);
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(18, 116, 87, 0.075) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 116, 87, 0.055) 1px, transparent 1px),
+        linear-gradient(135deg, transparent 0 44%, rgba(255, 212, 95, 0.22) 44% 45%, transparent 45% 100%),
+        linear-gradient(45deg, transparent 0 58%, rgba(50, 199, 184, 0.16) 58% 59%, transparent 59% 100%);
+      background-size: 54px 54px, 54px 54px, 260px 260px, 320px 320px;
+      mask-image: linear-gradient(180deg, #000 0, #000 68rem, transparent 104rem);
+      opacity: 0.55;
+    }
+
+    body::after {
+      background:
+        linear-gradient(112deg, rgba(255, 255, 255, 0.72), transparent 42%),
+        linear-gradient(180deg, rgba(251, 255, 246, 0.10), rgba(251, 255, 246, 0.72));
+      opacity: 0.78;
+    }
+
+    .aurora-layer {
+      opacity: 0.58;
+    }
+
+    .aurora-layer::before,
+    .aurora-layer::after {
+      background:
+        linear-gradient(106deg, transparent 0 25%, rgba(255, 255, 255, 0.72) 29%, transparent 38%),
+        linear-gradient(72deg, transparent 0 42%, rgba(167, 239, 95, 0.24) 47%, transparent 58%),
+        linear-gradient(146deg, transparent 0 55%, rgba(50, 199, 184, 0.18) 60%, transparent 69%);
+    }
+
+    .scroll-progress {
+      background: linear-gradient(90deg, #f9ffe9, var(--may-leaf), var(--may-cyan), var(--may-coral));
+      box-shadow: 0 0 24px rgba(34, 201, 134, 0.38);
+    }
+
+    .floating-nav {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 255, 232, 0.88)),
+        rgba(251, 255, 246, 0.84);
+      border-color: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 20px 48px rgba(18, 116, 87, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+
+    .floating-nav::before {
+      color: #f8fff0;
+      background:
+        linear-gradient(135deg, var(--may-600), var(--may-800));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52), 0 10px 24px rgba(18, 116, 87, 0.22);
+    }
+
+    .floating-nav a,
+    .floating-nav span {
+      color: var(--may-950);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(240, 255, 224, 0.66)),
+        rgba(255, 255, 255, 0.58);
+      border-color: rgba(18, 116, 87, 0.10);
+    }
+
+    .floating-nav a:hover {
+      color: var(--may-950);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(228, 255, 205, 0.78));
+      border-color: rgba(18, 116, 87, 0.20);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 10px 24px rgba(18, 116, 87, 0.12);
+    }
+
+    .floating-nav span {
+      color: #f9ffe9;
+      background: linear-gradient(135deg, var(--may-700), var(--may-cyan));
+      border-color: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 10px 24px rgba(18, 116, 87, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+    }
+
+    .hero {
+      background:
+        linear-gradient(126deg, rgba(167, 239, 95, 0.28), transparent 28%),
+        linear-gradient(222deg, rgba(50, 199, 184, 0.20), transparent 44%),
+        linear-gradient(308deg, rgba(255, 212, 95, 0.26), transparent 46%),
+        linear-gradient(180deg, #fbfff3 0%, #f8fff7 42%, #e7ffcf 72%, #d4f7ef 100%);
+    }
+
+    .hero::before {
+      background:
+        repeating-linear-gradient(90deg, rgba(18, 116, 87, 0.058) 0 1px, transparent 1px 46px),
+        repeating-linear-gradient(0deg, rgba(18, 116, 87, 0.042) 0 1px, transparent 1px 46px),
+        linear-gradient(120deg, transparent 0 50%, rgba(255, 212, 95, 0.18) 50% 51%, transparent 51% 100%);
+      opacity: 0.56;
+    }
+
+    .hero::after {
+      background: linear-gradient(180deg, rgba(251, 255, 246, 0) 0%, rgba(232, 255, 220, 0.34) 52%, rgba(251, 255, 246, 0.94) 100%);
+    }
+
+    .hero-shell::before {
+      border-radius: 48px;
+      border-color: rgba(18, 116, 87, 0.12);
+      box-shadow:
+        inset 0 0 0 42px rgba(255, 255, 255, 0.20),
+        inset 0 0 0 118px rgba(167, 239, 95, 0.09),
+        0 34px 82px rgba(18, 116, 87, 0.10);
+    }
+
+    .hero-shell::after {
+      background:
+        linear-gradient(135deg, rgba(255, 212, 95, 0.30), rgba(167, 239, 95, 0.18), rgba(50, 199, 184, 0.12));
+      border-color: rgba(255, 255, 255, 0.62);
+    }
+
+    .hero-copy,
+    .download-card,
+    .feature-shell,
+    .support-panel,
+    .history-shell {
+      color: var(--may-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(241, 255, 226, 0.78)),
+        rgba(251, 255, 246, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: var(--may-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+
+    .hero-copy {
+      border-radius: 38px;
+    }
+
+    .hero-copy::before {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(167, 239, 95, 0.28), transparent 68%);
+    }
+
+    .hero-copy::after {
+      color: rgba(18, 116, 87, 0.065);
+    }
+
+    .hero-copy .surface-grid {
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(18, 116, 87, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 116, 87, 0.08) 1px, transparent 1px);
+    }
+
+    .eyebrow,
+    .hero-latest-label,
+    .feature-kicker {
+      color: var(--may-800);
+    }
+
+    .eyebrow::before {
+      background: rgba(18, 116, 87, 0.24);
+    }
+
+    h1 {
+      color: var(--may-900);
+      text-shadow:
+        0 3px 0 #ffffff,
+        0 12px 28px rgba(18, 116, 87, 0.18),
+        0 0 0.75px var(--may-950);
+    }
+
+    .lead,
+    .hero-latest p,
+    .download-card span {
+      color: rgba(16, 44, 34, 0.78);
+    }
+
+    .lead strong,
+    .download-card strong,
+    .hero-latest strong,
+    .feature-intro h2 {
+      color: var(--may-950);
+    }
+
+    .hero-tags span,
+    .hero-status span,
+    .hero-summary div,
+    .hero-latest,
+    .release-card,
+    .download-facts span,
+    .download-section,
+    .path-choice,
+    .path-card,
+    .tutorial-checks li,
+    .ssh-tool-grid li,
+    .feature-brief span,
+    .feature-tile,
+    .compat-item {
+      color: var(--may-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(237, 255, 221, 0.68)),
+        rgba(251, 255, 246, 0.66);
+      border: 1px solid var(--may-line);
+      box-shadow: 0 12px 28px rgba(18, 116, 87, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .hero-tags span::before,
+    .download-list li::before {
+      background: var(--may-600);
+      box-shadow: 0 0 14px rgba(34, 201, 134, 0.42);
+    }
+
+    .hero-status b,
+    .hero-summary strong,
+    .release-card strong,
+    .download-facts em,
+    .download-section b,
+    .ssh-tool-grid strong,
+    .feature-brief b,
+    .feature-tile strong,
+    .compat-item b {
+      color: var(--may-950);
+    }
+
+    .hero-summary span,
+    .release-card p,
+    .download-facts b,
+    .download-list,
+    .path-choice,
+    .path-card p,
+    .tutorial-steps,
+    .tutorial-checks span,
+    .ssh-tool-grid span,
+    .feature-brief em,
+    .feature-tags span,
+    .compat-item span {
+      color: rgba(16, 44, 34, 0.66);
+    }
+
+    .hero-action {
+      color: var(--may-950);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.90), rgba(241, 255, 226, 0.66)),
+        rgba(255, 255, 255, 0.62);
+      border-color: rgba(18, 116, 87, 0.12);
+      box-shadow: 0 12px 26px rgba(18, 116, 87, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+
+    .hero-action:hover {
+      border-color: rgba(18, 116, 87, 0.24);
+      box-shadow: 0 16px 30px rgba(18, 116, 87, 0.16), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .hero-action-primary,
+    .download-card a.download-primary,
+    .download-card a,
+    .route-code-card a,
+    .release-card b,
+    .path-choice b {
+      color: #f9ffe9;
+      background: linear-gradient(135deg, var(--may-700), var(--may-cyan));
+      border-color: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 14px 30px rgba(18, 116, 87, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    }
+
+    .download-card a:hover,
+    .route-code-card a:hover {
+      border-color: rgba(18, 116, 87, 0.22);
+      box-shadow: 0 18px 34px rgba(18, 116, 87, 0.21), inset 0 1px 0 rgba(255, 255, 255, 0.52);
+    }
+
+    .hero-latest-version,
+    .hero-milestones span {
+      color: var(--may-900);
+      background: rgba(255, 255, 255, 0.76);
+      border-color: var(--may-line);
+    }
+
+    .release-card-current {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(224, 255, 207, 0.78)),
+        linear-gradient(312deg, rgba(255, 212, 95, 0.18), transparent 54%),
+        rgba(251, 255, 246, 0.76);
+      border-color: rgba(18, 116, 87, 0.20);
+      box-shadow: 0 20px 48px rgba(18, 116, 87, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    }
+
+    .release-card-current::before {
+      color: #f9ffe9;
+      background: linear-gradient(135deg, var(--may-coral), var(--may-sun));
+    }
+
+    .hero-summary div:nth-child(2) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(224, 252, 255, 0.58)),
+        rgba(251, 255, 246, 0.70);
+      border-color: rgba(50, 199, 184, 0.18);
+    }
+
+    .hero-summary div:nth-child(2) strong {
+      color: #10786f;
+    }
+
+    .hero-summary div:nth-child(3) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 241, 196, 0.62)),
+        rgba(251, 255, 246, 0.70);
+      border-color: rgba(255, 180, 51, 0.22);
+    }
+
+    .hero-summary div:nth-child(3) strong {
+      color: #bd6d13;
+    }
+
+    .download-note,
+    .route-code-card,
+    .download-code {
+      color: var(--may-950);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(240, 255, 224, 0.74)),
+        rgba(251, 255, 246, 0.72);
+      border-color: var(--may-line);
+      box-shadow: 0 14px 30px rgba(18, 116, 87, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .route-code-card code,
+    .download-list code,
+    .tutorial-steps code {
+      color: var(--may-950);
+      background: rgba(255, 255, 255, 0.80);
+      border-color: rgba(18, 116, 87, 0.12);
+    }
+
+    .path-card[data-route="A"] {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 241, 196, 0.58)),
+        rgba(251, 255, 246, 0.70);
+      border-color: rgba(255, 180, 51, 0.22);
+    }
+
+    .path-card[data-route="B"],
+    .feature-tile:nth-child(1) {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(224, 252, 255, 0.58)),
+        rgba(251, 255, 246, 0.70);
+      border-color: rgba(50, 199, 184, 0.18);
+    }
+
+    .model-chip-list span,
+    .inline-models span {
+      color: var(--may-950);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.90), rgba(237, 255, 221, 0.68)),
+        rgba(251, 255, 246, 0.72);
+      border-color: rgba(18, 116, 87, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    }
+
+    .download-code::after {
+      background:
+        radial-gradient(circle at 4px 50%, var(--may-coral) 0 3px, transparent 3.5px),
+        radial-gradient(circle at 17px 50%, var(--may-sun) 0 3px, transparent 3.5px),
+        radial-gradient(circle at 30px 50%, var(--may-cyan) 0 3px, transparent 3.5px);
+    }
+
+    @media (max-width: 760px) {
+      body {
+        background:
+          linear-gradient(128deg, rgba(167, 239, 95, 0.24), transparent 30%),
+          linear-gradient(232deg, rgba(50, 199, 184, 0.18), transparent 42%),
+          linear-gradient(180deg, #fbfff3 0%, #f7ffec 48%, #dff7ef 100%);
+      }
+
+      .floating-nav a {
+        color: var(--may-950);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(241, 255, 226, 0.76)),
+          rgba(251, 255, 246, 0.80);
+        border-color: rgba(18, 116, 87, 0.12);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.98), 0 8px 18px rgba(18, 116, 87, 0.09);
+      }
+    }
+    */
+
+    /* Pink May polish */
+    :root {
+      --pink-950: #52102d;
+      --pink-900: #77153f;
+      --pink-800: #a91c58;
+      --pink-700: #d92d76;
+      --pink-600: #ff5b9d;
+      --pink-400: #ff9fc7;
+      --pink-200: #ffd8e8;
+      --pink-100: #fff0f6;
+      --cream-pink: #fff9fc;
+      --rose-line: rgba(180, 31, 93, 0.14);
+      --rose-shadow: 0 30px 82px rgba(181, 35, 91, 0.18);
+      --rose-hairline: rgba(255, 255, 255, 0.92);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 9% 12%, rgba(255, 255, 255, 0.92) 0 1px, transparent 2px),
+        radial-gradient(circle at 91% 14%, rgba(255, 255, 255, 0.82) 0 2px, transparent 3px),
+        radial-gradient(circle at 78% 6%, rgba(255, 126, 178, 0.24), transparent 13rem),
+        radial-gradient(circle at 16% 36%, rgba(255, 255, 255, 0.86), transparent 12rem),
+        linear-gradient(128deg, rgba(255, 255, 255, 0.24), transparent 34%),
+        linear-gradient(146deg, #ffe2ee 0%, #fff9fc 36%, #ffd6e8 68%, #ffc0da 100%);
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(184, 37, 95, 0.052) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(184, 37, 95, 0.044) 1px, transparent 1px),
+        radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.58), transparent 22px),
+        linear-gradient(135deg, transparent 0 46%, rgba(255, 159, 199, 0.16) 46% 47%, transparent 47% 100%);
+      background-size: 56px 56px, 56px 56px, 112px 112px, 300px 300px;
+      opacity: 0.52;
+    }
+
+    body::after {
+      background:
+        radial-gradient(circle at 14% 16%, rgba(255, 94, 159, 0.13), transparent 7rem),
+        radial-gradient(circle at 86% 17%, rgba(255, 255, 255, 0.70), transparent 10rem),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.30), rgba(255, 236, 246, 0.50));
+    }
+
+    .aurora-layer::before,
+    .aurora-layer::after {
+      background:
+        linear-gradient(112deg, transparent 0 31%, rgba(255, 255, 255, 0.66) 35%, transparent 43%),
+        linear-gradient(76deg, transparent 0 43%, rgba(255, 94, 159, 0.15) 48%, transparent 58%),
+        linear-gradient(151deg, transparent 0 52%, rgba(255, 216, 232, 0.38) 56%, transparent 66%);
+    }
+
+    .floating-nav {
+      padding: 8px;
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 238, 246, 0.86)),
+        rgba(255, 249, 252, 0.86);
+      border-color: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 20px 48px rgba(184, 37, 95, 0.16), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .floating-nav::before {
+      background:
+        radial-gradient(circle at 33% 26%, rgba(255, 255, 255, 0.92) 0 3px, transparent 4px),
+        linear-gradient(135deg, #ff8fbc, #d92a73 64%, #b31f5d);
+    }
+
+    .hero {
+      background:
+        radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.78), transparent 10rem),
+        radial-gradient(circle at 88% 11%, rgba(255, 94, 159, 0.15), transparent 12rem),
+        radial-gradient(circle at 72% 54%, rgba(255, 216, 232, 0.44), transparent 18rem),
+        linear-gradient(180deg, rgba(255, 238, 246, 0.84) 0%, rgba(255, 250, 253, 0.64) 46%, rgba(255, 214, 232, 0.68) 100%);
+    }
+
+    .hero::before {
+      background:
+        repeating-linear-gradient(90deg, rgba(184, 37, 95, 0.048) 0 1px, transparent 1px 42px),
+        repeating-linear-gradient(0deg, rgba(184, 37, 95, 0.036) 0 1px, transparent 1px 42px),
+        linear-gradient(118deg, transparent 0 49%, rgba(255, 255, 255, 0.34) 49% 50%, transparent 50% 100%),
+        linear-gradient(62deg, transparent 0 59%, rgba(255, 159, 199, 0.16) 59% 60%, transparent 60% 100%);
+      opacity: 0.54;
+    }
+
+    .hero-shell {
+      gap: 34px;
+    }
+
+    .hero-shell::before {
+      border-radius: 54px;
+      border-color: rgba(226, 58, 126, 0.12);
+      box-shadow:
+        inset 0 0 0 42px rgba(255, 255, 255, 0.24),
+        inset 0 0 0 116px rgba(255, 159, 199, 0.10),
+        0 34px 88px rgba(184, 37, 95, 0.12);
+    }
+
+    .hero-copy,
+    .download-card,
+    .feature-shell,
+    .support-panel,
+    .history-shell {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 236, 246, 0.82)),
+        linear-gradient(320deg, rgba(255, 216, 232, 0.28), transparent 54%),
+        rgba(255, 249, 252, 0.74);
+      border-color: var(--rose-hairline);
+      box-shadow: var(--rose-shadow), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .hero-copy {
+      border-radius: 40px;
+      padding-top: 42px;
+    }
+
+    .hero-copy::before {
+      right: -116px;
+      top: -132px;
+      width: 360px;
+      height: 360px;
+      border-radius: 76px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(255, 159, 199, 0.30), transparent 68%),
+        linear-gradient(45deg, rgba(255, 216, 232, 0.34), transparent 60%);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+    }
+
+    .hero-copy .surface-grid {
+      opacity: 0.16;
+      background-size: 42px 42px;
+      mask-image: linear-gradient(90deg, transparent, #000 14%, #000 76%, transparent);
+    }
+
+    h1 {
+      color: #f04f92;
+      text-shadow:
+        0 3px 0 #fff9fc,
+        0 12px 28px rgba(184, 37, 95, 0.22),
+        0 0 0.75px #7e1743;
+    }
+
+    .lead {
+      max-width: 27em;
+    }
+
+    .hero-tags span,
+    .hero-status span,
+    .hero-summary div,
+    .hero-latest,
+    .release-card,
+    .download-facts span,
+    .download-section,
+    .path-choice,
+    .path-card,
+    .tutorial-checks li,
+    .ssh-tool-grid li,
+    .feature-brief span,
+    .feature-tile,
+    .compat-item {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 236, 246, 0.72)),
+        rgba(255, 249, 252, 0.68);
+      border-color: rgba(180, 31, 93, 0.13);
+      box-shadow: 0 12px 28px rgba(184, 37, 95, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .hero-status span,
+    .download-facts span,
+    .feature-brief span {
+      min-height: 66px;
+    }
+
+    .hero-action-primary,
+    .download-card a.download-primary,
+    .download-card a,
+    .route-code-card a,
+    .release-card b {
+      background: linear-gradient(135deg, #ff7fb2 0%, #e23a7e 54%, #b31f5d 100%);
+      box-shadow: 0 16px 34px rgba(184, 37, 95, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .hero-action-primary {
+      min-width: 154px;
+    }
+
+    .hero-latest {
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .hero-latest::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.46), transparent 26%),
+        radial-gradient(circle at 88% 18%, rgba(255, 127, 178, 0.14), transparent 7rem);
+      opacity: 0.82;
+    }
+
+    .hero-latest > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .release-cards {
+      gap: 13px;
+    }
+
+    .release-card {
+      border-radius: 18px;
+      transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
+    }
+
+    .release-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(226, 58, 126, 0.22);
+      box-shadow: 0 18px 34px rgba(184, 37, 95, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    }
+
+    .release-card-current {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 216, 232, 0.82)),
+        linear-gradient(315deg, rgba(255, 159, 199, 0.24), transparent 58%),
+        rgba(255, 249, 252, 0.78);
+      border-color: rgba(226, 58, 126, 0.22);
+      box-shadow: 0 22px 48px rgba(184, 37, 95, 0.14), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .download-card::before,
+    .support-panel::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+    }
+
+    .download-card::before {
+      left: 18px;
+      right: 18px;
+      top: 0;
+      height: 2px;
+      opacity: 0.92;
+    }
+
+    .support-panel::after {
+      left: 20px;
+      right: 20px;
+      top: 0;
+      height: 1px;
+      opacity: 0.86;
+    }
+
+    .qr-shell {
+      border-color: rgba(180, 31, 93, 0.12);
+      box-shadow: 0 20px 48px rgba(184, 37, 95, 0.12);
+    }
+
+    .model-chip-list span,
+    .inline-models span {
+      border-radius: 999px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 238, 246, 0.70)),
+        rgba(255, 249, 252, 0.72);
+    }
+
+    @media (max-width: 760px) {
+      .hero-copy {
+        border-radius: 30px;
+        padding-top: 26px;
+      }
+
+      .hero-status span,
+      .download-facts span,
+      .feature-brief span {
+        min-height: 0;
+      }
+
+      .release-card,
+      .hero-latest {
+        border-radius: 18px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -3370,7 +4058,7 @@
       <a href="#history">更新记录</a>
       <a href="#install">安装教程</a>
       <a href="#wechat">微信支持</a>
-      <span>V2.0.10 已发布</span>
+      <span>V2.0.15 已发布</span>
     </nav>
 
     <section class="hero">
@@ -3381,11 +4069,11 @@
           <h1>NRadio<br>插件工具</h1>
           <p class="lead">
             NRadio NROS2.0 设备 SSH 插件安装脚本。
-            当前版本 <strong>V2.0.10</strong>，通过 SSH 在路由器执行。
+            当前版本 <strong>V2.0.15</strong>，通过 SSH 在路由器执行。
           </p>
 
           <div class="hero-tags">
-            <span>V2.0.10</span>
+            <span>V2.0.15</span>
             <span>SSH 执行</span>
             <span>单一脚本入口</span>
             <span>NROS2.0 设备</span>
@@ -3396,7 +4084,7 @@
           </div>
 
           <div class="hero-status" aria-label="当前维护状态">
-            <span><b>版本</b>V2.0.10</span>
+            <span><b>版本</b>V2.0.15</span>
             <span><b>文件</b>ssh-nradio-plugin-installer.sh</span>
             <span><b>方式</b>SSH 终端执行</span>
             <span><b>入口</b>单一下载入口</span>
@@ -3420,12 +4108,12 @@
           <section class="hero-latest" aria-label="当前里程碑说明">
             <div class="hero-latest-top">
               <div class="hero-latest-label">已发布</div>
-              <div class="hero-latest-version">V2.0.10</div>
+              <div class="hero-latest-version">V2.0.15</div>
             </div>
-            <strong>V2.0.10</strong>
+            <strong>V2.0.15</strong>
             <p>
-              风扇控制页面新增定时策略。
-              开启后可设置开始时间、结束时间和定时期间模式，适合夜间低噪、固定低速或继续 Smart 自动控制。
+              奇游、雷神安装前复用哈基米软件源检查流程。
+              未切到 OpenWrt 21.02.7 清华源时自动备份并切换，再继续安装。
             </p>
             <div class="hero-milestones">
               <span>V2.0.0 正式脚本默认下载</span>
@@ -3434,12 +4122,18 @@
               <span>V2.0.3 风扇控制增强</span>
               <span>V2.0.7 新增 C8-668 支持</span>
               <span>V2.0.10 风扇定时策略</span>
+              <span>V2.0.15 奇游 / 雷神源切换</span>
               <span>单一脚本入口</span>
             </div>
           </section>
 
           <div class="release-cards" id="history" aria-label="最新更新摘要">
             <article class="release-card release-card-current">
+              <b>V2.0.15</b>
+              <strong>奇游 / 雷神源切换</strong>
+              <p>奇游、雷神安装前复用哈基米软件源检查流程；未切到 OpenWrt 21.02.7 清华源时自动备份并切换，再继续安装。</p>
+            </article>
+            <article class="release-card">
               <b>V2.0.10</b>
               <strong>风扇定时策略</strong>
               <p>风扇控制页面开启后，可设置开始时间、结束时间和定时期间模式。适合夜间低噪、固定低速或继续 Smart 自动控制。</p>
@@ -3719,7 +4413,7 @@ sh ssh-nradio-plugin-installer.sh</code>
               </div>
               <div>
                 <strong>持续更新</strong>
-                <span>当前公开里程碑整理到 V2.0.10。</span>
+                <span>当前公开里程碑整理到 V2.0.15。</span>
               </div>
             </div>
           </section>
@@ -4007,11 +4701,18 @@ sh ssh-nradio-plugin-installer.sh</code>
                     <p>新增 NRadio_C8-668 设备支持；支持机型扩展为 5 款。V2.0.6 的奇游状态返回码修复、应用商店美化标记同步、OpenVPN 快速状态读取、C8-688 / C2000MAX 风扇分机型默认策略和单一脚本入口继续保留。</p>
                   </div>
                 </article>
-                <article class="timeline-entry is-current">
+                <article class="timeline-entry">
                   <div class="version">V2.0.10</div>
                   <div class="entry-copy">
                     <strong>风扇定时策略</strong>
                     <p>风扇控制页面开启后，可设置开始时间、结束时间和定时期间模式。适合夜间低噪、固定低速或继续 Smart 自动控制。</p>
+                  </div>
+                </article>
+                <article class="timeline-entry is-current">
+                  <div class="version">V2.0.15</div>
+                  <div class="entry-copy">
+                    <strong>奇游 / 雷神源切换</strong>
+                    <p>奇游、雷神安装前复用哈基米软件源检查流程；未切到 OpenWrt 21.02.7 清华源时自动备份并切换，再继续安装。</p>
                   </div>
                 </article>
               </div>

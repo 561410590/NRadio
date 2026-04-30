@@ -2,7 +2,7 @@
 
 NRadio 插件助手公开仓库。这里保存当前正式脚本、公开支持页、应用商店页面素材和版本记录。
 
-当前正式版本：`V2.0.10`
+当前正式版本：`V2.0.15`
 
 公网入口：[https://nradio.mayebano.shop/](https://nradio.mayebano.shop/)
 
@@ -32,7 +32,7 @@ sh ssh-nradio-plugin-installer.sh
 
 | 文件 | 用途 |
 | --- | --- |
-| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.10 正式总脚本，公网默认下载入口 |
+| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.15 正式总脚本，公网默认下载入口 |
 | `00-current/ssh-nradio-plugin-installer-2.0.0beta.sh` | V2.0.0-beta 历史备份，不作为当前下载渠道 |
 | `00-current/nradio-fanctrl-plugin.sh` | 风扇控制独立脚本 |
 | `00-current/qiyou-nradio-temp-installer.sh` | 奇游联机宝历史临时脚本 |
@@ -42,13 +42,14 @@ sh ssh-nradio-plugin-installer.sh
 | `CONTRIBUTING.md` | 反馈和贡献说明 |
 | `SECURITY.md` | 安全反馈边界 |
 
-## V2.0.10 状态
+## V2.0.15 状态
 
-- 默认下载脚本已切换为 `V2.0.10`。
+- 默认下载脚本已切换为 `V2.0.15`。
 - 旧 beta 独立短下载入口已取消。
 - 主菜单改为 5 个功能分类。
 - 设备识别新增 `NRadio_C8-668`，对应硬件型号 `HC-WT9108`。
 - 奇游联机宝和雷神加速器已并入正式菜单，菜单不再标注“测试中”。
+- 奇游 / 雷神安装前会复用哈基米软件源检查流程；未切到 OpenWrt 21.02.7 清华源时会先备份并切换，再继续安装。
 - 设备维护与检测中的风扇控制已扩展到 `NRadio_C8-688` / `NRadio_C2000MAX`。
 - 应用商店 FanControl 打开路由统一为 `nradioadv/system/fanctrl`，并保留旧路由迁移逻辑。
 - 奇游/雷神安装阶段号、官方脚本 SHA256 日志和雷神依赖失败提示已补齐。
@@ -57,14 +58,14 @@ sh ssh-nradio-plugin-installer.sh
 - OpenVPN 连接中枢 Mk2 美化层已回写总脚本，首次状态读取改为快速模式，完整诊断随后自动补齐。
 - 奇游联机宝状态查看在未安装场景下不再因 `set -e` 异常退出。
 - 应用商店美化用户可见口径统一为“哈基米”。
-- 公网页已同步 V2.0.10 风扇定时策略说明。
+- 公网页已同步 V2.0.15 奇游 / 雷神源切换说明。
 - 公网页由 GitHub `main` 分支通过 Vercel 发布。
 
 当前正式脚本校验：
 
 ```text
-SHA256  a599b915f165a229ca901ac57b8ffc043ca4dc8aeb8391da75cc6dcc6ad523dc
-Bytes   889057
+SHA256  36908f940697380b7dadab94321a381f7465868a95aadbd5bcde43f3b1f0bbf3
+Bytes   889185
 Path    00-current/ssh-nradio-plugin-installer.sh
 ```
 
