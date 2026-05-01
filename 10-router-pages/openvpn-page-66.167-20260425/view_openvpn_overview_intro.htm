@@ -1,7 +1,7 @@
 <%+openvpn/ovpn_css%>
 
-<div class="vpn-shell vpn-shell-refined vpn-shell-mk2 vpn-shell-secondary">
-  <div class="vpn-hero vpn-hero-mk2 vpn-hero-secondary">
+<div class="vpn-shell vpn-shell-refined vpn-shell-mk3 vpn-shell-secondary">
+  <div class="vpn-hero vpn-hero-mk3 vpn-hero-secondary">
     <div class="vpn-hero-top">
       <div class="vpn-brand-block">
         <div class="vpn-toolbar">
@@ -9,10 +9,15 @@
           <span class="vpn-status-chip">标准实例管理</span>
         </div>
         <h2>标准 OpenVPN</h2>
-        <p class="vpn-sub">用于新建模板实例、导入现成 ovpn 文件，或维护原生 OpenVPN 节点；运行态建议回到连接中枢查看。</p>
+        <p class="vpn-sub">新建模板实例、导入 ovpn 文件，或维护原生 OpenVPN 节点；运行状态回到控制台查看。</p>
+        <div class="vpn-secondary-summary">
+          <span>实例 <strong><%=self.instance_count or 0%></strong></span>
+          <span>启用 <strong><%=self.enabled_count or 0%></strong></span>
+          <span>运行 <strong><%=self.running_count or 0%></strong></span>
+        </div>
       </div>
       <div class="vpn-hero-actions">
-        <a class="cbi-button cbi-button-apply" href="<%=url('nradioadv/system/openvpnfull')%>">返回连接中枢</a>
+        <a class="cbi-button cbi-button-apply" href="<%=url('nradioadv/system/openvpnfull')%>">返回控制台</a>
       </div>
     </div>
 

@@ -73,11 +73,11 @@
 
 <%+openvpn/ovpn_css%>
 
-<div class="vpn-entry-grid vpn-entry-grid-mk2">
+<div class="vpn-entry-grid vpn-entry-grid-mk3">
 	<div class="vpn-entry-card" id="div_add">
 		<div class="vpn-entry-head">
 			<h4>模板创建</h4>
-			<span class="vpn-entry-badge">推荐</span>
+			<span class="vpn-entry-badge">模板</span>
 		</div>
 		<p class="vpn-entry-lead">适合快速生成一个标准 OpenVPN 实例，再进入基础配置或高级配置继续细化。</p>
 		<label class="vpn-field-label" for="instance_name1">实例名称</label>
@@ -107,13 +107,13 @@
 		<div class="vpn-field-help">实例名称会决定落盘文件名和列表中的显示项。</div>
 		<label class="vpn-field-label" for="ovpn_file">配置文件</label>
 		<input type="file" name="ovpn_file" id="ovpn_file" accept="application/x-openvpn-profile,.ovpn" />
-		<div class="vpn-field-help">支持标准 `.ovpn` 客户端配置文件，上传后可再到 OEM 视图核对运行状态。</div>
+		<div class="vpn-field-help">支持标准 `.ovpn` 客户端配置文件，上传后可回到控制台核对运行状态。</div>
 		<div class="vpn-entry-actions">
 			<input class="btn cbi-button cbi-button-add" type="submit" onclick="vpn_upload(); return false;" value="上传导入" title="上传 ovpn 文件" />
 		</div>
 	</div>
 </div>
 
-<div class="vpn-output">
+<div class="vpn-output" role="status" aria-live="polite">
 	<span id="vpn_output"></span>
 </div>

@@ -148,7 +148,9 @@ local function detect_primary_lan_cidr(lan_addr_dump)
     return nil
 end
 
-local function collect_status()
+local function collect_status(opts)
+    opts = opts or {}
+    local fast_probe = opts.fast_probe == true
     local svc = cmd("/etc/init.d/openvpn status 2>/dev/null || true")
     local ps_std = cmd("ps | grep 'openvpn(custom_config)' | grep -v grep")
     local ps_legacy = cmd("ps | grep 'openvpn --config' | grep -v grep")
@@ -159,8 +161,15 @@ local function collect_status()
     local rule_dump = cmd("ip rule | grep 'lookup main' 2>/dev/null")
     local nat_dump = cmd("iptables -t nat -S 2>/dev/null")
     local lan_addr_dump = cmd("ip -4 addr show br-lan 2>/dev/null")
-    local log = cmd("tail -40 /tmp/openvpn-client.log 2>/dev/null || logread 2>/dev/null | grep -i openvpn | tail -40")
-    local log_focus = cmd("(tail -120 /tmp/openvpn-client.log 2>/dev/null; logread 2>/dev/null) | grep -i -E 'openvpn|tun0|tls|auth|route|error|fail|warn' | tail -30")
+    local log = nil
+    local log_focus = nil
+    if fast_probe then
+        log = cmd("tail -18 /tmp/openvpn-client.log 2>/dev/null")
+        log_focus = cmd("tail -60 /tmp/openvpn-client.log 2>/dev/null | grep -i -E 'openvpn|tun0|tls|auth|route|error|fail|warn' | tail -16")
+    else
+        log = cmd("tail -40 /tmp/openvpn-client.log 2>/dev/null || logread 2>/dev/null | grep -i openvpn | tail -40")
+        log_focus = cmd("(tail -120 /tmp/openvpn-client.log 2>/dev/null; logread 2>/dev/null) | grep -i -E 'openvpn|tun0|tls|auth|route|error|fail|warn' | tail -30")
+    end
     local cfg = cmd("sed -n '1,180p' /etc/openvpn/client.ovpn 2>/dev/null")
     local tun_ip = tun:match("inet%s+([%d%.]+/%d+)") or "-"
     local remote = cmd("awk '$1==\"remote\"{print $2\" \"$3; exit}' /etc/openvpn/client.ovpn 2>/dev/null")
@@ -199,8 +208,11 @@ local function collect_status()
             local to_rule_ok = contains(rule_dump, "to " .. target .. " lookup main")
             local iif_rule_ok = contains(rule_dump, "to " .. target .. " iif br-lan lookup main")
             local proxy_ok = is_host and contains_proxy_target(peer_dump, target) or false
-            local probe_ip = probe_ip_for_target(target)
-            local probe_ok = probe_ping(probe_ip)
+            local probe_ip = fast_probe and "-" or probe_ip_for_target(target)
+            local probe_ok = nil
+            if not fast_probe then
+                probe_ok = probe_ping(probe_ip)
+            end
             route_checks[#route_checks + 1] = {
                 line = line,
                 target = target,
@@ -210,7 +222,8 @@ local function collect_status()
                 iif_rule_ok = iif_rule_ok,
                 proxy_ok = proxy_ok,
                 probe_ip = probe_ip or "-",
-                probe_ok = probe_ok
+                probe_ok = probe_ok == true,
+                probe_deferred = fast_probe
             }
             route_targets[#route_targets + 1] = target
             route_count = route_count + 1
@@ -329,7 +342,7 @@ local function collect_status()
         else
             action_kind = "restart"
             action_label = "重连 OpenVPN"
-            action_hint = "当前已在线但存在告警，可优先尝试重连或查看下方实时校验。"
+            action_hint = "当前已在线但存在告警，可先尝试重连或查看下方目标检查。"
             runtime_note = "当前实例已由 LuCI 接管；如果状态异常，可直接重连当前 custom_config。"
             auth_note = "当前配置已在运行，但存在待确认项，可优先检查认证材料和下方日志。"
         end
@@ -363,8 +376,11 @@ local function collect_status()
     end
 
     local startup_label = activation_ready and "可启动" or (profile_ready and "待认证文件" or "待配置")
-    local online_breakdown = "远端 " .. ratio_text(remote_online_count, route_count) .. " · 映射 " .. (map_ip_ok and ratio_text(local_map_online and 1 or 0, 1) or "-")
-    local online_device_ratio = ratio_text(remote_online_count, route_count)
+    local map_ratio = map_ip_ok and ratio_text(local_map_online and 1 or 0, 1) or "-"
+    local remote_online_ratio = fast_probe and "探测中" or ratio_text(remote_online_count, route_count)
+    local online_breakdown = fast_probe and ("远端探测中 · 映射 " .. map_ratio) or ("远端 " .. remote_online_ratio .. " · 映射 " .. map_ratio)
+    local online_device_ratio = fast_probe and "探测中" or remote_online_ratio
+    local online_ratio = fast_probe and "探测中" or ratio_text(remote_online_count + (local_map_online and 1 or 0), route_count + (map_ip_ok and 1 or 0))
     local mode_label = "未启动"
     if ps_std ~= "" then
         mode_label = "LuCI 管理实例"
@@ -402,8 +418,8 @@ local function collect_status()
         status_label = connected and "已连接" or "已停止",
         health_ratio = ratio_text(health_ok, health_total),
         online_device_ratio = online_device_ratio,
-        online_ratio = ratio_text(remote_online_count + (local_map_online and 1 or 0), route_count + (map_ip_ok and 1 or 0)),
-        remote_online_ratio = ratio_text(remote_online_count, route_count),
+        online_ratio = online_ratio,
+        remote_online_ratio = remote_online_ratio,
         local_map_online_ratio = map_ip_ok and ratio_text(local_map_online and 1 or 0, 1) or "-",
         route_rule_ratio = ratio_text(route_health_ok, route_health_total),
         tun_ip = tun_ip,
@@ -456,6 +472,7 @@ local function collect_status()
         masquerade_hits = masquerade_hits,
         route_targets = route_targets,
         route_checks = route_checks,
+        probe_deferred = fast_probe,
         peer_lines = peer_lines,
         log_focus = log_focus ~= "" and log_focus or "no focus log",
         log = log ~= "" and log or "no log",
@@ -493,7 +510,10 @@ function stop()
 end
 
 function status()
-    local ok, data = xpcall(collect_status, debug.traceback)
+    local fast_probe = http.formvalue("fast") == "1"
+    local ok, data = xpcall(function()
+        return collect_status({ fast_probe = fast_probe })
+    end, debug.traceback)
     if not ok then
         http.status(200, "OK")
         http.prepare_content("application/json")

@@ -9,33 +9,42 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
 
 <%+openvpn/ovpn_css%>
 
-<div class="vpn-shell vpn-shell-refined vpn-shell-mk2">
-  <section class="vpn-hero vpn-hero-mk2">
+<div class="vpn-shell vpn-shell-refined vpn-shell-mk3 is-loading">
+  <section class="vpn-hero vpn-hero-mk3">
     <div class="vpn-hero-main">
       <div class="vpn-brand-block">
+        <h2>OpenVPN 控制台</h2>
         <div class="vpn-toolbar">
           <span class="vpn-pill">OpenVPN</span>
           <span id="vpn-health-chip" class="vpn-health-chip bad">等待更新</span>
           <span id="vpn-live-ts" class="vpn-inline-note">更新中</span>
         </div>
-        <h2>OpenVPN 连接中枢</h2>
-        <p class="vpn-sub">右侧处理启动、停止、刷新和复制；下方集中查看运行、认证、路由和日志。</p>
-        <div class="vpn-stage-line" aria-label="OpenVPN 状态闭环">
-          <span id="vpn-stage-config" class="vpn-stage-chip wait">配置</span>
-          <span id="vpn-stage-auth" class="vpn-stage-chip wait">认证</span>
-          <span id="vpn-stage-tunnel" class="vpn-stage-chip wait">隧道</span>
-          <span id="vpn-stage-route" class="vpn-stage-chip wait">路由</span>
+        <p class="vpn-sub">启动、停止、刷新、复制配置；下方查看运行、认证、路由和日志。</p>
+        <div class="vpn-hero-summary" aria-label="OpenVPN 摘要">
+          <div class="vpn-hero-summary-item">
+            <span>实例</span>
+            <strong>custom_config</strong>
+          </div>
+          <div class="vpn-hero-summary-item">
+            <span>配置文件</span>
+            <strong><span class="vpn-summary-line">/etc/openvpn</span><span class="vpn-summary-line">/client.ovpn</span></strong>
+          </div>
+          <div class="vpn-hero-summary-item">
+            <span>入口</span>
+            <strong>基础 / 高级 / 标准</strong>
+          </div>
         </div>
       </div>
 
       <aside class="vpn-command-card">
+        <div class="vpn-command-kicker">运行控制</div>
         <div class="vpn-orb-wrap">
           <div id="vpn-orb-ring" class="vpn-orb-ring bad">
             <span id="vpn-orb-status">等待</span>
           </div>
           <div class="vpn-orb-copy">
             <strong id="vpn-orb-subtitle">正在读取状态</strong>
-            <span id="vpn-orb-meta">连接、认证、路由会自动汇总。</span>
+            <span id="vpn-orb-meta">连接、认证、路由状态会在这里显示。</span>
           </div>
         </div>
         <div class="vpn-hero-actions">
@@ -45,15 +54,15 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
           <form id="vpn-stop-form" method="post" action="<%=dispatcher.build_url('nradioadv','system','openvpnfull','stop')%>" style="display:none">
             <input id="vpn-stop-button" class="cbi-button vpn-button-muted" type="submit" value="停止 OpenVPN" />
           </form>
-          <a id="vpn-refresh-button" class="cbi-button vpn-button-muted" href="#" onclick="return vpnManualRefresh();">刷新状态</a>
-          <a id="vpn-copy-button" class="cbi-button vpn-button-muted" href="#" onclick="return vpnCopyConfig();">复制配置</a>
+          <button id="vpn-refresh-button" class="cbi-button vpn-button-muted" type="button">刷新状态</button>
+          <button id="vpn-copy-button" class="cbi-button vpn-button-muted" type="button" aria-disabled="true">复制配置</button>
           <span id="vpn-copy-feedback" class="vpn-copy-feedback" aria-live="polite"></span>
         </div>
         <div id="vpn-action-hint" class="vpn-hero-note">当前页会按配置状态自动切换主操作。</div>
       </aside>
     </div>
 
-    <div class="vpn-mini-grid vpn-mini-grid-mk2">
+    <div class="vpn-mini-grid vpn-mini-grid-mk3">
       <div class="vpn-mini-card vpn-mini-card-accent vpn-mini-card-wide">
         <span class="vpn-mini-label">当前动作</span>
         <strong id="vpn-mini-action">等待更新</strong>
@@ -112,7 +121,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       </div>
       <div class="vpn-kv"><span>服务状态</span><strong id="vpn-runtime-service">-</strong></div>
       <div class="vpn-kv"><span>接管状态</span><strong id="vpn-runtime-managed">-</strong></div>
-      <div class="vpn-kv"><span>推荐动作</span><strong id="vpn-runtime-action">-</strong></div>
+      <div class="vpn-kv"><span>可用操作</span><strong id="vpn-runtime-action">-</strong></div>
       <div class="vpn-kv"><span>启动方式</span><strong id="vpn-runtime-mode">-</strong></div>
       <div class="vpn-kv"><span>连接日志</span><strong id="vpn-runtime-log-state" class="vpn-inline-badge vpn-badge-neutral">等待更新</strong></div>
       <div class="vpn-kv"><span>进程状态</span><strong id="vpn-runtime-process">-</strong></div>
@@ -139,10 +148,10 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       </div>
       <div class="vpn-kv"><span>远端目标</span><strong id="vpn-route-count">-</strong></div>
       <div class="vpn-kv"><span>远端在线</span><strong id="vpn-peer-count">-</strong></div>
-      <div class="vpn-kv"><span>规则健康</span><strong id="vpn-route-ratio">-</strong></div>
+      <div class="vpn-kv"><span>规则状态</span><strong id="vpn-route-ratio">-</strong></div>
       <div class="vpn-kv"><span>本地映射 IP</span><strong id="vpn-map-ip">-</strong></div>
       <div class="vpn-kv"><span>DNAT</span><strong id="vpn-dnat-status" class="vpn-inline-badge vpn-badge-neutral">等待更新</strong></div>
-      <div id="vpn-route-note" class="vpn-card-note">下方“实时校验”展示每个目标的详细结果。</div>
+      <div id="vpn-route-note" class="vpn-card-note">下方“目标检查”展示每个目标的详细结果。</div>
     </article>
   </section>
 
@@ -150,7 +159,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
     <div class="vpn-quick-rail-head">
       <div>
         <div class="vpn-quick-rail-title">配置入口</div>
-        <p class="vpn-quick-rail-sub">把配置类操作收在一行，首屏先看状态和动作，需要改项时再下钻。</p>
+        <p class="vpn-quick-rail-sub">配置入口集中在这里，首屏保留状态和操作，需要改项时再进入配置。</p>
       </div>
       <span class="vpn-card-badge vpn-badge-neutral">导航</span>
     </div>
@@ -173,21 +182,21 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
   <section class="vpn-panel-shell">
     <div class="vpn-panel-shell-head">
       <div>
-        <span class="vpn-panel-shell-kicker">诊断工作区</span>
+        <span class="vpn-panel-shell-kicker">诊断</span>
         <h3>日志与路由联动排查</h3>
-        <p>优先看关键日志和实时校验，出现异常后再下钻到完整运行日志、配置内容和隧道信息。</p>
+        <p>优先看关键日志和目标检查，异常时再查看完整运行日志、配置内容和隧道信息。</p>
       </div>
       <span id="vpn-panel-live-badge" class="vpn-panel-live-badge">等待更新</span>
     </div>
-    <div class="vpn-tabbar">
-      <button class="vpn-tab-btn vpn-tab-btn-major is-active" type="button" data-target="vpn-focus-panel">关键日志</button>
-      <button class="vpn-tab-btn vpn-tab-btn-major" type="button" data-target="vpn-route-panel">实时校验</button>
-      <button class="vpn-tab-btn" type="button" data-target="vpn-config-panel">客户端配置</button>
-      <button class="vpn-tab-btn" type="button" data-target="vpn-runtime-panel">运行日志</button>
-      <button class="vpn-tab-btn" type="button" data-target="vpn-tun-panel">隧道信息</button>
+    <div class="vpn-tabbar" role="tablist" aria-label="OpenVPN 诊断面板">
+      <button class="vpn-tab-btn vpn-tab-btn-major is-active" type="button" data-target="vpn-focus-panel" role="tab" aria-selected="true" aria-controls="vpn-focus-panel">关键日志</button>
+      <button class="vpn-tab-btn vpn-tab-btn-major" type="button" data-target="vpn-route-panel" role="tab" aria-selected="false" aria-controls="vpn-route-panel">目标检查</button>
+      <button class="vpn-tab-btn" type="button" data-target="vpn-config-panel" role="tab" aria-selected="false" aria-controls="vpn-config-panel">客户端配置</button>
+      <button class="vpn-tab-btn" type="button" data-target="vpn-runtime-panel" role="tab" aria-selected="false" aria-controls="vpn-runtime-panel">运行日志</button>
+      <button class="vpn-tab-btn" type="button" data-target="vpn-tun-panel" role="tab" aria-selected="false" aria-controls="vpn-tun-panel">隧道信息</button>
     </div>
 
-    <div id="vpn-focus-panel" class="vpn-panel vpn-panel-major is-active">
+    <div id="vpn-focus-panel" class="vpn-panel vpn-panel-major is-active" role="tabpanel" aria-hidden="false">
       <div class="vpn-panel-head">
         <h3>关键日志</h3>
         <span id="vpn-focus-meta">优先展示连接、认证、路由相关行。</span>
@@ -199,9 +208,9 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       <pre id="vpn-focus-log">等待更新</pre>
     </div>
 
-    <div id="vpn-route-panel" class="vpn-panel vpn-panel-major">
+    <div id="vpn-route-panel" class="vpn-panel vpn-panel-major" role="tabpanel" aria-hidden="true">
       <div class="vpn-panel-head">
-        <h3>实时校验</h3>
+        <h3>目标检查</h3>
         <span id="vpn-route-meta">基于当前内核状态与目标探测的实时结果。优先看离线和缺规则项。</span>
       </div>
       <div class="vpn-focus-strip vpn-focus-strip-route">
@@ -226,7 +235,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       </div>
     </div>
 
-    <div id="vpn-config-panel" class="vpn-panel">
+    <div id="vpn-config-panel" class="vpn-panel" role="tabpanel" aria-hidden="true">
       <div class="vpn-panel-head">
         <h3>客户端配置</h3>
         <span>只读展示当前写入的 client.ovpn 内容。</span>
@@ -235,7 +244,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       <pre id="vpn-config-pre"><%=esc(cfg ~= "" and cfg or "no config")%></pre>
     </div>
 
-    <div id="vpn-runtime-panel" class="vpn-panel">
+    <div id="vpn-runtime-panel" class="vpn-panel" role="tabpanel" aria-hidden="true">
       <div class="vpn-panel-head">
         <h3>运行日志</h3>
         <span id="vpn-runtime-meta">完整日志更适合排查重连、认证和 TLS 问题。</span>
@@ -243,7 +252,7 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
       <pre id="vpn-runtime-log">等待更新</pre>
     </div>
 
-    <div id="vpn-tun-panel" class="vpn-panel">
+    <div id="vpn-tun-panel" class="vpn-panel" role="tabpanel" aria-hidden="true">
       <div class="vpn-panel-head">
         <h3>隧道信息</h3>
         <span id="vpn-tun-meta">展示 tun0 与 br-lan 的当前地址信息。</span>
@@ -264,6 +273,13 @@ local cfg = cmd("sed -n '1,240p' /etc/openvpn/client.ovpn 2>/dev/null")
 
 <script>
 function vpnCopyConfig() {
+  var copyButton = document.getElementById('vpn-copy-button');
+  if (copyButton && copyButton.getAttribute('aria-disabled') === 'true') {
+    if (window.vpnShowCopyFeedback) {
+      window.vpnShowCopyFeedback('当前没有可复制的 client.ovpn', 'warn');
+    }
+    return false;
+  }
   var source = document.getElementById('vpn-config-copy-source');
   if (!source || !source.value || source.value === 'no config') {
     if (window.vpnShowCopyFeedback) {
@@ -310,21 +326,55 @@ function vpnCopyConfig() {
   function activate(targetId) {
     for (var i = 0; i < buttons.length; i++) {
       buttons[i].className = buttons[i].className.replace(/\bis-active\b/g, '').replace(/\s+/g, ' ').replace(/^\s|\s$/g, '');
+      buttons[i].setAttribute('aria-selected', 'false');
       if (buttons[i].getAttribute('data-target') === targetId) {
         buttons[i].className += (buttons[i].className ? ' ' : '') + 'is-active';
+        buttons[i].setAttribute('aria-selected', 'true');
+        buttons[i].setAttribute('tabindex', '0');
+      } else {
+        buttons[i].setAttribute('tabindex', '-1');
       }
     }
     for (var j = 0; j < panels.length; j++) {
       panels[j].className = panels[j].className.replace(/\bis-active\b/g, '').replace(/\s+/g, ' ').replace(/^\s|\s$/g, '');
+      panels[j].setAttribute('aria-hidden', 'true');
       if (panels[j].id === targetId) {
         panels[j].className += (panels[j].className ? ' ' : '') + 'is-active';
+        panels[j].setAttribute('aria-hidden', 'false');
       }
     }
   }
 
   for (var i = 0; i < buttons.length; i++) {
+    buttons[i].setAttribute('tabindex', buttons[i].className.indexOf('is-active') >= 0 ? '0' : '-1');
     buttons[i].onclick = function() {
       activate(this.getAttribute('data-target'));
+      return false;
+    };
+    buttons[i].onkeydown = function(ev) {
+      ev = ev || window.event;
+      var key = ev.key || ev.keyCode;
+      if (key !== 'ArrowLeft' && key !== 'ArrowRight' && key !== 37 && key !== 39) {
+        return;
+      }
+      var current = 0;
+      for (var j = 0; j < buttons.length; j++) {
+        if (buttons[j] === this) {
+          current = j;
+          break;
+        }
+      }
+      var next = (key === 'ArrowLeft' || key === 37) ? current - 1 : current + 1;
+      if (next < 0) {
+        next = buttons.length - 1;
+      } else if (next >= buttons.length) {
+        next = 0;
+      }
+      activate(buttons[next].getAttribute('data-target'));
+      buttons[next].focus();
+      if (ev.preventDefault) {
+        ev.preventDefault();
+      }
       return false;
     };
   }
@@ -356,6 +406,7 @@ function vpnCopyConfig() {
   var statusBusy = false;
   var lastGoodStatus = null;
   var pendingManualRefresh = false;
+  var deepRefreshTimer = 0;
 
   function esc(text) {
     return String(text == null ? '' : text)
@@ -397,7 +448,7 @@ function vpnCopyConfig() {
   function setShellState(stateClass) {
     var shell = document.querySelector('.vpn-shell-refined');
     if (shell) {
-      shell.className = 'vpn-shell vpn-shell-refined vpn-shell-mk2' + (stateClass ? (' ' + stateClass) : '');
+      shell.className = 'vpn-shell vpn-shell-refined vpn-shell-mk3' + (stateClass ? (' ' + stateClass) : '');
     }
   }
 
@@ -405,13 +456,6 @@ function vpnCopyConfig() {
     var el = document.getElementById(id);
     if (el) {
       el.className = 'vpn-card' + (stateClass ? (' ' + stateClass) : '');
-    }
-  }
-
-  function setStageState(id, stateClass) {
-    var el = document.getElementById(id);
-    if (el) {
-      el.className = 'vpn-stage-chip ' + (stateClass || 'wait');
     }
   }
 
@@ -452,7 +496,12 @@ function vpnCopyConfig() {
       if (aKind !== bKind) {
         return aKind - bKind;
       }
-      if (!!a.probe_ok !== !!b.probe_ok) {
+      var aDeferred = !!(status.probe_deferred || a.probe_deferred);
+      var bDeferred = !!(status.probe_deferred || b.probe_deferred);
+      if (aDeferred !== bDeferred) {
+        return aDeferred ? 1 : -1;
+      }
+      if (!aDeferred && !bDeferred && !!a.probe_ok !== !!b.probe_ok) {
         return a.probe_ok ? 1 : -1;
       }
       return String(a.target || '').localeCompare(String(b.target || ''));
@@ -463,10 +512,11 @@ function vpnCopyConfig() {
 
     for (var i = 0; i < ordered.length; i++) {
       var item = ordered[i];
+      var probeDeferred = !!(status.probe_deferred || item.probe_deferred);
       var badges = [
         { label: '主规则', state: item.to_rule_ok ? 'ok' : 'bad' },
         { label: 'LAN规则', state: item.iif_rule_ok ? 'ok' : 'bad' },
-        { label: item.probe_ok ? '在线' : '离线', state: item.probe_ok ? 'ok' : 'bad' }
+        { label: probeDeferred ? '待探测' : (item.probe_ok ? '在线' : '离线'), state: probeDeferred ? 'neutral' : (item.probe_ok ? 'ok' : 'bad') }
       ];
 
       if (item.kind === 'host') {
@@ -477,7 +527,7 @@ function vpnCopyConfig() {
         '<div class="vpn-check-row">' +
           '<div class="vpn-check-main">' +
             '<strong>' + esc(item.target) + '</strong>' +
-            '<span>via ' + esc(item.via || '-') + ' · ' + (item.kind === 'host' ? '主机映射' : '网段路由') + ' · 探测 ' + esc(item.probe_ip || '-') + '</span>' +
+            '<span>via ' + esc(item.via || '-') + ' · ' + (item.kind === 'host' ? '主机映射' : '网段路由') + ' · ' + (probeDeferred ? '探测排队 ' : '探测 ') + esc(item.probe_ip || '-') + '</span>' +
           '</div>' +
           '<div class="vpn-check-badges">' + renderBadges(badges) + '</div>' +
         '</div>';
@@ -597,11 +647,6 @@ function vpnCopyConfig() {
     setText('vpn-orb-status', status.connected ? (status.health_label || '在线') : (status.activation_ready ? '可启动' : (status.profile_ready ? '待补齐' : '待配置')));
     setText('vpn-orb-subtitle', status.action_label || '-');
     setText('vpn-orb-meta', (status.mode_label || status.mode || '-') + ' · ' + (status.online_breakdown || '等待路由状态'));
-    setStageState('vpn-stage-config', status.profile_ready ? 'ok' : 'bad');
-    setStageState('vpn-stage-auth', status.activation_ready ? 'ok' : (status.profile_ready ? 'warn' : 'wait'));
-    setStageState('vpn-stage-tunnel', status.connected ? (status.health_class === 'ok' ? 'ok' : 'warn') : (status.activation_ready ? 'ready' : 'wait'));
-    setStageState('vpn-stage-route', status.route_badge_ok ? 'ok' : (((status.route_count || 0) > 0 || (status.map_ip && status.map_ip !== '-')) ? 'warn' : 'wait'));
-
     setText('vpn-stat-tun-ip', status.tun_ip || '-');
     setHtml('vpn-stat-remote', renderRemoteValue(status.remote || '-'));
     setText('vpn-stat-remote-meta', '协议: ' + (status.proto || '-') + ' · 当前写入的 remote');
@@ -647,7 +692,7 @@ function vpnCopyConfig() {
     setClass('vpn-dnat-status', 'vpn-inline-badge ' + (status.dnat_ok ? 'vpn-badge-ok' : 'vpn-badge-bad'));
     setText('vpn-dnat-status', status.dnat_status || '未启用');
     setText('vpn-map-ip', status.map_ip || '-');
-    setText('vpn-route-note', '下方“实时校验”展示每个目标的详细结果。');
+    setText('vpn-route-note', '下方“目标检查”展示每个目标的详细结果。');
 
     setText('vpn-action-hint', status.action_hint || '当前页会按配置状态自动切换主操作。');
     setText('vpn-runtime-note', status.runtime_note || '断开后如条件满足，可直接从当前页启动或接管启动。');
@@ -680,7 +725,7 @@ function vpnCopyConfig() {
     setText('vpn-focus-meta', '优先展示连接、认证、路由相关行。' + (status.ts ? (' · ' + status.ts) : ''));
     setText('vpn-focus-ts', status.ts ? ('最近刷新: ' + status.ts) : '等待刷新');
     setText('vpn-route-strip-count', '目标数: ' + ((status.route_count || 0) + ' 条'));
-    setText('vpn-route-strip-health', '规则健康: ' + (status.route_rule_ratio || '-'));
+    setText('vpn-route-strip-health', '规则状态: ' + (status.route_rule_ratio || '-'));
     setText('vpn-route-strip-dnat', 'DNAT: ' + (status.dnat_status || '未启用'));
     setHtml('vpn-focus-log', esc(status.log_focus || 'no focus log')
       .replace(/(Initialization Sequence Completed)/g, '<span class="vpn-log-good">$1</span>')
@@ -703,15 +748,11 @@ function vpnCopyConfig() {
     setShellState('is-warn');
     setClass('vpn-health-chip', 'vpn-health-chip warn');
     setText('vpn-health-chip', '状态未返回');
-    setText('vpn-live-ts', lastGoodStatus && lastGoodStatus.ts ? ('保留上次 ' + lastGoodStatus.ts) : '等待重新读取');
+    setText('vpn-live-ts', lastGoodStatus && lastGoodStatus.ts ? ('更新 ' + lastGoodStatus.ts) : '等待重试');
     setClass('vpn-orb-ring', 'vpn-orb-ring warn');
     setText('vpn-orb-status', '待查');
     setText('vpn-orb-subtitle', '状态接口未返回');
     setText('vpn-orb-meta', message || '请刷新页面，或从应用商店重新打开 OpenVPN。');
-    setStageState('vpn-stage-config', 'wait');
-    setStageState('vpn-stage-auth', 'wait');
-    setStageState('vpn-stage-tunnel', 'warn');
-    setStageState('vpn-stage-route', 'wait');
     setText('vpn-action-hint', message || '状态读取失败，当前不改动 OpenVPN 运行状态。');
     setText('vpn-mini-action', '等待状态接口');
     setText('vpn-mini-action-note', '页面没有执行启动、停止或重连，只是状态读取未完成。');
@@ -723,7 +764,9 @@ function vpnCopyConfig() {
     setText('vpn-mini-route-note', '路由状态需要接口返回后确认。');
   }
 
-  function refreshStatus() {
+  function refreshStatus(options) {
+    options = options || {};
+    var fast = !!options.fast;
     if (statusBusy) {
       pendingManualRefresh = true;
       return;
@@ -731,9 +774,9 @@ function vpnCopyConfig() {
 
     statusBusy = true;
     pendingManualRefresh = false;
-    setText('vpn-live-ts', lastGoodStatus && lastGoodStatus.ts ? ('刷新中 · 上次 ' + lastGoodStatus.ts) : '刷新中');
+    setText('vpn-live-ts', lastGoodStatus && lastGoodStatus.ts ? ('更新 ' + lastGoodStatus.ts) : '刷新中');
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', statusUrl, true);
+    xhr.open('GET', statusUrl + (fast ? ((statusUrl.indexOf('?') === -1 ? '?' : '&') + 'fast=1') : ''), true);
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.onreadystatechange = function() {
       if (xhr.readyState !== 4) {
@@ -751,6 +794,15 @@ function vpnCopyConfig() {
           }
           lastGoodStatus = payload;
           applyStatus(payload);
+          if (fast) {
+            if (deepRefreshTimer) {
+              window.clearTimeout(deepRefreshTimer);
+            }
+            deepRefreshTimer = window.setTimeout(function() {
+              deepRefreshTimer = 0;
+              refreshStatus();
+            }, 900);
+          }
         } catch (e) {
           applyStatusError('状态响应无法解析，保留页面不执行操作。');
         }
@@ -759,7 +811,9 @@ function vpnCopyConfig() {
       }
 
       if (pendingManualRefresh) {
-        window.setTimeout(refreshStatus, 80);
+        window.setTimeout(function() {
+          refreshStatus();
+        }, 80);
       }
     };
     xhr.send(null);
@@ -770,8 +824,38 @@ function vpnCopyConfig() {
     return false;
   };
 
-  refreshStatus();
-  window.setInterval(refreshStatus, 8000);
+  function bindCommandButtons() {
+    var refreshButton = document.getElementById('vpn-refresh-button');
+    var copyButton = document.getElementById('vpn-copy-button');
+    if (refreshButton) {
+      refreshButton.onclick = function() {
+        return window.vpnManualRefresh();
+      };
+    }
+    if (copyButton) {
+      copyButton.onclick = function() {
+        return window.vpnCopyConfig();
+      };
+    }
+  }
+
+  function startStatusRefresh() {
+    refreshStatus({ fast: true });
+  }
+
+  bindCommandButtons();
+
+  if (window.requestAnimationFrame) {
+    window.requestAnimationFrame(function() {
+      window.setTimeout(startStatusRefresh, 80);
+    });
+  } else {
+    window.setTimeout(startStatusRefresh, 120);
+  }
+
+  window.setInterval(function() {
+    refreshStatus();
+  }, 8000);
 })();
 </script>
 

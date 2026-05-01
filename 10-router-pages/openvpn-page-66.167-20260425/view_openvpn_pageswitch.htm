@@ -41,8 +41,8 @@ elseif mode == "file" then
 end
 %>
 
-<div class="vpn-shell vpn-shell-refined vpn-shell-mk2 vpn-shell-secondary">
-  <div class="vpn-hero vpn-hero-mk2 vpn-hero-secondary">
+<div class="vpn-shell vpn-shell-refined vpn-shell-mk3 vpn-shell-secondary">
+  <div class="vpn-hero vpn-hero-mk3 vpn-hero-secondary">
     <div class="vpn-toolbar">
       <span class="vpn-pill">OpenVPN</span>
       <span class="vpn-status-chip"><%=mode_label%></span>
@@ -54,9 +54,14 @@ end
     <p class="vpn-sub">
       <%=mode_desc%>
     </p>
+    <div class="vpn-secondary-summary">
+      <span>实例 <strong><%=pcdata(instance)%></strong></span>
+      <span>配置 <strong><%=pcdata(cfg_path)%></strong></span>
+      <span>路由 <strong><%=route_noexec%></strong></span>
+    </div>
     <div class="vpn-hero-actions">
       <a class="cbi-button cbi-button-apply" href="<%=primary_href%>"><%=primary_label%></a>
-      <a class="cbi-button" href="<%=url('nradioadv/system/openvpnfull')%>">返回连接中枢</a>
+      <a class="cbi-button" href="<%=url('nradioadv/system/openvpnfull')%>">返回控制台</a>
     </div>
   </div>
 
@@ -84,7 +89,7 @@ end
   </div>
 
   <% if mode == "advanced" then %>
-    <div class="vpn-card vpn-category-rail" style="margin-bottom:14px;">
+    <div class="vpn-card vpn-category-rail">
       <div class="vpn-card-title">高级分类</div>
       <div class="vpn-toolbar">
         <% for i, c in ipairs(self.categories or {}) do %>

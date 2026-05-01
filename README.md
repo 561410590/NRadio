@@ -2,9 +2,9 @@
 
 NRadio 官方 NROS2.0 路由器使用的 SSH 菜单脚本。
 
-- 当前版本：`V2.0.15`
+- 当前版本：`V2.0.20`
 - 公网页：[https://nradio.mayebano.shop/](https://nradio.mayebano.shop/)
-- Release：[v2.0.15](https://github.com/561410590/ssh-nradio-plugin-installer/releases/tag/v2.0.15)
+- Release：[v2.0.20](https://github.com/561410590/ssh-nradio-plugin-installer/releases/tag/v2.0.20)
 
 ## 适用设备
 
@@ -49,15 +49,17 @@ sh ssh-nradio-plugin-installer.sh
 | 风扇控制 | C8-688、C2000MAX、Smart PWM |
 | 游戏加速器 | 奇游、雷神、状态读取 |
 
-## V2.0.15 更新
+## V2.0.20 更新
 
-- 奇游、雷神安装前复用哈基米软件源检查流程。
-- 未切到 OpenWrt 21.02.7 清华源时，先备份并切换，再继续安装。
-- 公网页同步奇游 / 雷神源切换说明。
-- 应用商店美化可见口径统一为“哈基米”。
+- OpenVPN 控制台界面升级。
+- 主界面删除冗余状态项，保留连接状态、可用操作、路由与日志排查等核心信息。
+- “目标检查”面板更清楚地展示远端目标和规则状态。
+- 基础配置、高级配置、文件编辑和导入页面统一为暗色控制台风格。
+- 公网页同步 V2.0.20 发布说明和粉色主题细节。
 
 ## 版本记录
 
+- `V2.0.20`：OpenVPN 控制台界面升级。
 - `V2.0.15`：奇游 / 雷神源切换。
 - `V2.0.10`：风扇定时策略。
 - `V2.0.7`：新增 `NRadio_C8-668`。
@@ -71,7 +73,7 @@ sh ssh-nradio-plugin-installer.sh
 
 | 文件 | 用途 |
 | --- | --- |
-| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.15 正式脚本 |
+| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.20 正式脚本 |
 | `40-server-web/mayebano-support/index.html` | 公网支持页 |
 | `40-server-web/mayebano-support/wechat-donate.png` | 微信支持图片 |
 | `CHECKSUMS.txt` | 当前公开文件校验 |
@@ -84,8 +86,8 @@ sh ssh-nradio-plugin-installer.sh
 当前脚本：
 
 ```text
-SHA256  36908f940697380b7dadab94321a381f7465868a95aadbd5bcde43f3b1f0bbf3
-Bytes   889185
+SHA256  143166f7043dbcca54ab9fd59fbfb200cd360cc4efb1f87cf2d71a300e6e4718
+Bytes   971846
 Path    00-current/ssh-nradio-plugin-installer.sh
 ```
 
