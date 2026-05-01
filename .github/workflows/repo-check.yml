@@ -28,59 +28,59 @@ jobs:
         run: |
           grep -q 'SCRIPT_VERSION="V2.0.15"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SCRIPT_RELEASE_DATE="2026-05-01"' 00-current/ssh-nradio-plugin-installer.sh
-          ! grep -q '???' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q "printf '3. ?????" 00-current/ssh-nradio-plugin-installer.sh
-          grep -q "printf '1. ?????" 00-current/ssh-nradio-plugin-installer.sh
-          grep -q "printf '2. ?????" 00-current/ssh-nradio-plugin-installer.sh
+          ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
+          grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
+          grep -q "printf '2. 雷神加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-668' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'HC-WT9108' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-688|NRadio_C2000MAX' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'NRadio_C8-688 / C2000MAX ????' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '????' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'Smart ????' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '??????' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '????' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'NRadio_C8-688 / C2000MAX 风扇控制' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '温度来源' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'Smart 最低风速' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '过热保护温度' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '检测间隔' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'open_route = "nradioadv/system/fanctrl";' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'QIYOU_INSTALLER_SHA256' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'LEIGOD_INSTALLER_SHA256' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'verify_remote_script_sha256 "??????"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'verify_remote_script_sha256 "????????"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'verify_remote_script_sha256 "奇游入口脚本"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'verify_remote_script_sha256 "雷神官方安装脚本"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'fast_probe' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio OpenVPN Mk2 fast-open polish' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '??? ????' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '哈基米 打开路由' 00-current/ssh-nradio-plugin-installer.sh
           grep -Fq '[ -f /tmp/qy/etc/PKG_INFO ] && cat /tmp/qy/etc/PKG_INFO || true' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'schedule_enabled' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'schedule_start' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'schedule_end' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'schedule_mode' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '????' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '????' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'OpenWrt 21.02.7 ???' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '???: ???? OpenWrt 21.02.7 ???' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '定时策略' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '定时期间' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'OpenWrt 21.02.7 清华源' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '软件源: 当前不是 OpenWrt 21.02.7 清华源' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'ensure_opkg_update' 00-current/ssh-nradio-plugin-installer.sh
-          ! grep -q 'opkg update || die "opkg update ??"' 00-current/ssh-nradio-plugin-installer.sh
+          ! grep -q 'opkg update || die "opkg update 失败"' 00-current/ssh-nradio-plugin-installer.sh
 
       - name: Verify support page state
         run: |
           grep -q 'V2.0.15' 40-server-web/mayebano-support/index.html
           grep -q 'NRadio_C8-668' 40-server-web/mayebano-support/index.html
-          grep -q '?? / ?????' 40-server-web/mayebano-support/index.html
-          grep -q '????????????????????' 40-server-web/mayebano-support/index.html
-          grep -q 'OpenWrt 21.02.7 ???' 40-server-web/mayebano-support/index.html
-          grep -q 'OpenVPN ??????' 40-server-web/mayebano-support/index.html
-          grep -q '????' 40-server-web/mayebano-support/index.html
-          grep -q '????' 40-server-web/mayebano-support/index.html
+          grep -q '奇游 / 雷神源切换' 40-server-web/mayebano-support/index.html
+          grep -q '奇游、雷神安装前复用哈基米软件源检查流程' 40-server-web/mayebano-support/index.html
+          grep -q 'OpenWrt 21.02.7 清华源' 40-server-web/mayebano-support/index.html
+          grep -q 'OpenVPN 快速状态读取' 40-server-web/mayebano-support/index.html
+          grep -q '安装教程' 40-server-web/mayebano-support/index.html
+          grep -q '主要功能' 40-server-web/mayebano-support/index.html
           grep -q 'feature-brief' 40-server-web/mayebano-support/index.html
-          grep -q 'GitHub ??' 40-server-web/mayebano-support/index.html
+          grep -q 'GitHub 开源' 40-server-web/mayebano-support/index.html
           grep -q 'MobaXterm' 40-server-web/mayebano-support/index.html
-          grep -q '3. ???????' 40-server-web/mayebano-support/index.html
+          grep -q '3. 路由器在线下载' 40-server-web/mayebano-support/index.html
           grep -q 'wget -O ssh-nradio-plugin-installer.sh https://nradio.mayebano.shop/ssh-nradio-plugin-installer.sh' 40-server-web/mayebano-support/index.html
-          grep -q '???' 40-server-web/mayebano-support/index.html
+          grep -q '哈基米' 40-server-web/mayebano-support/index.html
           ! grep -q 'V2.0.5' 40-server-web/mayebano-support/index.html
           ! grep -q 'HC-WT9108' 40-server-web/mayebano-support/index.html
-          ! grep -q '????' 40-server-web/mayebano-support/index.html
-          ! grep -q '??????' 40-server-web/mayebano-support/index.html
-          ! grep -q '???????' 40-server-web/mayebano-support/index.html
+          ! grep -q '我的项目' 40-server-web/mayebano-support/index.html
+          ! grep -q '安装方式提醒' 40-server-web/mayebano-support/index.html
+          ! grep -q '电脑下载后上传' 40-server-web/mayebano-support/index.html
           ! grep -q 'SFTP' 40-server-web/mayebano-support/index.html
           ! grep -q 'data-route="A"' 40-server-web/mayebano-support/index.html
           ! grep -q 'data-route="B"' 40-server-web/mayebano-support/index.html
