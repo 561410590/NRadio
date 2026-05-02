@@ -115,11 +115,11 @@ jobs:
       - name: Verify checksum record
         run: |
           grep -q '33ee4f9a0d90d6bbd99bbda6666ee332d22fb1d17e36cd84443eeb391d2b603c' CHECKSUMS.txt
-          grep -q '336d6900d6075b2d3b0e04525baa1e2be8568ecb509ac0e3f9926aff1e2baf94' CHECKSUMS.txt
+          grep -q 'c7b80cb89a5108497db8c68c94734f7a5d2b4cbf3cebad4a2c4221c49d292cb5' CHECKSUMS.txt
           grep -q '971824  00-current/ssh-nradio-plugin-installer.sh' CHECKSUMS.txt
-          grep -q '185402  40-server-web/mayebano-support/index.html' CHECKSUMS.txt
+          grep -q '201998  40-server-web/mayebano-support/index.html' CHECKSUMS.txt
           printf '%s  %s\n' '33ee4f9a0d90d6bbd99bbda6666ee332d22fb1d17e36cd84443eeb391d2b603c' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
-          printf '%s  %s\n' '336d6900d6075b2d3b0e04525baa1e2be8568ecb509ac0e3f9926aff1e2baf94' '40-server-web/mayebano-support/index.html' | sha256sum -c -
+          printf '%s  %s\n' 'c7b80cb89a5108497db8c68c94734f7a5d2b4cbf3cebad4a2c4221c49d292cb5' '40-server-web/mayebano-support/index.html' | sha256sum -c -
 
       - name: Verify license
         run: |

@@ -5786,13 +5786,102 @@
       }
     }
 
-    /* Pink May V2.0.20 release polish */
+    /* V2.0.20 pink interface polish */
+    :root {
+      --green-950: #4b0625;
+      --green-900: #71103f;
+      --green-850: #9b1758;
+      --green-800: #c92577;
+      --green-700: #e94795;
+      --aqua-600: #f09abe;
+      --cyan-400: #ffd6e7;
+      --blue-700: #8f2b5d;
+      --amber-500: #f4bc6b;
+      --lime-300: #ffe0ec;
+      --coral-400: #ff8db9;
+      --steel-900: #310519;
+      --steel-800: #4a0a28;
+      --mint-100: #fff0f7;
+      --cream-50: #fff8fb;
+      --cream-100: #ffeef6;
+      --paper: #fff6fa;
+      --paper-strong: #ffffff;
+      --ink-950: #3b0620;
+      --ink-800: #612241;
+      --ink-700: #8c526c;
+      --ink-500: #ad7890;
+      --line-light: rgba(188, 37, 103, 0.13);
+      --line-mid: rgba(255, 224, 237, 0.24);
+      --shadow-main: 0 34px 90px rgba(154, 25, 84, 0.18);
+      --shadow-soft: 0 18px 42px rgba(154, 25, 84, 0.12);
+    }
+
+    ::selection {
+      color: #4b0625;
+      background: #ffd6e7;
+    }
+
+    html {
+      background: #fff2f7;
+    }
+
+    body {
+      background:
+        linear-gradient(116deg, rgba(255, 199, 222, 0.46), transparent 30%),
+        linear-gradient(226deg, rgba(255, 232, 241, 0.58), transparent 43%),
+        linear-gradient(304deg, rgba(244, 188, 107, 0.18), transparent 48%),
+        linear-gradient(180deg, #fff8fb 0, #ffeef6 17rem, #f8d8e7 36rem, #fff6fa 58rem, var(--cream-50) 100%);
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(188, 37, 103, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(188, 37, 103, 0.040) 1px, transparent 1px),
+        linear-gradient(123deg, transparent 0 36%, rgba(255, 141, 185, 0.095) 36% 37%, transparent 37% 100%),
+        linear-gradient(74deg, transparent 0 58%, rgba(244, 188, 107, 0.075) 58% 59%, transparent 59% 100%);
+      opacity: 0.64;
+    }
+
+    body::after,
+    .site::before {
+      background:
+        linear-gradient(155deg, rgba(255, 255, 255, 0.58), transparent 36%),
+        linear-gradient(0deg, rgba(255, 246, 250, 0.82) 0, transparent 32rem);
+    }
+
+    .aurora-layer {
+      opacity: 0.72;
+    }
+
+    .aurora-layer::before,
+    .aurora-layer::after {
+      background:
+        linear-gradient(112deg, transparent 0 28%, rgba(255, 141, 185, 0.18) 34%, transparent 43% 100%),
+        linear-gradient(78deg, transparent 0 44%, rgba(255, 214, 231, 0.28) 49%, transparent 57% 100%),
+        linear-gradient(151deg, transparent 0 52%, rgba(244, 188, 107, 0.10) 56%, transparent 64% 100%);
+    }
+
+    .scroll-progress {
+      background: linear-gradient(90deg, #ffeaf3, #ec3e90, #9b1758);
+      box-shadow: 0 0 24px rgba(217, 45, 118, 0.38);
+    }
+
     .hero-shell {
       align-items: start;
+      gap: clamp(28px, 3vw, 44px);
     }
 
     .hero-copy {
       min-height: auto;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 240, 247, 0.72)),
+        linear-gradient(106deg, rgba(255, 141, 185, 0.15), transparent 34%, rgba(244, 188, 107, 0.09) 72%),
+        rgba(255, 248, 251, 0.62);
+      border-color: rgba(255, 214, 231, 0.88);
+      box-shadow:
+        0 42px 110px rgba(168, 30, 91, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.38);
     }
 
     .hero-copy,
@@ -5807,12 +5896,129 @@
       background-blend-mode: normal, soft-light, normal;
     }
 
+    .hero {
+      padding-block: clamp(114px, 10vw, 142px) clamp(96px, 11vw, 150px);
+      background:
+        linear-gradient(118deg, rgba(255, 199, 222, 0.52), transparent 30%),
+        linear-gradient(216deg, rgba(255, 239, 247, 0.78), transparent 47%),
+        linear-gradient(300deg, rgba(244, 188, 107, 0.16), transparent 48%),
+        linear-gradient(180deg, #fff8fb 0%, #ffeaf3 39%, #f7c6dc 74%, #fff6fa 100%);
+    }
+
+    .hero::before {
+      background:
+        repeating-linear-gradient(90deg, rgba(188, 37, 103, 0.055) 0 1px, transparent 1px 34px),
+        repeating-linear-gradient(0deg, rgba(188, 37, 103, 0.035) 0 1px, transparent 1px 34px),
+        linear-gradient(110deg, transparent 0 48%, rgba(244, 188, 107, 0.13) 48% 49%, transparent 49% 100%),
+        linear-gradient(64deg, transparent 0 58%, rgba(255, 141, 185, 0.12) 58% 59%, transparent 59% 100%);
+      opacity: 0.66;
+    }
+
+    .hero::after {
+      background:
+        linear-gradient(180deg, rgba(255, 246, 250, 0) 0%, rgba(255, 218, 234, 0.32) 48%, rgba(255, 246, 250, 0.92) 100%);
+    }
+
+    .floating-nav {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(255, 238, 246, 0.66)),
+        rgba(255, 248, 251, 0.82);
+      border-color: rgba(236, 62, 144, 0.22);
+      box-shadow:
+        0 22px 58px rgba(169, 35, 96, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    }
+
+    .floating-nav a,
+    .floating-nav span {
+      color: #7b1748;
+      border-color: rgba(236, 62, 144, 0.14);
+      background: rgba(255, 255, 255, 0.38);
+    }
+
+    .floating-nav a:hover {
+      color: #500725;
+      background: rgba(255, 214, 231, 0.62);
+      border-color: rgba(236, 62, 144, 0.28);
+    }
+
+    .floating-nav span,
+    .hero-action-primary,
+    .download-card a.download-primary,
+    .route-code-card a {
+      color: #fff;
+      background:
+        linear-gradient(135deg, #f45fa2, #c81970 78%),
+        #d92d76;
+      border-color: rgba(255, 255, 255, 0.55);
+      box-shadow:
+        0 16px 34px rgba(217, 45, 118, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.32);
+    }
+
+    .eyebrow,
+    h1,
+    .lead,
+    .hero-tags span,
+    .hero-status span,
+    .hero-summary span {
+      color: var(--ink-800);
+      text-shadow: none;
+    }
+
+    h1,
+    .hero-summary strong,
+    .hero-status b,
+    .hero-latest strong,
+    .feature-intro h2,
+    .feature-tile strong,
+    .compat-item b {
+      color: var(--ink-950);
+    }
+
+    .eyebrow::before {
+      background: rgba(188, 37, 103, 0.28);
+    }
+
+    .hero-tags span,
+    .hero-status span,
+    .hero-summary div,
+    .hero-latest,
+    .release-card,
+    .download-card,
+    .support-panel,
+    .feature-shell {
+      border-color: rgba(236, 62, 144, 0.16);
+    }
+
+    .hero-tags span,
+    .hero-status span {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 240, 247, 0.58)),
+        rgba(255, 249, 252, 0.72);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    }
+
+    .hero-tags span::before {
+      background: #ec3e90;
+      box-shadow: 0 0 0 6px rgba(236, 62, 144, 0.10);
+    }
+
+    .hero-summary {
+      gap: clamp(12px, 1.5vw, 18px);
+    }
+
     .hero-latest {
+      gap: clamp(14px, 1.5vw, 18px);
+      padding: clamp(22px, 2.2vw, 30px);
       background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 239, 247, 0.88)),
         radial-gradient(circle at 88% 18%, rgba(217, 45, 118, 0.18), transparent 28%),
         linear-gradient(315deg, rgba(255, 159, 199, 0.20), transparent 62%),
         rgba(255, 249, 252, 0.88);
+      box-shadow:
+        0 24px 62px rgba(184, 37, 95, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
     }
 
     .hero-latest::before {
@@ -5826,23 +6032,60 @@
     .hero-latest p {
       font-size: 14px;
       line-height: 1.82;
-    }
-
-    .release-card-current {
-      flex-basis: clamp(304px, 32vw, 444px);
-      border-color: rgba(217, 45, 118, 0.24);
+      color: var(--ink-800);
       background:
-        linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 231, 242, 0.88)),
-        radial-gradient(circle at 90% 20%, rgba(217, 45, 118, 0.18), transparent 30%),
-        rgba(255, 249, 252, 0.84);
+        linear-gradient(90deg, rgba(236, 62, 144, 0.12), transparent 7px),
+        rgba(255, 255, 255, 0.62);
+      border-color: rgba(236, 62, 144, 0.16);
     }
 
-    .release-card-current strong {
-      font-size: 18px;
+    .release-cards {
+      gap: 14px;
+      margin-top: 4px;
+      padding-bottom: 18px;
+      scrollbar-color: rgba(217, 45, 118, 0.32) rgba(217, 45, 118, 0.08);
+    }
+
+    .release-card {
+      flex-basis: clamp(228px, 18vw, 286px);
+      min-height: 162px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 241, 248, 0.78)),
+        radial-gradient(circle at 94% 16%, rgba(236, 62, 144, 0.14), transparent 28%),
+        rgba(255, 249, 252, 0.88);
+      border-color: rgba(236, 62, 144, 0.15);
+      box-shadow:
+        0 18px 44px rgba(184, 37, 95, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    }
+
+    .release-card:hover {
+      border-color: rgba(236, 62, 144, 0.30);
+      box-shadow:
+        0 24px 52px rgba(184, 37, 95, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    }
+
+    .release-card b {
+      color: #fff;
+      background: linear-gradient(135deg, #f45fa2, #c81970);
+      box-shadow: 0 12px 24px rgba(217, 45, 118, 0.18);
+    }
+
+    .release-card strong {
+      color: var(--ink-950);
     }
 
     .feature-shell {
-      margin-top: 2px;
+      margin-top: 4px;
+      color: var(--ink-800);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 239, 247, 0.78)),
+        linear-gradient(56deg, rgba(244, 188, 107, 0.10), transparent 44%),
+        rgba(255, 248, 251, 0.76);
+      box-shadow:
+        0 30px 82px rgba(184, 37, 95, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.90);
     }
 
     .feature-tile,
@@ -5855,6 +6098,41 @@
       background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 242, 248, 0.78)),
         rgba(255, 249, 252, 0.80);
+      border-color: rgba(236, 62, 144, 0.13);
+      color: var(--ink-800);
+    }
+
+    .feature-brief span,
+    .model-chip-list span,
+    .feature-tags span,
+    .inline-models span,
+    .download-facts span {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 232, 242, 0.68)),
+        rgba(255, 249, 252, 0.80);
+      border-color: rgba(236, 62, 144, 0.14);
+      color: var(--ink-800);
+    }
+
+    .feature-brief b,
+    .download-facts b,
+    .download-facts em {
+      color: var(--ink-950);
+    }
+
+    .feature-brief em,
+    .feature-tags span,
+    .compat-item span,
+    .download-note,
+    .download-card span,
+    .route-code-card p,
+    .tutorial-steps li,
+    .tutorial-checks span,
+    .download-list li,
+    .ssh-tool-grid span,
+    .support-meta,
+    .support-steps li {
+      color: var(--ink-700);
     }
 
     .download-card,
@@ -5866,14 +6144,86 @@
         inset 0 0 0 1px rgba(255, 255, 255, 0.48);
     }
 
+    .download-card {
+      background:
+        linear-gradient(155deg, rgba(255, 255, 255, 0.98), rgba(255, 242, 248, 0.92)),
+        linear-gradient(90deg, rgba(255, 141, 185, 0.13), transparent 40%, rgba(244, 188, 107, 0.07)),
+        rgba(255, 249, 252, 0.92);
+    }
+
+    .support-panel {
+      background:
+        linear-gradient(155deg, rgba(255, 255, 255, 0.98), rgba(255, 242, 248, 0.94)),
+        linear-gradient(90deg, rgba(255, 141, 185, 0.10), transparent 44%, rgba(244, 188, 107, 0.06)),
+        #fff8fb;
+    }
+
+    .download-card strong,
+    .download-section > b,
+    .path-card > b,
+    .route-code-card span,
+    .ssh-tool-grid strong,
+    .tutorial-checks b,
+    .support-head strong,
+    .support-meta strong {
+      color: var(--ink-950);
+    }
+
+    .download-main {
+      gap: 16px;
+    }
+
+    .download-actions {
+      align-items: stretch;
+    }
+
+    .download-card a.download-primary,
+    .route-code-card a {
+      min-height: 44px;
+    }
+
+    .route-code-card {
+      box-shadow:
+        0 18px 42px rgba(184, 37, 95, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86);
+    }
+
+    .install-steps li::after {
+      background: linear-gradient(180deg, rgba(236, 62, 144, 0.22), transparent);
+    }
+
+    .install-steps b,
+    .tutorial-steps li::before,
+    .support-steps b {
+      color: #fff;
+      background: linear-gradient(135deg, #f45fa2, #c81970);
+      box-shadow: 0 10px 22px rgba(217, 45, 118, 0.17);
+    }
+
     .download-code {
       tab-size: 2;
       border-left-color: rgba(217, 45, 118, 0.52);
+      color: #4b0625;
       background:
         linear-gradient(90deg, rgba(217, 45, 118, 0.10), transparent 6px),
         linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 245, 250, 0.86)),
         repeating-linear-gradient(135deg, rgba(255, 159, 199, 0.06) 0 1px, transparent 1px 22px),
         rgba(255, 249, 252, 0.86);
+      box-shadow:
+        inset 0 0 0 1px rgba(236, 62, 144, 0.12),
+        0 16px 34px rgba(184, 37, 95, 0.10);
+    }
+
+    .qr-shell,
+    .support-owner {
+      border-color: rgba(236, 62, 144, 0.14);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 244, 249, 0.92));
+    }
+
+    .support-badge {
+      color: #9b1758;
+      background: rgba(255, 214, 231, 0.62);
     }
 
     @media (max-width: 1120px) {
@@ -5881,14 +6231,19 @@
         align-items: stretch;
       }
 
-      .release-card-current {
-        flex-basis: auto;
+      .release-card {
+        flex-basis: clamp(238px, 34vw, 320px);
+      }
+
+      .support-side {
+        max-width: none;
       }
     }
 
     @media (max-width: 760px) {
       .hero-copy {
         padding-bottom: 18px;
+        border-radius: 30px;
       }
 
       .hero-latest p {
@@ -5896,8 +6251,382 @@
         line-height: 1.78;
       }
 
-      .release-card-current strong {
+      .release-cards {
+        gap: 10px;
+        margin-inline: -2px;
+        padding-inline: 2px;
+      }
+
+      .release-card {
+        flex-basis: min(82vw, 300px);
+        min-height: 150px;
+        padding: 15px;
+      }
+
+      .download-main,
+      .hero-latest-top {
+        align-items: stretch;
+      }
+
+      .download-actions,
+      .download-card a.download-primary,
+      .route-code-card a {
+        width: 100%;
+      }
+    }
+
+    /* V2.0.20 compact polish pass */
+    @media (min-width: 1121px) {
+      .container {
+        width: min(1380px, calc(100% - 56px));
+      }
+
+      .hero-shell {
+        grid-template-columns: minmax(0, 1fr) minmax(396px, 0.43fr);
+        gap: 30px;
+      }
+
+      .support-side {
+        max-width: 448px;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      .hero-copy {
+        padding: 42px 44px 38px;
+      }
+
+      .release-cards {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-rows: repeat(2, minmax(132px, auto));
+        grid-auto-columns: minmax(246px, 1fr);
+        align-items: stretch;
+        overflow-x: auto;
+      }
+
+      .release-card {
+        width: auto;
+        min-height: 132px;
+      }
+    }
+
+    .hero-copy {
+      gap: 18px;
+      border-radius: clamp(30px, 3vw, 40px);
+    }
+
+    .hero-latest {
+      overflow: hidden;
+      border-radius: 28px;
+    }
+
+    .hero-latest-top {
+      align-items: start;
+    }
+
+    .hero-latest-label {
+      color: #9b1758;
+      font-weight: 950;
+    }
+
+    .hero-latest-version {
+      min-width: 118px;
+      color: #fff;
+      background: linear-gradient(135deg, #f45fa2, #c81970);
+      border-color: rgba(255, 255, 255, 0.56);
+    }
+
+    .hero-latest p {
+      max-width: none;
+      margin-top: -2px;
+    }
+
+    .release-cards {
+      scroll-padding-inline: 6px;
+    }
+
+    .release-card {
+      gap: 10px;
+      padding: 16px;
+      border-radius: 20px;
+    }
+
+    .release-card strong {
+      font-size: 16px;
+      line-height: 1.34;
+    }
+
+    .release-card p {
+      font-size: 12px;
+      line-height: 1.72;
+    }
+
+    .feature-shell {
+      padding: 18px;
+      border-radius: 28px;
+    }
+
+    .hero-copy .feature-intro {
+      align-items: start;
+    }
+
+    .hero-copy .feature-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .feature-tile {
+      min-height: 108px;
+      border-radius: 18px;
+    }
+
+    .compat-strip {
+      gap: 8px;
+    }
+
+    .compat-item {
+      min-height: 76px;
+      border-radius: 16px;
+    }
+
+    .download-card,
+    .support-panel {
+      border-radius: 30px;
+    }
+
+    .download-card {
+      padding: 20px;
+    }
+
+    .download-main {
+      align-items: start;
+    }
+
+    .download-main > div:first-child {
+      min-width: 0;
+    }
+
+    .download-main strong {
+      font-size: 25px;
+      line-height: 1.12;
+    }
+
+    .download-facts {
+      gap: 8px;
+    }
+
+    .download-facts span {
+      min-height: 58px;
+      padding: 10px;
+      border-radius: 16px;
+    }
+
+    .download-section,
+    .path-card {
+      border-radius: 20px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        0 10px 26px rgba(184, 37, 95, 0.055);
+    }
+
+    .ssh-tool-grid {
+      gap: 10px;
+    }
+
+    .ssh-tool-grid li,
+    .tutorial-checks li {
+      border-radius: 16px;
+    }
+
+    .install-steps li,
+    .tutorial-steps li {
+      border-color: rgba(236, 62, 144, 0.12);
+    }
+
+    .route-code-card {
+      border-radius: 20px;
+    }
+
+    .route-code-card code,
+    .download-code {
+      font-family: "Cascadia Mono", "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.72;
+      letter-spacing: 0;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .download-code {
+      display: block;
+      padding: 17px 18px 17px 20px;
+      border-radius: 18px;
+      white-space: pre-wrap;
+    }
+
+    .download-code::before,
+    .download-code::after {
+      opacity: 0.62;
+    }
+
+    .support-panel {
+      padding: 20px;
+    }
+
+    .qr-shell {
+      border-radius: 24px;
+      box-shadow: 0 18px 44px rgba(184, 37, 95, 0.12);
+    }
+
+    .qr-stage,
+    .qr-box,
+    .qr-box img {
+      border-radius: 20px;
+    }
+
+    .floating-nav {
+      max-width: min(820px, calc(100% - 28px));
+    }
+
+    @media (max-width: 1120px) {
+      .hero {
+        padding-block: 108px 82px;
+      }
+
+      .hero-shell {
+        gap: 22px;
+      }
+
+      .hero-copy,
+      .download-card,
+      .support-panel {
+        border-radius: 28px;
+      }
+
+      .feature-shell {
+        padding: 16px;
+      }
+
+      .release-cards {
+        padding-bottom: 14px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .container {
+        width: min(100% - 24px, 640px);
+      }
+
+      .hero {
+        padding-block: 96px 66px;
+      }
+
+      .hero-copy {
+        gap: 15px;
+        padding: 24px 18px 18px;
+      }
+
+      h1 {
+        max-width: 9.5ch;
+        font-size: clamp(46px, 15vw, 64px);
+      }
+
+      .lead {
         font-size: 16px;
+        line-height: 1.68;
+      }
+
+      .hero-tags,
+      .hero-actions {
+        gap: 8px;
+      }
+
+      .hero-tags span {
+        min-height: 36px;
+        padding-inline: 12px;
+      }
+
+      .hero-status {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .hero-summary strong {
+        font-size: 24px;
+      }
+
+      .hero-latest {
+        border-radius: 22px;
+      }
+
+      .hero-latest strong {
+        font-size: 28px;
+      }
+
+      .release-card {
+        border-radius: 18px;
+      }
+
+      .hero-copy .feature-grid,
+      .hero-copy .feature-brief,
+      .hero-copy .compat-strip,
+      .download-facts,
+      .ssh-tool-grid,
+      .tutorial-checks {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-tile {
+        min-height: 94px;
+      }
+
+      .download-card {
+        padding: 17px;
+      }
+
+      .download-section,
+      .path-card {
+        padding: 16px;
+      }
+
+      .download-code {
+        padding: 15px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .container {
+        width: min(100% - 18px, 390px);
+      }
+
+      .floating-nav {
+        top: 8px;
+        max-width: calc(100% - 14px);
+      }
+
+      .hero {
+        padding-top: 88px;
+      }
+
+      .hero-copy {
+        padding-inline: 14px;
+      }
+
+      .hero-status,
+      .hero-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .release-card {
+        flex-basis: min(88vw, 280px);
+      }
+
+      .download-code {
+        font-size: 11.5px;
       }
     }
   </style>
@@ -5971,11 +6700,6 @@
           </section>
 
           <div class="release-cards" id="history" aria-label="最新更新摘要">
-            <article class="release-card release-card-current">
-              <b>V2.0.20</b>
-              <strong>OpenVPN 控制台界面升级</strong>
-              <p>主界面删除冗余状态项，保留连接状态、可用操作、路由与日志排查等核心信息；基础配置、高级配置、文件编辑和导入页面同步统一为暗色控制台风格。</p>
-            </article>
             <article class="release-card">
               <b>V2.0.15</b>
               <strong>奇游 / 雷神源切换</strong>
