@@ -699,19 +699,6 @@ confirm_default_yes() {
     esac
 }
 
-confirm_appcenter_polish_risk() {
-    cat <<'EOF_APPCENTER_POLISH_CONFIRM'
-高风险警告：“应用商店与页面美化 -> 美化应用商店”会直接覆盖原厂应用商店页面文件，执行后无法通过本脚本一键还原。
-
-如果美化后页面异常、样式错乱或不兼容当前固件，通常只能通过以下方式恢复：
-1. 恢复出厂设置；
-2. 等待官方新固件推送并覆盖原厂页面。
-
-不理解以上风险请勿继续。
-EOF_APPCENTER_POLISH_CONFIRM
-    confirm_or_exit "确认仍要美化应用商店吗？"
-}
-
 run_startup_disclaimer_countdown() {
     disclaimer_countdown_remaining="${1:-10}"
     case "$disclaimer_countdown_remaining" in
@@ -6033,6 +6020,277 @@ install_appcenter_polish() {
     log "应用商店美化完成"
     log "范围: 应用卡片、状态徽标、右侧系统状态面板、按钮、图标与打开弹窗视觉层"
     log "说明: 不修改插件下载链、安装链和卸载链；仅补应用商店模板与只读系统状态接口"
+}
+
+decode_gzip_b64_to_file() {
+    decode_gzip_b64_target="$1"
+    decode_gzip_b64_label="$2"
+
+    command -v gzip >/dev/null 2>&1 || die "系统缺少 gzip，无法写入${decode_gzip_b64_label}"
+
+    if command -v base64 >/dev/null 2>&1; then
+        base64 -d | gzip -dc > "$decode_gzip_b64_target" || return 1
+        return 0
+    fi
+
+    if command -v openssl >/dev/null 2>&1; then
+        openssl enc -base64 -d 2>/dev/null | gzip -dc > "$decode_gzip_b64_target" || return 1
+        return 0
+    fi
+
+    if command -v lua >/dev/null 2>&1; then
+        lua -e '
+local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local map = {}
+for i = 1, #alphabet do
+    map[alphabet:sub(i, i)] = i - 1
+end
+
+local data = io.read("*a")
+local buf = {}
+local n = 0
+
+for c in data:gmatch(".") do
+    if c == "=" then
+        break
+    end
+    local v = map[c]
+    if v then
+        n = n + 1
+        buf[n] = v
+        if n == 4 then
+            io.write(string.char(
+                buf[1] * 4 + math.floor(buf[2] / 16),
+                (buf[2] % 16) * 16 + math.floor(buf[3] / 4),
+                (buf[3] % 4) * 64 + buf[4]
+            ))
+            n = 0
+        end
+    end
+end
+
+if n == 2 then
+    io.write(string.char(buf[1] * 4 + math.floor(buf[2] / 16)))
+elseif n == 3 then
+    io.write(string.char(
+        buf[1] * 4 + math.floor(buf[2] / 16),
+        (buf[2] % 16) * 16 + math.floor(buf[3] / 4)
+    ))
+elseif n ~= 0 then
+    os.exit(1)
+end
+' | gzip -dc > "$decode_gzip_b64_target" || return 1
+        return 0
+    fi
+
+    die "系统缺少 base64/openssl/lua，无法写入${decode_gzip_b64_label}"
+}
+
+write_original_appcenter_template() {
+    mkdir -p "$(dirname "$TPL")" || die "创建应用商店模板目录失败"
+    cat <<'EOF_ORIGINAL_APPCENTER_FACTORY_TEMPLATE_GZ_B64' | decode_gzip_b64_to_file "$TPL" "内置原厂应用商店模板" || die "写入内置原厂应用商店模板失败"
+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
+EOF_ORIGINAL_APPCENTER_FACTORY_TEMPLATE_GZ_B64
+    chmod 644 "$TPL" 2>/dev/null || true
+}
+
+write_original_appcenter_controller() {
+    mkdir -p "$(dirname "$APPCENTER_CONTROLLER")" || die "创建应用商店控制器目录失败"
+    cat <<'EOF_ORIGINAL_APPCENTER_FACTORY_CONTROLLER_GZ_B64' | decode_gzip_b64_to_file "$APPCENTER_CONTROLLER" "内置原厂应用商店控制器" || die "写入内置原厂应用商店控制器失败"
+H4sIAAAAAAAEANUba28bx/Ez+SsWl7oi4zMfsp04bs4AY7Gt4IcESm7aEgJxIpfSRce76z0kqwr7
+IUDQV4IUaIG2QICm6Ic+gDRFU7RukPwbK3H+RWb2dXu8I3lSaBRVYvJuZ3ZmdnZ2ZnZ2OfFHiUtr
+hpsMncbQ9+LQd10aNrzQHjn+wB4dN+wgGFIvpqFhksAeHtkHtBFRartuvVodJ94wdnyPON6IPq7V
+qxVnTDw/Jp7z2PEb46hhD4c0impGk8bDJnAYOwfNlGSdxIfUq1YqIY2TEB6oN6pWKwEwIRYBnPC0
+dmZwaUAYEMGITqOYTvApJTM1CbQFrh3DWKTsEqqzM8mgZnSC4C5733Vil2LjKy0gECa0jgIs4Gno
+yjBcJ4qR9RB0UTNspghkO2AAIOs5rvhgxBsutccwLHy5ECPHi2LgUchLwlbILvEWMUyhK2Q5dP2I
+FrLjkBWy8gPqFXJigFWqMRiBPRbrkINWqcBDOjwqViCDrJrVIHJ+rI1Na/tanMiM4U8CP8yvMdG8
+ek4DMOw4ieYwlNBV8oWXKPbDQjPhgFVy49O0lOcqbGaG84RO/PA0x/GAxgMBWsYtYIHn0D/JtjgQ
+U6BljQtxTTFdq7JQogLUjHsewAK0MV65PghEkthxgUpIf5Q4ISU8HmKjITGgI/YDJGxuJPsJBLV8
+OKgTPyRngR3aEwrt1pnoZ51Np9OqCHOSWEPhLRaWyYkS8UE28HmAehyENErcuFY8uDqjysV3vQOS
+G6DTvuUZ1aoaoJh8f4TB96xa6Wxv7+xu9bqDrXtWy9Teu73eVm+w0dntWO18+6PefWs93/xg46Z1
+Pd+8s/nDrnWjEH2w03nQtW4W9Nnu3O1aLxWItPX6w/tbnQ3r5Txs+35n99tbvQfWrQKRX3u0Y72S
+b9/dfNDderRrtQuGDzLc63yna7ULVADkfmC1M0rY7nW3O70uaLad0cLrnc1dbLxRnc7OxCQ64BNx
+Bk8WTGEjDm0v4mkOENiALGzrnlGfmnNRGKFuGPrhBthESVSYwJKYMEklMXdYbChLdAeWRVnCkJSW
+xd3wTzwXPFVJ9G1oG/vhpKza9jE4lELddSbUT+KycvC0uyT2a0l0uhz1EaYgjnewHPN120FBlXmK
+9C/rJ+52H+52e5qjEA2bD3d2O/fvS+uX7kJAe90HW99TS0M6DQF8tA0OJgVezwDlEux1pO/IANh6
+vlkAQCf0UhEl6RxeLgByd3OrAPJwa7f7/Z3NXek7MkAx9u6Gch8ZMB/8hvIfGaByZO31+ZStdrFS
+hF8CxczO2Qo8CqJscnLLzAdRexDdj8sgljJIRORLAma+HObSVakwlzmzlHkZv6Cwlzsohdp9HDmL
+nYJCFVNAF/syhc6moSxyKTc5K0lJ1WmubCpTD5X3YDoIYoaufToYh5SK3BDyHwJ/S1O1FGk4GQFO
+v09GY/ImOQhpQNYE4XF0uyke1wBmnxyRtbMgdLz4Gzema2RvTyNDHzuxScBRA7GAJa4s+aOP6dBE
+HlwuZ8wQie2NGC5+v4APd0iL1zeI+ONUj5x9zGF9L5ns07AGmCxrbCk0kSUi3ouk3Vq/wSCYzGnQ
+Fs8ZCzSIaaBQz2iwfxrTqOZBPC2pRJnwso6A09K6YV5ZLgMmKrVFf6Nlz2dTAv9pNCWghsTTjJhp
+MdvUEFQ4B7AeJALrkAxM4sCmIwI3B3ydMKoJvJGvdAqTxHD6BurC2COWRfApO0FZTDaePSZJfBrQ
+Wqa5jhSM2N53qZEnoomG6Vwq2QwNTUL9j6sG99O6pSClvsF22XszJqP/yZnj31cZmRyitCb17kZ5
+JElJSSCknyvCLNX9kNpHVQ1KikyZsWHmfO1aH/4Rllq0yOe/fvfpZ+9//rNfnf/iD6q5Tc7//vNn
+f3r76ZMPVds6OX/3ybPPPtPbrkPbT7/45M962w3y9NMPzt9768vf/P7ZRx+p5psEjXmm8SVy/s7b
+k9HNzz/445d/e2cG+DI5/+/H5+/9oxB4i3zx10++/O2/nj5599m/P1bNr6AlQNv5h787f/8v6Xha
+2H7+n3/yYaXtbdnOhpa2r6NgT5/8EhrPP33r/MmTFHQdQbN0brBGibknXYYf0NBm20aVFPTXRJ6w
+BsuD5L248PSYIJiIrUqBc/AfSXjagxW+5qEzIMedFu+Gh5CPMmdm8sYyG3iJwo1Npa34bem5bKMo
+u5zyijY6CubW2ZPy65UKr3NHp5HrH9QMGoZ6tYwYjQaXs9Ew8IW7YVntlqIUu1Pe0TzDPhZ+TIVn
+XS44Zr/gYyuyGK+xazCeQvhKDmCRpYShH65U/gEMcjTuWC2mqxzgVfKCnocKIYpIgGdtFQrJTTVj
+un2uqD2UC31YYQ+Nb3+W29X2HmJlxrWw2qIRqM8v3AiWaY3pMI6DnIlio6oxMeOyGGID88tj203w
+QINthmWqMc8Ws6FDy56A4uK8Ku3lUZkxiE4LUwkhkM7qVZw4sFKN0KvWrIT4V7im1UFHPYMrzoaK
+YgzqI2V1JyNLjufCST1Dw6mUWQRsN2gy9LxxLe+ZmltlWmqc8nuZyuZaonLTq7PFSrEw2tnQfHHw
+nOW5S8IPc5gQhXEET5WeuxDi7GrBzLCI9/ynRRw3zVMHK/NcpBheFEoz9eNGrjA2lX2HSTgIxAZa
+Bj/cUNUMvk3b2NzZ7W2+Nuj07n53jbBjY5zMkzCGpepSO6JvPrbDg4iwPduY7zcMEG2GsP56e2LH
+w8OaceXuVasGH3XQRXVe7GZyE3YEQsBnRqCkPsRunR6E8z1Ud5k4nh7xmGeyv6UTy8T1JVok0+qy
+oF4Q05cQlafuFw3mmTp1AXfuHXWs+bF3VVGXTdtFFtQ40uHy2oICD9+I2PmSwmANCxfC0gzKxBpJ
+6aCBPYSa0jVkwzgHY8dFrkYzngRNxxv7w1GTQbQbDyX9hjh44OrMo3FAikixTgV4Y5tlXJgEqJse
+qWzqcoc61hiIAgJgw8ZwhEg6fgZVKJ7PQGNEUTk1SaPOE0eFhyYqX2ZqCPlmWUdQGSZu1B3zON2k
+z+/DduwY+oH7cXEtAaEVqSF+UlkpzrWBgDBdcbK8l0ctn7/yviBXLcfqJ3NTmq17pM47VlBZF+k6
+U9q/LJnsGcBlqWQPCwSVdDrYFL9hRsl+OsnHmSoMR0P1AVLfQHsciNnVyGTnRiHBDM32kh2YY8vS
+nplztJ4l+1BW0J8vB4Su0B+MaGyzwM2Y6G2pNBVekMnJpp5wC7V0R3ahTZlOPeUumsSXCGl80Sgu
+5XenW/dyHZYIxRmvcsOn3Zz438afXLSfPehm8ScTlpd2+ToB6P8wOmgXIaQ1avSW4s7JwRZ2nmPA
+5bKnr2vPypzTe1wXseHlGwZRyZ7NK/iFMZbAt1Lc0whtKZtQp9eKECYPGZQ9ooFwf2q1ZNuETgQd
+QbEhCgPYFXUW++BL8ISDbeaxdKBe9pPxmIZ0pBqiQ1u8VispV6w2uHQc6yVywbaBwDrPqhXei63G
+LXInxcXxq3WgjaEtU/LFJYu0B64a9TKddVIsLI2o7dYcL0jigShDrshFIXURBHEbxuY4ojE2H8IS
+c2GcODohDOgntk0wtMQ7Mgn1x3UtAIwDtigRRT00OG30/VL2dKHpvJkXgo0a64SA2wcQCWtG/0rt
+Sv1K/8oeWfvmt/bQhAyeH4xx3DAWVpCQlAB8wuFpbBJiMZk13sHtk9CB7TtrL+4C48t0UHWHzIpN
+r00z5Y+cKMD9KriIGKZ0EPjwEVHYMzrxaa2uFU5fUOPXStIV8J+J5zrekRpUXXKSF9Dwkh1OFmsU
+bZiqmrJH1i3Akj0asE360J9MYGDKegIHF4WwCcASV8CxWRNJ3e7m2QXrpCUUeFQBpnIAE+uT0Ac9
+jJxQFdeHh/BWM5psz464TDkkikeOxw5nwYzCELs2R/S46SWuq0IFvij52DwbCgkt4eSqIYIFw5Qa
+5PijJKhhsyn6A0dgVF+IgIe5CxEcTxk8AG4zffswqXfIemopDFRoK1wDIQ1ce0jJiRMfktgOD2hM
+xMwotfGaSnPf8ZrRIY712hA+0/lDakX1oMxd14sUhVbpSGYDhQSlW9BLnuaolaaYYbUa31WKohZN
+1nqJWC2LT3yECIRrkXHBgx9tIZaqGbExGibz8JbsfPEDoMsUi0ocAF2uXPQ8zn7SA8tVHv9cOn3K
+LKGLFVSRsqmtgDRmG86E3ZjRJhORleFqhpzGA12LjJ38fQyk1h64sYU/kzHPhBPgnCy+utrTaX12
+NSxbDuL2GV8M2XWwIqlaptp0pwsllwHlrpunk7PEKZU4WGZ5pKBrkiSiI3kEZZJ4PLRDnkbi/7xg
+NrMnMppJFDZdZ7/pJnYTGTTTn2I1059iNaMRGKOd/mhKEZf38UdKJnYBqt8nF7sAtc4vQKkqH95+
+gvmee/uJDUTdfUJMdjCJD1r01/WjZ8qAJq6QCNEvJ/R1IfSqxNUncJG0S48T0+lhD2aRKjTLybHW
+3gAobPorm+gcXbI3AAA=
+EOF_ORIGINAL_APPCENTER_FACTORY_CONTROLLER_GZ_B64
+    chmod 644 "$APPCENTER_CONTROLLER" 2>/dev/null || true
+}
+
+restore_appcenter_original() {
+    log_stage 1 4 "检查 NRadio 应用商店原厂还原环境"
+    require_nradio_oem_appcenter
+    log "说明: 直接使用脚本内置 C2000MAX 2.1.7 原厂应用商店模板和控制器，不读取备份，不覆盖 /etc/config/appcenter"
+
+    log_stage 2 4 "回写内置原厂应用商店文件"
+    write_original_appcenter_template
+    write_original_appcenter_controller
+
+    log_stage 3 4 "刷新 LuCI 与应用商店缓存"
+    refresh_luci_appcenter
+    /etc/init.d/uhttpd reload >/dev/null 2>&1 || true
+
+    log_stage 4 4 "校验应用商店入口"
+    verify_file_exists "$TPL" "NRadio 应用商店模板"
+    verify_file_exists "$APPCENTER_CONTROLLER" "NRadio 应用商店控制器"
+    verify_luci_route "nradioadv/system/appcenter" "应用商店还原"
+
+    log "应用商店已还原为脚本内置原厂模板和控制器"
+    log "入口: nradioadv/system/appcenter"
 }
 
 refresh_luci_appcenter() {
@@ -23231,9 +23489,11 @@ run_menu_feature() {
             fi
             ;;
         15)
-            confirm_appcenter_polish_risk
             install_appcenter_polish
             show_support_page_hint='1'
+            ;;
+        16)
+            restore_appcenter_original
             ;;
         *)
             die_menu_input_issue "$feature_choice"
@@ -23318,12 +23578,14 @@ appcenter_polish_menu() {
         submenu_feature=''
         printf '\n应用商店与页面美化:\n'
         printf '1. 美化应用商店\n'
+        printf '2. 还原应用商店\n'
         printf '0. 返回功能分类\n'
-        printf '请选择 0 或 1: '
+        printf '请选择 0、1 或 2: '
         read_category_choice
         case "$UI_READ_RESULT" in
             0) return 2 ;;
             1) submenu_feature='15' ;;
+            2) submenu_feature='16' ;;
             *) die_menu_input_issue "$UI_READ_RESULT" ;;
         esac
         if run_menu_feature "$submenu_feature"; then

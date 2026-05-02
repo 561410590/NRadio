@@ -15,6 +15,7 @@
 10-router-pages/*.fix-*
 10-router-pages/*openfix*
 10-router-pages/*statuspanel*
+10-router-pages/factory-bin-*-extracted/
 30-theme/*backup*/
 
 # Local tools and generated binaries
