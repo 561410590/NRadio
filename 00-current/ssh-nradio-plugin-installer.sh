@@ -17079,7 +17079,7 @@ EOF_OPENVPN_NSECTION
 </style>
 EOF_OPENVPN_MK3_FINAL_POLISH
 
-    cat > /usr/lib/lua/luci/view/openvpn/ovpn_css.htm <<'EOF_OPENVPN_OVPN_CSS'
+    cat > /usr/lib/lua/luci/view/openvpn/ovpn_css.htm <<'EOF_OPENVPN_OVPN_CSS_MK3_EXACT'
 <style type="text/css">
     :root {
         --vpn-bg: #070b12;
@@ -18527,7 +18527,7 @@ EOF_OPENVPN_MK3_FINAL_POLISH
         }
     }
 </style>
-EOF_OPENVPN_OVPN_CSS
+EOF_OPENVPN_OVPN_CSS_MK3_EXACT
 
     cat > /usr/lib/lua/luci/model/cbi/openvpn.lua <<'EOF_OPENVPN_STANDARD_MODEL'
 -- Copyright 2008 Steven Barth <steven@midlink.org>

@@ -48,7 +48,7 @@ jobs:
           grep -q 'fast_probe' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio OpenVPN Mk3: dark command-center layer' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'EOF_OPENVPN_MK3_FINAL_POLISH' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'EOF_OPENVPN_OVPN_CSS' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'EOF_OPENVPN_OVPN_CSS_MK3_EXACT' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'EOF_OPENVPN_LEGACY_UNUSED_CSS_OLD' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'EOF_OPENVPN_STANDARD_MODEL' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'vpn-shell-mk3' 00-current/ssh-nradio-plugin-installer.sh
@@ -114,11 +114,11 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q 'd7f41105388930b32aea967e0b331781d96d814f2d106ab0fe4b2a2797dd1828' CHECKSUMS.txt
+          grep -q '33ee4f9a0d90d6bbd99bbda6666ee332d22fb1d17e36cd84443eeb391d2b603c' CHECKSUMS.txt
           grep -q '336d6900d6075b2d3b0e04525baa1e2be8568ecb509ac0e3f9926aff1e2baf94' CHECKSUMS.txt
-          grep -q '971804  00-current/ssh-nradio-plugin-installer.sh' CHECKSUMS.txt
+          grep -q '971824  00-current/ssh-nradio-plugin-installer.sh' CHECKSUMS.txt
           grep -q '185402  40-server-web/mayebano-support/index.html' CHECKSUMS.txt
-          printf '%s  %s\n' 'd7f41105388930b32aea967e0b331781d96d814f2d106ab0fe4b2a2797dd1828' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          printf '%s  %s\n' '33ee4f9a0d90d6bbd99bbda6666ee332d22fb1d17e36cd84443eeb391d2b603c' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
           printf '%s  %s\n' '336d6900d6075b2d3b0e04525baa1e2be8568ecb509ac0e3f9926aff1e2baf94' '40-server-web/mayebano-support/index.html' | sha256sum -c -
 
       - name: Verify license
@@ -133,8 +133,8 @@ jobs:
           grep -q 'V2.0.20' CHANGELOG.md
           grep -q 'OpenVPN 控制台界面升级' README.md
           grep -q 'OpenVPN 控制台界面升级' CHANGELOG.md
-          grep -q 'd7f41105388930b32aea967e0b331781d96d814f2d106ab0fe4b2a2797dd1828' README.md
-          grep -q '971804' README.md
+          grep -q '33ee4f9a0d90d6bbd99bbda6666ee332d22fb1d17e36cd84443eeb391d2b603c' README.md
+          grep -q '971824' README.md
           grep -q 'GitHub main -> Vercel Production' CONTRIBUTING.md
           grep -q 'Only the current public script is maintained' SECURITY.md
           grep -q 'Do not include router passwords' .github/ISSUE_TEMPLATE/bug_report.yml
