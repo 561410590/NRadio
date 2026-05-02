@@ -36,10 +36,10 @@ jobs:
           printf '%s  %s\n' '754f54fd7502633097d30d52ac6d7b487074753d32575650d05b31bc03304fd2' '10-router-pages/factory-bin-C2000MAX-2.1.7.n0.c1-extracted/usr/lib/lua/luci/controller/nradio_adv/appcenter.lua' | sha256sum -c -
           printf '%s  %s\n' 'c7e4d540582152f1f7afde7ce604b305a48c7299cae5d18d1fa1736ff7ee2f23' '10-router-pages/factory-bin-C2000MAX-2.1.7.n0.c1-extracted/usr/lib/lua/luci/view/nradio_appcenter/appcenter.htm' | sha256sum -c -
 
-      - name: Verify V2.0.20 script state
+      - name: Verify V2.0.25 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V2.0.20"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'SCRIPT_RELEASE_DATE="2026-05-02"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V2.0.25"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_RELEASE_DATE="2026-05-03"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
@@ -90,10 +90,13 @@ jobs:
 
       - name: Verify support page state
         run: |
+          grep -q 'V2.0.25' 40-server-web/mayebano-support/index.html
+          grep -q '应用商店美化可以恢复默认' 40-server-web/mayebano-support/index.html
+          grep -q '美化后的应用商店可从菜单里恢复到默认页面' 40-server-web/mayebano-support/index.html
           grep -q 'V2.0.20' 40-server-web/mayebano-support/index.html
           grep -q 'NRadio_C8-668' 40-server-web/mayebano-support/index.html
           grep -q 'OpenVPN 控制台界面升级' 40-server-web/mayebano-support/index.html
-          grep -q 'OpenVPN 控制台与配置页面完成界面升级' 40-server-web/mayebano-support/index.html
+          grep -q 'OpenVPN 主界面删除冗余状态项' 40-server-web/mayebano-support/index.html
           grep -q '暗色控制台风格' 40-server-web/mayebano-support/index.html
           grep -q 'V2.0.15' 40-server-web/mayebano-support/index.html
           grep -q '奇游 / 雷神源切换' 40-server-web/mayebano-support/index.html
@@ -126,12 +129,12 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '1aa64269d32fb4e3be329251872b2e637b3a7fd11bcf191b5f4cb884e2a2c15c' CHECKSUMS.txt
-          grep -q 'aef5bb7d7dde8c60305112378e64cbae00d283ba0663440689faa6a4bc734e92' CHECKSUMS.txt
+          grep -q '6752a063babaeeb32ab1b95fe101df20731baf158830ad9b502482e2ba02177e' CHECKSUMS.txt
+          grep -q 'e7289449993ed7966fd01cc37f6709fd02648aa6ee16064ef14260d1a9a7ad12' CHECKSUMS.txt
           grep -q '987849  00-current/ssh-nradio-plugin-installer.sh' CHECKSUMS.txt
-          grep -q '212185  40-server-web/mayebano-support/index.html' CHECKSUMS.txt
-          printf '%s  %s\n' '1aa64269d32fb4e3be329251872b2e637b3a7fd11bcf191b5f4cb884e2a2c15c' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
-          printf '%s  %s\n' 'aef5bb7d7dde8c60305112378e64cbae00d283ba0663440689faa6a4bc734e92' '40-server-web/mayebano-support/index.html' | sha256sum -c -
+          grep -q '212854  40-server-web/mayebano-support/index.html' CHECKSUMS.txt
+          printf '%s  %s\n' '6752a063babaeeb32ab1b95fe101df20731baf158830ad9b502482e2ba02177e' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          printf '%s  %s\n' 'e7289449993ed7966fd01cc37f6709fd02648aa6ee16064ef14260d1a9a7ad12' '40-server-web/mayebano-support/index.html' | sha256sum -c -
 
       - name: Verify license
         run: |
@@ -141,11 +144,11 @@ jobs:
 
       - name: Verify repository docs
         run: |
-          grep -q 'V2.0.20' README.md
-          grep -q 'V2.0.20' CHANGELOG.md
+          grep -q 'V2.0.25' README.md
+          grep -q 'V2.0.25' CHANGELOG.md
           grep -q 'OpenVPN 控制台界面升级' README.md
           grep -q 'OpenVPN 控制台界面升级' CHANGELOG.md
-          grep -q '1aa64269d32fb4e3be329251872b2e637b3a7fd11bcf191b5f4cb884e2a2c15c' README.md
+          grep -q '6752a063babaeeb32ab1b95fe101df20731baf158830ad9b502482e2ba02177e' README.md
           grep -q '987849' README.md
           grep -q 'GitHub main -> Vercel Production' CONTRIBUTING.md
           grep -q 'Only the current public script is maintained' SECURITY.md
