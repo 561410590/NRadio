@@ -24,6 +24,15 @@ jobs:
           test -f SECURITY.md
           test -f .github/ISSUE_TEMPLATE/bug_report.yml
 
+      - name: Verify appcenter factory backup
+        run: |
+          test ! -e 10-router-pages/appcenter-backup-66.1-20260427-141411
+          test -f 10-router-pages/factory-reset-66.1-20260426-222841/appcenter.lua
+          test -f 10-router-pages/factory-reset-66.1-20260426-222841/nradio_appcenter/appcenter.htm
+          ! grep -R -E 'NRadio appcenter card polish|sys_status|plugin_uninstall|appcenter-card-polish|appcenter-backup-66\.1-20260427' 10-router-pages/factory-reset-66.1-20260426-222841
+          printf '%s  %s\n' '754f54fd7502633097d30d52ac6d7b487074753d32575650d05b31bc03304fd2' '10-router-pages/factory-reset-66.1-20260426-222841/appcenter.lua' | sha256sum -c -
+          printf '%s  %s\n' 'c7e4d540582152f1f7afde7ce604b305a48c7299cae5d18d1fa1736ff7ee2f23' '10-router-pages/factory-reset-66.1-20260426-222841/nradio_appcenter/appcenter.htm' | sha256sum -c -
+
       - name: Verify V2.0.20 script state
         run: |
           grep -q 'SCRIPT_VERSION="V2.0.20"' 00-current/ssh-nradio-plugin-installer.sh
