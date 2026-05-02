@@ -114,11 +114,11 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '33ee4f9a0d90d6bbd99bbda6666ee332d22fb1d17e36cd84443eeb391d2b603c' CHECKSUMS.txt
+          grep -q '1aa64269d32fb4e3be329251872b2e637b3a7fd11bcf191b5f4cb884e2a2c15c' CHECKSUMS.txt
           grep -q 'aef5bb7d7dde8c60305112378e64cbae00d283ba0663440689faa6a4bc734e92' CHECKSUMS.txt
-          grep -q '971824  00-current/ssh-nradio-plugin-installer.sh' CHECKSUMS.txt
+          grep -q '987849  00-current/ssh-nradio-plugin-installer.sh' CHECKSUMS.txt
           grep -q '212185  40-server-web/mayebano-support/index.html' CHECKSUMS.txt
-          printf '%s  %s\n' '33ee4f9a0d90d6bbd99bbda6666ee332d22fb1d17e36cd84443eeb391d2b603c' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          printf '%s  %s\n' '1aa64269d32fb4e3be329251872b2e637b3a7fd11bcf191b5f4cb884e2a2c15c' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
           printf '%s  %s\n' 'aef5bb7d7dde8c60305112378e64cbae00d283ba0663440689faa6a4bc734e92' '40-server-web/mayebano-support/index.html' | sha256sum -c -
 
       - name: Verify license
@@ -133,8 +133,8 @@ jobs:
           grep -q 'V2.0.20' CHANGELOG.md
           grep -q 'OpenVPN 控制台界面升级' README.md
           grep -q 'OpenVPN 控制台界面升级' CHANGELOG.md
-          grep -q '33ee4f9a0d90d6bbd99bbda6666ee332d22fb1d17e36cd84443eeb391d2b603c' README.md
-          grep -q '971824' README.md
+          grep -q '1aa64269d32fb4e3be329251872b2e637b3a7fd11bcf191b5f4cb884e2a2c15c' README.md
+          grep -q '987849' README.md
           grep -q 'GitHub main -> Vercel Production' CONTRIBUTING.md
           grep -q 'Only the current public script is maintained' SECURITY.md
           grep -q 'Do not include router passwords' .github/ISSUE_TEMPLATE/bug_report.yml
