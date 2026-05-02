@@ -1,0 +1,10 @@
+#!/bin/sh
+
+local _name="fixup"
+local _dir="/etc/${_name}.d"
+
+if [ -d "$_dir" ]; then
+	find "$_dir" -type f -exec sh {} \;
+fi
+
+exit 0

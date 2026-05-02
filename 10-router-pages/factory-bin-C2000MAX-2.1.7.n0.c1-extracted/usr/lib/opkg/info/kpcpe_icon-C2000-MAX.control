@@ -1,0 +1,10 @@
+Package: kpcpe_icon-C2000-MAX
+Version: 1.0-20260104
+Depends: libc, kpcpe_icon
+Source: package/nradio/base/kpcpe_icon
+SourceName: kpcpe_icon-C2000-MAX
+Section: nradiowifi
+SourceDateEpoch: 1768179994
+Architecture: aarch64_cortex-a53
+Installed-Size: 2123
+Description:  C2000-MAX nbcpe local icon

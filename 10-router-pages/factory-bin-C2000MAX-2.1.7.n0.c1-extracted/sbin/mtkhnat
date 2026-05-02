@@ -1,0 +1,259 @@
+#!/bin/ash
+
+. /lib/functions.sh
+. /lib/network/switch.sh
+
+gStatus=0
+MTKHNAT_BLOCK_PATH="/var/run/mtkhnat/"
+MTKHNAT_BLOCK_STATUS=$MTKHNAT_BLOCK_PATH"status"
+
+[ -d $MTKHNAT_BLOCK_PATH ] || mkdir -p $MTKHNAT_BLOCK_PATH
+
+usage() {
+	cat <<-EOF
+		usage: $0 OPTION...
+		mtkhnat control tool.
+
+		  -b      block mtkhnat,even if this is enabled
+		  -r      recovery mtkhnat, whether function is working,it's based on enabled settings
+
+	EOF
+}
+
+while getopts "brh" opt; do
+	case "${opt}" in
+		b)
+			gStatus=1
+			;;
+		r)
+			gStatus=2
+			;;
+		h)
+			usage
+			exit
+			;;
+		\?)
+			usage >&2
+			exit 1
+			;;
+	esac
+done
+shift $((OPTIND-1))
+
+
+wan_ports=$(get_ports "WE")
+auto_en=$(uci -q get auto_adapt.mode.en)
+
+config_load mtkhnat
+config_get enable global enable 0
+config_get hqos global hqos 0
+config_get txq_num global txq_num 16
+config_get sch_num global sch_num 2
+config_get scheduling global scheduling "wrr"
+config_get sch0_bw global sch0_bw 100000
+config_get sch1_bw global sch1_bw 100000
+config_get sch2_bw global sch2_bw 100000
+config_get sch3_bw global sch3_bw 100000
+
+# disable bridge netfilter module to avoid high cpu usage
+echo 0 > /proc/sys/net/bridge/bridge-nf-call-arptables
+echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
+echo 0 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
+echo 0 > /proc/sys/net/bridge/bridge-nf-filter-pppoe-tagged
+echo 0 > /proc/sys/net/bridge/bridge-nf-filter-vlan-tagged
+echo 0 > /proc/sys/net/bridge/bridge-nf-pass-vlan-input-dev
+
+SOC=`cat /proc/device-tree/ethernet*/compatible 2>/dev/null | cut -c 10-15`
+
+#if mtk_ppe is not exist, switch module to hnat
+module=mtk_ppe
+[ -d /sys/kernel/debug/${module} ] || {
+	module=hnat
+}
+
+#if module=mtk_ppe, enable the bridge netfilter
+[ "${module}" = "mtk_ppe" ] && {
+	echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+	echo 1 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
+}
+
+if [ -z "$wan_ports" ] && [ "$auto_en" != "1" ]; then
+	if [ "$SOC" = "mt7621" ] || [ "$SOC" = "mt7620" ]; then
+		enable=0
+	fi
+fi
+
+toggle_hnat() {
+	local mode="$(uci -q get mtkhnat.global.mode)"
+	local offload_enable="$(uci -q get firewall.@defaults[0].flow_offloading)"
+	local cpe_cnt="$(uci -q get oem.feature.cpe)"
+
+	if [ -z "$mode" ]; then
+		if [ -z "$cpe_cnt" ] || [ "$cpe_cnt" = "0" ]; then
+			mode=0
+		else
+			mode=2
+		fi
+	fi
+
+	if [ "$mode" = "1" ] && [ -f "/lib/modules/$(uname -r)/shortcut-fe-cm.ko" ]; then
+		[ -f "/sys/kernel/debug/hnat/hook_toggle" ] && echo 0 > /sys/kernel/debug/hnat/hook_toggle
+
+		if [ "$offload_enable" = "1" ]; then
+			uci -q set firewall.@defaults[0].flow_offloading='0'
+			uci commit firewall
+			fw3 reload
+		fi
+
+		if [ "$1" = 1 ]; then
+			insmod shortcut-fe-cm
+		else
+			rmmod shortcut-fe-cm
+		fi
+	elif [ "$mode" = "2" ] && [ -f "/lib/modules/$(uname -r)/xt_FLOWOFFLOAD.ko" ]; then
+		[ -f "/sys/kernel/debug/hnat/hook_toggle" ] && echo 0 > /sys/kernel/debug/hnat/hook_toggle
+
+		if [ -f "/lib/modules/$(uname -r)/shortcut-fe-cm.ko" ] && lsmod|grep -q shortcut_fe_cm; then
+			rmmod shortcut-fe-cm
+		fi
+
+		if [ "$1" = 1 ]; then
+			uci -q set firewall.@defaults[0].flow_offloading='1'
+		else
+			uci -q set firewall.@defaults[0].flow_offloading='0'
+		fi
+		uci commit firewall
+		fw3 reload
+	else
+		if [ -f "/lib/modules/$(uname -r)/shortcut-fe-cm.ko" ] && lsmod|grep -q shortcut_fe_cm; then
+			rmmod shortcut-fe-cm
+		fi
+
+		if [ "$offload_enable" = "1" ]; then
+			uci -q set firewall.@defaults[0].flow_offloading='0'
+			uci commit firewall
+			fw3 reload
+		fi
+
+		if [ "$1" = 1 ]; then
+			echo 1 > /sys/kernel/debug/hnat/hook_toggle
+		else
+			echo 0 > /sys/kernel/debug/hnat/hook_toggle
+		fi
+	fi
+}
+
+shutdown_hnat() {
+	for i in $(seq 0 $((sch_num - 1)))
+	do
+		eval sch_bw='$sch'$i'_bw'
+		echo 0 ${scheduling} ${sch_bw} > /sys/kernel/debug/${module}/qdma_sch${i}
+	done
+	if [ "$SOC" = "mt7621" ] || [ "$SOC" = "mt7620" ]; then
+		echo 1 0 0 0 0 0 4 > /sys/kernel/debug/${module}/qdma_txq0
+	else
+		echo 0 0 0 0 0 0 4 > /sys/kernel/debug/${module}/qdma_txq0
+	fi
+	for i in $(seq 1 $((txq_num - 1)))
+	do
+		echo 0 0 0 0 0 0 0 > /sys/kernel/debug/${module}/qdma_txq$i
+	done
+
+	if [ "$SOC" = "mt7621" ] || [ "$SOC" = "mt7620" ]; then
+		rmmod mtkhnat
+	else
+		toggle_hnat 0
+	fi
+	exit 0
+}
+
+if [ $gStatus -eq 1 ];then
+	[ -f $MTKHNAT_BLOCK_STATUS ] || touch $MTKHNAT_BLOCK_STATUS
+	shutdown_hnat
+	return
+elif [ $gStatus -eq 2 ];then
+	[ -f $MTKHNAT_BLOCK_STATUS ] && rm $MTKHNAT_BLOCK_STATUS
+fi
+
+#if enable=0, disable qdma_sch & qdma_txq
+[ "${enable}" -eq 1 ] || shutdown_hnat
+[ -f $MTKHNAT_BLOCK_STATUS ] && shutdown_hnat
+
+insmod mtkhnat
+
+toggle_hnat 1
+
+#if hqos=0, disable qdma_sch & qdma_txq
+[ "${hqos}" -eq 1 ] || {
+	for i in $(seq 0 $((sch_num - 1)))
+	do
+		eval sch_bw='$sch'$i'_bw'
+		echo 0 ${scheduling} ${sch_bw} > /sys/kernel/debug/${module}/qdma_sch${i}
+	done
+	if [ "$SOC" = "mt7621" ] || [ "$SOC" = "mt7620" ]; then
+		echo 1 0 0 0 0 0 4 > /sys/kernel/debug/${module}/qdma_txq0
+		for i in $(seq 1 $((txq_num - 1)))
+		do
+			echo 0 0 0 0 0 0 0 > /sys/kernel/debug/${module}/qdma_txq$i
+		done
+	else
+		for i in $(seq 0 $((txq_num - 1)))
+		do
+			current_sch=$((${i} / (txq_num / sch_num)))
+			echo ${current_sch} 0 0 0 0 0 4 > /sys/kernel/debug/${module}/qdma_txq$i
+		done
+	fi
+
+	exit 0
+}
+
+# enable qdma_sch
+for i in $(seq 0 $((sch_num - 1)))
+do
+	eval sch_bw='$sch'$i'_bw'
+	echo 1 ${scheduling} ${sch_bw} > /sys/kernel/debug/${module}/qdma_sch${i}
+done
+
+# enable bridge netfilter module to allow skb being marked
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
+
+setup_queue() {
+	local queue_id queue_minebl queue_maxebl
+	local queue_minrate queue_maxrate queue_resv minrate maxrate queue_weight
+	local current_sch
+
+	config_get queue_id $1 id 0
+	config_get queue_minrate $1 minrate 0
+	config_get queue_maxrate $1 maxrate 0
+	config_get queue_resv $1 resv 4
+	config_get queue_weight $1 weight 4
+
+	# check qid < txq max num or not for loop condition
+	[ "${queue_id}" -gt $((txq_num - 1)) ] && return 0
+
+	# start to set per queue config
+	queue_minebl=1
+	queue_maxebl=1
+
+	# if min rate = 0, set min enable = 0
+	# if max rate = 0, set max enable = 0
+	[ "${queue_minrate}" -eq 0 ] && queue_minebl=0
+	[ "${queue_maxrate}" -eq 0 ] && queue_maxebl=0
+
+	# get current scheduler id
+	current_sch=$((${queue_id} / (txq_num / sch_num)))
+
+	# calculate min rate according to schx_bw
+	minrate=$((sch${current_sch}_bw * $queue_minrate))
+	minrate=$((minrate / 100))
+
+	# calculate max rate according to schx_bw
+	maxrate=$((sch${current_sch}_bw * $queue_maxrate))
+	maxrate=$((maxrate / 100))
+
+	echo ${current_sch} ${queue_minebl} ${minrate} ${queue_maxebl} ${maxrate} ${queue_weight} \
+		${queue_resv} > /sys/kernel/debug/${module}/qdma_txq${queue_id}
+}
+
+config_foreach setup_queue queue

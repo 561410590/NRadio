@@ -1,0 +1,4 @@
+/usr/lib/lua/luci/view/nradio_adv/ptype.htm
+/etc/uci-defaults/40_luci-ptype
+/usr/lib/lua/luci/model/cbi/nradio_adv/ptype.lua
+/usr/lib/lua/luci/controller/nradio_adv/ptype.lua

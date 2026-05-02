@@ -1,0 +1,7 @@
+local c_api = require "cloudd.api"
+
+function cloudd_main()
+	c_api.cloudd_sync_config(false)
+end
+
+cloudd_main()

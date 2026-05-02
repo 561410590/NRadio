@@ -1,0 +1,54 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+<ul class="cbi-tabmenu">
+
+<%
+local nr = require "luci.nradio"
+local uci  = require "luci.model.uci"
+local cur = uci.cursor()
+local lng  = require "luci.i18n"
+local wired_count=0
+local cellular_count=0
+local nbcpe_index=0
+
+cur:foreach("wanchk", "checker",
+	function(s)
+		local label_info=lng.translate("CellularMonitor")
+		local label_index=""
+		local iface_odu_mode = cur:get("network",s[".name"], "mode") or ""
+
+		if s[".name"] == "wan" then
+			label_info=lng.translate("WiredMonitor")
+			
+			wired_count=wired_count+1
+			if wired_count > 1 then
+				label_index=wired_count
+			end
+		else
+			if iface_odu_mode == "odu" then
+				label_info=lng.translate("CellularNBCPE")
+				nbcpe_index=nbcpe_index+1
+				if nbcpe_index > 1 then
+					label_index=nbcpe_index
+				end
+			else
+				cellular_count=cellular_count+1
+				if cellular_count > 1 then
+					label_index=cellular_count
+				end
+			end
+		end
+		if model and s[".name"] == model then
+			print('<li class="cbi-tab"><a href="#">'..label_info..label_index..'</a></li>')
+		else
+			url_info=url("nradioadv/network/wanchk/model/"..s[".name"])
+			print('<li class="cbi-tab-disabled"><a href="'..url_info..'">'..label_info..label_index..'</a></li>')
+		end
+	end
+)
+
+%>
+
+</ul>

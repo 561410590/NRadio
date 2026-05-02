@@ -1,0 +1,4 @@
+/usr/sbin/setcap
+/usr/sbin/getcap
+/usr/sbin/getpcaps
+/usr/sbin/capsh

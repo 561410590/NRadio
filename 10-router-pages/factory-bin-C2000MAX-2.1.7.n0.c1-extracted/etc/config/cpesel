@@ -1,0 +1,4 @@
+
+config cpesel sim
+	option mode '0'
+	option cur '1'

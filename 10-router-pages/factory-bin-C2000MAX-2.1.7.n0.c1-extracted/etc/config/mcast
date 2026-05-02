@@ -1,0 +1,4 @@
+
+config mcast 'config'
+	option enhance '1'
+	option mcsrate '-1'

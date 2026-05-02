@@ -1,0 +1,25 @@
+local c_api = require "cloudd.api"
+local cloudd = require "cloudd.cloudd"
+local nr = require "luci.nradio"
+
+function cloudd_main(did, sid, topic, payload, proto, reply)
+	if reply == 1 then
+		return
+	end
+
+	if payload ~= "0" then
+		c_api.cloudd_sleep(5)
+		c_api.cloudd_send_group_id(sid, proto)
+		c_api.cloudd_send_status(sid, proto)
+		c_api.cloudd_send_config(sid, proto)
+		c_api.cloudd_send_time(sid, proto)
+		c_api.cloudd_send_pass(sid, proto)
+		if nr.support_mesh and nr.support_mesh() then
+			c_api.sync_controller_netstat(sid)
+		end
+	end
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

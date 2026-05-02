@@ -1,0 +1,12 @@
+/etc/cpetools/spreadtrum.sh
+/usr/bin/cpetools.sh
+/etc/cpetools/tdtech.sh
+/etc/cpetools/fibocom.sh
+/etc/cpetools/cmcc.sh
+/etc/cpetools/quecsoc.sh
+/etc/cpetools/simcom.sh
+/etc/cpetools/ucloudlink.sh
+/etc/cpetools/huawei.sh
+/etc/cpetools/generic.sh
+/etc/cpetools/meig.sh
+/etc/cpetools/quectel.sh

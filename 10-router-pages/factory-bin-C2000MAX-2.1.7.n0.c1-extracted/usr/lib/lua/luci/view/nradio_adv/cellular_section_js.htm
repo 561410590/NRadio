@@ -1,0 +1,7 @@
+	$(".sim-selector").click(function(e) {
+		var sim = $(this).data("model");
+		$(".sim-selector").removeClass("cbi-tab").addClass("cbi-tab-disabled");
+		$(this).removeClass("cbi-tab-disabled").addClass("cbi-tab");
+		$(".cell_info_table").addClass("hide");
+		$("#cell_info_table_"+sim).removeClass("hide");
+	});

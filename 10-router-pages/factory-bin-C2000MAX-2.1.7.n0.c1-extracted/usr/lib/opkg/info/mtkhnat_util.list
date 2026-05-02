@@ -1,0 +1,4 @@
+/etc/init.d/mtkhnat
+/sbin/mtkhnat
+/etc/uci-defaults/99-firewall
+/etc/config/mtkhnat

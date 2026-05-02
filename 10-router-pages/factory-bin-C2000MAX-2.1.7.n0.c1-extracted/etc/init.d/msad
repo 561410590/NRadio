@@ -1,0 +1,22 @@
+#!/bin/sh /etc/rc.common
+
+. /lib/network/switch.sh
+
+START=40
+STOP=69
+
+SERVICE_DAEMONIZE=1
+SERVICE_WRITE_PID=1
+
+start() {
+	local _sports="$(get_ports S)"
+	local _dual_br=
+
+	uci -q get mosquitto.bridge_ac 2>&1 >/dev/null && _dual_br="-D"
+
+	service_start /usr/sbin/msad -p "${_sports:-N}" ${_dual_br}
+}
+
+stop() {
+	service_stop /usr/sbin/msad
+}

@@ -1,0 +1,6 @@
+/etc/init.d/cpesel
+/etc/config/cpesel
+/etc/init.d/cpeselgpio
+/usr/libexec/rpcd/cpesel1
+/usr/libexec/rpcd/cpesel
+/usr/bin/cpesel.sh

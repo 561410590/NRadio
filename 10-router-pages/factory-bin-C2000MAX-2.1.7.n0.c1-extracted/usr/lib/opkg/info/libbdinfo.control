@@ -1,0 +1,11 @@
+Package: libbdinfo
+Version: 3.3-20231229
+Depends: libc
+Source: package/nradio/base/bdinfo
+SourceName: libbdinfo
+Section: nradiowifi
+SourceDateEpoch: 1741953134
+Maintainer: Duke Wu
+Architecture: aarch64_cortex-a53
+Installed-Size: 5317
+Description:  Provide supporting for parsing nradiowifi board information.

@@ -1,0 +1,71 @@
+#!/bin/ash
+
+. /usr/share/libubox/jshn.sh
+
+readonly WANCHK_STATUS_FILE="/var/run/rpcd/wanchk.json"
+readonly WANCHK_STATUS_LOCK="/var/run/rpcd/wanchk.json.lock"
+
+set_status() {
+	local _dest=$1
+	local _msg=$2
+	local _tmp=
+	local _name=
+	local _status=
+
+	flock 9
+
+	# Parse input message
+	json_load "$_msg"
+	json_get_var _name name
+	json_get_var _status status
+	json_cleanup
+
+	# Set status by name
+	_tmp=$(cat "$_dest")
+	json_load "${_tmp:-{}}"
+	json_add_string "$_name" "${_status:-none}"
+	json_dump|tee "$_dest"
+	json_cleanup
+} 9>"$WANCHK_STATUS_LOCK"
+
+get_status() {
+	local _dest=$1
+	local _msg=$2
+	local _tmp=
+	local _name=
+	local _status=
+
+	# Parse input message
+	json_load "$_msg"
+	json_get_var _name name
+	json_cleanup
+
+	# Get status by name
+	_tmp=$(cat "$_dest")
+	json_load "${_tmp:-{}}"
+	json_get_var _status "$_name"
+	json_cleanup
+
+	# Gen output message
+	json_init
+	json_add_string "$_name" "${_status:-none}"
+	json_dump
+	json_cleanup
+}
+
+case "$1" in
+	list)
+		echo '{ "set": { "name": "", "status": "" }, "get": { "name": "" } }'
+	;;
+	call)
+		read -r input;
+		case "$2" in
+			set)
+				set_status "$WANCHK_STATUS_FILE" "$input"
+			;;
+			get)
+				get_status "$WANCHK_STATUS_FILE" "$input"
+			;;
+		esac
+	;;
+esac

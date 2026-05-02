@@ -1,0 +1,10 @@
+Package: access_ctl
+Version: 1.1-20230626
+Depends: libc, conntrack, ipset
+Source: package/nradio/utils/access_ctl
+SourceName: access_ctl
+Section: nradiowifi
+SourceDateEpoch: 1774003514
+Architecture: aarch64_cortex-a53
+Installed-Size: 4476
+Description:  client network access control tool

@@ -1,0 +1,7 @@
+/usr/lib/iptables/libip6t_hbh.so
+/usr/lib/iptables/libip6t_mh.so
+/usr/lib/iptables/libip6t_ipv6header.so
+/usr/lib/iptables/libip6t_frag.so
+/usr/lib/iptables/libip6t_ah.so
+/usr/lib/iptables/libip6t_rt.so
+/usr/lib/iptables/libip6t_eui64.so

@@ -1,0 +1,43 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<%
+	local disp = require "luci.dispatcher"
+	local request  = disp.context.requestpath
+	local menu = request[3]
+	nr = require "luci.nradio"
+	model_str,cpe_section = nr.get_cellular_last(model)
+	cellular_data = nr.get_cellular_data(cpe_section)
+	
+	if cellular_data.cnt > 1 then
+%>
+<ul class="cbi-tabmenu">
+	<%
+	local cellular_index = 0
+	for _,item in pairs(cellular_data.celluar) do
+		local index_str=""
+		local class_name="cbi-tab"
+		local iface = item.name
+		cellular_index = cellular_index+1
+
+		if cellular_index > 1 then
+			index_str=(cellular_index-1)
+		else
+			index_str=""
+		end
+		
+		if cpe_section and cpe_section == iface then
+			class_name="cbi-tab"
+		else
+			class_name="cbi-tab-disabled"
+		end
+		local sub_menu_info = nr.get_cellular_menu(item.name)
+		if sub_menu_info[menu] and sub_menu_info[menu].support then
+	%>
+		<li class="<%=class_name%> sim-selector" data-model="<%=item.name%>"><a href="<%=url("nradio/cellular/"..menu.."/model/"..iface)%>"><%if cellular_data.nbcpe then %><%:CellularNBCPE%><%else%><%:Cellular%><%end%><%=index_str%></a></li>
+		<%end%>
+	<%end%>
+</ul>
+<%end%>

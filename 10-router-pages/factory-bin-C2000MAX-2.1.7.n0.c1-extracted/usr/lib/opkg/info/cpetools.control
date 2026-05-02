@@ -1,0 +1,10 @@
+Package: cpetools
+Version: 2.13-20240106
+Depends: libc, rpcd
+Source: package/nradio/utils/cpetools
+SourceName: cpetools
+Section: nradiowifi
+SourceDateEpoch: 1774930180
+Architecture: all
+Installed-Size: 57272
+Description:  CPE Control Tools

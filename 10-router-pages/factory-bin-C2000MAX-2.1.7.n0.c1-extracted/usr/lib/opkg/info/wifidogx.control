@@ -1,0 +1,13 @@
+Package: wifidogx
+Version: 1.0.0
+Depends: libc, iptables-mod-extra, iptables-mod-ipopt, kmod-ipt-nat, iptables-mod-nat-extra, lask, lua
+Source: package/nradio/apps/wifidogx
+SourceName: wifidogx
+Section: net
+SourceDateEpoch: 1760616212
+Architecture: aarch64_cortex-a53
+Installed-Size: 26830
+Description:  The Wifidogx project is a complete and embeddable captive
+ portal solution for wireless community groups or individuals
+ who wish to open a free Hotspot while still preventing abuse
+ of their Internet connection.

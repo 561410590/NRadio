@@ -1,0 +1,10 @@
+Package: logservice
+Version: 1.1-20240401
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, libcurl4, tc, nradio-utils, libbdinfo, libopenssl1.1
+Source: package/nradio/services/logservice
+SourceName: logservice
+Section: nradiowifi
+SourceDateEpoch: 1750849813
+Architecture: aarch64_cortex-a53
+Installed-Size: 11164
+Description:  Nradio log sync service

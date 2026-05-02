@@ -1,0 +1,13 @@
+<fieldset class="cbi-section">
+	<div class="cbi-page-actions">
+		<input type="submit" class="cbi-button cbi-button-apply" id="btn-save" value="<%:Save & Apply%>" />
+	</div>
+</fieldset>
+<script>
+$(document).ready(function(){
+	$('#btn-save').click(function(){
+		$(reloadFieldset).insertAfter('h2');
+		nradio_ajax_submit('form', document.referrer,"<%:Waiting for changes to be applied...%>");
+	});
+});
+</script>

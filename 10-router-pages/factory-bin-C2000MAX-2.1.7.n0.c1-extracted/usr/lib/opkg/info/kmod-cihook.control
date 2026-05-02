@@ -1,0 +1,10 @@
+Package: kmod-cihook
+Version: 5.4.281-20200803
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526)
+Source: package/nradio/kernel/cihook
+SourceName: kmod-cihook
+Section: nradiowifi
+SourceDateEpoch: 1715851776
+Architecture: aarch64_cortex-a53
+Installed-Size: 3725
+Description:  Kernel module for client infomation hook.

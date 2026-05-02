@@ -1,0 +1,11 @@
+{
+	"desc":"Fibocom FM160",
+	"vendor":"fibocom",
+	"cmdset":2,
+	"dver":"",
+	"type":"cdc_ether",
+	"control":2,
+	"cmdctrl":3,
+	"data": 0,
+	"nrcap": 1
+}

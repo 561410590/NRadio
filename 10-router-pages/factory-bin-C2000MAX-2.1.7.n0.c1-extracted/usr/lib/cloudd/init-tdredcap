@@ -1,0 +1,17 @@
+local c_api = require "cloudd.api"
+local util = require "luci.util"
+local uci = require "luci.model.uci".cursor()
+
+function cloudd_main()
+	local disabled = tonumber(uci:get("wireless","wlan0","disabled") or 0)
+	local maxtries = 10
+	for i = 1, maxtries do
+		if util.ubus("hostapd.wlan0") or disabled == 1 then
+			break
+		end
+		os.execute("sleep 5")
+	end
+	c_api.cloudd_sync_config()
+end
+
+cloudd_main()

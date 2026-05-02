@@ -1,0 +1,10 @@
+Package: cimd
+Version: 1.2-20200803
+Depends: libc, libpthread, libubus20210630, libubox20210516, libnl-tiny1, libpcap1, kmod-cihook
+Source: package/nradio/services/cimd
+SourceName: cimd
+Section: nradiowifi
+SourceDateEpoch: 1599480413
+Architecture: aarch64_cortex-a53
+Installed-Size: 15868
+Description:  Client Infomation Monitor Daemon

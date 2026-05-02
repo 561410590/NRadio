@@ -1,0 +1,11 @@
+{
+	"desc":"Fibocom FM650",
+	"vendor":"fibocom",
+	"cmdset":2,
+	"dver":"eth",
+	"type":"cdc_ether",
+	"control":0,
+	"cmdctrl":3,
+	"data": 0,
+	"nrcap": 1
+}

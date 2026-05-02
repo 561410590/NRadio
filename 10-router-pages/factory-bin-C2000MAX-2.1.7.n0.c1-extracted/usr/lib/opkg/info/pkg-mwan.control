@@ -1,0 +1,10 @@
+Package: pkg-mwan
+Version: 1.0-20220721
+Depends: libc, luci-app-nradio-dividing, luci-i18n-nradio-dividing-zh-cn, mwan3
+Source: package/nradio/collections/pkg-mwan
+SourceName: pkg-mwan
+Section: nradiowifi
+SourceDateEpoch: 1735204576
+Architecture: aarch64_cortex-a53
+Installed-Size: 104
+Description:  Pakcages for ttl

@@ -1,0 +1,24 @@
+#!/bin/ash
+. /lib/functions/oem.sh
+
+board_def="$(get_def_board)"
+
+[ -f "/oem/$board_def/config/99_cpe_dynamic" ] && . /oem/$board_def/config/99_cpe_dynamic
+
+_cpesoc=0
+# check platform
+if [ -f "/usr/bin/qlnet" ] || [ -f "/bin/serial_atcmd" ]; then
+	_cpesoc=1
+elif [ -f "/usr/sbin/atcmd" ]; then
+	_cpesoc=1
+fi
+
+_cpe_dynamic="${_cpe_dynamic:-0}"
+if [ "${_cpesoc}" = "0" ]; then
+	cpe_cnt=$(find /sys/class/gpio/ -maxdepth 1 -type l -name "cpe*-pwr"|wc -l)
+	if [ "$cpe_cnt" -gt 0 ]; then
+		uci -q set oem.feature.cpe="$((cpe_cnt+_cpe_dynamic))"
+	fi
+else
+	uci -q set oem.feature.cpe="1"
+fi

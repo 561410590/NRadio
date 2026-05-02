@@ -1,0 +1,10 @@
+Package: luci-app-nradio-sms
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-sms
+SourceName: luci-app-nradio-sms
+Section: luci
+SourceDateEpoch: 1774591661
+Architecture: all
+Installed-Size: 19590
+Description:  LuCI Support for NRadio Access

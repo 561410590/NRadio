@@ -1,0 +1,162 @@
+<%+header%>
+<%
+	local uci = require "luci.model.uci".cursor()
+	local util = require "luci.util"
+	local id  = util.split(uci:get("oem", "board", "id") or "00:11:22:33:44:55", ":")
+	local prefix = uci:get("oem","custom","ssid") or "NRadio"
+	local ssid = string.format("@"..prefix.."-%s%s", id[5] and id[5] or "00", id[6] and id[6] or "00")
+%>
+	<div class="column second-text-padding">
+		<form class="form-horizontal" role="form">
+			<div class="col-sm-8 col-xs-8 col-sm-offset-3 col-md-offset-4 col-xs-offset-1">
+				<div class="text-left qsetup-title">
+					<span><%:QSetupWifiNote%></span>
+				</div>
+
+				<div class="form-group detect-mode-text">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:QSetupWifiName%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="ssid-text" value="<%=ssid%>"/>
+						<span id="msg-name" style="color: red; display: none;"><%:QSetupWifiInputNote%></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:QSetupWifiPassword%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control n-txt" id="wifi-key" placeholder="<%:QSetupWifiInputPassNote%>" maxlength="64" style="ime-mode: disabled;"/>
+						<span style="color: red; display: none;" id="msg-wifi"><%:QSetupWifiInputError%></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-md-offset-2 col-sm-8 col-md-6 text-left ">
+						<div class="checkbox">
+							<label style="line-height: 20px;"><input id="user-key-checkbox" type="checkbox" checked="checked"/><%:QSetupWifiPasswordNote%></label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group hide" id="user-key-block">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:AdminPassword%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="user-key" placeholder="<%:QSetupWifiInputAdminPassNote%>" maxlength="64" style="ime-mode: disabled;"/>
+						<span style="color: red; display: none;" id="msg-user"><%:QSetupWifiInputError%></span>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix second-btn-padding">
+				<div class="double_btn_box">
+					<li id="pre-btn" class="second-btn second-btn-left recommand-color" ><%:Back%></li>
+					<li id="next-btn" class="second-btn second-btn-right btn-color disable-btn-color" ><%:Next%></li>
+				</div>
+			</div>
+		</form>
+	</div>
+
+
+<script type="text/javascript">
+	function pwdchange(pwdid,msgid){
+		var pwd = document.getElementById(pwdid).value;
+		if(/[\u4E00-\u9FA5]/g.test(pwd)){
+			$("#"+msgid).css('display' , 'block')
+			return false;
+		}
+		else{
+			$("#"+msgid).css('display' , 'none')
+			return true;
+		}
+	};
+
+	var ssid_check = 1;
+	$('#ssid-text').on('input propertychange', function() {
+		var length = $('#ssid-text').val().length;
+		if(length > 0){
+			ssid_check = 1;
+			$('#msg-name').css('display' , 'none');
+		} else {
+			ssid_check = 0;
+			$('#msg-name').css('display' , 'block');
+		}
+	});
+
+	var box_check =0;
+	$('#user-key-checkbox').click(function(){
+		if($(this).prop('checked')){
+			$('#user-key-block').removeClass("hide").addClass("hide");
+			box_check = 0;
+		}else{
+			box_check = 1;
+			$('#user-key-block').removeClass("hide");
+		}
+	});
+
+	var wifi_key = 0;
+	$('#wifi-key').on('input propertychange', function() {
+		var length = $('#wifi-key').val().length;
+		var check = pwdchange("wifi-key", "msg-wifi");
+		if(length >= 8 && check){
+			wifi_key = 1;
+		} else {
+			wifi_key = 0;
+		}
+	});
+
+	var user_check =0;
+	$('#user-key').on('input propertychange', function() {
+		var length = $('#user-key').val().length;
+		var check = pwdchange("user-key", "msg-user");
+		if(length >= 5 && check){
+			user_check = 1;
+		} else {
+			user_check = 0;
+		}
+	});
+
+	var wifi_check = 0;
+	$('input').on('input propertychange', function() {
+		if(box_check == 0 ){
+			if(wifi_key == 1 && ssid_check == 1){
+				wifi_check = 1;
+			}else{
+				wifi_check = 0;
+			}
+		}else{
+			if(wifi_key == 1 && user_check == 1 && ssid_check == 1){
+				wifi_check = 1;
+			}else{
+				wifi_check = 0;
+			}
+		}
+		if (wifi_check){
+			$('#next-btn').removeClass("disable-btn-color");
+			$('#next-btn').addClass("btn-color");
+		}
+		else{
+			$('#next-btn').removeClass("btn-color");
+			$('#next-btn').addClass("disable-btn-color");
+		}
+	});
+
+	$('#pre-btn').click(function(){
+		location.href="/cgi-bin/luci/nradio/qsetup/second";
+	});
+
+	$('#next-btn').click(function(){
+		var data={};
+		data['token']='<%=token%>';
+		data['ssid']=$('#ssid-text').val();
+		data['key']=$('#wifi-key').val();
+
+		if($('#user-key-checkbox').is(':checked')) {
+			data['password'] = data['key'];
+		}else{
+			data['password'] = $('#user-key').val();
+		}
+
+		if(wifi_check == 1){
+			(new XHR()).post('<%=controller%>nradio/qsetup/wifiset', data, function(){
+				location.href="/cgi-bin/luci/nradio/qsetup/third";
+			});
+		}
+	});
+
+</script>
+<%+footer%>

@@ -1,0 +1,33 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<div class="cbi-page-actions">
+	<input type="button" class="cbi-button cbi-button-apply" id="btn-save" value="<%:Save & Apply%>" />
+	<input type="submit" class="cbi-button cbi-button-apply hide" id="btn-apply" name="cbi.apply" />
+</div>
+<script>
+	$(document).ready(function(){
+		$('#btn-save').click(function(){
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: '<%:Switching product type requires restarting the device!%>',
+				buttons: [{
+					label: '<%:No%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog){
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog){
+						dialog.close();
+						$('#btn-apply').click();
+					}
+				}]
+			});
+		});
+	});
+</script>

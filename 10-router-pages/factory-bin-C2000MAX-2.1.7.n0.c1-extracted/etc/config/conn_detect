@@ -1,0 +1,2 @@
+config service 'config'
+	option 'interval' '5'

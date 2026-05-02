@@ -1,0 +1,10 @@
+Package: cellular_init
+Version: 1.0-20240613
+Depends: libc, nradio-utils, libopenssl1.1, libbdinfo, ubus, libubox20210516, libjson-c5
+Source: package/nradio/utils/cellular_init
+SourceName: cellular_init
+Section: nradiowifi
+SourceDateEpoch: 1774253996
+Architecture: aarch64_cortex-a53
+Installed-Size: 10433
+Description:  cellular init module

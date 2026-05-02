@@ -1,0 +1,49 @@
+#!/bin/ash
+
+ptype="oem.board.ptype"
+val=$(uci -q get "$ptype")
+
+if [ "$val" = "mb" ]; then
+	uci -q set "$ptype=ap"
+	uci -q commit oem
+fi
+
+# fixup unused firewall rules, e.g., wa_tools
+if ! opkg list|grep -q wa_tools; then
+	uci -q batch <<-EOF
+		delete firewall.wa_tools
+		delete firewall.wa_http
+		delete firewall.wa_https
+		delete firewall.wa_http_visitor
+		delete firewall.wa_https_visitor
+		commit firewall
+	EOF
+fi
+
+if ! opkg list|grep -q shadowsocks-libev-ss-rules; then
+	uci -q delete firewall.ss_rules
+	uci -q commit firewall
+fi
+
+if ! uci -q get firewall.ssh; then
+	_ssh=$(uci get -q security.security.ssh)
+
+	if [ "${_ssh:-0}" -eq 1 ]; then
+		_target="ACCEPT"
+	fi
+
+	uci -q batch <<-EOF
+		set firewall.ssh=rule
+		set firewall.ssh.src=lan
+		set firewall.ssh.proto=tcp
+		set firewall.ssh.dest_port=22
+		set firewall.ssh.target=${_target:-REJECT}
+		commit firewall
+	EOF
+fi
+
+if ! opkg list|grep -q luci-app-nradio-ppsk; then
+	if [ -f "/etc/config/ppsk" ]; then
+		rm -f /etc/config/ppsk
+	fi
+fi

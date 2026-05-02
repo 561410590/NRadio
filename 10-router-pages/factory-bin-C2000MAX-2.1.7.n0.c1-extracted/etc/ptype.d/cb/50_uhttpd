@@ -1,0 +1,4 @@
+#!/bin/sh
+
+uci del uhttpd.main.listen_https
+uci set uhttpd.main.listen_http=127.0.0.1:80

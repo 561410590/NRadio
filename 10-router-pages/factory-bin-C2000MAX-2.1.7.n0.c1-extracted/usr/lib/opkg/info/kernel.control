@@ -1,0 +1,11 @@
+Package: kernel
+Version: 5.4.281-1-62030240c86acc07b71c0b1522950526
+Depends: libc
+Source: package/kernel/linux
+SourceName: kernel
+License: GPL-2.0
+Section: sys
+SourceDateEpoch: 1755595010
+Architecture: aarch64_cortex-a53
+Installed-Size: 104
+Description:  Virtual kernel package

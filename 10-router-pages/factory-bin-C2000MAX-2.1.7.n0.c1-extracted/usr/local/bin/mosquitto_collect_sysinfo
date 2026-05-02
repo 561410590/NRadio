@@ -1,0 +1,52 @@
+#!/bin/sh
+# Basic init script for mosquitto
+# April 2012, OpenWrt.org
+# Provides support for the luci-app-mosquitto package, if installed
+
+
+system_time=$(date +'%F %T')
+uptime=$(cat /proc/uptime | cut -d'.' -f1)
+rom_version=$(. /etc/openwrt_release && echo $DISTRIB_REVISION)
+bus_no=$(uci -q get openfin.global.bus_no)
+reboot_type=$(grep reset_type /proc/stat | sed 's/reset_type //')
+portal_version=$(uci -q get openfin.global.portal_version)
+content_version=$(uci -q get openfin.global.content_version)
+wifibox_version=$(uci -q get openfin.global.wifibox_version)
+[ ! -f /etc/onboot/booted ] && firstboot=1
+portal_count=$(sqlite3 /vhost/in.portal.openfin.com/portal-content.s3db "select count(*) from content_data;" 2>/dev/null)
+
+df -h | grep /dev/sda > /dev/null
+if [ $? -eq 0 ];then
+    storage_total=$(df -h | grep /dev/sda | awk -F ' ' '{print $2}')
+    storage_free=$(df -h | grep /dev/sda | awk -F ' ' '{print $4}')
+fi
+
+ip netns exec ap ifconfig ofra0 >/dev/null 2>&1
+if [ $? -eq 0 ];then
+	type="amplifier"
+	mode="master"
+else
+	syncmode=$(uci -q get system.@system[0].syncmode)
+	if [ "${syncmode:-NONE}" == "master" ];then
+		type="wifibox"
+		mode="master"
+	else
+		type="wifibox"
+		mode="slave"
+	fi
+fi
+
+msg="{\"system_time\": \"${system_time:-0}\", \"uptime\": ${uptime:-0}, \
+\"rom_version\": \"${rom_version:-0}\", \"firstboot\": ${firstboot:-0}, \
+\"bus_no\": \"${bus_no:-0}\", \"reboot_type\": ${reboot_type:-0}, \
+\"portal_version\": \"${portal_version:-0}\", \
+\"content_version\": \"${content_version:-0}\", \
+\"wifibox_version\": \"${wifibox_version:-0}\", \
+\"portal_count\": \"${portal_count:--1}\", \
+\"type\": \"${type:-0}\", \
+\"mode\": \"${mode:-0}\", \
+\"storage\": {\"total\": \"${storage_total:-0}\", \"free\": \"${storage_free:-0}\"}}"
+
+echo $msg
+
+exit 0

@@ -1,0 +1,15 @@
+[ ifup = "$ACTION" ] && {
+	uci_toggle_state network "$INTERFACE" up 1
+	[ -n "$DEVICE" ] && {
+		uci_toggle_state network "$INTERFACE" ifname "$DEVICE"
+	}
+	if [ "$INTERFACE" = "lan" ]; then
+		lanip=$(uci -q get network.lan.ipaddr)
+		mask=$(uci -q get network.lan.netmask)
+		info=$(ipcalc.sh $lanip $mask)
+		subnet=$(echo "$info"|grep NETWORK|cut -f2 -d=)
+		prefix=$(echo "$info"|grep PREFIX|cut -f2 -d=)
+		ip rule del pref 1
+		ip rule add pref 1 to "$subnet/$prefix" lookup main
+	fi
+}

@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-mcast-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-mcast
+Source: package/luci/applications/luci-app-nradio-mcast
+SourceName: luci-i18n-nradio-mcast-zh-cn
+Section: luci
+SourceDateEpoch: 1722948739
+Architecture: all
+Installed-Size: 463
+Description:  Translation for luci-app-nradio-mcast - 中文 (Chinese)

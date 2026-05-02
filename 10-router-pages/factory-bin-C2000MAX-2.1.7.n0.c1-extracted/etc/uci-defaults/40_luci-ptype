@@ -1,0 +1,10 @@
+#!/bin/ash
+
+if ! uci -q get luci.module.ptype >/dev/null; then
+	uci set luci.module=internal
+	uci set luci.module.ptype=0
+	uci commit luci.module
+fi
+
+rm -f /tmp/luci-indexcache
+exit 0

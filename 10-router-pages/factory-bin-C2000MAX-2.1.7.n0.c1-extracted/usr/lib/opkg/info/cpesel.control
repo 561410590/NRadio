@@ -1,0 +1,10 @@
+Package: cpesel
+Version: 1.3-20210923
+Depends: libc, cpetools, cpestat, wanchk
+Source: package/nradio/services/cpesel
+SourceName: cpesel
+Section: nradiowifi
+SourceDateEpoch: 1775741501
+Architecture: all
+Installed-Size: 4571
+Description:  Auto select SIM card by traffic and link status

@@ -1,0 +1,10 @@
+Package: QDloader
+Version: Aaron-20230216
+Depends: libc
+Source: package/nradio/quectel/QDloader
+SourceName: QDloader
+Section: nradiowifi
+SourceDateEpoch: 1682302839
+Architecture: aarch64_cortex-a53
+Installed-Size: 45052
+Description:  Quectel QDloader Linux

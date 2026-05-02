@@ -1,0 +1,445 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local uci = require "luci.model.uci".cursor()
+	local utl = require "luci.util"
+	local capi = require "cloudd.api"
+	local util = require "luci.util"
+	local nr = require "luci.nradio"
+	local version = capi.cloudd_get_local_sversion() or ""
+	local info = utl.ubus("cloudd", "info") or {code=1, ver=version}
+	local lan_section = uci:get("network", "globals", "default_lan") or "lan"
+	local dip = uci:get("network", lan_section, "def_ipaddr")
+	local cur_status = 0
+	local new_version=""
+	
+	if version == info.ver then
+		if info.state == 1 then
+			if info.code == 1 then
+				cur_status = 0
+			else
+				cur_status = 1 --正在查询新版本，没结果
+			end
+		end
+	else
+		new_version=info.ver
+		if info.state == 0 then
+			if info.code == 0 then				
+				cur_status = 5 --存在新版本，需要手动触发升级操作
+			end
+		elseif info.state == 1 then			
+			if info.code == 1 then
+				cur_status = 0
+			else
+				cur_status = 1 --正在查询新版本，没结果
+			end
+		elseif info.state == 2 then
+			cur_status = 2 --正在升级
+		elseif info.state == 3 then
+			cur_status = 3 --下载开始
+		elseif info.state == 4 then
+			cur_status = 4 --下载结束
+		end
+	end
+
+	local board = util.ubus("system", "board") or {board_name = ""}
+	local platform = nr.get_platform()
+	local max = 22
+	if platform == "tdtech" then
+		max = 25
+	elseif platform == "quectel" then
+		max = 30
+	else
+		if board.board_name:match("NAND") or board.board_name:match("SPHY") or board.board_name:match("S128") or board.board_name:match("S256") or board.board_name:match("N256") then
+			max = 42
+		elseif board.board_name:match("EMMC") or board.board_name:match("EPHY") then
+			max = 8
+		end
+	end
+	local info_local = nr.system_info(true)
+	version = info_local.ver
+%>
+<%+themes/nradio/header_simple%>
+<style>
+
+	.container{
+		width: 100%;
+		padding: 0;
+	}
+	.next-button::before{
+		top:9px;
+	}
+	#shclDefault{
+		position: relative;
+		display: inline-block;
+		width: 15px;
+		height: 15px;
+		top: 3px;
+	}
+	.theme_color{
+		color: #00D5FF;
+	}
+	.error_color{
+		color: #FF4C4C;
+	}
+	.undeal_note{
+		border-radius: 50%;
+		background: unset;
+		width: 5px;
+		height: 5px;
+		background-color: red;
+		display: inline-block;
+	}
+	.progress{
+		width: 80%;
+		display: inline-block;
+	}
+	.upgrade_box{
+		display: none;
+	}
+	.mobile_bg_color.panel-info.upgrade_box{
+		background:unset;
+		border:unset;
+	}
+	.mobile_bg_color.panel-info.upgrade_box>.panel-heading{
+		border: unset;
+	}
+	.mobile_bg_color .progress-bar{
+		background-color: #00D5FF;
+		background-image: linear-gradient(to bottom, #00D5FF 0%, #00aeff 100%);
+	}
+	#process_version{
+		font-size: 18px;
+	}
+	#process_size{
+		font-size: 14px;
+	}
+	.normol_color{
+		background: linear-gradient(to right, #00D5FF, #00aeff);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		color: transparent;
+	}
+</style>
+			<div class="mobile_bg_color main_box">
+				<div class="panel-heading sub_label_color">
+					<h3 class="panel-title"><%:DeviceUpgradeTitle%></h3>
+				</div>	
+			</div>
+		
+			<div class="mobile_bg_color panel panel-info device-panel main_box">
+				<div class="panel-heading">
+					<h3 class="panel-title"></h3>
+				</div>
+				<div class="panel-body info-box no_padding">
+					<div class="row">
+						<div class="col-sm-12 col-xs-12 text-left">
+							<div class="row">
+								<div class="col-sm-6 col-xs-6 text-left label_name" >
+									<%:DeviceVerCur%>
+								</div>
+								<div class="col-sm-6 col-xs-6 text-right label_value sub_label_color">
+									 <%=version%>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12 col-xs-12 text-left">
+							<div class="row line_top_class" >
+								<div class="col-sm-6 col-xs-4 text-left label_name">
+									<%:DeviceVerUp%>
+								</div>
+								<div class="col-sm-6 col-xs-8 text-right label_value sub_label_color" id="device_upgrade_new">
+									<div id="shclDefault"></div><%:UpgradeChecking%>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mobile_bg_color panel panel-info device-panel upgrade_box">
+				<div class="panel-heading">
+					<h3 class="panel-title"></h3>
+				</div>
+				<div class="panel-body info-box no_padding">
+					<div class="row">
+						<div class="col-sm-12 col-xs-12 text-center">
+							<div class="row" id="upgrade_img">
+								<i class="far fa-nradio-upgrade2 fa-fw fa-5x theme_color"></i>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12 col-xs-12 text-center">
+							<div class="row" >
+								<div class="progress">
+									<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div>
+								</div>
+								<div>
+									<p id="process_note" class="normol_color"></p>
+									<p>&nbsp;</p>
+									<p id="process_version"></p>
+									<p id="process_size"><p>
+									<p>&nbsp;</p>
+									<p id="process_done" class="sub_label_color">&nbsp;</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+<script language="javascript">
+var timer = null;
+var upload_process_timer = null;
+var firmware_upload_precent = 0;
+var action = 0;
+var result_error = -1;
+var new_version="<%=new_version%>";
+var rcheck_retry = 0;
+function prepare_upgrade(){
+	var warning_htm = ''+
+	'<div class="note_box">'+
+	'<div class="note_body"><p><%:UpgradeHelp%></p><p><%:UpgradeHelp2%></p></div>'+
+	'</div>';
+	BootstrapDialog.show({
+		type: BootstrapDialog.TYPE_DEFAULT,
+		title: '<%:UpgradeHelpTitle%>',
+		message: warning_htm,
+		closeByBackdrop: false,
+		closable:false,
+		cssClass:'mobile_note',
+		buttons: [{
+			label: "<%:SetOK%>",
+			cssClass: 'mobile_note_btn',
+			action: function(dialog) {
+					show_upgrade_box();
+					trigger_download();					
+					dialog.close();
+				}
+			}],
+	});
+}
+function show_upgrade_box(){
+	$(".main_box").css("display","none");
+	$(".upgrade_box").css("display","block");
+}
+function reset_upgrade(){
+	$.post("<%=controller%>admin/system/reset/rcheck", function(data){
+		trigger_download();
+	});	
+}
+function start_upgrade(cur_state){
+	state = parseInt(cur_state);
+	if(state == 0){
+		$.post("<%=controller%>admin/system/reset/rcheck", function(data){
+			timer=setInterval(wait_check_info, 3000);
+		});
+	}
+	else if(state == 1){
+		show_upgrade_box();
+		timer=setInterval(wait_check_info, 3000);
+	}
+	else if(state == 2){
+		show_new_version(new_version);
+		show_upgrade_box();
+		upgrade_doing("<%=dip%>");
+	}
+	else if(state == 3){
+		show_new_version(new_version);
+		show_upgrade_box();
+		download_doing();
+	}
+	else if(state == 4){
+		show_new_version(new_version);
+		show_upgrade_box();
+		trigger_upgrade();
+	}
+	else if(state == 5){
+		show_new_version(new_version);
+	}
+}
+
+function download_doing(){
+	upgrade_process(0);
+	timer=setInterval(wait_check_info, 3000);
+	$("#process_note").removeClass("sub_label_color").addClass("normol_color").html("<%:UpgradeDownloadHelp%>");
+}
+function trigger_download(){
+	$.post("<%=controller%>admin/system/reset/rdownload", function(data){
+		download_doing();
+	});
+}
+
+function upgrade_doing(addr){
+	var count = 0;
+	var max = <%=max%>;
+	var getResponse = null;
+	var timeInterval = 5000;
+	var no_response = 0;
+
+	window.setTimeout(function(){
+		getResponse = setInterval(function(){
+			count++;
+			if (count > max ){
+				$("#process_note").removeClass("sub_label_color").addClass("normol_color").html("<%:UpgradeDone%>");
+				$("#process_done").html("<%:UpgradeDoneHelp%>");
+				nradio_network_recheck(getResponse,function(getResponse){
+					location.href="http://"+addr;
+				});
+				return;
+			}
+			else{
+				upgrade_process(50 + Math.floor((count/max)*50));
+			}
+			nradio_network_recheck(getResponse,function(getResponse){
+				result_error=-1;
+				timer=setInterval(wait_check_info, 3000);
+				var check_interval = setInterval(function(){
+					if(result_error == -1||result_error == -2){
+						no_response++;
+						if(no_response>3)
+							result_error=0;
+					}
+					console.log("result_error:"+result_error);
+					if(result_error == 1){
+						window.clearInterval(timer);
+						window.clearInterval(check_interval);
+						$("#upgrade_img").html('<i class="far fa-nradio-err fa-fw fa-5x error_color"></i>');
+						$("#process_note").removeClass("normol_color").addClass("sub_label_color").html(html_format("<%:UpgradeNetError%>"));
+					}
+					else if(result_error == 2){
+						window.clearInterval(timer);
+						window.clearInterval(check_interval);		
+						$("#process_note").removeClass("normol_color").addClass("sub_label_color").html(html_format("<%:UpgradePackageError%>"));
+						$("#upgrade_img").html('<i class="far fa-nradio-err fa-fw fa-5x error_color"></i>');
+					}
+					else if(result_error == 0){
+						window.clearInterval(timer);
+						window.clearInterval(check_interval);
+						upgrade_process(100);
+						$("#process_note").removeClass("sub_label_color").addClass("normol_color").html("<%:UpgradeDone%>");
+						$("#process_done").html("<%:UpgradeDoneHelp%>");
+						window.setTimeout(function(){
+							location.href="http://"+addr;
+						},2000);
+					}
+				}, 3000);
+			});
+		}, timeInterval);
+	},15000);
+
+}
+function trigger_upgrade(){	
+	$("#process_note").removeClass("sub_label_color").addClass("normol_color").html("<%:UpgradeingHelp%>");
+	upgrade_process(50);
+	$.post("<%=controller%>admin/system/reset/rupgrade_async", function(data){
+		if (data.result.code == 0){
+			upgrade_doing(data.result.dip);
+		}
+		else{
+			$("#process_note").removeClass("normol_color").addClass("sub_label_color").html(html_format("<%:UpgradeNetError%>"));
+		}
+	});
+}
+function upgrade_process(percent){
+	firmware_upload_precent = percent;
+	if(upload_process_timer){		
+		return ;
+	}
+	
+	upload_process_timer = setInterval(function(){
+		var done = firmware_upload_precent;
+		$('.progress-bar').attr('aria-valuenow', done).width(done+'%').html(done+'%');
+	}, 1000);
+}
+function html_format(str){
+	var temp = "";
+	if(str.length == 0) return "";
+	temp = str.replace(/&amp;/g,"&");
+	temp = temp.replace(/&#60;/g,"<");
+	temp = temp.replace(/&#62;/g,">");
+	temp = temp.replace(/&nbsp;/g," ");
+	temp = temp.replace(/&#39;/g,"\'");
+	temp = temp.replace(/&quot;/g,"\"");
+	return temp;
+
+}
+function show_new_version(ver){
+	$.getJSON("<%=controller%>admin/system/reset/rinfosize", function(data){
+		if(data.result && data.result.code == 0 )
+			$("#process_size").html("<%:UpgradeSize%>:"+nradio_byte_format(parseInt(data.result.size)));
+			$("#process_size").data("size",parseInt(data.result.size));
+	});
+	$("#process_version").html(ver);					
+	$("#device_upgrade_new").html('<div onclick="prepare_upgrade()"><div class="undeal_note"></div>&nbsp;&nbsp;'+ver+'<div style="display: inline-block"></div>&nbsp;&nbsp;&nbsp;<div id="upgrade_next" class="next-button">&nbsp;</div></div>');
+}
+function wait_check_info(){
+	$.getJSON("<%=controller%>admin/system/reset/rinfo", function(data){
+		result_error = -2
+		if(data.result.state==0||data.result.state==4||data.result.state>250){
+			window.clearInterval(timer);
+			if(data.result.state==0){
+				if(data.result.code==0 && data.result.ver!="<%=version%>"){
+					action=1;
+					show_new_version((data.result.ver?data.result.ver:""));
+				}
+				else if(data.result.code==1){
+					action=0;
+					$("#device_upgrade_new").html("<%:UpgradeLatest%>");
+				}
+				else{
+					action=0;
+					window.setTimeout(function(){start_upgrade(0)},5000);
+				}
+			}
+			else if(data.result.state==4){
+				if(action == 2)
+					return;
+				action=2;				
+				trigger_upgrade();				
+			}
+			else if(data.result.state==252||data.result.state==253||data.result.state==254){
+				action=0;
+				result_error = 1;
+				$("#upgrade_img").html('<i class="far fa-nradio-err fa-fw fa-5x error_color"></i>');
+				$("#process_note").removeClass("normol_color").addClass("sub_label_color").html(html_format("<%:UpgradeNetError%>"));
+			}
+			else if(data.result.state==255 || data.result.state==251){
+				action=0;
+				result_error = 2;
+				$("#process_note").removeClass("normol_color").addClass("sub_label_color").html(html_format("<%:UpgradePackageError%>"));
+				$("#upgrade_img").html('<i class="far fa-nradio-err fa-fw fa-5x error_color"></i>');
+			}
+		}
+		else if(data.result.state==1){
+			window.clearInterval(timer);
+			if(rcheck_retry>3){
+				$("#device_upgrade_new").html("<%:UpgradeLatest%>");
+				return;
+			}
+			
+			if(data.result.code==0 || data.result.code==1){
+				action=0;
+				rcheck_retry++;
+				window.setTimeout(function(){start_upgrade(0)},5000);
+			}
+		}
+		else if(data.result.state==3){				
+			var download_size = $("#process_size").data("size");
+			if(download_size){
+				upgrade_process(Math.floor(parseInt(data.result.size)*50 / download_size));
+			}
+		}
+	})
+}
+$(document).ready(function(){
+	goto_page('<%=controller%>nradio/system/overview',"<%:DeviceUpgrade%>");
+	$('#shclDefault').shCircleLoader({color: "white",dotsRadius: 1});
+	start_upgrade("<%=cur_status%>");
+});
+</script>
+<%+themes/nradio/footer_simple%>

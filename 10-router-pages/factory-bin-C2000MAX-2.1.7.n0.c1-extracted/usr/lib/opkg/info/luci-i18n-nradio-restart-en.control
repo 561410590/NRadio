@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-restart-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-restart
+Source: package/luci/applications/luci-app-nradio-restart
+SourceName: luci-i18n-nradio-restart-en
+Section: luci
+SourceDateEpoch: 1774940829
+Architecture: all
+Installed-Size: 933
+Description:  Translation for luci-app-nradio-restart - English

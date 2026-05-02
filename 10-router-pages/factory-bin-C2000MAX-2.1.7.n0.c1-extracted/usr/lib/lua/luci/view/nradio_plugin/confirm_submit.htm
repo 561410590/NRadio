@@ -1,0 +1,83 @@
+<fieldset class="cbi-section">
+	<div class="cbi-page-actions">
+		<input class="cbi-button cbi-button-apply <%if luci.dispatcher._CHANNEL then%>mobile_note_btn<%end%>" type="button" id="btn-save" value="<%if luci.dispatcher._CHANNEL then%><%:SimpleApply%><%else%><%:Save & Apply%><%end%>" />
+	</div>
+</fieldset>
+<script>
+$(document).ready(function(){
+	$('#btn-save').click(function(){
+		var row='<div>{{msg1}}</div>' +
+			'<div>{{msg2}}</div>' +
+			'<div>{{msg3}}</div>';
+		var count = 0;
+		var msg_warning = '';
+		if ($("#cbid\\.cloudd\\.d0\\.diff_2_4_wlan").is(':checked')){
+			if(! $("#cbid\\.cloudd\\.d0\\.disabled_wlan").is(':checked')){
+				msg_warning = "Wi-Fi<%:WifiCloseHelp%>";
+			}
+		}
+		else{
+			var prefix = '';
+			$(".cbi-input-checkbox").each(function(){
+				var id=$(this).attr("id");
+				if(id == "cbid.cloudd.d0.disabled_wlan" && $("#cbid\\.cloudd\\.d0\\.diff_2_4_wlan").length>0)
+					return;
+				if(id.indexOf("cbid.cloudd.d0.disabled") != -1){
+					if (! $(this).is(':checked')){
+						if (prefix.length)
+							prefix +=",";
+						prefix +=$(this).parent().parent().parent().find(".cbi-value-title").html();
+						
+					}
+				}
+			});
+			if(prefix.length){
+				msg_warning = prefix+"<%:WifiCloseHelp%>";
+			}
+		}
+
+		var htm=row.compose({
+			'msg1': '<%:Wi-Fi configuration has been modified. Are you sure to save the configuration?%>',
+<%
+local mobile = luci.http.formvalue("mobile") or "0"
+local msg = luci.i18n.translate("If you choose personal password, please make sure you have downloaded the password table document.")
+if mobile == "1" then
+	msg = ""
+elseif luci.nradio.has_cpe() then
+	msg = ""
+elseif noppsk then
+	msg = ""
+end
+%>
+			'msg2': '<%=msg%>',
+			'msg3': '<%:After saving configuration, Wi-Fi connection will disconnect. Please connect it again.%>',
+		});
+		if (cbi_validate_form(this.form, '<%:Invalid parameters. Save failed. Check and retry.%>')) {
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: msg_warning.length>0?msg_warning:htm,
+				<%if luci.dispatcher._CHANNEL then%>
+				cssClass:'mobile_note',
+				<%end%>
+				buttons: [{
+					label: '<%:No%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						dialog.close();
+						$(reloadFieldset).insertAfter('h2');
+						nradio_ajax_submit('form',null,"<%:Waiting for changes to be applied...%>");
+						$('form').submit();
+					}
+				}]
+			});
+		}
+	});
+});
+</script>

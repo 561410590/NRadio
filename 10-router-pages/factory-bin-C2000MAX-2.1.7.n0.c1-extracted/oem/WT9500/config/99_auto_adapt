@@ -1,0 +1,1 @@
+uci set auto_adapt.mode.en="0"

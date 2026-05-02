@@ -1,0 +1,6 @@
+/lib/firmware/WIFI_RAM_CODE_MT7993_1_1_TESTMODE.bin
+/lib/firmware/WIFI_RAM_CODE_MT7993_1_1.bin
+/etc/modules.d/62-mt_hwifi
+/lib/modules/5.4.281/mtk_hwifi.ko
+/lib/firmware/WIFI_RAM_CODE_idxlog.bin
+/lib/firmware/WIFI_MT7993_PATCH_MCU_1_1_hdr.bin

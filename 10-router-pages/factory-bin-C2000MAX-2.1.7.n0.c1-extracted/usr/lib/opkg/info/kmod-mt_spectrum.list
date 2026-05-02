@@ -1,0 +1,3 @@
+/lib/modules/5.4.281/mt_spectrum.ko
+/etc/modules-boot.d/58-mt_spectrum
+/etc/modules.d/58-mt_spectrum

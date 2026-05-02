@@ -1,0 +1,235 @@
+#!/bin/ash
+
+_cpesoc=0
+_network="network"
+
+_lan=$(uci -q get network.globals.default_lan)
+_wan6=$(uci -q get network.globals.default_wan6)
+
+[ -z "$_lan" ] && _lan="lan"
+[ -z "$_wan6" ] && _wan6="wan6"
+
+# check platform
+if [ -f "/usr/bin/qlnet" ] || [ -f "/bin/serial_atcmd" ]; then
+	_cpesoc=1
+fi
+
+
+uci set "${_network}"."${_lan}".ip6class="local"
+uci set "${_network}".${_wan6}.ipv6="0"
+uci delete dhcp."${_lan}".dhcpv6
+uci delete dhcp."${_lan}".ra
+uci delete dhcp."${_lan}".ra_default
+uci delete dhcp."${_lan}".ra_management
+uci delete network.globals.ipv6
+
+[ "$1" = "reinit" ] && exit 0
+
+_defip='192.168.88.1'
+_cpenu=$(uci -q get oem.feature.cpe)
+metric=1
+
+_cellular=$(uci -q get network.globals.default_cellular)
+[ -z "$_cellular" ] && _cellular="cpe"
+_cpenu="${_cpenu:-0}"
+
+
+if [ -f "/etc/config/mwan3" ];then
+	uci set mwan3.net_switch='policy'
+	uci set mwan3.net_switch.family="ipv4"
+	uci set mwan3.net6_switch='policy'
+	uci set mwan3.net6_switch.family="ipv6"
+	_name="wan"
+	uci set mwan3.dividmac_${_name}='rule'
+	uci set mwan3.dividmac_${_name}.ipset="nradio-dividing-mac-${_name}"
+	uci set mwan3.dividmac_${_name}.use_policy="divid_${_name}"
+	uci set mwan3.dividmac_${_name}.class="client"
+	uci set mwan3.dividmac_${_name}.family="ipv4"
+
+	uci set mwan3.dividmac6_${_name}='rule'
+	uci set mwan3.dividmac6_${_name}.ipset="nradio-dividing-mac-${_name}"
+	uci set mwan3.dividmac6_${_name}.use_policy="divid6_${_name}"
+	uci set mwan3.dividmac6_${_name}.class="client"
+	uci set mwan3.dividmac6_${_name}.family="ipv6"
+
+	uci set mwan3.dividip_${_name}='rule'
+	uci set mwan3.dividip_${_name}.ipset="nradio-dividing-${_name}"
+	uci set mwan3.dividip_${_name}.use_policy="divid_${_name}"
+	uci set mwan3.dividip_${_name}.family="ipv4"
+	uci set mwan3.dividip_${_name}.class="protocol"
+
+	uci set mwan3.dividip6_${_name}='rule'
+	uci set mwan3.dividip6_${_name}.ipset="nradio-dividing6-${_name}"
+	uci set mwan3.dividip6_${_name}.use_policy="divid6_${_name}"
+	uci set mwan3.dividip6_${_name}.family="ipv6"
+	uci set mwan3.dividip6_${_name}.class="protocol"
+
+	uci set mwan3.divid_${_name}='policy'
+	uci add_list mwan3.divid_${_name}.use_member="${_name}_policy"
+	uci set mwan3.divid_${_name}.class="divid"
+	uci set mwan3.divid_${_name}.last_resort="*"
+	uci set mwan3.divid_${_name}.family="ipv4"
+
+	uci set mwan3.divid6_${_name}='policy'
+	uci add_list mwan3.divid6_${_name}.use_member="${_name}6_policy"
+	uci set mwan3.divid6_${_name}.class="divid"
+	uci set mwan3.divid6_${_name}.last_resort="*"
+	uci set mwan3.divid6_${_name}.family="ipv6"
+
+
+	uci add_list mwan3.net_switch.use_member="${_name}_policy"
+	uci add_list mwan3.net6_switch.use_member="${_name}6_policy"
+
+	uci set mwan3.${_name}_policy='member'
+	uci set mwan3.${_name}_policy.interface="$_name"
+	uci set mwan3.${_name}_policy.weight="1"
+	uci set mwan3.${_name}_policy.metric="$metric"
+	uci set mwan3.${_name}_policy.family='ipv4'
+
+	uci set mwan3.${_name}6_policy='member'
+	uci set mwan3.${_name}6_policy.interface="${_name}6"
+	uci set mwan3.${_name}6_policy.weight="1"
+	uci set mwan3.${_name}6_policy.metric="$metric"
+	uci set mwan3.${_name}6_policy.family='ipv6'
+
+	uci set mwan3.$_name='interface'
+	uci set mwan3.$_name.enabled='1'
+	uci set mwan3.$_name.family='ipv4'
+	uci set mwan3.$_name.reliability='1'
+	uci set mwan3.$_name.down='1'
+	uci set mwan3.$_name.timeout='2'
+	uci set mwan3.$_name.up='1'
+	uci set mwan3.$_name.interval='2'
+	uci set mwan3.$_name.count='2'
+
+	uci set mwan3.${_name}6='interface'
+	uci set mwan3.${_name}6.enabled='1'
+	uci set mwan3.${_name}6.family='ipv6'
+	uci set mwan3.${_name}6.reliability='1'
+	uci set mwan3.${_name}6.down='1'
+	uci set mwan3.${_name}6.timeout='2'
+	uci set mwan3.${_name}6.up='1'
+	uci set mwan3.${_name}6.interval='2'
+	uci set mwan3.${_name}6.count='2'
+
+	metric=$((metric+1))
+fi
+
+if [ "$_cpenu" != "0" ]; then
+	uci set "${_network}".wan.defaultroute=0
+	uci set "${_network}".${_wan6}.defaultroute=0
+fi
+
+for _i in $(seq 1 "${_cpenu:-0}"); do
+	_defip='192.168.66.1'
+	_name="cpe$((_i-1))"
+
+	if [ ! -f "/usr/bin/qlnet" ]; then
+		[ "$_i" -eq 1 ] && _name="cpe"
+
+		uci set "${_network}"."$_name"=interface
+		uci set "${_network}"."$_name".proto=wwan
+		uci set "${_network}"."$_name".defaultroute=0
+	else
+		_name="wan$((_i-1))"
+	fi
+
+	if [ -f "/etc/config/mwan3" ];then
+		uci set mwan3.dividmac_${_name}='rule'
+		uci set mwan3.dividmac_${_name}.ipset="nradio-dividing-mac-${_name}"
+		uci set mwan3.dividmac_${_name}.use_policy="divid_${_name}"
+		uci set mwan3.dividmac_${_name}.class="client"
+		uci set mwan3.dividmac_${_name}.family="ipv4"
+
+		uci set mwan3.dividmac6_${_name}='rule'
+		uci set mwan3.dividmac6_${_name}.ipset="nradio-dividing-mac-${_name}"
+		uci set mwan3.dividmac6_${_name}.use_policy="divid6_${_name}"
+		uci set mwan3.dividmac6_${_name}.class="client"
+		uci set mwan3.dividmac6_${_name}.family="ipv6"
+
+		uci set mwan3.dividip_${_name}='rule'
+		uci set mwan3.dividip_${_name}.ipset="nradio-dividing-${_name}"
+		uci set mwan3.dividip_${_name}.use_policy="divid_${_name}"
+		uci set mwan3.dividip_${_name}.family="ipv4"
+		uci set mwan3.dividip_${_name}.class="protocol"
+
+		uci set mwan3.dividip6_${_name}='rule'
+		uci set mwan3.dividip6_${_name}.ipset="nradio-dividing6-${_name}"
+		uci set mwan3.dividip6_${_name}.use_policy="divid6_${_name}"
+		uci set mwan3.dividip6_${_name}.family="ipv6"
+		uci set mwan3.dividip6_${_name}.class="protocol"
+
+		uci set mwan3.divid_${_name}='policy'
+		uci add_list mwan3.divid_${_name}.use_member="${_name}_4_policy"
+		uci set mwan3.divid_${_name}.class="divid"
+		uci set mwan3.divid_${_name}.last_resort="*"
+		uci set mwan3.divid_${_name}.family="ipv4"
+
+		uci set mwan3.divid6_${_name}='policy'
+		uci add_list mwan3.divid6_${_name}.use_member="${_name}_6_policy"
+		uci set mwan3.divid6_${_name}.class="divid"
+		uci set mwan3.divid6_${_name}.last_resort="*"
+		uci set mwan3.divid6_${_name}.family="ipv6"
+
+		uci add_list mwan3.net_switch.use_member="${_name}_4_policy"
+		uci add_list mwan3.net6_switch.use_member="${_name}_6_policy"
+		uci set mwan3.${_name}_4_policy='member'
+		uci set mwan3.${_name}_4_policy.interface="${_name}_4"
+		uci set mwan3.${_name}_4_policy.weight="1"
+		uci set mwan3.${_name}_4_policy.metric="$metric"
+		uci set mwan3.${_name}_4_policy.family='ipv4'
+
+		uci set mwan3.${_name}_6_policy='member'
+		uci set mwan3.${_name}_6_policy.interface="${_name}_6"
+		uci set mwan3.${_name}_6_policy.weight="1"
+		uci set mwan3.${_name}_6_policy.metric="$metric"
+		uci set mwan3.${_name}_6_policy.family='ipv6'
+
+		uci set mwan3.${_name}_4='interface'
+		uci set mwan3.${_name}_4.enabled='1'
+		uci set mwan3.${_name}_4.family='ipv4'
+		uci set mwan3.${_name}_4.reliability='1'
+		uci set mwan3.${_name}_4.down='1'
+		uci set mwan3.${_name}_4.timeout='2'
+		uci set mwan3.${_name}_4.up='1'
+		uci set mwan3.${_name}_4.interval='2'
+		uci set mwan3.${_name}_4.count='2'
+
+		uci set mwan3.${_name}_6='interface'
+		uci set mwan3.${_name}_6.enabled='1'
+		uci set mwan3.${_name}_6.family='ipv6'
+		uci set mwan3.${_name}_6.reliability='1'
+		uci set mwan3.${_name}_6.down='1'
+		uci set mwan3.${_name}_6.timeout='2'
+		uci set mwan3.${_name}_6.up='1'
+		uci set mwan3.${_name}_6.interval='2'
+		uci set mwan3.${_name}_6.count='2'
+
+		metric=$((metric+1))
+	fi
+
+	uci set wanchk.${_name}=checker
+	if [ "$_cpesoc" = "0" ]; then
+		_wanfw=$(uci show firewall|grep -E "zone\[[0-9]+\]\.name='?wan'?"|sed 's/name=.*/network/')
+		uci del_list "${_wanfw}=$_name"
+		uci add_list "${_wanfw}=$_name"
+		uci set wanchk.${_name}.network="${_name}_4"
+	else
+		uci set wanchk.${_name}.network="$_cellular"
+		uci set wanchk.${_name}.iscpe="1"
+	fi
+	uci set wanchk.${_name}.enable=1
+	uci set wanchk.${_name}.period=10
+done
+
+uci set "${_network}"."${_lan}".ipaddr="$_defip"
+uci set "${_network}"."${_lan}".def_ipaddr="$_defip"
+
+if [ -f "/etc/config/mwan3" ];then
+	uci set mwan3.default_rule='rule'
+	uci set mwan3.default_rule.use_policy='net_switch'
+	uci set mwan3.default_rule.family='ipv4'
+	uci set mwan3.default_rule6='rule'
+	uci set mwan3.default_rule6.use_policy='net6_switch'
+	uci set mwan3.default_rule6.family='ipv6'
+fi

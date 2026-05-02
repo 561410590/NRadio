@@ -1,0 +1,4 @@
+/usr/lib/lua/luci/view/nradio_ipv6/template.htm
+/usr/lib/lua/luci/model/cbi/nradio_adv/ipv6_basic.lua
+/usr/lib/lua/luci/model/cbi/nradio_adv/ipv6_lan.lua
+/usr/lib/lua/luci/controller/nradio_adv/ipv6.lua

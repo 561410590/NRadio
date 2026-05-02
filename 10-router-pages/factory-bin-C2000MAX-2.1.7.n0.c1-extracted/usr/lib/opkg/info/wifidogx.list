@@ -1,0 +1,15 @@
+/etc/wifidogx-www/netdown.htm
+/etc/wifidogx-www/servererror.htm
+/usr/lib/lua/wifidogx/fw_iptables.lua
+/etc/wifidogx-www/internalerror.htm
+/etc/init.d/wifidogx
+/etc/wifidogx-www/serverunreach.htm
+/usr/bin/wifidogx
+/usr/lib/lua/wifidogx/auth.lua
+/usr/lib/lua/wifidogx/httpwifi.lua
+/usr/lib/lua/wifidogx/conf.lua
+/etc/wifidogx-www/wifidog.png
+/usr/lib/lua/wifidogx/fw_ipset.lua
+/etc/wifidogx.conf
+/usr/lib/lua/luci/controller/auth.lua
+/usr/bin/wdxctl

@@ -1,0 +1,10 @@
+Package: pkg-wifiauth
+Version: 1.0-20250829
+Depends: libc, terminal_trackd, wifidogx, luci-app-nradio-wifidogx, luci-i18n-nradio-wifidogx-zh-cn, luci-i18n-nradio-wifidogx-en
+Source: package/nradio/collections/pkg-wifiauth
+SourceName: pkg-wifiauth
+Section: nradiowifi
+SourceDateEpoch: 1756432083
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for wifiauth

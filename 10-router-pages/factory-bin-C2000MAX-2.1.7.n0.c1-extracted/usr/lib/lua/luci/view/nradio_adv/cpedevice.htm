@@ -1,0 +1,312 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+<%+header%>
+<%+nradio_adv/cellular_header%>
+<%
+	local util = require "luci.util"		
+	local nr = require "luci.nradio"
+	local lng = require "luci.i18n"		
+	local info = nr.system_info()
+	local port_data_string = util.serialize_json(nr.get_nrswitch_info(),nil)
+	local rv = util.ubus("kpcped", "status") or {}
+	local status_string = util.serialize_json(rv,nil)
+	local gType= util.serialize_json(nr.get_network_type(),nil)
+	local has_nbcpe_only = nr.has_nbcpe_only()
+	local remote_note_lng = lng.translate("NBCPDeviceERemote")
+	if has_nbcpe_only then
+		remote_note_lng = lng.translate("NBCPDeviceERemote1")
+	end
+%>
+<style>
+	.padding_top{
+		padding-top:10px;
+	}
+	.kpcpe_port_box{
+		width:120px;
+		margin: 0 10px;
+	}
+	@media (min-width: 10px) and (max-width: 767px){
+		.kpcpe_port_box{
+			width:80px;
+			margin: 0;
+		}
+	}	
+	.list-group{
+		margin-bottom: 10px;
+	}
+
+	.kpcpe_img{
+		display: inline-block;
+	}
+	.kpcpe_bgimg{		
+		height: 126px;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.kpcpe_port_box>.list-group.sublist{
+		border: unset;
+		-webkit-box-shadow:unset;
+		box-shadow:unset
+	}
+</style>
+<ul class="cbi-tabmenu">
+	<li class="cbi-tab-disabled"><span class="help_title"><i class="far fa-nradio-note fa-fw icon_disable" ></i><%:NBCPEDeviceHeadHelp%></span></li>
+</ul>
+
+<div class="cbi-map main-box">
+	<form method="post" name="cbi" >
+		<fieldset class="cbi-section border-bottom">
+			<div class="full-width kpcpe_box">
+				<div class="col-xs-12 col-sm-12">
+					<div class="text-center"><img class='kpcpe_img' src='/luci-static/nradio/images/kpcpe/local.svg'></div>
+					<div class="local_name text-center text_white padding_top"><%=info.model%></div>
+					<div class="local_label text-center"><%:NBCPEDeviceELocal%></div>
+				</div>
+				<div class="col-xs-12 col-sm-12 text-center">
+					<ul class="list-inline data_box padding_top">
+					</ul>
+				</div>
+				<div class="col-xs-12 col-sm-12 text-center">
+					<ul class="list-inline data_link">
+					</ul>
+				</div>
+			</div>
+		</fieldset>
+
+
+		<fieldset class="cbi-section">
+			<div class="cbi-section-node">
+				<div class="cbi-value " data-index="9">
+					<p class="cbi-value-title width_auto text-left adapt_label_padding" style="line-height:20px;"><%=translate("NBCPEDeviceHelp")%></p>
+				</div>
+			</div>
+		</fieldset>
+		
+		<div class="mobile_list visible-xs-block hide"  data-terminal="mobile"></div>
+	</form>
+</div>
+
+<script language="javascript">
+	var warg_obj = null;
+	var gPortData = <%=port_data_string%>;
+	function show_port_link(data_info){
+		var htm="";
+		var data = data_info.port;
+		var gType=<%=gType%>;
+		var networktype = data_info.networktype;
+		var nbcpe_exsit = 0;
+		var wired_exsit = 0;
+		for (key in gType){
+			if(gType[key] == networktype){
+				if(key.indexOf("NBCPE") != -1){
+					nbcpe_exsit = 1;
+
+				}
+				if(key.indexOf("Wired") != -1){
+					wired_exsit = 1;
+				}
+			}
+		};
+		for(sort in data)
+		{
+			var data_obj = data[sort];
+			var status = "";
+			var eth_label="LAN";
+			var switch_label = "&nbsp;";
+			var len = data;
+
+			if(data_obj["type"] == "m"){
+				if(nbcpe_exsit && wired_exsit){
+					eth_label = "WAN"
+					status="icon_color";
+				}
+			}
+			else if(data_obj["type"] == "M" || data_obj["type"] == "W"){
+				if(nbcpe_exsit && (data_info.last_wan_port == data_obj["port"])){
+					eth_label = "5G";
+					status="icon_color";
+					nbcpe_flag = 1;
+				}
+				else if (wired_exsit){
+					eth_label = "WAN"
+					status="icon_color";
+				}
+			}		
+	
+			switch_label=data_obj["label"];
+
+			htm+='<li class="kpcpe_port_box">';
+			htm+='	<ul class="list-group">';
+			htm+='		<li class="list-group-item text-center">'+switch_label+'</li>';
+			htm+='		<li class="list-group-item text-center '+status+' link_icon"><i class="far fa-nradio-ethernet fa-3x fa-fw"></i></li>';
+			htm+='		<li class="list-group-item text-center '+status+'">'+eth_label+'</li>';
+			htm+='	</ul>';
+			htm+='</li>';
+		}
+		return htm;
+	}
+	function show_port_status(data_info){
+		var htm="";
+		var data = gPortData.port;
+		var gType=<%=gType%>;
+		var networktype = gPortData.networktype;
+		var nbcpe_exsit = 0;
+		var kpcpe_cnt = 0;
+		for (key in gType){
+			if(gType[key] == networktype){
+				if(key.indexOf("NBCPE") != -1){
+					nbcpe_exsit = 1;
+
+				}
+			}
+		};
+		if (data_info && data_info.list){
+			for(var i=0;i<data_info.list.length;i++){
+				var item = data_info.list[i];
+				if(item.kind != "LOCAL" && !item.disabled){
+					kpcpe_cnt++;
+				}
+			}
+		}
+
+		if(!kpcpe_cnt){
+			$(".kpcpe_box").css("display","none");
+			$(".help_title").html('<i class="far fa-nradio-note fa-fw icon_disable" ></i><%=translate("NBCPEDeviceHeadHelp2")%></span>');
+			return;
+		}
+		else{
+			$(".help_title").html('<i class="far fa-nradio-note fa-fw icon_disable" ></i><%=translate("NBCPEDeviceHeadHelp")%></span>');
+			$(".kpcpe_box").css("display","block");
+		}
+		for(sort in data)
+		{
+			var data_obj = data[sort];
+			var status = "";
+			var eth_label="";
+			var switch_label = "&nbsp;";
+			var hide_class = "hide";
+			var len = data;
+			var info_data = {"status":"","link":0,"name":"","note":"","img":"","host":""};
+			if(data_obj["type"] == "M" || data_obj["type"] == "W"){				
+				if(nbcpe_exsit && (gPortData.last_wan_port == data_obj["port"])){
+					info_data.note = "(<%=remote_note_lng%>)";
+					eth_label = "5G";
+					hide_class=""
+					if (data_info && data_info.list){
+						for(var i=0;i<data_info.list.length;i++){
+							var item = data_info.list[i];
+							if(item.kind != "LOCAL"){
+								if(item.host)
+									info_data.host = item.host;
+								if(item.link == 1 ){
+									info_data.link = 1;
+									if(item.type != 1){
+										info_data.status = "<%:NBCPEDeviceStatusRec%>";
+										info_data.name  = "<%:NBCPEDeviceStatusUnLink%>";
+										info_data.img='<div  id="scan_loading"><img alt="loading" src="<%=media%>/images/loading.gif" ></div>';
+										var error_info = "<%:NBCPEDeviceHelp2%>";
+										if(parseInt(item.learn_time/30) && item.learn_time%30 < 4){
+											if(!warg_obj){
+												warg_obj = BootstrapDialog.show({
+													type: BootstrapDialog.TYPE_DEFAULT,
+													closeByBackdrop: true,
+													title: '',
+													message: '<i class="far fa-nradio-note fa-fw icon_disable" ></i>'+error_info,
+													onhide :function() {
+														warg_obj = null;
+													}
+												});
+											}
+										}
+									}
+									else{
+										if(warg_obj){
+											warg_obj.close();
+											warg_obj = null;
+										}
+										info_data.status = "<%:NBCPEDeviceStatusConnected%>";
+										info_data.name = item.device_name?item.device_name:"";
+										if(item.kind == "AK"){
+											info_data.img='<img class="kpcpe_bgimg" src="<%=media%>/images/kpcpe/AK.svg?'+Date.now()+'" >';
+										}
+										else{
+											info_data.img='<img class="kpcpe_bgimg" src="<%=media%>/images/kpcpe/'+item.device_id+'.svg?'+Date.now()+'" >';
+										}
+									}						
+								}
+								else{
+									info_data.status = "<%:NBCPEDeviceStatusUnConnected%>";									
+									info_data.name = item.device_name?item.device_name:"<%:NBCPEDeviceStatusUnLink%>";
+									if(item.kind == "AK"){
+										info_data.img="";
+										info_data.img='<img class="kpcpe_bgimg" src="<%=media%>/images/kpcpe/AK.svg?'+Date.now()+'" >';
+									}
+									else{
+										if(item.type != 1){
+											info_data.name  = "<%:NBCPEDeviceStatusUnLink%>";
+											info_data.img='<img class="kpcpe_bgimg" src="<%=media%>/images/kpcpe_nodevice.svg?'+Date.now()+'" >';
+										}
+										else{
+											info_data.img='<img class="kpcpe_bgimg" src="<%=media%>/images/kpcpe/'+item.device_id+'.svg?'+Date.now()+'" >';
+										}
+									}									
+								}
+							}
+						}
+					}
+
+					if(info_data.link){
+						status="icon_color";
+						switch_label = "<div class='kpcpe_connected_line'>&nbsp;<div>";
+					}
+					else{
+						switch_label = "<div class='kpcpe_line'>&nbsp;<div>";
+					}
+					nbcpe_flag = 1;					
+				}				
+			}
+
+			htm+='<li class="kpcpe_port_box">';
+			htm+='	<ul class="list-group sublist '+hide_class+'">';
+			htm+='		<li class="list-group-item text-center '+status+'">'+switch_label+'</li>';
+			htm+='		<li class="list-group-item text-center ">'+info_data.status+'</li>';
+			htm+='		<li class="list-group-item text-center '+status+'">'+switch_label+'</li>';
+			htm+='		<li class="list-group-item text-center ">'+info_data.img+'</li>';
+			htm+='		<li class="list-group-item text-center text_white">'+info_data.name+'</li>';
+			htm+='		<li class="list-group-item text-center" style="padding-top:0px">'+info_data.host+'</li>';
+			htm+='		<li class="list-group-item text-center" style="padding-top:0px">'+info_data.note+'</li>';
+			htm+='	</ul>';
+			htm+='</li>';
+		}
+		return htm;
+	}
+
+	function get_link_data(){
+		$.getJSON("<%=controller%>nradio/cellular/cpedevice/info", function(data){
+			if(data.result){
+				$(".data_link").empty().append(show_port_status(data.result));
+			}                       
+		}) 
+	}
+	function get_port_data(){
+		$.getJSON("<%=controller%>nradio/cellular/cpedevice/port", function(data){
+			if(data.result){
+				gPortData = data.result;
+				$(".data_box").empty().append(show_port_link(data.result));
+			}                       
+		}) 
+	}
+	$(document).ready(function(){		
+		var htm = show_port_link(gPortData);		
+		var info_data = <%=status_string%>;
+		var htm_status = show_port_status(info_data);
+		nradio_backend_flash();
+		$(".data_box").empty().append(htm);	
+		$(".data_link").empty().append(htm_status);
+		setInterval(get_link_data, 3*1000);
+		setInterval(get_port_data, 3*1000);
+	});
+</script>
+<%+footer%>

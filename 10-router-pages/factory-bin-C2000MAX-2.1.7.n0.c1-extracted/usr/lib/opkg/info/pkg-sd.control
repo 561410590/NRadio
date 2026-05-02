@@ -1,0 +1,10 @@
+Package: pkg-sd
+Version: 1.0-20260122
+Depends: libc, luci-app-nradio-sd, luci-i18n-nradio-sd-zh-cn, luci-i18n-nradio-sd-en, kmod-fs-ext4, kmod-fs-f2fs, block-mount, f2fs-tools
+Source: package/nradio/collections/pkg-sd
+SourceName: pkg-sd
+Section: nradiowifi
+SourceDateEpoch: 1769154439
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for NRadio SD

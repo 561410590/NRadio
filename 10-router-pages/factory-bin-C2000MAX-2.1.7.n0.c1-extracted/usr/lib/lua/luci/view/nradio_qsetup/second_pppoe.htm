@@ -1,0 +1,137 @@
+<%+header%>
+	<div id="pppoe_show" class="column  second-text-padding">
+		<form  class="form-horizontal " role="form">
+			<div class="col-sm-8 col-xs-8 col-sm-offset-3 col-md-offset-4 col-xs-offset-1">
+				<div class="text-left qsetup-title">
+					<span><%:QSetupPPPoeInputNote%></span>
+				</div>
+
+				<div class="form-group detect-mode-text">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:Username%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="account" placeholder="<%:QSetupPPPoeInputUserNote%>" />
+					</div>
+				</div>				
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:Password%></div>
+					<div class="col-sm-6 wifi-password">
+						<div class="input-group">
+							<input type="password" class="form-control" id="password" placeholder="<%:QSetupPPPoeInputPwdNote%>" />
+							<span  class="input-group-addon input-group-addon-pwd-toggle" onclick="toggle_eye_pwd(this)">
+								<i class="far fa-nradio-eye-close"></i>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group" >
+					<div class="col-sm-offset-3 col-md-offset-2 col-sm-8 col-md-6 text-left ">
+						<span class="note_info"><%:QSetupPPPoeTip%><a id="get_account" class="click_pointer icon_color" onclick='location.href="/cgi-bin/luci/nradio/qsetup/get_account";'> <%:QSetupPPPoeTip2%></a></span>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix second-btn-padding">
+				<div class="double_btn_box">
+					<li id="pre-btn" class="second-btn second-btn-left recommand-color" onclick='location.href="/cgi-bin/luci/nradio/qsetup/other_mode";'><%:Back%></li>
+					<li id="next-btn" class="second-btn second-btn-right btn-color disable-btn-color" ><%:Next%></li>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div id="pppoe_error" class="column second-text-padding hide">
+		<div class="row clearfix">
+			<div class="col-sm-12 column text-center">
+				<div class="col-sm-12 column detect_error"><i class="far fa-nradio-detect-error fa-7x fa-fw nradio-width fail_color"></i></div>
+				<div class="col-sm-12 column detect-mode-text">
+					<p class="detect_error ">
+						<%:QSetupPPPoeDialError%>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="row clearfix second-text-padding"></div>
+		<div class="clearfix second-btn-padding">
+			<div class="double_btn_box">
+				<li id="reload-btn" class="second-btn second-btn-left recommand-color"  onclick='location.reload();'><%:Retry%></li>
+				<li id="skip-btn" class="second-btn second-btn-right btn-color" onclick='location.href="/cgi-bin/luci/nradio/qsetup/second_wifi";'><%:Skip%></li>
+			</div>
+		</div>
+	</div>
+<script type="text/javascript">
+	var time;
+	var count = 0;
+	var dlg;
+	function get_wan_stat(){
+		$.getJSON('<%=url('nradio/basic/iface', 'wan')%>', function(data) {
+			if (data.result) {
+				net = data.result[0];
+				if (net.is_up || (net.uptime && (net.uptime > 0) && net.proto && (net.proto == "pppoe"))) {
+					clearInterval(time);
+					location.href="/cgi-bin/luci/nradio/qsetup/second_wifi";
+				}else{
+					count ++;
+					if(count>5){
+						dlg.close();
+						$('#pppoe_show').removeClass("hide").addClass("hide");
+						$('#pppoe_error').removeClass("hide");
+						clearInterval(time);
+					}
+				}
+			}
+		});
+	}
+
+	var check = 0;
+
+
+	$('input').on('input propertychange', function() {
+		if(($.trim($('#account').val()) !== "") && ($.trim($('#password').val()) !== "")){
+			$('#next-btn').removeClass("disable-btn-color");
+			$('#next-btn').addClass("btn-color");
+			check= 1;
+		} else {
+			check = 0;
+			$('#next-btn').removeClass("btn-color");
+			$('#next-btn').addClass("disable-btn-color");
+		}
+	});
+
+	$('#next-btn').click (function(){
+		var data={};
+		data['token']='<%=token%>';
+		data['account']=$('#account').val();
+		data['password']=$('#password').val();
+		if(check == 1){
+			var row='<div style="margin-top:-35px;" ><h2 style="border-bottom: aliceblue;">{{msg1}}</h2></div>';
+			var htm=row.compose({
+				'msg1': '<%:QSetupPPPoeDial%>',
+			});
+
+			dlg = BootstrapDialog.show({
+				type: BootstrapDialog.SIZE_SMALL,
+				closable:false,
+				title: false,
+				message: htm,
+			});
+
+			(new XHR()).post('<%=controller%>nradio/qsetup/pppoeset', data, function(){
+				time = setInterval(get_wan_stat, 2*1000);
+			});
+		}else{
+			console.log("no account or password");
+		}
+	});
+
+	$(document).ready(function(){
+		(new XHR()).get('<%=controller%>nradio/qsetup/get_pppoe_id', null, function(x,data){
+			if(data.result.detect == "ok" ){
+				$('#account').val(data.result.username);
+				$('#password').val(data.result.password);
+				$('#next-btn').removeClass("disable-btn-color");
+				$('#next-btn').addClass("btn-color");
+				check= 1;
+			}
+		});
+	});
+
+</script>
+<%+footer%>

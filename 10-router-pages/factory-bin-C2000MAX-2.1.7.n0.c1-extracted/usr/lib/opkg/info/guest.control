@@ -1,0 +1,10 @@
+Package: guest
+Version: 1.0-20200811
+Depends: libc, kmod-ebtables, kmod-ebtables-ipv4, ebtables
+Source: package/nradio/utils/guest
+SourceName: guest
+Section: nradiowifi
+SourceDateEpoch: 1597204069
+Architecture: all
+Installed-Size: 875
+Description:  Guest Network Utility

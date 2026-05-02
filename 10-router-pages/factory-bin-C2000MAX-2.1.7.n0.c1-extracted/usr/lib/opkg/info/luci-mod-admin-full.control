@@ -1,0 +1,10 @@
+Package: luci-mod-admin-full
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-base
+Source: package/luci/modules/luci-mod-admin-full
+SourceName: luci-mod-admin-full
+Section: luci
+SourceDateEpoch: 1720695215
+Architecture: aarch64_cortex-a53
+Installed-Size: 77939
+Description:  LuCI Administration - full-featured for full control

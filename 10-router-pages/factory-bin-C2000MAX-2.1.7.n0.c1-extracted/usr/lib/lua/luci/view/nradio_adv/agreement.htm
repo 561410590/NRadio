@@ -1,0 +1,121 @@
+<%
+local nr = require "luci.nradio"
+local support_agreement = nr.support_agreement()
+%>
+<style>
+	.agreement_top{
+		text-align: left;
+	}
+	.mobile_apply_color .mobile{
+		color:#c5c5c5
+	}
+	.agreement_dialog .modal-dialog {
+		margin: 0 auto;
+	}
+	.agreement_dialog h2{
+		text-align: center;
+		color: black;
+	}
+
+	.agreement_dialog h2 span{
+		position:unset;
+		border-bottom:unset
+	}
+	.bootstrap-dialog .modal-dialog {
+			margin:100px auto;
+		}
+
+	@media (min-width: 10px) and (max-width: 768px) {
+
+		.bootstrap-dialog-message .main{
+			margin-top: 0px;
+		}
+
+		.agreement_dialog .modal-dialog .main-content{
+			padding:20px;
+		}
+
+		.bootstrap-dialog .modal-dialog{
+			width: 380px;
+		}
+	}
+</style>
+
+	<%if support_agreement then%>
+	<input type="text" style="display: none;" />
+	<div class="cbi-value" >
+		<label class="cbi-value-title" ></label>
+		<div class="cbi-value-field">
+			<input id="click-box" type="checkbox" class="form-check-input" style="padding:unset;" value="">
+			<a id="check-agreement"  class="click_pointer">
+				<%:LoginAgreement%>
+			</a>
+		</div>
+	</div>
+	<% end %>
+
+<script type="text/javascript">//<![CDATA[
+	$(document).ready(function(){
+		$('#sub-cbi-sapply-btn').addClass("disable-btn-color");
+		$('#sub-cbi-sapply-btn').prop('disabled',true);
+		$("#mobile_apply").addClass("mobile_apply_color");
+		if (($("div.cbi-page-actions > input.cbi-button-apply").length == 1)){
+			$("#mobile_apply").removeClass("hide");
+		}
+	});
+	<%if support_agreement then%>
+	var agreementDialog = null;
+	var htm='<div class="main ">';
+	htm+='<div class="main-content main-content-sub" >';
+	htm+='<div class="cbi-map">';
+	htm+='<h2 name="content"  class="content-sub"><span><%:LoginAgreementTitle%></span></h2>';
+	htm+='<div class="agreement_top">';
+	htm+='	<fieldset class="cbi-section">';
+	htm+='		<div class="cbi-section-node sms_box_header">';
+	htm+='			<span><%:LoginAgreementContent1%></span>';
+	htm+='		</div>';
+	htm+='		<div class="cbi-section-node">';
+	htm+='			<span><%:LoginAgreementContent2%></span>';
+	htm+='			<span><%:LoginAgreementContent3%></span>';
+	htm+='		</div>';
+	htm+='	</fieldset>';
+	htm+='	</div>';
+	htm+='	</div>';
+	htm+='	</div>';
+	htm+='	</div>';
+	htm=htm.replace(/&#60;/g, "<");
+	htm=htm.replace(/&#62;/g, ">");
+
+	$('#click-box').click(function(){
+			if($(this).prop('checked')){
+				$('#sub-cbi-sapply-btn').removeClass("disable-btn-color");
+				$('#sub-cbi-sapply-btn').prop('disabled',false);
+				$("#mobile_apply").removeClass("mobile_apply_color");
+				$('#sub-cbi-sapply-btn').bind('click',function(){
+					$("form").submit();
+				})
+			}else{
+				$('#sub-cbi-sapply-btn').addClass("disable-btn-color");
+				$("#mobile_apply").addClass("mobile_apply_color");
+				$('#sub-cbi-sapply-btn').unbind('click');
+				$('#sub-cbi-sapply-btn').prop('disabled',true);
+			}
+		});
+
+	$('#check-agreement').click(function () {
+		if(!agreementDialog){
+			agreementDialog = BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				cssClass: 'list-dialog agreement_dialog',
+				closeByBackdrop: true,
+				title: '',
+				message: htm,
+				onhide:function(){
+					agreementDialog = null;
+				}
+			});
+		}
+	});
+	<% end %>
+//]]></script>
+

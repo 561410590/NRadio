@@ -1,0 +1,41 @@
+#!/bin/sh /etc/rc.common
+
+START=92
+WFA_DUT=wfa_dut
+WFA_CA=wfa_ca
+br_ip=`ifconfig br-lan | grep "inet addr" | sed -e s/^.*addr\://g | awk '{print $1}'`
+wfa_dut_port=8000
+wfa_ca_port=9000
+wifi_ut=apcli0
+
+start() {
+    killall wfa_ca wfa_dut
+
+    ifconfig $wifi_ut up
+    brctl delif br-lan $wifi_ut
+    sleep 1
+
+    echo "run sigama-daemon wfa_dut......"
+    $WFA_DUT $wifi_ut 8000 &
+    sleep 2
+
+    echo "run sigama-daemon wfa_ca......"
+    export WFA_ENV_AGENT_IPADDR=$br_ip
+    export WFA_ENV_AGENT_PORT=$wfa_dut_port
+    $WFA_CA br-lan $wfa_ca_port &
+}
+
+stop() {
+    pid=`ps | grep $WFA_CA | awk '{print $1}' | sed -n 1p`
+    if [ $pid -ne 0 ]
+    then
+            kill -9 $pid
+    fi
+
+    pid=`ps | grep $WFA_DUT | awk '{print $1}' | sed -n 1p`
+    if [ $pid -ne 0 ]
+    then
+            kill -9 $pid
+    fi
+}
+

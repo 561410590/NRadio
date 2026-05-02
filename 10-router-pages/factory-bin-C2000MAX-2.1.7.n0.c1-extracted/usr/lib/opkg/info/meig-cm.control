@@ -1,0 +1,10 @@
+Package: meig-cm
+Version: 1.0-20230327
+Depends: libc, kmod-qmi_wwan_m
+Source: package/nradio/meig/meig-cm
+SourceName: meig-cm
+Section: meig
+SourceDateEpoch: 1772007460
+Architecture: aarch64_cortex-a53
+Installed-Size: 56345
+Description:  Meig Dial tools

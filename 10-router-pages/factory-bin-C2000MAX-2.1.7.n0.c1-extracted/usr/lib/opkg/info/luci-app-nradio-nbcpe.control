@@ -1,0 +1,10 @@
+Package: luci-app-nradio-nbcpe
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-nbcpe
+SourceName: luci-app-nradio-nbcpe
+Section: luci
+SourceDateEpoch: 1769082050
+Architecture: all
+Installed-Size: 2501
+Description:  LuCI Support for CPE NBCPE

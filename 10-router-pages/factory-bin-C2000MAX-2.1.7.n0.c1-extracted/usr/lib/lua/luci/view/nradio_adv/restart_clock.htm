@@ -1,0 +1,35 @@
+<%+cbi/valueheader%>
+
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(5, '<%=url('admin/system/clock_status')%>', null,
+		function(x, rv)
+		{
+			var s = document.getElementById('<%=self.option%>-clock-status');
+			if (s)
+			{
+				s.innerHTML = rv.timestring || '?';
+			}
+		}
+	);
+//]]></script>
+
+<style>
+	.show-clock-status{
+		top: -0.5em;
+	}
+
+	@media screen and (max-width: 767px) {
+		.clock-status-display {
+			position: absolute;
+			top: -27px;
+			right: 0px;
+		}
+		.show-clock-status{
+			top: 0;
+		}
+	}
+</style>
+
+<div class="show-clock-status"><label id="<%=self.option%>-clock-status" style="padding: 0.5em 0em 0.5em 0em;" class="clock-status-display"><em><%:Collecting data...%></em></label></div>
+
+<%+cbi/valuefooter%>

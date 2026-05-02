@@ -1,0 +1,10 @@
+Package: luci-app-nradio-cpe-upgrade
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-cpe-upgrade
+SourceName: luci-app-nradio-cpe-upgrade
+Section: luci
+SourceDateEpoch: 1775741754
+Architecture: all
+Installed-Size: 6351
+Description:  LuCI Support for NRadio modem device upgrade

@@ -1,0 +1,32 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<%
+	cellular_data = nr.get_cellular_data(cpe_section)
+	if cellular_data.cnt > 1 then
+%>
+<ul class="cbi-tabmenu">
+	<%
+	local cellular_index = 0
+	for _,item in pairs(cellular_data.celluar) do
+		local index_str=""
+		local class_name="cbi-tab"
+		local iface = item.name
+		cellular_index = cellular_index+1
+
+		if cellular_index > 1 then
+			index_str=(cellular_index-1)
+		else
+			index_str=""
+		end
+		
+		if cellular_index > 1 then
+			class_name="cbi-tab-disabled"
+		end
+	%>
+		<li class="<%=class_name%> sim-selector" data-model="<%=item.name%>"><a style="cursor: pointer;"><%if cellular_data.nbcpe then %><%:CellularNBCPE%><%else%><%:Cellular%><%end%><%=index_str%></a></li>
+	<%end%>
+</ul>
+<%end%>

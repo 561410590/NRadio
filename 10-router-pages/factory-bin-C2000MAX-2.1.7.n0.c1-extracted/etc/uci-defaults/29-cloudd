@@ -1,0 +1,18 @@
+#!/bin/ash
+
+# check cloudd.limit.support
+speedctl=$(bdinfo -g "speedctl")
+support=$(uci -q get "cloudd.limit.support")
+
+if [ "$speedctl" == "1" -a "$support" != "1" ]; then
+    uci -q set "cloudd.limit=limit"
+    uci -q set "cloudd.limit.support=1"
+    uci commit cloudd
+fi
+if [ "$speedctl" != "1" -a "$support" == "1" ]; then
+    uci -q set "cloudd.limit=limit"
+    uci -q set "cloudd.limit.support=0"
+    uci commit cloudd
+fi
+
+exit 0

@@ -1,0 +1,164 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+<%
+	local nr = require "luci.nradio"
+	local gw_id = luci.http.formvalue("gw_id") or nil
+
+	if gw_id then
+		luci.nradio.syslog("err", "get gw_id:"..gw_id)
+		return nr.luci_call_result('{"result":"OK"}')
+	end
+
+%>
+<%+header%>
+	<div class="column  second-text-padding">
+		<form class="form-horizontal" role="form">
+			<div class="row clearfix">
+				<div class="col-sm-12 column text-center second-text-padding">
+					<div class="col-sm-12 column detect_error hide"><i class="far fa-nradio-detect-error fa-7x fa-fw nradio-width fail_color"></i></div>
+					<div class="col-sm-12 column detect_ok hide"><i class="far fa-nradio-detect-ok fa-7x fa-fw nradio-width success_color"></i></div>			
+					<div class="col-sm-12 column network_loading loading_svg">
+						<svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" >
+							<g fill="none" fill-rule="evenodd">
+								<g transform="translate(1 1)" stroke-width="2">
+									<circle stroke-opacity=".5" cx="18" cy="18" r="18"/>
+									<path d="M36 18c0-9.94-8.06-18-18-18">
+										<animateTransform
+											attributeName="transform"
+											type="rotate"
+											from="0 18 18"
+											to="360 18 18"
+											dur="1s"
+											repeatCount="indefinite"/>
+									</path>
+								</g>
+							</g>
+						</svg>
+					</div>
+
+					<div class="col-sm-12 column detect-mode-text">
+						<p class="network_loading" >
+							<%:Applying changes%>
+						</p>
+						<p class="detect_ok hide" >
+							<%:QSetupThirdSuccess%>
+						</p>
+						<p class="detect_error hide">
+							<%:QSetupThirdError%>
+						</p>
+
+					</div>
+				</div>
+			</div>
+			<div class="row clearfix">
+			<div class="col-sm-10 col-xs-10 col-sm-offset-2 col-xs-offset-1">				
+				<div class="form-group detect-mode-text">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:QSetupWifiName%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="ssid-text" disabled="disabled" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:QSetupWifiPassword%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="key-text" disabled="disabled" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:RouterIP%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="ip-text" disabled="disabled" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:AdminPassword%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="password-text" disabled="disabled" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="text" class="col-sm-3 control-label "></label>
+					<div class="col-sm-6">
+						<p  id="return-info" class="second-note-text"><%:QSetupThirdTips%></p>
+					</div>
+				</div>
+			</div>
+			</div>
+			<div class="row clearfix">	
+				<div class="double_btn_box">
+					<li id="back-login" class="second-btn btn-color hide hidden-xs"><%:QSetupThirdBack%></li>
+				</div>
+			</div>			
+		</form>
+	</div>
+
+	<iframe id='background_form' name='background_form' style='display: none'>
+	</iframe>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$.ajax({
+				type: "get",
+				async:true,
+				url: '<%=controller%>nradio/qsetup/wifi',
+				data: {"random":Date.now()},
+				timeout:3000,
+				success: function(data){
+					if(data && data.result){
+						$('#ssid-text').val(data.result.ssid);
+						$('#key-text').val(data.result.key);
+						$('#ip-text').val(data.result.lanip);
+						$('#password-text').val(data.result.pass);
+					}
+				}
+		});
+
+		function send_config(){
+			XHR.get('<%=controller%>nradio/qsetup/end',  null, function(x,data){
+				
+			});
+		}
+
+		function show_result(intervalkey,up){
+			$("#back-login").removeClass("hide");
+			if(intervalkey){
+				clearInterval(intervalkey);
+				intervalkey = null;
+			}
+			if (up){
+				$('.detect_error').removeClass("hide").addClass("hide");
+				$('.detect_ok').removeClass("hide");
+				$('.network_loading').removeClass("hide").addClass("hide");
+			}
+			else{
+				$('.detect_ok').removeClass("hide").addClass("hide");
+				$('.detect_error').removeClass("hide");
+				$('.network_loading').removeClass("hide").addClass("hide");
+			}
+			send_config();
+		}
+		var maxTry=5;
+		var intervalValue = window.setInterval(function(){
+			$.getJSON('<%=url('nradio/basic/iface', 'wan')%>', function(data) {
+				if (data.result) {
+					net = data.result[0];
+					if (net.is_up) {
+						show_result(intervalValue,1);
+						return ;
+					}
+				}
+				maxTry--;
+				if(maxTry<=0){
+					show_result(intervalValue,0);
+				}
+			});
+		},2000);
+	});
+
+	$('#back-login').click(function(){
+		location.href="/cgi-bin/luci";
+	});
+</script>
+<%+footer%>
+

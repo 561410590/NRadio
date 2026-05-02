@@ -1,0 +1,11 @@
+Package: kmod-shortcut-fe-cm
+Version: 5.4.281-9
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-conntrack, kmod-shortcut-fe
+Conflicts: kmod-shortcut-fe-drv
+Source: package/nradio/kernel/shortcut-fe/shortcut-fe
+SourceName: kmod-shortcut-fe-cm
+Section: kernel
+SourceDateEpoch: 1755595469
+Architecture: aarch64_cortex-a53
+Installed-Size: 10912
+Description:  Kernel driver for SFE

@@ -1,0 +1,15 @@
+Package: logrotate
+Version: 3.10.0-2
+Depends: libc, libpopt0
+Source: package/nradio/feeds/logrotate
+SourceName: logrotate
+License: GPL-2.0
+Section: utils
+SourceDateEpoch: 1750849813
+Maintainer: Christian Beier <cb@shoutrlabs.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 25325
+Description:  logrotate is designed to ease administration of systems that generate large
+ numbers of log files. It allows auto-matic rotation, compression, removal and
+ mailing of log files. Each log file may be handled daily, weekly, monthly or
+ when it grows too large.

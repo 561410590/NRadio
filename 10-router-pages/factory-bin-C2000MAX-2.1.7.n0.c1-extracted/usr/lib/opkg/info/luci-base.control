@@ -1,0 +1,10 @@
+Package: luci-base
+Version: git-26.103.38496-283ac67-1
+Depends: libc, lua, libuci-lua, luci-lib-nixio, luci-lib-ip, rpcd, libubus-lua, luci-lib-jsonc
+Source: package/luci/modules/luci-base
+SourceName: luci-base
+Section: luci
+SourceDateEpoch: 1758531555
+Architecture: aarch64_cortex-a53
+Installed-Size: 126132
+Description:  LuCI core libraries

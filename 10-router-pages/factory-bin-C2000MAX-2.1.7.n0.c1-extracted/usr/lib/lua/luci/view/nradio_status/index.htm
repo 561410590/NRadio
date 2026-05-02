@@ -1,0 +1,15 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local disp = require "luci.dispatcher"
+	local luci_channel = disp._CHANNEL
+%>
+<%if luci_channel then%>
+<%+nradio_status/index_simple%>
+<%+nradio_status/index_common%>
+<%else%>
+<%+nradio_status/index_stand%>
+<%+nradio_status/index_common%>
+<%end%>

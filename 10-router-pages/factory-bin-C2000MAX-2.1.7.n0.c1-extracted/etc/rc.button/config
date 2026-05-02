@@ -1,0 +1,27 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+
+case "$ACTION" in
+pressed)
+	return 2
+;;
+timeout)
+	cur="$(uci -q get cpesel.sim.cur)"
+	max="$(uci -q get cpesel.sim.max)"
+	
+	[ -z "$cur" ] && cur="1"
+	[ -z "$max" ] && max="1"
+	next=$((cur+1))
+	if [ "$next" -gt "$max" ];then
+		next="1"
+	fi
+	cpetools.sh -s "$next"
+	pid=$(ps -w|grep ledctrl.sh|grep "\-m"|awk -F ' ' '{print $1}')
+	[ -n "$pid" ] && kill -SIGUSR1 $pid
+	/etc/init.d/cpesel restart &
+;;
+esac
+
+return 0

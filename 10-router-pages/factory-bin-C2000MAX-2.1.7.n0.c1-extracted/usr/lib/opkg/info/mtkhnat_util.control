@@ -1,0 +1,10 @@
+Package: mtkhnat_util
+Version: 1-2.1.7.n0.c1
+Depends: libc
+Source: package/nradio/apps/mtkhnat_util
+SourceName: mtkhnat_util
+Section: net
+SourceDateEpoch: 1774928838
+Architecture: aarch64_cortex-a53
+Installed-Size: 3480
+Description:  mtk hnat util to init hnat module

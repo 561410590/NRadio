@@ -1,0 +1,212 @@
+<div class="cbi-page-actions">
+	<input type="button" class="cbi-button cbi-button-apply" id="btn-save" value="<%:Save & Apply%>" />
+</div>
+<script>
+
+var clilist;
+var acllist;
+$(document).ready(function(){
+	function genarate_list(action_type){
+		$.getJSON("/cgi-bin/luci/nradio/client/list", function(data){
+			clilist = data.result.client;
+			var htm='<div id="sta_list_table"  class="table-box form-box full-width"><table><thead>';
+			htm+=staTableRow.compose({
+				tag: 'th',
+				chkextra: 'id="select_all"',
+				idx: '<%:No.%>',
+				mac: '<%:MAC%>',
+				ap: '<%:AP%>',
+				ssid: '<%:SSID%>',
+				ch: '<%:Channel%>',
+				ip: '<%:IP%>',
+				rssi: '<%:StatusInterSignal%>',
+				txrate: '<%:TX rate%>',
+				rxrate: '<%:RX rate%>',
+				txbytes: '<%:TX data%>',
+				rxbytes: '<%:RX data%>',
+				host: '<%:Hostname%>',
+				uptime: '<%:Uptime%>',
+			})
+			htm+='</thead><tbody>';
+			var index=1;
+			$.each(clilist, function(i, db){
+				if (db.type == "wired"){
+					return ;
+				}
+				htm+=staTableRow.compose({
+					tag: 'td',
+					chkextra: 'name="sel_check" data-client-id="'+db.mac+'"',
+					idx: (index),
+					mac: db.mac,
+					ap: db.apname,
+					ssid: db.ssid,
+					ch: db.channel,
+					ip: db.ipaddr,
+					rssi: db.rssi,
+					txrate: nradio_rate_format(db.txrate, 'K'),
+					rxrate: nradio_rate_format(db.rxrate, 'K'),
+					txbytes: nradio_byte_format(db.txbytes),
+					rxbytes: nradio_byte_format(db.rxbytes),
+					host: db.hostname,
+					uptime: uptime2dhms(db.assoctime, 3),
+				});
+				index++;
+			});
+			htm+='</tbody></table></div>';
+			if(action_type == "refresh"){
+				$("#sta_list_table").parent().empty().html(htm);
+				return ;
+			}
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: htm,
+				cssClass: 'list-dialog',
+				buttons: [{
+					label: '<%:Cancel%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Confirm%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						$macarea = $('.cbi-value-field .cbi-input-textarea');
+						newmacs = nradio_checked_get('data-client-id', 'sel_check', '\n');
+						oldmacs = $macarea.val();
+
+						if (oldmacs.slice(-1) != '' && oldmacs.slice(-1) != '\n'){
+							oldmacs+='\n';
+						}
+						oldmacs+=newmacs;
+						$macarea.val(nradio_array_uniq(oldmacs.split('\n')).join('\n'));
+						dialog.close();
+					}
+				}]
+			});
+		});
+	}
+	$('body').on('click', '.cli-host-edit', function(){
+				var data={};
+				var row='<tr><td class="cbi-value-title">{{lb}}</td><td>'+
+					'<input class="cbi-input-text" id="{{id}}" value="{{val}}">'+
+					'</td></tr>';
+
+				var sel=$(this);
+				data['mac']=$(this).closest('td').attr('data-client-id');
+				data['name']=$(this).prev().text();
+				data['type']='name';
+				data['token']='<%=token%>';
+
+				var htm='<div class="form-box temp-select"><table>';
+				htm+=row.compose({
+					'lb': '<%:Hostname%>',
+					'id': 'cli-new-host',
+					'val': data['name'],
+				});
+				htm+='</table></div>';
+
+				BootstrapDialog.show({
+					type: BootstrapDialog.TYPE_DEFAULT,
+					title: '',
+					message: htm,
+					onshown: function(dialog) {
+						$('#cli-new-host').select();
+					},
+					buttons: [{
+						label: '<%:No%>',
+						cssClass: 'btn-nradio-cancel',
+						action: function(dialog) {
+							dialog.close();
+						}
+					}, {
+						label: '<%:Yes%>',
+						cssClass: 'btn-nradio-apply',
+						action: function(dialog) {
+							dialog.close();
+							data['name']=$('#cli-new-host').val();
+							(new XHR()).post('<%=controller%>nradio/client/set', data, function(){
+								genarate_list("refresh");
+							});
+						}
+					}]
+				});
+			});
+	$.getJSON("/cgi-bin/luci/nradio/acl/list", function(data){
+		acllist = data.result.acl;
+	});
+
+	$('#btn-save').click(function(){
+		var name=$('.cbi-value-field input').val().trim();
+		var valid=true;
+
+		$('.cbi-value-field input').val(name);
+		if (name.length == 0) {
+			valid=false;
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: '<%:Please input an ACL name.%>',
+				buttons: [{
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}]
+			});
+		}
+		$.each(acllist, function(i, db){
+			if (name == db.name && db.id != "<%=acl%>") {
+				valid=false;
+				BootstrapDialog.show({
+					type: BootstrapDialog.TYPE_DEFAULT,
+					title: '',
+					message: '<%:ACL name has already existed. Please input a different name.%>',
+					buttons: [{
+						label: '<%:Yes%>',
+						cssClass: 'btn-nradio-apply',
+						action: function(dialog) {
+							dialog.close();
+						}
+					}]
+				});
+			}
+		})
+		if (valid) {	
+			nradio_ajax_submit('form', document.referrer,"<%:Waiting for changes to be applied...%>");		
+			$('form').submit();
+		}
+	});
+
+	if (!window.FileReader) {
+		$('.file-select-bar').addClass('hide');
+	}
+
+	$('#import-macs').change(function() {
+		var input = $(this)[0];
+		if (input.files && input.files[0]) {
+			var file = input.files[0];
+			var fr = new FileReader();
+			fr.onload = function () {
+				var text = fr.result.split(',')[1];
+				$('textarea').val(atob(text));
+			};
+			fr.readAsDataURL(file);
+		}
+	});
+
+	$('#export-link').click(function() {
+		var maclist=$('.cbi-value-field textarea').val();
+		var filename=$('.cbi-value-field input').val();
+		$(this).attr('href', 'data:text/plain;charset=utf-8,'+encodeURIComponent(maclist))
+						.attr('download', filename+'-list.txt');
+	});
+
+	$('#btn-search').click(function(){
+		genarate_list();
+
+	});
+});
+</script>

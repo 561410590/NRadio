@@ -1,0 +1,56 @@
+local cloudd = require "cloudd.cloudd"
+local cjson = require "cjson"
+
+local function apply_remote_file(url, file, md5, command)
+	local httpfile = require "cloudd.httpfile"
+	local l_md5file = require "cloudd.md5file"
+	local tmpname = os.tmpname()
+	local http_code = nil
+	local fs = require "nixio.fs"
+
+	if tmpname == nil then
+		return false
+	end
+
+	local http_code = httpfile.download_file(param, tmpname)
+	local actual_md5 = l_md5file.md5file(tmpname)
+
+	if actual_md5 ~= md5 then
+		fs.remove(tmpname)
+		return false, http_code, actual_md5
+	else
+		fs.move(tmpname, file)
+		if command ~= nil then
+			os.execute(command)
+		end
+	end
+
+	return true
+end
+
+function cloudd_main(did, sid, topic, payload, proto, reply)
+	local c_file = require "cloudd.file"
+	local p_data = cjson.decode(payload)
+	local file_type = p_data["type"]
+
+	if reply == 1 then
+		return
+	end
+
+	if file_type == "r" then
+		local s_url = p_data["sfile"]
+		local d_file = p_data["dfile"]
+		local md5 = p_data["md5"]
+		local command = p_data["action"]
+
+		if s_url ~= nil and d_file ~= nil and md5 ~= nil then
+			apply_remote_file(s_url, d_file, md5, command)
+		end
+	else
+		c_file.cloudd_apply_file(payload)
+	end
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

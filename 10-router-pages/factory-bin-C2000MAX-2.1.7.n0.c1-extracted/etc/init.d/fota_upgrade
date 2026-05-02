@@ -1,0 +1,18 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+start() {
+	parameter=""
+	cellular=$(uci -q get fota_upgrade.basic.cellular)
+	src_version=$(uci -q get fota_upgrade.basic.src_version)
+	target_version=$(uci -q get fota_upgrade.basic.target_version)
+	url=$(uci -q get fota_upgrade.basic.url)
+	force=$(uci -q get fota_upgrade.basic.force)
+
+	[ -n "$cellular" ] && parameter="-i $cellular"
+	[ -z "$src_version" -o -z "$target_version" -o -z "$url" ] && return
+	parameter="$parameter -s $src_version -t $target_version -H $url"
+	[ -n "$force" ] && parameter="$parameter -f"
+	fota_upgrade.sh $parameter &
+}

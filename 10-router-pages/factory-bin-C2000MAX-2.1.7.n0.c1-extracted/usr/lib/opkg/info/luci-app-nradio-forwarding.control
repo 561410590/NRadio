@@ -1,0 +1,10 @@
+Package: luci-app-nradio-forwarding
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-forwarding
+SourceName: luci-app-nradio-forwarding
+Section: luci
+SourceDateEpoch: 1762168059
+Architecture: all
+Installed-Size: 1236
+Description:  LuCI Support for port forwarding

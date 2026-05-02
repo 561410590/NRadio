@@ -1,0 +1,10 @@
+Package: luci-app-nradio-dmz
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-dmz
+SourceName: luci-app-nradio-dmz
+Section: luci
+SourceDateEpoch: 1760956047
+Architecture: all
+Installed-Size: 947
+Description:  LuCI Support for NRadio DMZ

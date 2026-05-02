@@ -1,0 +1,21 @@
+Package: mosquitto-nossl
+Version: 2.0.17-1
+Depends: libc, librt
+Provides: mosquitto
+Source: package/nradio/feeds/mosquitto
+SourceName: mosquitto-nossl
+License: EPL-2.0
+LicenseFiles: LICENSE.txt
+Section: net
+Require-User: mosquitto=200:mosquitto=200
+SourceDateEpoch: 1751524401
+CPE-ID: cpe:/a:eclipse:mosquitto
+Maintainer: Karl Palsson <karlp@etactica.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 95882
+Description:  Mosquitto is an open source (BSD licensed) message broker that implements
+ the MQTT protocol version 3.1, 3.1.1 and 5. MQTT provides a lightweight
+ method of carrying out messaging using a publish/subscribe model.
+ 
+ This package also includes some basic support for configuring via UCI
+ This package is built WITHOUT SSL support.

@@ -1,0 +1,12 @@
+Package: libiwinfo-data
+Version: 2024-01-04-1
+Depends: libc
+Source: package/nradio/utils/iwinfo
+SourceName: libiwinfo-data
+License: GPL-2.0
+Section: opt
+SourceDateEpoch: 1773145878
+Maintainer: Jo-Philipp Wich <jo@mein.io>
+Architecture: aarch64_cortex-a53
+Installed-Size: 3328
+Description:  libiwinfo Lua binding

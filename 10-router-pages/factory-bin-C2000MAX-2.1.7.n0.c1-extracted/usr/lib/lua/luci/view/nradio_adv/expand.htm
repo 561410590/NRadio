@@ -1,0 +1,301 @@
+
+<%+header%>
+
+<style>
+	.bootstrap-dialog .bootstrap-dialog-title {
+		text-align: center;
+		width: 100%;
+		margin-bottom: 15px
+	}
+</style>
+
+
+<h2 name="content"><%: SdExpand %></h2>
+
+<form>
+	<fieldset class="cbi-section">
+		<div class="cbi-section-node">
+			<div class="cbi-value">
+				<label class="cbi-value-title"><%: SdStatus %></label>
+				<div class="cbi-value-field">
+					<p id="sd_lable" class="sim_detail_err"><%: BootSdStatusError %></p>
+				</div>
+			</div>
+			<div class="cbi-value">
+				<label class="cbi-value-title"><%: SdInitLabel %></label>
+				<div class="cbi-value-field">
+					<p id="sd_init_status" class="sim_detail_err"><%: SdInitIncomplete %></p>
+				</div>
+			</div>
+
+			<div class="cbi-value cbi-value-last">
+				<label class="cbi-value-title">
+					<i class="far fa-nradio-note fa-fw icon_disable visible-xs-block stand_label_icon" onclick="show_icon_help(this)"></i>
+					<%: SdExpand %>
+				</label>
+				<div class="cbi-value-field"> 
+					<div class="checkbox">
+						<input class="cbi-input-checkbox" type="checkbox" id="storage_enabled">
+						<label for="storage_enabled" class="switch"></label>
+					</div>
+
+					<div class="cbi-value-description description_help hidden-xs">
+						<p><%: SdStorageNode %></p>
+					</div>
+				</div>
+			</div>
+
+			<div class="cbi-page-actions">
+				<input type="button" class="cbi-button cbi-button-apply" id="storage_save" onclick="setStorageMode(this)" value="<%:Save & Apply%>" />
+			</div>
+		</div>
+	</fieldset>
+</form>
+
+<script>
+	var gInited = -1;
+	var gFstab = false;
+	var gEffect = false;
+	var gSdMounted = false;
+	var gButtStatus = false;
+
+	function nradio_apply_callback() {
+		msg = '<%: BootInitLoad %>';
+		let htm = '<fieldset class="cbi-section">';
+			htm += circling_htm;
+			htm += '<br>';
+			htm += '<span>' + msg + '</span>';
+			htm += '</fieldset>';
+		let intervalDialog = BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			closable: false,
+			cssClass: 'nradio_apply_info',
+			message: htm
+		});
+		return intervalDialog;
+	}
+
+	function getSdInfo() {
+		$.ajax({
+			url: '<%=url('nradioadv/system/sd/info')%>',
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) {
+				gSdMounted = !!data.mounted;
+				if (!data.mounted){
+					$('#sd_lable').removeClass('sim_detail_info').addClass('sim_detail_err')
+					$('#sd_lable').text('<%: BootSdStatusError %>');
+				}
+				else if(data.mounted) {
+					let sd_name = data.name || "NO LABLE";
+					const sizeInGB = Number(data.size) / (1024 * 1024);
+					const sizeGB = sizeInGB.toFixed(1);
+					const status_label = `${sd_name} (Disk 2)[${sizeGB} GB]`;
+					$('#sd_lable').removeClass('sim_detail_err').addClass('sim_detail_info');
+					$('#sd_lable').text(status_label);
+				}
+			}
+		})
+	}
+
+	function getFsInfo() {
+		$.ajax({
+			url: '<%=url('nradioadv/system/sd/partinfo')%>',
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) {
+				gFstab = data.fstab;
+				gInited = data.inited;
+				gEffect = data.effect;
+				var $status = $('#sd_init_status');
+				var inited = Number(data.inited);
+
+				if (gEffect === true) {
+					$status.removeClass('sim_detail_err').addClass('sim_detail_info');
+					$status.text('<%: SdInEffect %>');
+				} 
+				else {
+					if (inited === 0) {
+						$status.removeClass('sim_detail_err').addClass('sim_detail_info');
+						$status.text('<%: SdInitComplete %>');
+					}
+					else {
+						$status.removeClass('sim_detail_info').addClass('sim_detail_err');
+						$status.text('<%: SdInitIncomplete %>');
+					}
+				}
+
+				if (gFstab === true && gInited === 0) {
+					if (!gButtStatus) {
+						$('#storage_enabled').prop('checked', true);
+						gButtStatus = true;
+					}
+				}
+				else {
+					if (!gButtStatus) {
+						$('#storage_enabled').prop('checked', false);
+						gButtStatus = true;
+					}
+				}
+			}
+		})
+	}
+
+	function processConfirm(enabled, cover) {
+		$.ajax({
+			url: '<%=url('nradioadv/system/sd/storage')%>',
+			type: 'POST',
+			data: {enabled: enabled, cover: cover},
+			dataType: 'json'
+		}).done(function(data) {
+			if (data.status === 0){
+				BootstrapDialog.show({
+					type: BootstrapDialog.TYPE_DEFAULT,
+					title: '<%: SdInitTitle %>',
+					message: '<span><%: SdRebootNode %></span>',
+					buttons: [{
+						label: '<%: SdReboot %>',
+						cssClass: 'btn-nradio-apply',
+						action: function(dialog) {
+							dialog.close();
+							window.location.href = "/cgi-bin/luci/nradioadv/system/restart?auto=1";
+						}
+					}, {
+						label: '<%: SdRebootAfter %>',
+						cssClass: 'btn-nradio-cancel',
+						action: function(dialog) {
+							dialog.close();
+						}
+					}]
+				});
+			}
+			else if (data.status === 2 && data.msgcode === -1) {
+				create_info_box({msg:"<%: SdBackConfigFailed %>",btn_val:"<%:OK%>",onClose: function(){ location.reload(); }});
+			}
+			else if (data.status === 2 && data.msgcode === 1) {
+				create_info_box({msg:"<%: SdBackConfigExtFailed %>",btn_val:"<%:OK%>",onClose: function(){ location.reload(); }});
+			}
+
+		}).fail(function() {
+			create_info_box({msg:"<%: BootSdSwitchFailed %>",btn_val:"<%:OK%>",onClose: function(){ location.reload(); }});
+		});
+	}
+
+	function openSaveConfirm(enabled, cover) {
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '<%: SdInitTitle %>',
+			message: '<span><%: SdSave %></span>',
+			buttons: [{
+				label: '<%: No %>',
+				cssClass: 'btn-nradio-cancel',
+				action: function(dialog) {
+					dialog.close();
+				}
+			}, {
+				label: '<%: Yes %>',
+				cssClass: 'btn-nradio-apply',
+				action: function(dialog) {
+					dialog.close();
+					processConfirm(enabled, cover);
+				}
+			}]
+		});
+	}
+
+	function setStorageMode(btn) {
+		var enabled = $('#storage_enabled').prop('checked') ? 1 : 0;
+		
+		if (!gSdMounted) {
+			create_info_box({msg:"<%: BootSdStatusError %>",btn_val:"<%:OK%>"});
+			return;
+		}
+		if (Number(gInited) !== 0) {
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '<%: SdInitTitle %>',
+				message: '<%: SdInitNote %>',
+				buttons: [{
+					label: '<%: No %>',
+					cssClass: 'btn-nradio-cancel bootstrap-dialog-title-centered',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%: SdInit %>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						dialog.close();
+						var applyDialog = nradio_apply_callback('');
+						$.ajax({
+							url: '<%=url('nradioadv/system/sd/init')%>',
+							type: 'POST',
+							dataType: 'json'
+						}).done(function(data) {
+							if (applyDialog) applyDialog.close();
+							if (data && data.status === 0) {
+								setTimeout(function(){ location.reload(); }, 3000);
+								create_info_box({msg:"<%:SdInitSucc%>",btn_val:"<%:OK%>",onClose: function(){ location.reload(); }});
+							} else {
+								setTimeout(function(){ location.reload(); }, 3000);
+								create_info_box({msg:"<%:SdInitTitleFailed%>",btn_val:"<%:OK%>",onClose: function(){ location.reload(); }});
+							}
+						}).fail(function() {
+							if (applyDialog) applyDialog.close();
+							setTimeout(function(){ location.reload(); }, 3000);
+							create_info_box({msg:"<%:SdInitTitleFailed%>",btn_val:"<%:OK%>",onClose: function(){ location.reload(); }});
+						});
+					}
+				}]
+			});
+		}
+		else {
+			if (gEffect === true) {
+				openSaveConfirm(enabled, 2);
+				return;
+			}
+			else if (enabled === 0) {
+				openSaveConfirm(enabled, 2);
+				return;
+			}
+			else {
+				BootstrapDialog.show({
+					type: BootstrapDialog.TYPE_DEFAULT,
+					title: '<%: SdInitTitle %>',
+					message: '<span><%: SdCoverNote %></span>',
+					buttons: [{
+						label: '<%: SdCoverBut %>',
+						cssClass: 'btn-nradio-cancel',
+						action: function(process_dialog) {
+							process_dialog.close();
+							openSaveConfirm(enabled, 0);
+						}
+					}, {
+						label: '<%: SdInCoverBut %>',
+						cssClass: 'btn-nradio-apply',
+						action: function(process_dialog) {
+							process_dialog.close();
+							openSaveConfirm(enabled, 1);
+						}
+					}]
+				});
+			}
+		}
+	}
+
+	function initPage(info) {
+		getSdInfo();
+		getFsInfo();
+		setInterval(getSdInfo, 3000);
+		setInterval(getFsInfo, 3000);
+
+	}
+
+	$(document).ready(function() { 
+		initPage();
+	});
+
+</script>
+
+<%+footer%>

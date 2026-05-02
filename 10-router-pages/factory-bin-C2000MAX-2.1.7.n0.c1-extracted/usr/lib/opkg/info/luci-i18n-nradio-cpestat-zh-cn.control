@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-cpestat-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-cpestat
+Source: package/luci/applications/luci-app-nradio-cpestat
+SourceName: luci-i18n-nradio-cpestat-zh-cn
+Section: luci
+SourceDateEpoch: 1758531555
+Architecture: all
+Installed-Size: 652
+Description:  Translation for luci-app-nradio-cpestat - 中文 (Chinese)

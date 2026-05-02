@@ -1,0 +1,22 @@
+#!/bin/sh /etc/rc.common
+
+START=96
+
+USE_PROCD=1
+NAME=mtk_dut
+PROG=/sbin/mtk_dut_start.sh
+
+start_service() {
+	procd_open_instance
+	procd_set_param command "${PROG}"
+	procd_close_instance
+}
+
+stop_service() {
+	pid=`ps | grep mtk_dut | awk '{print $1}' | sed -n 1p`
+	if [ $pid -ne 0 ]
+	then
+	        kill -9 $pid
+	fi
+	rm /tmp/mtk_dut.txt
+}

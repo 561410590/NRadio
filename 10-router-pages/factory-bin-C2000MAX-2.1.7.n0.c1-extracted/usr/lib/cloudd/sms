@@ -1,0 +1,74 @@
+local cloudd = require "cloudd.cloudd"
+local c_api = require "cloudd.api"
+local cjson = require "cjson"
+local util = require "luci.util"
+
+function cloudd_main(did, sid, event, payload, proto, reply)
+	local r_topic = "sms"
+	local data = cjson.decode(payload)   
+	if reply == 1 then
+		return
+	end
+	local nr = require "luci.nradio"
+	local json_data = {code=-4}
+	if data.serial_num then
+		json_data.serial_num = data.serial_num
+	end
+	
+
+	if data.action == "read" then
+		local read_result = nr.sms_list(data.type)
+		if read_result then
+			if not read_result.smslist or #read_result.smslist == 0 then
+				read_result.smslist = {}
+				read_result.smslist[1] = {}
+			end
+		end
+		json_data.result = read_result
+		json_data.code = read_result.code
+	elseif data.action == "del" then
+		local del_result = nr.sms_del(data.ids,data.type) or {}
+		if del_result.smsdel then
+			json_data.smsdel =  del_result.smsdel
+		end
+		json_data.code =  del_result.code or 1
+	elseif data.action == "send" then
+		if data.msg and data.phone_num then
+			local send_result = nr.sms_send(data.msg,data.phone_num) or {}
+			json_data.code = send_result.code or -1
+			json_data.item = send_result.item or {}
+		else
+			json_data.code = -1
+			json_data.item = {}
+		end
+	else
+		local uci = require "luci.model.uci".cursor()
+		local base_data = nr.get_base_data(data)
+		json_data.code = 0
+		json_data.result = {}
+		json_data.result.index = base_data.index
+		if data.action then
+			json_data.result.action = data.action
+		end
+
+		json_data.result.sim = tonumber(data.sim or base_data.now_sim)
+		if data.action == "modify" then
+			local cpe_reload = nr.do_cellular_sms(base_data,data)
+			if cpe_reload then
+				if base_data.sim_diff == 0 then
+					nr.fork_exec(function()
+						nixio.nanosleep(2)
+						util.exec("ifup "..base_data.cpe_name.." >/dev/null 2>&1")
+					end)						
+				end
+			end
+		end
+		json_data.result.enabled = uci:get("cpecfg", base_data.cpecfg_name,"force_ims") or "0"
+	end
+	
+	cloudd.cloudd_send(sid, r_topic, json_data, proto, 1)
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

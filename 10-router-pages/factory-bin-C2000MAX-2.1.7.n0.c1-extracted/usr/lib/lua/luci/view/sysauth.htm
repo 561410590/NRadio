@@ -1,0 +1,189 @@
+<%+header%>
+<%
+	local nr = require "luci.nradio"
+%>
+
+<style>
+	.lang-switch{
+		position:fixed;
+		top:-10px;
+		right:5%;
+		z-index:99;
+		font-size: 14px;
+	}
+	#syslang{
+		position:absolute;
+		top:calc(100% + 30px);
+		right:0;
+	}
+	.language-bubble {
+		position: absolute;
+		right:0;
+		z-index: 99;
+		border-radius: 6px;
+		padding: 5px 0;
+		min-width: 80px;
+		text-align: center;
+	}
+	.language-bubble .lang-opt {
+		display: block;
+		font-size: 12px;
+		padding: 5px 10px;
+		text-decoration: none;
+		white-space: nowrap;
+		transition: background-color 0.2s ease;
+		cursor: pointer;
+	}
+</style>
+
+<style>
+	.lang-switch{
+		position:fixed;
+		top:-10px;
+		right:5%;
+		z-index:99;
+		font-size: 14px;
+	}
+	#syslang{
+		position:absolute;
+		top:calc(100% + 30px);
+		right:0;
+	}
+</style>
+
+<div class="lang-switch">
+	<ul class="list-inline nradio-right-btn">
+		<li class="click_pointer" onclick="confirm_switch_language(this)" tabindex="0" onblur="blur_lang_switch(event)">
+			<i class="far fa-nradio-syslang fa-fw"></i><%: SystemLang %>
+		</li>
+	</ul>
+	<div id="syslang">
+		<div id="syslang_bubble" class="language-bubble" tabindex="-1" role="dialog" style="display:none">
+			<a class="lang-opt" data-lang="0"><%: SystemLangAuto %></a>
+			<a class="lang-opt" data-lang="1">中文</a>
+			<a class="lang-opt" data-lang="2">English</a>
+		</div>
+	</div>
+	</div>		
+
+<form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI"))%>">
+	<div class="row clearfix">
+		<div class="col-sm-12 column">
+			<div class=" status-icon-padding text-center " style="height: 120px;">
+				<div class="<% if nr.get_firmware_type() ~= "oem" then print "nradio-logo" end%> auth-logo-size"></div>
+			</div>
+			<div class="login-page">
+				<ul>
+					<li>
+						<div class="input_box">
+							<input class="cbi-input-user" type="hidden" name="luci_username" value="<%=duser%>" />
+							
+							<input type="password"  placeholder="<%:Password%>" name="luci_password" />
+							<span class="icon" onclick="toggle_eye_pwd(this,2)"><i class="far fa-nradio-eye-close fa-2x"></i></span>
+							<div class="cbi-value">
+								<label class="cbi-value-title"><!--<%:Hint%>--></label>
+								<div class="cbi-value-field"></div>
+							</div>
+							<%- if fuser then %>
+							<div><%:Invalid password! Please try again.%></div>
+							<% end -%>
+						</div>
+					</li>
+					<li><div class="input_box"><input type="button" class="login-btn"  id="submit_btn" value="<%:LoginNote%>" /></div></li>
+				</ul>
+				<input class="cbi-input-user luci_channel" type="hidden" name="luci_channel" value="" />
+			</div>
+			
+		</div>
+	</div>
+</form>
+<script type="text/javascript">//<![CDATA[
+
+	if(is_mobile_device()){
+		$(".luci_channel").val("simple");
+	}
+
+	$("#submit_btn").click(function(){
+		$("form").submit();
+	})
+	var input = document.getElementsByName('luci_password')[0];
+	if (input)
+		input.focus();
+
+	$(window).resize(function(){
+		if(is_mobile_device()){
+			$(".luci_channel").val("simple");
+		}
+		else{
+			$(".luci_channel").val("");
+		}
+	});
+
+
+//]]></script>
+
+<script>
+	function blur_lang_switch(e){
+		setTimeout(function(){
+			var $bubble = $('#syslang_bubble');
+			if($bubble.is(':hidden')) return;
+			if ($(document.activeElement).closest('#syslang_bubble').length > 0) 
+				return;
+			$bubble.hide();
+			$(document).off('.syslang_bubble');
+		}, 10);
+	}
+
+	function confirm_switch_language(el){
+		var $bubble = $('#syslang_bubble');
+		if($bubble.is(':visible')){
+			$bubble.hide();
+			$(document).off('.syslang_bubble');
+			return;
+		}
+
+		$bubble.show();
+		$bubble.focus();
+
+		$bubble.off('focusout').on('focusout', function(e){
+			setTimeout(function(){
+				if ($(document.activeElement).closest('#syslang_bubble').length > 0)
+					return;
+				if ($(document.activeElement).closest(el).length > 0)
+					return;
+				$bubble.hide();
+				$(document).off('.syslang_bubble'); 
+			}, 10);
+		});
+
+		$bubble.find('.lang-opt').off('click').on('click', function(){
+			var selectedLang=$(this).data('lang');
+			$bubble.hide();
+			$(document).off('.syslang_bubble');
+			apply_lang(selectedLang);
+		});
+		$(document).off('click.syslang_bubble touchstart.syslang_bubble pointerdown.syslang_bubble keyup.syslang_bubble')
+			.on('click.syslang_bubble touchstart.syslang_bubble pointerdown.syslang_bubble', function(e){
+				if(!$(e.target).closest('#syslang_bubble').length && !$(e.target).closest(el).length){
+					$bubble.hide();
+					$(document).off('.syslang_bubble');
+				}
+			})
+			.on('keyup.syslang_bubble', function(e){
+				if(e.key === 'Escape'){ 
+					$bubble.hide();
+					$(document).off('.syslang_bubble');
+				} 
+			});
+	}
+
+	function apply_lang(lang){
+		var data={};
+		data['lang']=lang;
+		(new XHR()).post('/cgi-bin/luci/admin/syslang', data, function(){
+			location.reload();
+		});
+	}
+</script>
+
+<%+footer%>

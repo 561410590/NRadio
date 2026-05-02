@@ -1,0 +1,11 @@
+Package: bdinfo
+Version: 3.3-20231229
+Depends: libc, libbdinfo
+Source: package/nradio/base/bdinfo
+SourceName: bdinfo
+Section: nradiowifi
+SourceDateEpoch: 1741953134
+Maintainer: Duke Wu
+Architecture: aarch64_cortex-a53
+Installed-Size: 2745
+Description:  Command line frontend for the board information library.

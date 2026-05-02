@@ -1,0 +1,10 @@
+Package: kmod-mt7993_dbg
+Version: 5.4.281+TEST-1
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mt7993, kmod-mtk_pci
+Source: package/mtk/drivers/mt_hwifi
+SourceName: kmod-mt7993_dbg
+Section: kernel
+SourceDateEpoch: 1768997726
+Architecture: aarch64_cortex-a53
+Installed-Size: 7053
+Description:  MediaTek HWIFI MT7993 Debug driver

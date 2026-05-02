@@ -1,0 +1,781 @@
+<%
+
+local nr = require "luci.nradio"
+local util = require "luci.util"
+local cache_data=""
+cache_data = nr.get_cellular_neighbour_cache(cpe_section)
+if not cache_data or #cache_data == 0 then
+	cache_data="[]"
+end
+cellular_earfcn = nr.get_cellular_earfcn(cpe_section,sim_id)
+cellular_earfcn = util.serialize_json(cellular_earfcn,nil)
+%>
+<style>
+.bootstrap-dialog.earfcn_list .modal-dialog {
+    min-width: 90%;
+}
+@media (min-width: 10px) and (max-width: 767px){
+.bootstrap-dialog.earfcn_list .modal-dialog {
+    min-width: 90%;
+	margin-top: 50px;
+}
+.modal-header{
+	padding-bottom: 5px;
+}
+table>tbody>tr>td.earfcn_type{
+	border-top:unset;
+	text-align: center;
+	height: 34px;
+    line-height: 34px;
+}
+table>thead>tr>th.earfcn_type{
+	text-align: center;
+}
+
+.mobile_table{
+	border-collapse: separate;
+    border-spacing: 0 10px;
+}
+.active_label{
+    position: absolute;
+    left: -1px;
+    top: 0px;
+    height: 24px;
+    line-height: 20px;
+    padding: 2px;
+    font-size: 9px;
+    color: #FFFFFF;
+    min-width: 44px;
+    border-bottom-right-radius: 1.5em;
+    border-top-left-radius: 3px;	
+}
+</style>
+<script>
+var intervalCount=null;
+var gmode_type=0;
+var loading_save_htm =circling_htm;
+var cache_data=<%=cache_data%>;
+var cellular_earfcn=<%=cellular_earfcn%>;
+loading_save_htm +='<p class="cbi-value-title width_auto text-center adapt_label_padding"><%:ScanWaitHelp%></p>';
+var lable_array = [{"name":"CELL","lng":"<%:Cell ID%>"},{"name":"BAND","lng":"<%:CelluarBand%>"},{"name":"RSRP","lng":"<%:RSRP%>(dBm)"},{"name":"SINR","lng":"<%:SINR%>(dB)"},{"name":"EARFCN","lng":"<%:EARFCN%>"},{"name":"PCI","lng":"<%:PCI%>"},{"name":"LAC","lng":"<%:LAC/TAC%>"}];
+var mobile_lable_array = [{"name":"BAND","lng":"<%:CelluarBand%>"},{"name":"EARFCN","lng":"<%:EARFCN%>"},{"name":"PCI","lng":"<%:PCI%>"},{"name":"RSRP","lng":"<%:RSRP%>(dBm)"}];
+var active_label = '<span class="btn-color active_label" ><%:EarfcnStatusUsing%></span>';
+var list_BootstrapDialog = null;
+globalRequestEarfcn = 1;
+function valueLevel(val, min, mid, max) {
+	if (val == 255 || val == "none" || val == "")
+		return "<%:Unknown%>";
+	else if (val >= max)
+		return val + ", <%:Excellent%>";
+	else if (val < max && val >= mid)
+		return val + ", <%:Good%>";
+	else if (val < mid && val >= min)
+		return val + ", <%:Fair%>";
+	else
+		return val + ", <%:Marginal%>";
+}
+
+function valueRSRPLevel(val, worse, poor, notbad,good,better) {
+	if (val == 255 || val == "none" || val == "")
+		return "<%:Unknown%>";
+	else if (val >= better)
+		return val + ", <%:Signalbest%>";
+	else if (val < better && val >= good)
+		return val + ", <%:Signalbetter%>";
+	else if (val < good && val >= notbad)
+		return val + ", <%:Signalgood%>";
+	else if (val < notbad && val >= poor)
+		return val + ", <%:Signalnotbad%>";
+	else if (val < poor && val >= worse)
+		return val + ", <%:SignalPoor%>";
+	else
+		return val + ", <%:SignalWorse%>";
+}
+
+function valueRSRP(rsrp) {
+	return valueRSRPLevel(rsrp, -110,-100, -90, -80,-60);
+}
+function valueSINR(sinr) {
+	return valueLevel(sinr, 0, 13, 20);
+}
+
+function load_each_item(neighbour,index,model_type,lock_type,is_cur_data,first_data,auto){
+		var htm_mobile_extra="";
+		var status = "";
+		var each_item = {"thbody_tr_htm":"","thead_th_htm":"","mobile_thbody_tr_htm":"","mobile_thead_th_htm":"",index:index};
+		var data_attr = "";
+		var data_mobile_attr = "";
+		var action_lng = "<%:LockAction%>";
+		var action_type = 1;
+		var action_class = "icon_color";
+		var first_father_class = "";
+		var scan_each_class = "scan_item";
+		var scan_item_hide_class = "";
+		var scan_each_earfcn_class = "scan_item_"+neighbour["EARFCN"]+neighbour["PCI"];
+		if(lock_type){
+			action_lng = "<%:UnLockAction%>";
+			action_type = 0;
+			action_class = "error";
+		}
+		if(!index){
+			first_father_class = "first_item"+model_type;
+			scan_each_class = "";
+			scan_each_earfcn_class="";
+		}
+		else{			
+			
+			if(first_data && (first_data["EARFCN"] == neighbour["EARFCN"] && first_data["PCI"] == neighbour["PCI"])){
+				scan_item_hide_class = "hide";
+			}
+		}
+		if(is_cur_data ){
+			if(lock_type){
+				status = "<%:EarfcnStatusLock%>";
+			}
+			else{
+				status = "<%:EarfcnStatusUnLock%>";
+			}
+		}
+		else{
+			if(!is_mobile_device()){
+				$(".earfcn_scan"+model_type).val("<%:ReScanNeighbourcell%>");
+				$(".earfcn_scan"+model_type).data("force",1);
+			}
+
+			status = "<%:EarfcnStatusUnLock2%>";
+		}
+
+		if(!neighbour["EARFCN"] || !neighbour["EARFCN"].length || neighbour["EARFCN"] == "0"){
+			action_lng="-";
+		}
+		
+		for(var i = 0;i<lable_array.length;i++){
+			var info_things = neighbour[lable_array[i].name] || "-";
+			data_attr+=' data-'+lable_array[i].name+'="'+info_things+'"';
+		}
+		data_attr+=' data-model_type="'+model_type+'"';
+		for(var i = 0;i<mobile_lable_array.length;i++){
+			var info_things = neighbour[mobile_lable_array[i].name] || "-";
+			data_mobile_attr+=' data-'+mobile_lable_array[i].name+'="'+info_things+'"';
+		}
+		data_mobile_attr+=' data-model_type="'+model_type+'"';
+
+		
+		each_item.thbody_tr_htm+='<tr class="'+first_father_class+' '+scan_each_class+' '+scan_each_earfcn_class+' '+scan_item_hide_class+'" '+data_attr+'>';
+		each_item.mobile_thbody_tr_htm +='<tr class="earfcn_row '+first_father_class+' '+scan_each_class+' '+scan_each_earfcn_class+' '+scan_item_hide_class+'" '+data_attr+'>';
+
+		for(var i = 0;i<lable_array.length;i++){
+			var info_things = neighbour[lable_array[i].name] || "-";
+			if(lable_array[i].name == "BAND"){
+				if(model_type == "5"){
+					if(info_things !="-")
+						info_things = "n"+info_things;
+				}
+				else{
+					if(info_things !="-")
+						info_things = "B"+info_things;
+				}
+			}
+			else if(lable_array[i].name == "RSRP"){
+				if(info_things !="-"){
+					info_things = valueRSRP(info_things);
+				}
+			}
+			else if(lable_array[i].name == "SINR"){
+				if(info_things !="-"){
+					info_things = valueSINR(info_things);
+				}
+			}
+			if(!each_item.index)each_item.thead_th_htm+='<th class="text-center">'+lable_array[i].lng+'</th>';
+			each_item.thbody_tr_htm+='<td class="text-center earfcn_box_'+lable_array[i].name+'">'+ info_things+'</td>';
+		}
+
+		var first_td_active = "";
+		var first_td_info = "";
+		
+		if(is_cur_data){
+			first_td_active = "active_earfcn";
+			first_td_info=active_label;
+		}
+		for(var i = 0;i<mobile_lable_array.length;i++){
+			var info_things = neighbour[mobile_lable_array[i].name] || "-";
+			if(mobile_lable_array[i].name == "BAND"){
+				if(model_type == "5"){
+					if(info_things !="-")
+						info_things = "n"+info_things;
+				}
+				else{
+					if(info_things !="-")
+						info_things = "B"+info_things;
+				}
+			}
+			else if(mobile_lable_array[i].name == "RSRP"){
+				if(info_things !="-"){
+					info_things = valueRSRP(info_things);
+				}
+			}
+			else if(mobile_lable_array[i].name == "SINR"){
+				if(info_things !="-"){
+					info_things = valueSINR(info_things);
+				}
+			}
+
+			
+			if(!each_item.index)each_item.mobile_thead_th_htm+='<th class="text-center earfcn_type">'+mobile_lable_array[i].lng+'</th>';
+			if(!i)
+				each_item.mobile_thbody_tr_htm+='<td class="text-center earfcn_type earfcn_box_'+mobile_lable_array[i].name+' '+first_td_active+'">'+first_td_info+info_things+'</td>';
+			else
+				each_item.mobile_thbody_tr_htm+='<td class="text-center earfcn_type earfcn_box_'+mobile_lable_array[i].name+' '+first_td_active+'">'+info_things+'</td>';
+		}		
+		
+		if(!each_item.index){
+			each_item.thead_th_htm+='<th><%:EarfcnStatus%></th>';
+			each_item.thead_th_htm+='<th><%:Operation%></th>';
+			each_item.mobile_thead_th_htm+='<th><%:Operation%></th>';
+		}
+		each_item.thbody_tr_htm+='<td class="text-center"><span class="sub_label_color status_box" >'+status+'</span></td>';
+		each_item.thbody_tr_htm+='<td class="text-center click_pointer lock_item" data-action="'+action_type+'" onclick="lock_earfcn(this)" ><span class="'+action_class+'">'+action_lng+'</span></td>';
+
+		each_item.mobile_thbody_tr_htm+='<td class="text-center earfcn_type click_pointer lock_item '+first_td_active+'" data-action="'+action_type+'" onclick="lock_earfcn(this)" ><span class="'+action_class+'">'+action_lng+'</span></td>';
+
+		each_item.index++;
+		each_item.thbody_tr_htm+='</tr>'
+		each_item.mobile_thbody_tr_htm+='</tr>'
+		return each_item;
+}
+
+function caculate_band(earfcn,mode){
+	var band_val = "";
+	var band_list = 
+		{
+			"LTE":[
+				{"name":"1","min":0,"max":599},
+				{"name":"3","min":386000,"max":398000},
+				{"name":"5","min":1200,"max":1949},
+				{"name":"8","min":2400,"max":2649},
+				{"name":"34","min":3450,"max":3799},
+				{"name":"38","min":36200,"max":36349},
+				{"name":"39","min":37750,"max":38249},
+				{"name":"40","min":38250,"max":38649},
+				{"name":"41","min":39650,"max":41589}
+			],
+			"NR":[
+				{"name":"1","min":422000,"max":434000},
+				{"name":"2","min":386000,"max":398000},
+				{"name":"3","min":361000,"max":376000},
+				{"name":"5","min":173800,"max":178800},
+				{"name":"7","min":524001,"max":537999},
+				{"name":"8","min":185000,"max":192000},
+				{"name":"20","min":158200,"max":164200},
+				{"name":"28","min":151600,"max":160600},
+				{"name":"38","min":514002,"max":523998},
+				{"name":"41","min":499200,"max":537999},
+				{"name":"50","min":286400,"max":303400},
+				{"name":"51","min":285400,"max":286400},
+				{"name":"66","min":422000,"max":440000},
+				{"name":"70","min":399000,"max":404000},
+				{"name":"71","min":123400,"max":130400},
+				{"name":"74","min":295000,"max":303600},
+				{"name":"75","min":286400,"max":303400},
+				{"name":"76","min":285400,"max":286400},
+				{"name":"77","min":620000,"max":680000},
+				{"name":"78","min":620000,"max":653333},
+				{"name":"79","min":693333,"max":733333}
+			]
+		};
+	
+	if(!earfcn || !earfcn.length)
+		return band_val;
+	var earfcn_int = parseInt(earfcn);
+	var band_target = band_list.NR;
+	if(mode == "LTE")
+		band_target = band_list.LTE;
+	for(var i =0 ;i<band_target.length;i++){
+		var temp = band_target[i];
+		if(earfcn_int>= temp.min && earfcn_int<= temp.max){
+			band_val = temp.name;
+		}
+	}
+	return band_val;
+}
+
+function get_earfcn_data(data,clone_data,mode){
+	var valid_earfcn_list = [];
+		
+	$.each(data, function(i, db){
+		if(!db || !db.length)
+			return;
+		
+		$.each(db, function(j, neighbour){
+			if (mode == "4" && neighbour["MODE"] != "LTE")
+				return;
+			if ( mode == "5" && (!neighbour["MODE"].match("NR"))  )
+				return;
+			var earfcn_data = neighbour["EARFCN"]?neighbour["EARFCN"]:"";
+			var pci_data = neighbour["PCI"]?neighbour["PCI"]:"";
+			var band_data = neighbour["BAND"]?neighbour["BAND"]:"";
+			if (!band_data || !band_data.length){
+				band_data = caculate_band(earfcn_data,neighbour["MODE"]);
+				neighbour["BAND"] = band_data;
+			}
+				
+			var earfcn_info = earfcn_data+"_"+pci_data+"_"+band_data;
+			if($.inArray(earfcn_info, valid_earfcn_list) == -1){
+				valid_earfcn_list.push(earfcn_info);
+				clone_data.push(neighbour);
+			}
+		});
+	});
+	
+	return valid_earfcn_list
+}
+
+function combine_earfcn_data(cache,data,mode){
+	var valid_earfcn_list = [];
+	var clone_data = [[]];
+	var cache_valid_list = get_earfcn_data(cache,clone_data[0],mode);
+
+	$.each(data, function(i, db){
+		if(!db || !db.length)
+			return;
+		
+		$.each(db, function(j, neighbour){
+			if (mode == "4" && neighbour["MODE"] != "LTE")
+				return;
+			if ( mode == "5" && (!neighbour["MODE"].match("NR"))  )
+				return;
+
+			var earfcn_data = neighbour["EARFCN"]?neighbour["EARFCN"]:"";
+			var pci_data = neighbour["PCI"]?neighbour["PCI"]:"";
+			var band_data = neighbour["BAND"]?neighbour["BAND"]:"";
+			var earfcn_info = earfcn_data+"_"+pci_data+"_"+band_data;
+			
+			if($.inArray(earfcn_info, cache_valid_list) == -1){
+				clone_data[0].push(neighbour);
+			}
+		});
+	});
+	return clone_data;
+}
+function load_earfcn_data(data,model_item,model_type,cellular_earfcn,auto){
+	var htm ='';
+	var index=0;
+	var cur_cellular_earfcn = null;
+	var htm_mobile = '';
+	var body_htm='\
+		<div class="cbi-value" style="text-align: left;">\
+			<label class="cbi-value-title sub_label_color" style="padding-left:5px;margin-bottom: 20px;"><%:CellularScanHelp%></label>\
+			<div class="cbi-value-field right_btn click_pointer" >\
+			</div>\
+		</div>\
+		<div class="form-box full-width hidden-xs">\
+			<table class="line text-center no_paddingLeft address_list" data-model="<%=cpe_section%>">\
+			</table>\
+		</div>\
+		<div  data-model="<%=cpe_section%>">\
+			<table class="mobile_table line text-center no_paddingLeft address_list" data-terminal="mobile" data-model_type="'+model_type+'" data-model="<%=cpe_section%>">\
+			</table>\
+		</div>\
+		<div class="cbi-page-actions" style="display:inline-block">\
+			<input type="button" class="visible-xs-block mobile_note_btn cbi-button cbi-button-apply" style="min-width:350px" value="<%:ReScanNeighbourcell%>" data-model_type="'+model_type+'" data-model="<%=cpe_section%>" onclick="show_scan_dialog(this,1)"/>\
+		</div>';
+	htm+='<thead>'
+	htm+='			<tr>';
+	htm_mobile+='<thead>'
+	htm_mobile+='			<tr class="earfcn_row">';
+	var thead_th_htm="";
+	var thbody_tr_htm="";
+	var htm_mobile_extra="";
+	var lock_type = 0;
+	var mobile_thead_th_htm="";
+	var mobile_thbody_tr_htm="";
+	if(model_type == 5){
+		cur_cellular_earfcn = cellular_earfcn.cfg.nr;
+	}
+	if(model_type == 4){
+		cur_cellular_earfcn = cellular_earfcn.cfg.lte;
+	}
+	
+	var first_data = null;
+	if(cur_cellular_earfcn.EARFCN.length){
+		lock_type = 1;
+		var each_item = load_each_item(cur_cellular_earfcn,index,model_type,lock_type,1,null,auto);
+		if(each_item.index == 1){
+			thead_th_htm = each_item.thead_th_htm;
+			mobile_thead_th_htm = each_item.mobile_thead_th_htm;
+		}
+			
+		thbody_tr_htm += each_item.thbody_tr_htm;
+		mobile_thbody_tr_htm += each_item.mobile_thbody_tr_htm;
+
+		index = each_item.index;
+		first_data = cur_cellular_earfcn;
+	}
+	else if(cellular_earfcn.status.MODE == model_type){
+		var each_item = load_each_item(cellular_earfcn.status,index,model_type,lock_type,1,null,auto);
+		if(each_item.index == 1){
+			thead_th_htm = each_item.thead_th_htm;
+			mobile_thead_th_htm = each_item.mobile_thead_th_htm;
+		}
+		thbody_tr_htm += each_item.thbody_tr_htm;
+		mobile_thbody_tr_htm += each_item.mobile_thbody_tr_htm;
+		index = each_item.index;
+		first_data = cellular_earfcn.status;
+	}
+	else{
+		var each_item = load_each_item(cur_cellular_earfcn,index,model_type,lock_type,1,null,auto);
+		if(each_item.index == 1){
+			thead_th_htm = each_item.thead_th_htm;
+			mobile_thead_th_htm = each_item.mobile_thead_th_htm;
+		}
+		thbody_tr_htm += each_item.thbody_tr_htm;
+		mobile_thbody_tr_htm += each_item.mobile_thbody_tr_htm;
+		index = each_item.index;
+	}
+	
+	var valid_earfcn_list = [];
+	$.each(data, function(i, db){
+		if(!db || !db.length)
+			return;
+		
+		db.sort(function(a, b) {
+			prev_data = (a.RSRP && a.RSRP.length) ? parseInt(a.RSRP):-999;
+			last_data = (b.RSRP && b.RSRP.length) ? parseInt(b.RSRP):-999;
+			return ( last_data - prev_data );
+		});
+
+		$.each(db, function(j, neighbour){
+			if((cur_cellular_earfcn.EARFCN == neighbour.EARFCN)
+			&& (cur_cellular_earfcn.PCI == neighbour.PCI)){
+				return;
+			}
+
+			var earfcn_data = neighbour["EARFCN"]?neighbour["EARFCN"]:"";
+			var pci_data = neighbour["PCI"]?neighbour["PCI"]:"";
+			var band_data = neighbour["BAND"]?neighbour["BAND"]:"";
+			var earfcn_info = earfcn_data+"_"+pci_data+"_"+band_data;
+
+			if((neighbour["MODE"] == "LTE") && (model_type != "4"))
+				return;
+			if((neighbour["MODE"].match("NR")) && (model_type != "5"))
+				return;
+			if($.inArray(earfcn_info, valid_earfcn_list) == -1){
+				valid_earfcn_list.push(earfcn_info);
+				var each_item = load_each_item(neighbour,index,model_type,0,0,first_data,auto);
+				if(each_item.index == 1){
+					thead_th_htm = each_item.thead_th_htm;
+					mobile_thead_th_htm = each_item.mobile_thead_th_htm;
+				}
+				thbody_tr_htm += each_item.thbody_tr_htm;
+				mobile_thbody_tr_htm += each_item.mobile_thbody_tr_htm;
+				index = each_item.index;
+			}
+		});
+	});
+	
+	htm+=thead_th_htm;
+	htm+='			</tr>';
+	htm+='		</thead>';
+	htm+='		<tbody>';
+	htm+=	thbody_tr_htm;
+	htm+='		</tbody>';
+
+	htm_mobile+=mobile_thead_th_htm;
+	htm_mobile+='			</tr>';
+	htm_mobile+='		</thead>';
+	htm_mobile+='		<tbody>';
+	htm_mobile+=	mobile_thbody_tr_htm;
+	htm_mobile+='		</tbody>';
+	
+	$(".scanlist"+model_item+model_type).html(htm);
+
+	if (is_mobile_device() && (!auto || list_BootstrapDialog)){
+		if(!list_BootstrapDialog){
+			list_BootstrapDialog = BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '<%:FreqLockScanTitle%>',
+				message: body_htm,
+				cssClass:"earfcn_list",
+				onshown: function(dialog) {
+					$(".address_list").each(function(){
+						if(($(this).data("model") == model_item) && ($(this).data("model_type") == model_type)){
+							var type_s = $(this).data("terminal");
+							if(type_s == "mobile"){
+								$(this).empty().html(htm_mobile);
+							}
+						}
+					});
+				},
+				onhide :function(dialog) {
+					list_BootstrapDialog = null;
+				}
+			});
+		}
+		else{
+			$(".address_list").each(function(){
+				if(($(this).data("model") == model_item) && ($(this).data("model_type") == model_type)){
+					var type_s = $(this).data("terminal");
+					if(type_s == "mobile"){
+						$(this).empty().html(htm_mobile);
+					}
+				}
+			});
+		}
+	}
+}
+
+function scan_result_check(dialog,model_item,model_type){
+	var try_time = 1;
+	var try_max = 80;
+	checkInterval=setInterval(function(){
+		if (try_time > try_max){
+			dialog.close();
+			clearInterval(checkInterval);
+			return;
+		}
+		$.ajax({
+			url  : "/cgi-bin/luci/nradio/cellular/cpescan/scan_check",
+			type : 'POST',
+			data : {"model":model_item},
+			timeout: 2000,
+			success: function(data){
+				var code = data.result.code;
+				if( code == 0){
+					dialog.close();
+					clearInterval(checkInterval);
+					cache_data = data.result.neighbour;
+					load_earfcn_data(data.result.neighbour,model_item,model_type,cellular_earfcn);
+				}
+				else{
+					try_time++;
+				}
+			},
+			error: function(xhr, error){
+				try_time++;
+			}
+		});
+	},2000);
+}
+function lock_earfcn(obj){
+	var earfcn = $(obj).parent().data("earfcn");
+	var pci = $(obj).parent().data("pci");
+	var band = $(obj).parent().data("band");
+	var action = $(obj).data("action");
+	var model_type = $(obj).parent().data("model_type");
+	if(action){
+		if(!earfcn || earfcn == "-" || earfcn == "0")
+			return;
+
+		if(pci == "-")
+			return;
+	}
+	console.log(typeof band);
+	if(band)
+		band = band.toString().replace(/[a-z]/gi, "");
+
+	$.ajax({
+		url  : "/cgi-bin/luci/nradio/cellular/cpestatus/earfcn_lock",
+		type : 'POST',
+		data : {"model":"<%=cpe_section%>","sim_id":"<%=sim_id%>","action":action,"model_type":model_type,"earfcn":earfcn,"pci":pci,"band":band},
+		timeout: 2000,
+		success: function(data){
+			var code = data.result.code;
+			if( code == 0){
+				
+			}
+			else{
+				
+			}
+			location.reload();
+		},
+		error: function(xhr, error){
+
+		}
+	});
+}
+function show_scan_dialog(obj,force){
+	var model_type=$(obj).data("model_type");
+	var model_item=$(obj).data("model");
+	var model_force=$(obj).data("force");
+	console.log("model_type:"+model_type+" model_item:"+model_item);
+
+	if(!force && is_mobile_device())
+		force=0;
+	else{
+		if(model_type){
+			if(gmode_type && (gmode_type != model_type))
+				force=1;		
+			gmode_type=model_type;
+		}
+		if(cache_data){
+			if (cache_data[0]&& cache_data[0][0] && cache_data[0][0].MODE == "LTE" && model_type == "5"){
+				force=1;
+			}
+			if (cache_data[0]&& cache_data[0][0] && cache_data[0][0].MODE.match("NR") && model_type == "4"){
+				force=1;
+			}
+		}
+
+		if(force)
+			cache_data=null;
+		else{
+			if(model_force == 1){
+				force = 1;
+				cache_data=null;
+			}			
+		}
+	}
+
+	
+	if(!force && ((cache_data && cache_data.length) || is_mobile_device())){		
+		load_earfcn_data(cache_data,model_item,model_type,cellular_earfcn);
+		return;
+	}
+	if (!is_mobile_device()){
+		$(obj).val("<%:ReScanNeighbourcell%>");
+		$(obj).data("force",1);
+	}
+
+	BootstrapDialog.show({
+		type: BootstrapDialog.TYPE_DEFAULT,
+		title: '',
+		message: loading_save_htm,
+		closeByBackdrop: false,
+		onshown: function(dialog) {
+			$.ajax({
+				url  : "/cgi-bin/luci/nradio/cellular/cpescan/scaninfo",
+				type : 'POST',
+				data : {"model":model_item,"model_type":model_type,"force":force},
+				timeout: 60000,
+				success: function(data){
+					var code = data.result.code;
+					if( code != 0){
+						var waittime = data.result.waittime;
+						dialog.setMessage("<%:Please retry,%>"+waittime+"<%:s second later%>");
+						if(intervalCount)
+							clearInterval(intervalCount);
+						intervalCount=setInterval(function(){
+							if (waittime>0){
+								waittime--;
+								dialog.setMessage("<%:Please retry,%>"+waittime+"<%:s second later%>");
+							}
+							else{
+								clearInterval(intervalCount);
+								dialog.close();
+							}
+
+						},1000);
+					}
+					else{
+						dialog.close();
+						cache_data = data.result.neighbour;
+						load_earfcn_data(data.result.neighbour,model_item,model_type,cellular_earfcn);
+					}
+
+				},
+				error: function(xhr, error){
+					scan_result_check(dialog,model_item,model_type,cellular_earfcn);
+				}
+			});
+		}
+	});
+}
+
+	function get_cellular_earfcn(data_res){
+		var nr_cfg = null;
+		var lte_cfg = null;
+		var model_name = "<%=cpe_section%>";
+		if(data_res && data_res.result && data_res.result.cfg){
+			nr_cfg = data_res.result.cfg.nr;
+			lte_cfg = data_res.result.cfg.lte;
+		}
+		var list_info = null;
+		if (data_res.result.neighbour[0] && data_res.result.neighbour[0][0] && data_res.result.neighbour[0][0].MODE == "LTE"){
+			list_info = combine_earfcn_data(data_res.result.neighbour,cache_data,"4");		
+			load_earfcn_data(list_info,model_name,"4",cellular_earfcn,1);
+		}
+
+		if (data_res.result.neighbour[0] && data_res.result.neighbour[0][0] && data_res.result.neighbour[0][0].MODE.match("NR")){
+			list_info = combine_earfcn_data(data_res.result.neighbour,cache_data,"5");	
+			load_earfcn_data(list_info,model_name,"5",cellular_earfcn,1);
+		}
+
+		if(data_res && data_res.result && data_res.result.status){
+			var mode = data_res.result.status.MODE;
+			var nr_stop_refresh = 0;
+			var lte_stop_refresh = 0;
+
+			if(mode && mode.length){
+
+				if (nr_cfg && nr_cfg.EARFCN && nr_cfg.EARFCN.length && nr_cfg.PCI && nr_cfg.PCI.length){
+					if((nr_cfg.EARFCN !=  data_res.result.status["EARFCN"]) || (nr_cfg.PCI !=  data_res.result.status["PCI"])){
+						nr_stop_refresh = 1;
+					}
+				}
+
+				if (lte_cfg && lte_cfg.EARFCN && lte_cfg.EARFCN.length && lte_cfg.PCI && lte_cfg.PCI.length){
+					if((lte_cfg.EARFCN !=  data_res.result.status["EARFCN"]) || (lte_cfg.PCI !=  data_res.result.status["PCI"])){
+						lte_stop_refresh = 1;
+					}
+				}
+
+				var empty_flag = $(".first_item"+mode).data("earfcn");
+				for (let key in data_res.result.status) {
+					var info_things = data_res.result.status[key]?data_res.result.status[key]:"-";
+					if(key != "MODE"){									
+						if(key == "BAND"){
+							if(mode == "5"){
+								if(info_things !="-")
+									info_things = "n"+info_things;
+							}
+							else{
+								if(info_things !="-")
+									info_things = "B"+info_things;
+							}
+						}
+						else if(key == "RSRP"){
+							if(info_things !="-"){
+								info_things = valueRSRP(info_things);
+							}
+						}
+						else if(key == "SINR"){
+							if(info_things !="-"){
+								info_things = valueSINR(info_things);
+							}
+						}
+						if(((mode == "5") && !nr_stop_refresh) || (mode == "4") && !lte_stop_refresh){
+							
+							if(key == "BAND" && $(".first_item"+mode+" .earfcn_box_"+key).hasClass("active_earfcn")){
+								$(".first_item"+mode+" .earfcn_box_"+key).html(active_label+info_things);
+							}
+							else{
+								$(".first_item"+mode+" .earfcn_box_"+key).html(info_things);
+							}
+							
+						}
+					}
+					if(info_things && info_things!="-" && empty_flag == "-")
+						$(".first_item"+mode).data(key.toLowerCase(),info_things);
+				}
+				
+				if (data_res.result.status.EARFCN && data_res.result.status.EARFCN.length){
+					$(".scan_item").removeClass("hide");
+					$(".scan_item_"+data_res.result.status.EARFCN+data_res.result.status.PCI).addClass("hide");
+					if($(".first_item"+mode+" .lock_item").find("span")){
+						var box_info = $(".first_item"+mode+" .lock_item").find("span").html();
+						if(box_info == "-"){
+							$(".first_item"+mode+" .lock_item").children("span").removeClass("error").addClass("icon_color").html("<%:LockAction%>");
+						}
+					}
+					else{
+						var box_info = $(".first_item"+mode+" .lock_item").html();
+						if(box_info == "-"){
+							$(".first_item"+mode+" .lock_item").removeClass("error").addClass("icon_color").html("<%:LockAction%>");
+						}										
+					}
+				}
+			}
+		}		
+	}	
+
+</script>

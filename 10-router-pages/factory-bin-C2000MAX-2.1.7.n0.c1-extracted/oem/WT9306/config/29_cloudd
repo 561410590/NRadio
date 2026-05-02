@@ -1,0 +1,10 @@
+prefix=$(uci -q get oem.custom.ssid)
+suffix=$(uci -q get oem.board.imei|tr -d :|grep -o ....$)
+
+uci set cloudd.t0.diff_2_4_wlan='X1'
+uci set cloudd.t0.ssid_wlan="X${prefix:-NRadio}-${suffix}"
+uci set cloudd.t0.diff_2_4_ssid_wlan="X${prefix:-NRadio}-${suffix}"
+uci set cloudd.t0.key_wlan='X1234567890'
+uci set cloudd.g1wlan='interface'
+uci set cloudd.g1wlan.ssid_wlan0="wireless.wlan0.ssid=${prefix:-NRadio}-${suffix}"
+uci set cloudd.g1wlan.ssid_wlan1="wireless.wlan1.ssid=${prefix:-NRadio}-5G-${suffix}"

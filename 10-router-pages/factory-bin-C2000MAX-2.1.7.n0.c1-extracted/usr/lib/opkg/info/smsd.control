@@ -1,0 +1,10 @@
+Package: smsd
+Version: 1.0-20231126
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, libbdinfo, nradio-utils, libopenssl1.1
+Source: package/nradio/services/smsd
+SourceName: smsd
+Section: nradiowifi
+SourceDateEpoch: 1773974720
+Architecture: aarch64_cortex-a53
+Installed-Size: 22871
+Description:  smsd operation center

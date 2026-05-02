@@ -1,0 +1,14 @@
+#!/bin/sh
+
+uci -q batch <<-EOT
+	delete firewall.dmz
+	set firewall.dmz=redirect
+	set firewall.dmz.name='dmz'
+	set firewall.dmz.src='wan'
+	set firewall.dmz.target='DNAT'
+	set firewall.dmz.proto='*'
+	set firewall.dmz.enabled='0'
+	commit firewall
+EOT
+
+exit 0

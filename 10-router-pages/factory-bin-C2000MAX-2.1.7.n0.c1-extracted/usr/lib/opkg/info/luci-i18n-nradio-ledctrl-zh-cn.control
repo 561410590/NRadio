@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-ledctrl-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-ledctrl
+Source: package/luci/applications/luci-app-nradio-ledctrl
+SourceName: luci-i18n-nradio-ledctrl-zh-cn
+Section: luci
+SourceDateEpoch: 1722948739
+Architecture: all
+Installed-Size: 531
+Description:  Translation for luci-app-nradio-ledctrl - 中文 (Chinese)

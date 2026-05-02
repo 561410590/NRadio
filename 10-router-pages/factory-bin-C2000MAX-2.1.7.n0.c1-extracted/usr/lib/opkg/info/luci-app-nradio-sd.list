@@ -1,0 +1,4 @@
+/usr/lib/lua/luci/view/nradio_adv/sd.htm
+/usr/lib/lua/luci/controller/nradio_adv/sd.lua
+/usr/lib/lua/luci/view/nradio_adv/expand.htm
+/usr/lib/lua/luci/view/nradio_adv/boot.htm

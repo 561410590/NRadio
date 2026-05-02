@@ -1,0 +1,10 @@
+Package: pkg-fs
+Version: 1.0-20220609
+Depends: libc, kmod-fs-ext4, e2fsprogs, ntfs-3g, kmod-fs-vfat
+Source: package/nradio/collections/pkg-fs
+SourceName: pkg-fs
+Section: nradiowifi
+SourceDateEpoch: 1655358548
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for File system

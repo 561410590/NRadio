@@ -1,0 +1,11 @@
+Package: special-dial
+Version: 1.0-20150201
+Depends: libc, librt
+Source: package/nradio/utils/special-dial
+SourceName: special-dial
+Section: nradiowifi
+SourceDateEpoch: 1497261109
+Maintainer: Duke Wu
+Architecture: all
+Installed-Size: 8614
+Description:  Provide supporting for PPPoE special dialing in some region.

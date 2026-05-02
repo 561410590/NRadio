@@ -1,0 +1,429 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+<%
+	nr = require "luci.nradio"
+	local util = require "luci.util"
+	model_str,cpe_section,model_index = nr.get_cellular_last(model)
+	local client_ip = luci.http.getenv("REMOTE_ADDR") or ""	
+	nixio.syslog("err","WEB["..client_ip.."] cellular status")
+%>
+<%+header%>
+<style>
+table.form-key-value-table{
+	margin-top: 0px;
+}
+ul.cbi-tabmenu{
+	margin-bottom: 0;
+}
+.table-box table{
+	border-top: none;
+}
+.form-group, fieldset div.cbi-value {
+	margin-bottom: 0;
+}
+table.form-key-value-table tbody tr th{
+	width: 30%;
+}
+</style>
+<%+nradio_adv/cellular_header%>
+
+<form><fieldset class="cbi-section" id="cbi-cpe-status">
+	<div class="cbi-section-node table-box">
+		<%+nradio_adv/cellular_status_content%>
+	</div>
+	<br>
+</fieldset></form>
+<script type="text/javascript">//<![CDATA[
+var sims_alias = <%=util.serialize_json(nr.get_sim_alias(),nil)%>;
+function addRow(title, data, tb) {
+	var tr = tb.insertRow(-1);
+	if (title != null) {
+		var th = document.createElement("TH");
+		th.innerHTML = title;
+		tr.appendChild(th);
+	}
+	tr.insertCell(-1).innerHTML = data;
+}
+
+function valueLevel(val, min, mid, max) {
+	if (val == 255 || val == "none" || val == "")
+		return "<%:Unknown%>";
+	else if (val >= max)
+		return val + ", <%:Excellent%>";
+	else if (val < max && val >= mid)
+		return val + ", <%:Good%>";
+	else if (val < mid && val >= min)
+		return val + ", <%:Fair%>";
+	else
+		return val + ", <%:Marginal%>";
+}
+
+function valueRSRPLevel(val, worse, poor, notbad,good,better) {
+	if (val == 255 || val == "none" || val == "")
+		return "<%:Unknown%>";
+	else if (val >= better)
+		return val + ", <%:Signalbest%>";
+	else if (val < better && val >= good)
+		return val + ", <%:Signalbetter%>";
+	else if (val < good && val >= notbad)
+		return val + ", <%:Signalgood%>";
+	else if (val < notbad && val >= poor)
+		return val + ", <%:Signalnotbad%>";
+	else if (val < poor && val >= worse)
+		return val + ", <%:SignalPoor%>";
+	else
+		return val + ", <%:SignalWorse%>";
+}
+
+function valueRSSI(rssi) {
+	return valueLevel(rssi, -100, -85, -70);
+}
+
+function valueRSCP(rscp) {
+	return valueLevel(rscp, -85, -75, -60);
+}
+
+function valueECIO(ecio) {
+	return valueLevel(ecio, -20, -10, -6);
+}
+
+function valueRSRP(rsrp) {
+	return valueRSRPLevel(rsrp, -110,-100, -90, -80,-60);
+}
+
+function valueRSRQ(rsrq) {
+	return valueLevel(rsrq, -20, -15, -10);
+}
+
+function valueSINR(sinr) {
+	return valueLevel(sinr, 0, 13, 20);
+}
+
+function cardItem(status, tb){
+	if(status.simcount && status.simcount>1){
+		sim_alias = sims_alias?sims_alias[<%=model_index%>-1]:[];
+		if (status.simno && status.simno.length){
+			var simidinfo=sim_alias[status.simno - 1];
+			addRow("<%:CurSim%>", simidinfo, tb);
+		}
+	}
+}
+
+function cardBasicItem(status, tb){
+	if (status.sim_isp && status.sim_isp != "none") {
+		addRow("<%:SIM Operator%>", status.sim_isp, tb);
+	}
+	else{
+		addRow("<%:SIM Operator%>","<%:Unknown%>", tb);
+	}
+
+	if (status.sim_isp && status.sim_isp != "none") {
+		addRow("<%:IMSI%>", status.imsi, tb);
+	}
+	if (status.iccid && status.iccid != "none") {
+		addRow("<%:ICCID%>", status.iccid, tb);
+	}
+}
+function cardAdvItem(status, tb){
+	if (status.apn && status.apn.length) {
+		if(status.apn.indexOf(",")!=-1){
+			var apn_arrys = status.apn.split(",");
+			addRow("<%:APN%>", apn_arrys[0], tb);
+			if(apn_arrys[1] && apn_arrys[1].length)
+				addRow("<%:DNN%>", apn_arrys[1], tb);
+		}
+		else
+			addRow("<%:APN%>", status.apn, tb);
+	}
+	else{
+		addRow("<%:APN%>", "-", tb);
+	}
+	if (status.simnumber && status.simnumber != "none") {
+		addRow("<%:SIM Number%>", status.simnumber, tb);
+	}
+	else{
+		addRow("<%:SIM Number%>", "-", tb);
+	}
+	if (status.CQI && status.CQI != "none") {
+		addRow("<%:QCI%>", status.CQI, tb);
+	}
+	if (status.NR5G_AMBR_DL && status.NR5G_AMBR_DL != "none") {
+		addRow("<%:DL Ambr(Mbps)%>", status.NR5G_AMBR_DL/1000, tb);
+	}
+	if (status.NR5G_AMBR_UL && status.NR5G_AMBR_UL != "none") {
+		addRow("<%:UL Ambr(Mbps)%>", status.NR5G_AMBR_UL/1000, tb);
+	}
+}
+
+function moduleItem(status, tb){
+	if (status.model && status.model != "none") {
+		addRow("<%:Cellular Model%>", status.model, tb);
+	}
+	if (status.revision && status.revision != "none") {
+		addRow("<%:Cellular Revision%>", status.revision, tb);
+	}
+	if (status.imei && status.imei != "none") {
+		addRow("<%:IMEI%>", status.imei, tb);
+	}
+	if (status.ext_sn && status.ext_sn.length) {
+		addRow("<%:ext_sn%>", status.ext_sn, tb);
+	}
+	if (status.ext_host_version && status.ext_host_version.length) {
+		addRow("<%:ext_host_version%>", status.ext_host_version, tb);
+	}
+	if (status.ext_app_version && status.ext_app_version.length) {
+		addRow("<%:ext_app_version%>", status.ext_app_version, tb);
+	}
+	if (status.ext_model_version && status.ext_model_version.length) {
+		addRow("<%:ext_model_version%>", status.ext_model_version, tb);
+	}
+}
+
+function registerItem(status, tb){
+	if (status.isp && status.isp != "none") {
+		addRow("<%:Registered Operator%>", status.isp+" ("+status.isp_ori+")", tb);
+	}
+	if (status.mode && status.mode != "none") {
+		addRow("<%:Registered Mode%>", status.mode, tb);
+	}
+	if (status.cell && status.cell != "none") {
+		addRow("<%:Cell ID%>", status.cell, tb);
+	}
+	if (status.lac && status.lac != "none") {
+		addRow("<%:LAC/TAC%>", status.lac, tb);
+	}
+	if (status.tac && status.tac != "none") {
+		if (status.lac != status.tac)
+			addRow("<%:LAC/TAC%>", status.tac, tb);
+	}
+	if (status.pci && status.pci != "none") {
+		if (status.pci1 && status.pci1.length)
+			addRow("<%:PCI%>", status.pci+","+status.pci1, tb);
+		else
+			addRow("<%:PCI%>", status.pci, tb);
+	}
+	if (status.earfcn && status.earfcn != "none") {
+		if (status.earfcn1 && status.earfcn1.length)
+			addRow("<%:Earfcn%>", status.earfcn+","+status.earfcn1, tb);
+		else
+			addRow("<%:Earfcn%>", status.earfcn, tb);
+	}
+	if (status.band && status.band != "none") {
+		var data_str = "";
+		var band_max = status.band_count;
+		for (var i=0;i<band_max;i++){
+			if(i){
+				cur_band = status["band"+i];
+				if (status.mode && status.mode.match("NR")){
+					cur_band = "n"+status["band"+i];
+					if (i && status.mode && status.mode.match("NSA"))
+					{
+						cur_band = "B"+status["band"+i];
+					}
+				}
+				else if (status.mode && (status.mode =="LTE")){
+					cur_band = "B"+status["band"+i];
+				}
+				else{
+					cur_band = status["band"+i];
+				}
+				cur_dlbw = status["DLBW"+i];
+			}
+			else{
+				if (status.mode && status.mode.match("NR")){
+					cur_band = "n"+status["band"];
+				}
+				else if (status.mode && (status.mode == "LTE")){
+					cur_band = "B"+status["band"];
+				}
+				else{
+					cur_band = status["band"];
+				}
+				cur_dlbw = status["DLBW"];
+			}
+
+			if(cur_band && cur_band.length)
+			{
+				data_str += cur_band;
+			}
+			if(cur_dlbw && cur_dlbw.length)
+			{
+				data_str += " ("+cur_dlbw/1000+"MHz)";
+			}
+			if(i<(band_max-1))
+				data_str+=" + ";
+		}
+		addRow("<%:CelluarBand%>", data_str, tb);
+	}
+	if (status.rssi && (status.mode != "LTE" && status.mode.match("NR") == null)) {
+		addRow("<%:RSSI%>(dBm)", valueRSSI(status.rssi), tb);
+	}
+	if (status.ecio && (status.mode != "LTE" && status.mode.match("NR") == null)) {
+		addRow("<%:EC/IO%>(dBm)", valueRSSI(status.ecio), tb);
+	}
+	if (status.rscp && (status.mode != "LTE" && status.mode.match("NR") == null)) {
+		addRow("<%:RSCP%>(dBm)", valueRSSI(status.rscp), tb);
+	}
+	if (status.rsrp && (status.mode == "LTE" || status.mode.match("NR") != null)) {
+		if (status.rsrp1 && status.rsrp1.length)
+			addRow("<%:RSRP%>(dBm)", valueRSRP(status.rsrp)+","+valueRSRP(status.rsrp1), tb);
+		else
+			addRow("<%:RSRP%>(dBm)", valueRSRP(status.rsrp), tb);
+	}
+	if (status.rsrq && (status.mode == "LTE" || status.mode.match("NR") != null)) {
+		if (status.rsrq1 && status.rsrq1.length)
+			addRow("<%:RSRQ%>(dB)", valueRSRQ(status.rsrq)+","+valueRSRQ(status.rsrq1), tb);
+		else
+			addRow("<%:RSRQ%>(dB)", valueRSRQ(status.rsrq), tb);
+	}
+	if (status.sinr && (status.mode == "LTE" || status.mode.match("NR") != null)) {
+		if (status.sinr1 && status.sinr1.length)
+		addRow("<%:SINR%>(dB)", valueSINR(status.sinr)+","+valueSINR(status.sinr1), tb);
+		else
+			addRow("<%:SINR%>(dB)", valueSINR(status.sinr), tb);
+	}
+}
+
+function basicItem(status,uptime, upstatus,tb) {
+	var ipaddr_buf = "";
+	var ipaddr1_buf = "";
+	var dns_buf = "";
+	var dns1_buf = "";
+	if (status) {
+		if (typeof(uptime) == "number" && uptime && upstatus == 0) {
+			addRow("<%:Online Time%>", uptime2dhms(uptime, 3), tb);
+		}
+		else{
+			show_error_data("<%:Online Time%>","<%:Network detection in progress%>",tb);
+		}
+
+		if (status.V4){
+			var ip_array = status.V4.ipaddrs;
+			var dns_array = status.V4.dns;
+			if(ip_array){
+				for(i=0;i<ip_array.length;i++){
+					ipaddr_buf += ip_array[i]+"<br>";
+				}
+			}
+			if(dns_array){
+				for(i=0;i<dns_array.length;i++){
+					dns_buf += dns_array[i]+"<br>";
+				}
+			}
+			var ip1_array = status.V4.ipaddrs1;
+			var dns1_array = status.V4.dns1;
+			if(ip1_array){
+				for(i=0;i<ip1_array.length;i++){
+					ipaddr1_buf += ip1_array[i]+"<br>";
+				}
+			}
+			if(dns1_array){
+				for(i=0;i<dns1_array.length;i++){
+					dns1_buf += dns1_array[i]+"<br>";
+				}
+			}
+		}
+
+		if (status.V6) {
+			var ip_array = status.V6.ipaddrs;
+			var dns_array = status.V6.dns;
+			if(ip_array){
+				for(i=0;i<ip_array.length;i++){
+					ipaddr_buf += ip_array[i]+"<br>";
+				}
+			}
+			if(dns_array){
+				for(i=0;i<dns_array.length;i++){
+					dns_buf += dns_array[i]+"<br>";
+				}
+			}
+
+			var ip1_array = status.V6.ipaddrs1;
+			var dns1_array = status.V6.dns1;
+			if(ip1_array){
+				for(i=0;i<ip1_array.length;i++){
+					ipaddr1_buf += ip1_array[i]+"<br>";
+				}
+			}
+			if(dns1_array){
+				for(i=0;i<dns1_array.length;i++){
+					dns1_buf += dns1_array[i]+"<br>";
+				}
+			}
+		}
+
+		if(ipaddr_buf.length){
+			addRow("<%:Cellular IP%>", ipaddr_buf, tb);
+		}
+		else{
+			addRow("<%:Cellular IP%>", "-", tb);
+		}
+		if(dns_buf.length){
+			addRow("<%:Cellular DNS%>", dns_buf, tb);
+		}
+		else{
+			addRow("<%:Cellular DNS%>", "-", tb);
+		}
+
+		if(ipaddr1_buf.length){
+			addRow("<%:DNN IP%>", ipaddr1_buf, tb);
+		}
+
+		if(dns1_buf.length){
+			addRow("<%:DNN DNS%>", dns1_buf, tb);
+		}
+	}
+}
+
+function show_error_data(label,msg,tb) {
+	addRow(label?label:"", "<b style='color:red'>"+msg+"</b>", tb);
+}
+$(document).ready(function() {
+	XHR.poll(5, '<%=url('nradio/cellular/cpestatus/cellinfo')%>', null,
+		function(x, data) {
+			if (!data) {
+				return;
+			}
+			for (var i = 0; i < data.result.length; i++) {
+				var tb = document.getElementById('cell_info_table_'+data.result[i].status.name);
+				if (tb)
+				{
+					var ci = data.result[i];
+					/* clear all rows */
+					while (tb.rows.length > 0)
+						tb.deleteRow(-1);
+					if (ci.status) {
+						var info_stats = ci.status;
+						cardItem(info_stats, tb);
+						if (info_stats.imei && info_stats.imei.length && info_stats.imei != "none") {
+							if (info_stats.iccid && info_stats.iccid.length && info_stats.iccid != "none") {
+								cardBasicItem(info_stats, tb);
+								if (info_stats.isp_ori && info_stats.isp_ori.length && info_stats.isp_ori != "none") {
+									registerItem(info_stats, tb);
+									basicItem(info_stats,ci.uptime,ci.up, tb);
+								}
+								else{
+									show_error_data(null,"<%:Cellular network not available%>",tb);
+								}
+								cardAdvItem(info_stats, tb);
+							}
+							else{
+								show_error_data(null,"<%:SIM card not detected%>",tb);
+							}
+							moduleItem(info_stats, tb);
+						}
+						else{
+							show_error_data(null,"<%:Cellular module not available%>", tb);
+						}
+					}
+					else{
+						show_error_data(null,"<%:Failed to get cellular status%>", tb);
+					}
+				}
+			}
+		});
+});
+<%+nradio_adv/cellular_section_js%>
+//]]></script>
+<%+footer%>

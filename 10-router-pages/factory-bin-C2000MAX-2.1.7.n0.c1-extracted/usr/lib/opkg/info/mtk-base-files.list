@@ -1,0 +1,8 @@
+/etc/banner.mtk
+/usr/lib/lua/shuci.lua
+/usr/sbin/hwnat-disable.sh
+/sbin/smp.sh
+/etc/openwrt.config
+/etc/sdk.version
+/sbin/netsys_dbg.sh
+/usr/sbin/hwnat-enable.sh

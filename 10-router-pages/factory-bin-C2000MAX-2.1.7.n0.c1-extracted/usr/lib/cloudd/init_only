@@ -1,0 +1,9 @@
+local c_api = require "cloudd.api"
+local os = os
+
+function cloudd_main()
+	c_api.cloudd_sync_config(true)
+	os.execute("uci show wireless > /tmp/wifi_init_config.log")
+end
+
+cloudd_main()

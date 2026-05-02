@@ -16,6 +16,8 @@
 10-router-pages/*openfix*
 10-router-pages/*statuspanel*
 10-router-pages/factory-bin-*-extracted/
+!10-router-pages/factory-bin-C2000MAX-2.1.7.n0.c1-extracted/
+!10-router-pages/factory-bin-C2000MAX-2.1.7.n0.c1-extracted/**
 30-theme/*backup*/
 
 # Local tools and generated binaries

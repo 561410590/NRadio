@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+
+START=05
+STOP=75
+
+start() {
+	 echo "start"
+}
+
+shutdown() {
+	if ubus list|grep -q logservice ;then
+		ubus call logservice sync
+		sync
+		sleep 1
+	fi
+}

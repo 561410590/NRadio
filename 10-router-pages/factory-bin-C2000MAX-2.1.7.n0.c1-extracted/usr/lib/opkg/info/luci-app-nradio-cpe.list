@@ -1,0 +1,16 @@
+/usr/lib/lua/luci/view/nradio_adv/cellular_section_js.htm
+/usr/lib/lua/luci/model/cbi/nradio_cellular/switch.lua
+/usr/lib/lua/luci/view/nradio_adv/cellular_status_content.htm
+/usr/lib/lua/luci/view/nradio_adv/apn.htm
+/usr/lib/lua/luci/view/nradio_adv/cellular_section.htm
+/usr/lib/lua/luci/view/nradio_adv/apn_simple.htm
+/usr/lib/lua/luci/view/nradio_adv/cpescan.htm
+/usr/lib/lua/luci/view/nradio_adv/cpedevice.htm
+/usr/lib/lua/luci/view/nradio_adv/cpestatus.htm
+/usr/lib/lua/luci/view/nradio_adv/cellular_switch.htm
+/usr/lib/lua/luci/view/nradio_adv/cellular_scan_content.htm
+/usr/lib/lua/luci/view/nradio_adv/cellular_header.htm
+/usr/lib/lua/luci/model/cbi/nradio_cellular/apn.lua
+/usr/lib/lua/luci/controller/nradio_adv/cpestatus.lua
+/usr/lib/lua/luci/view/nradio_adv/cellular_submenu.htm
+/usr/lib/lua/luci/view/nradio_adv/cellular_section_redirect.htm

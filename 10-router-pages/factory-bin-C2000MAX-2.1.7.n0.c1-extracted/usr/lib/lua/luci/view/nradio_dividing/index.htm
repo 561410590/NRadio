@@ -1,0 +1,367 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%+header%>
+
+
+<%
+local nr = require "luci.nradio"
+local uci  = require "luci.model.uci"
+local cur = uci.cursor()
+local lng  = require "luci.i18n"
+local util = require "luci.util"
+
+local outwan_info = get_outwan_info()
+local outwan_info_buffer = util.serialize_json(outwan_info,nil)
+
+local outwan_data = get_outwan_data()
+local outwan_data_buffer = util.serialize_json(outwan_data,nil)
+local exsit_nbcpe = check_nbcpe_match()
+%>
+<style>
+table tr td input{
+min-width:0;
+}
+form div.cbi-page-actions{
+		margin-left:0
+	}
+@media (min-width: 10px) and (max-width: 768px){
+	div.checkbox .switch {
+		top: 0;
+	}	
+	.panel-info select {
+		max-width: 9em;
+	}
+}
+</style>
+
+</style>
+
+
+<div class="cbi-map">
+	<h2 name="content"><%:Traffic Dist%></h2>
+	<ul class="cbi-tabmenu">
+		<li class="cbi-tab"><a href="#"><%:Client dividing%></a></li>
+		<li class="cbi-tab-disabled"><a href="<%=url("nradioadv/network/dividing/protocol")%>"><%:Protocol dividing%></a></li>
+	</ul>
+	<form method="post" name="cbi" >
+		<div class="form-box full-width hidden-xs">
+			<table class="line text-center no_paddingLeft">
+				<thead>
+					<tr class="wans_label">
+						<th style="width: 40%"><%:ConnectedClient%></th>
+					</tr>
+				</thead>
+				<tbody class="terminal_list pc_list">
+				</tbody>
+			</table>
+		</div>
+		<div class="terminal_list mobile_list" data-terminal="mobile"></div>
+		<fieldset class="cbi-section">
+			<div class="cbi-section-node">
+				<div class="cbi-value" data-index="9" >
+					<div class="cbi-value-field cbi-page-actions left_btn click_pointer">
+						<input type="button" class="cbi-button cbi-button-apply" id="btn-save"  value="<%:Save & Apply%>" />
+					</div>
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>
+
+<script language="javascript">
+	var gmsg = {uptime:'<%:ConnectedDuration%>',wired:'<%:Wired%>',disable:'<%:StatusDisable%>',enable:'<%:StatusEnable%>',native:'<%:Native%>',nettype:'<%:StatusInterType%>',};
+	var loading_save_htm =circling_htm;
+	loading_save_htm +='<p class="cbi-value-title width_auto text-center adapt_label_padding"><%:Waiting for changes to be applied...%></p>';
+	var nrdevClientTableMobileRow = ''+
+'<div class="panel panel-info visible-xs-block hide">'+
+	'<div class="panel-heading">'+
+	'	<div class="row">'+
+	'		<div class="col-sm-6 col-xs-6 text-right">'+
+	'			{{opt}}'+
+	'		</div>'+
+	'	</div>'+
+	'</div>'+
+	'<div class="panel-body info-box">'+
+	'	<div class="row">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{link}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					<span class="note_info">IP:{{ip}}</span><br/>' +
+	'					<span class="note_info">IPv6:{{ipv6}}</span><br/>' +
+	'					<span class="note_info">MAC:{{mac}}</span><br/>'+
+	'					<span class="note_info {{wired_hide}}">{{uptime_label}}:{{uptime}}</span>'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>' +
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{nettype_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					{{nettype}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>' +
+	'</div>'+
+	'</div>';
+
+	var nrdevClientTableRow = ''+
+	'<tr data-index={{sort_index}} data-mac={{mac}}>'+
+	'<td style="width: 40%">'+
+	'<table class="line temp-table no_paddingLeft">'+
+	'<tbody>'+
+	'<tr>'+
+	'<td style="width: 15%">'+
+	'{{link}}'+
+	'</td>'+
+	'<td data-device-id={{id}}>'+
+	'<span class="note_info">IP:{{ip}}</span><br/>' +
+	'<span class="note_info">IPv6:{{ipv6}}</span><br/>'+
+	'<span class="note_info">MAC:{{mac}}</span><br/>'+
+	'<span class="note_info {{wired_hide}}">{{uptime_label}}:{{uptime}}</span>'+
+	'</td>'+
+	'</tr>'+
+	'</tbody>'+
+	'</table>'+
+	'</td>'+	
+	'{{nettype}}' +
+	'</tr>';
+	var wans = <%=outwan_info_buffer%>;
+	var outwan_data = <%=outwan_data_buffer%>;
+	<%if exsit_nbcpe then %>
+	var exsit_nbcpe=true;
+	<%else%>
+	var exsit_nbcpe=false;
+	<%end%>
+	function init_wan_label(){		
+		for(var i = 0;i <wans.length;i++){
+			var data = wans[i];
+			$(".wans_label").append("<th>"+data.translate+"</th>");
+		}
+	}
+	function init_wan_sub(index,mac,value){
+		var htm = "";
+		for(var i = 0;i <wans.length;i++){
+			var data = wans[i];
+			var checked_str = "";
+			var nbcpedisable = "";
+			if((!value || !value.length) && (i == 0)){
+				checked_str = "checked=\"checked\"";
+			}
+			if(value == data.value){
+				checked_str = "checked=\"checked\"";
+			}
+			if (data.isnbcpe){
+				if (exsit_nbcpe){
+					nbcpedisable = "";
+				}
+				else{
+					nbcpedisable = "disabled";
+				}
+			}
+			htm +="<td >";
+			htm +='	<input class="cbi-input-radio" '+nbcpedisable+' data-update="click change" type="radio" id="dividing_default'+index+'_'+data.value+'" name="dividing_default'+index+'" value="'+data.value+'" '+checked_str+' >';
+			htm +="</td>";
+		}
+		return htm;
+	}	
+	function init_wan_mobilesub(index,mac,value){
+		var htm = "";
+		var nbcpedisable = "";
+		htm +='<div class="cbi-value-field">';
+		htm +='	<select class="cbi-input-select valid mobiletarget" data-mac="'+mac+'" data-update="change" name="dividing_default'+index+'" size="1" >';
+		for(var i = 0;i <wans.length;i++){
+			var data = wans[i];
+			var checked_str = "";
+			if((!value || !value.length) && (i == 0)){
+				checked_str = "selected=\"selected\"";
+			}
+			if(value == data.value){
+				checked_str = "selected=\"selected\"";
+			}
+			if (data.isnbcpe){
+				if (exsit_nbcpe){
+					nbcpedisable = "";
+				}
+				else{
+					nbcpedisable = "disabled";
+				}
+			}
+			htm +='<option '+nbcpedisable+' value="'+data.value+'" '+checked_str+'>'+data.translate+'</option>';
+		}
+		htm +='	</select>';
+		htm +='</div>';
+		return htm;
+	}
+	
+	function show_terminal_online_data(data,box_class,msg){
+		var htm="";
+		var mobile_htm = "";
+		var terminal_count = 0;
+		$.each(data.result.client, function(index, db){	
+			var wired_hide = "hide";
+			var link_data = { type: db.type };
+			var ipv4 = "";
+			var ipv6 = "";
+			if (db.exsit != 1)
+				return;
+			terminal_count++;
+			if(db.type && db.type == "wired"){
+				link_data.symbol = gmsg.wired;
+			}
+			else{
+				link_data.signal=db.rssi;
+				link_data.alias=db.ssid;
+				link_data.type = "wireless";
+				wired_hide = "";
+				if (db.frequency.indexOf("2.4") != -1)
+					link_data.symbol = "2.4G";
+				if (db.frequency.indexOf("5.") != -1)
+					link_data.symbol = "5G";
+			}
+			var linkht = link_type_show(link_data);
+			if (db.ipaddr) { 
+				var iparray = db.ipaddr.split(' ');
+				for (i = 0; i < iparray.length; i++) { 
+					if (iparray[i].indexOf(":") != -1) {
+						ipv6 = ipv6 + iparray[i] + "\n";
+					}
+					else if (iparray[i].indexOf(".") != -1) { 
+						ipv4 = ipv4 + iparray[i] + "\n";
+					}
+				}
+			}
+			var item_data = outwan_data["client"][db.mac];
+			var default_data = outwan_data.globals;
+			if(item_data && item_data.length)
+				default_data = item_data;
+			nettype_htm = init_wan_sub(terminal_count,index,default_data);
+			nettype_mobile_htm = init_wan_mobilesub(terminal_count,index,default_data);
+ 			{
+				htm+=nrdevClientTableRow.compose({
+					id: db.mac,
+					link: linkht,
+					name: db.hostname,
+					ip: ipv4,
+					ipv6:ipv6,
+					mac:db.mac,
+					wired_hide:wired_hide,
+					uptime:uptime2dhms(db.assoctime?db.assoctime:db.uptime, 3),
+					uptime_label: gmsg.uptime,
+					nettype:nettype_htm,
+					sort_index:terminal_count
+				});
+				
+				mobile_htm+=nrdevClientTableMobileRow.compose({
+					id: db.mac,
+					ip: ipv4,
+					ipv6:ipv6,
+					mac:db.mac,
+					wired_hide:wired_hide,
+					uptime:uptime2dhms(db.assoctime?db.assoctime:db.uptime,3),
+					uptime_label: msg.uptime,
+					nettype_label:gmsg.nettype,
+					nettype:nettype_mobile_htm,
+					name: db.hostname,
+					link: linkht,
+					sort_index:terminal_count,
+					index:index
+				});
+			}
+		});
+
+		$("."+box_class).each(function(){		
+			var type_s = $(this).data("terminal");
+			if(type_s == "mobile"){
+				$(this).empty().append(mobile_htm);
+			}
+			else{
+				$(this).empty().append(htm);
+			}		
+		});
+		return terminal_count;
+	}
+	function renew_stat(){
+		$.getJSON("/cgi-bin/luci/nradio/client/all_list", function(data){
+			if(data.result){
+				show_terminal_online_data(data,"terminal_list",gmsg);
+			}
+		})
+	}
+
+	$('#btn-save').click(function(){
+		var data={};
+		var data_item = {};
+
+		if (is_mobile_device()){
+			$(".mobiletarget").each(function(){
+				var id = $(this).val();
+				var mac = $(this).data("mac");
+				mac = mac.replace(/:/g, "_");
+				data[mac] = id;
+			});
+		}
+		else{			
+			$(".pc_list tr").each(function(){
+				
+				var id = $(this).data("index");
+				if(!id)
+					return;
+				var dividing_default = $(":radio[name='dividing_default"+id+"']:checked").val();
+				var mac = $(this).data("mac");
+				mac = mac.replace(/:/g, "_");
+				data[mac] = dividing_default;
+			});
+		}
+		data['token']='<%=token%>';
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: loading_save_htm,
+			closeByBackdrop: false,
+			onshown: function(dialog) {
+				(new XHR()).post('<%=controller%>nradioadv/network/dividing/save', data, function(xhr){
+					var data_res = null;
+					var code = 0;
+					if (xhr.getResponseHeader("Content-Type") == "application/json") {
+						try {
+							data_res = eval('(' + xhr.responseText + ')');
+							code = data_res.result.code;
+						}
+						catch(e) {
+							data_res = null;
+						}
+					}
+					if (code == -1){
+						var content = "<%:Note: The current internet connection mode is not set to "Bandwidth dividing" and the configuration cannot be saved!Please go to "<a style=color:blue href=/cgi-bin/luci/nradio/basic/wan>Internet</a>" and change the internet mode to "Bandwidth dividing" before using this configuration!%>";
+						content=content.replace(/&#60;/g, "<");
+						content=content.replace(/&#62;/g, ">");
+						dialog.setMessage(content);
+					}
+					else{
+						//location.href='<%=controller%>nradioadv/network/dividing';
+						dialog.close();
+					}
+				});
+			}
+		});
+
+
+
+	});
+	$(document).ready(function(){
+		init_wan_label();
+		renew_stat();
+		nradio_backend_flash();
+	});
+</script>
+<%+footer%>

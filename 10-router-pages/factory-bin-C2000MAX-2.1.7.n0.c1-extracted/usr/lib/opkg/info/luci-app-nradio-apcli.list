@@ -1,0 +1,4 @@
+/etc/uci-defaults/99-apcli
+/usr/lib/lua/luci/model/cbi/nradio_adv/apcli.lua
+/usr/lib/lua/luci/controller/nradio_adv/apcli.lua
+/usr/bin/apcli.sh

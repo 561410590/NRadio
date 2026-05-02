@@ -1,0 +1,147 @@
+local cjson = require "cjson"
+local uci = require "uci".cursor()
+local fs = require "nixio.fs"
+local nixio = require "nixio"
+
+local function syslog(data)
+    local wm_log_tag = "wm_mesh"
+
+    nixio.openlog(wm_log_tag)
+    nixio.syslog("info", data)
+    nixio.closelog()
+end
+
+local function parse_data()
+    local data = cjson.decode(io.read("*a"))
+    local bssid = nil
+    local psk = nil
+    local action = nil
+    local ipaddr = nil
+
+    io.input():close()
+    ifname = data["ifname"]
+    bssid = data["bssid"]
+    psk = data["psk"]
+    action = data["action"]
+    ipaddr = data["ipaddr"] or "192.168.88.3"
+
+    return ifname, bssid, psk, action, ipaddr
+end
+
+local function nrmesh(ifname, bssid, psk, ipaddr)
+    local radios = {}
+    local bridge_ifname
+    local device
+    local freq = 1
+    local mode = uci:get("oem", "board", "ptype") or ""
+
+    -- disable slave device advertisement
+    uci:foreach("wireless", "wifi-device",
+                function(s)
+                    if s.nrctrl_mode then
+                        uci:set("wireless", s[".name"], "nrctrl_mode", 0)
+                        uci:set("cloudd", "g1radio", "nrctrl_mode_"..s[".name"], "wireless."..s[".name"]..".nrctrl_mode=0")
+                    end
+                    radios[s[".name"]] = s.hwmode
+                end
+    )
+
+    uci:commit("wireless")
+
+    if mode == "cb" then
+        return
+    end
+
+    -- config network
+    uci:set("network", "lan", "ipaddr", ipaddr)
+    uci:commit("network")
+
+    -- get bridge interface
+    uci:foreach("wireless", "wifi-iface",
+                function(s)
+                    if s.ifname and s.ifname == ifname then
+                        if radios[s.device] then
+                            if radios[s.device] == "11a" then
+                                bridge_ifname = "apclii0"
+                                device = s.device
+                                freq = 2
+                            elseif radios[s.device] == "11g" then
+                                bridge_ifname = "apcli0"
+                                device = s.device
+                                freq = 1
+                            end
+                        end
+                    end
+                end
+    )
+
+    if bridge_ifname then
+        uci:set("wireless", "apcli", "wifi-iface")
+        uci:set("wireless", "apcli", "mode", "sta")
+        uci:set("wireless", "apcli", "network", "lan")
+        uci:set("wireless", "apcli", "device", device)
+        uci:set("wireless", "apcli", "ifname", bridge_ifname)
+        uci:set("wireless", "apcli", "bssid", bssid)
+        uci:set("wireless", "apcli", "ssid", "@#!nRadiOMeSH!#@")
+        uci:set("wireless", "apcli", "encryption", "psk2")
+        uci:set("wireless", "apcli", "key", psk)
+        uci:set("wireless", "apcli", "disabled", 0)
+        uci:set("wireless", "apcli", "workfreq", freq)
+        uci:commit("wireless")
+        uci:commit("cloudd")
+    end
+
+    if fs.access("/etc/config/msad") then
+        local msad_mode = uci:get("msad", "msad", "mode") or "1"
+        local n_msad_mode = msad_mode
+
+        -- set AP enable bit
+        if msad_mode ~= "0" then
+            n_msad_mode = "129"
+        end
+
+        if msad_mode ~= n_msad_mode then
+            uci:set("msad", "msad", "mode", n_msad_mode)
+            uci:commit("msad")
+            os.execute("/etc/init.d/msad restart")
+        end
+    end
+
+    if mode ~= "ap" then
+        uci:set("oem", "board", "ptype", "ap")
+        uci:commit("oem")
+        os.execute("/etc/ptype.d/init ap reinit && reboot")
+    else
+        os.execute("wifi")
+    end
+end
+
+local function easy_mesh(ifname)
+    local enable = tonumber(uci:get("mesh", "config", "enabled") or 0)
+    local role = tonumber(uci:get("mesh", "config", "role") or 1)
+    local config = tonumber(uci:get("mesh", "config", "config") or 0)
+
+    if enable == 1 and role == 1 and config == 0 then
+        syslog(ifname.. " trigger wps")
+        os.execute("wappctrl "..ifname.." wps_pbc")
+    end
+end
+
+local function easy_mesh_trigger_wps(ifname)
+    local enable = tonumber(uci:get("mesh", "config", "enabled") or 0)
+    local role = tonumber(uci:get("mesh", "config", "role") or 1)
+
+    if enable == 1 and role == 0 then
+        syslog(ifname.. " trigger wps")
+        os.execute("wappctrl "..ifname.." wps_pbc")
+    end
+end
+
+ifname, bssid, psk, action, ipaddr = parse_data()
+if action == 0 then
+    nrmesh(ifname, bssid, psk, ipaddr)
+elseif action == 1 then
+    easy_mesh(ifname)
+elseif action == 2 then
+    easy_mesh_trigger_wps(ifname)
+end

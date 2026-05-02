@@ -1,0 +1,10 @@
+Package: uboot-env
+Version: 1.1-2024.11.21
+Depends: libc
+Source: package/nradio/utils/uboot-env
+SourceName: uboot-env
+Section: nradiowifi
+SourceDateEpoch: 1732253649
+Architecture: aarch64_cortex-a53
+Installed-Size: 3984
+Description:  Provide supporting nradiowifi uboot env utility

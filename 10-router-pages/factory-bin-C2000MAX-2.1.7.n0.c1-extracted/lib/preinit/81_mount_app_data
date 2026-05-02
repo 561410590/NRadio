@@ -1,0 +1,114 @@
+# Copyright (C) 2006 OpenWrt.org
+# Copyright (C) 2010 Vertical Communications
+
+. /lib/functions.sh
+. /lib/upgrade/nand.sh
+
+do_mount_app_data() {
+	local mac=$(bdinfo -g fac_mac)
+	local mtdnum="$(find_mtd_index "app_data")"
+	local blkdev=$(blkid -t PARTLABEL=app_data -o device)
+	local mountdev=
+	local bdinfodev=
+	local fstype=
+	local mkfs_arg=
+
+	if [ -z $mac ]; then
+		echo "bdinfo is not initialized, skip mount app_data"
+		return
+	fi
+
+	if [ ! "$mtdnum" ] && [ ! "$blkdev" ]; then
+		echo "cannot find app_data partition"
+		return
+	fi
+
+	if [ -n "$mtdnum" ]; then
+		if ! ubiattach -m "$mtdnum" 2> /dev/null; then
+			ubiformat /dev/mtd"${mtdnum}" -y 2> /dev/null
+			if ! ubiattach -m "$mtdnum" 2> /dev/null; then
+				echo "ubi attach mtd${mtdnum} failed"
+				return
+			fi
+			sync
+		fi
+		local ubidev="$(nand_find_ubi "app_data")"
+		local ubivol="$(nand_find_volume $ubidev app_data)"
+		if [ ! "$ubivol" ]; then
+			echo "cannot find ubi volume app_data"
+			if ! ubimkvol /dev/$ubidev -N app_data -m 2> /dev/null; then
+				echo "cannot create ubi volume app_data"
+				return
+			fi
+			ubivol="$(nand_find_volume $ubidev app_data)"
+		fi
+		mountdev="/dev/$ubivol"
+		fstype="ubifs"
+		mtdnum="$(find_mtd_index "bdinfo")"
+		bdinfodev="/dev/mtd$mtdnum"
+	else
+		local appdata_size=$(blockdev --getsize64 $blkdev)
+		mountdev=$(losetup -f)
+		losetup -o 0 $mountdev $blkdev || {
+			echo "Failed to mount looped app_data."
+			return
+		}
+		fstype=ext4
+		mkfs_arg="-q -L app_data"
+		[ "$appdata_size" -gt "$((100*1024*1024))" ] && {
+			fstype=f2fs
+			mkfs_arg="-q -l app_data"
+		}
+		bdinfodev=$(blkid -t PARTLABEL=bdinfo -o device)
+	fi
+
+	mkdir -p /mnt/app_data
+	mount -t $fstype $mountdev /mnt/app_data || {
+		echo "Failed to mount app_data"
+		if [ -z "$mtdnum" ]; then
+			echo "Format new app_data"
+			mkfs.${fstype} ${mkfs_arg} ${mountdev} || {
+				echo "Failed format app_data partition"
+				return
+			}
+			mount -t $fstype $mountdev /mnt/app_data || {
+				echo "Failed to mount app_data"
+				return
+			}
+			sync
+		else
+			return
+		fi
+	}
+
+	if [ ! -f /mnt/app_data/bdinfo ]; then
+		if [ -f /tmp/appdata.tgz ]; then
+			echo "restore /mnt/app_data/bdinfo from appdata.tgz"
+			tar xzf /tmp/appdata.tgz
+		else
+			echo "generate /mnt/app_data/bdinfo from bdinfo partition"
+			dd if=$bdinfodev of=/mnt/app_data/bdinfo bs=$((0x10000)) count=1 2> /dev/null
+		fi
+		sync
+	else
+		mac=$(bdinfo -g fac_mac)
+		if [ -z "$mac" ]; then
+			echo "app_data is invalid."
+			if [ -f /tmp/appdata.tgz ]; then
+				echo "restore /mnt/app_data/bdinfo from appdata.tgz"
+				tar xzf /tmp/appdata.tgz
+			else
+				echo "generate /mnt/app_data/bdinfo from bdinfo partition"
+				dd if=$bdinfodev of=/mnt/app_data/bdinfo bs=$((0x10000)) count=1 2> /dev/null
+			fi
+			touch /mnt/app_data/broken
+			sync
+		fi
+	fi
+
+	[ -f /tmp/appdata.tgz ] && rm -f /tmp/appdata.tgz
+
+	[ -n "$mtdnum" ] && rm -f /mnt/app_data/boot_*_flag
+}
+
+[ "$INITRAMFS" = "1" ] || boot_hook_add preinit_main do_mount_app_data

@@ -1,0 +1,10 @@
+Package: dad_recovery
+Version: 1.0-20221226
+Depends: libc
+Source: package/nradio/utils/dad_recovery
+SourceName: dad_recovery
+Section: nradiowifi
+SourceDateEpoch: 1672027586
+Architecture: all
+Installed-Size: 473
+Description:  IPv6 DAD failed recovery.

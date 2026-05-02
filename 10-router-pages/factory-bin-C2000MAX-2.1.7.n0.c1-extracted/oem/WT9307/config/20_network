@@ -1,0 +1,17 @@
+#!/bin/ash
+uci set network.wan.disabled="1"
+uci set network.wan6.disabled="1"
+
+uci set network.cpe1="interface"
+uci set network.cpe1.phyifname="eth1"
+uci set network.cpe1.ifname="eth1"
+uci set network.cpe1.odu_interface="nbdevice"
+uci set network.cpe1.mode="odu"
+uci set network.cpe1.disabled="1"
+uci set network.cpe1.forcephy="1"
+
+uci set network.nbdevice="interface"
+uci set network.nbdevice.phyifname="eth1"
+uci set network.nbdevice.ifname="eth1"
+uci set network.nbdevice.device="eth1"
+uci set network.nbdevice.disabled="1"

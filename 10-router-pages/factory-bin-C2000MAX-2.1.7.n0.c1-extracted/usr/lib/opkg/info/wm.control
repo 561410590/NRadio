@@ -1,0 +1,10 @@
+Package: wm
+Version: 4.8-20200921
+Depends: libc, libubox20210516, libubus20210630, libiwinfo20210430, libuci20130104, libjson-c5, libmosquitto, mosquitto
+Source: package/nradio/services/wm
+SourceName: wm
+Section: nradiowifi
+SourceDateEpoch: 1720166913
+Architecture: aarch64_cortex-a53
+Installed-Size: 57127
+Description:  Wi-Fi Monitor

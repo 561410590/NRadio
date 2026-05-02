@@ -1,0 +1,8 @@
+# Put your custom commands here that should be executed once
+# the system init finished. By default this file does nothing.
+
+if grep -qE MT798 /tmp/sysinfo/board_name; then
+	echo 3 > /proc/sys/vm/drop_caches
+fi
+
+exit 0

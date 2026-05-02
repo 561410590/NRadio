@@ -1,0 +1,13 @@
+#!/bin/sh
+
+uci -q get wireless.apcli &>/dev/null && exit 0
+
+uci -q batch <<-EOF >/dev/null
+	set wireless.apcli=wifi-iface
+	set wireless.apcli.disabled=1
+	set wireless.apcli.device=radio0
+	set wireless.apcli.mode=sta
+	commit wireless
+EOF
+
+exit 0

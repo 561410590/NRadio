@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+
+START=80
+STOP=65
+
+SERVICE_DAEMONIZE=1
+SERVICE_WRITE_PID=1
+
+start() {
+	local flag=$(bdinfo -g telnet)
+	local mac=$(bdinfo -g fac_mac)
+
+	if [ -z "$mac" ] || [ "$flag" = "1" ]; then
+		service_start /usr/sbin/telnetd -l /bin/login
+	fi
+}
+
+stop() {
+	service_stop /usr/sbin/telnetd
+}

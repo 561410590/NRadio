@@ -1,0 +1,77 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+<%
+	local nr = require "luci.nradio"
+	local company_info = nr.get_company_info()
+%>
+
+			<div class="container click-top hidden">
+				<div class="row">
+					<div class="col-xs-12 text-center">
+						<div onclick="window.scrollTo(0,0)">
+							<i class="far fa-nradio-top fa-2x icon_disable"></i>	
+							<span><%:BackTop%></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container footer_container_body">
+				<div class="row">
+					<div class="col-xs-12 text-center">
+					<ul class="list-inline" style="padding-top: 0px;">					
+						<%						
+							local lng  = require "luci.i18n"
+							local target_name = ""
+							local target_url = ""
+							if company_info["name"] then
+								target_name = company_info["name"]
+							end
+							if (company_info["owe"] and (#company_info["owe"] > 0) ) then
+								target_url = company_info["owe"]							
+							end
+							print ('<li class="click_pointer"><span id="copyright_year"></span><a class="text_white" target="_blank" href="'..target_url..'">'..target_name..'</a></li>')
+						%>
+							<% if nr.get_firmware_type() == "stand" then%>
+								<li class="click_pointer">
+									<span id="powered" >Powered by</span>
+									<span id="powered_1" >NR</span>
+									<span id="powered_2" >OS</span>
+								</li>
+							<%end%>
+					</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>	
+function show_current_year(){
+	var date = new Date();
+	$("#copyright_year").html("©"+date.getFullYear()+"  ");
+}
+show_current_year();
+
+function rebind_apply(){
+	if (($("div.cbi-page-actions > input.cbi-button-apply").length == 1)&& !$("div.cbi-page-actions > input.cbi-button-apply").prop("disabled") && $("div.cbi-page-actions > input.cbi-button-apply").click){;
+		$("div.cbi-page-actions > input.cbi-button-apply").click();
+	}
+}
+$(window).resize(function(){
+	adapt_symbol_menu();
+	footer_adjust();
+});	
+$(document).ready(function(){	
+	adapt_symbol_menu();			
+	footer_adjust();
+});
+</script>
+</body>
+</html>
+
+
+
+
+

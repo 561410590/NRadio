@@ -1,0 +1,13 @@
+Package: wireless-regdb
+Version: 2025.02.20-1
+Depends: libc
+Source: package/firmware/wireless-regdb
+SourceName: wireless-regdb
+License: ISC
+LicenseFiles: LICENSE
+Section: firmware
+SourceDateEpoch: 1768997726
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: all
+Installed-Size: 2679
+Description:  Wireless Regulatory Database

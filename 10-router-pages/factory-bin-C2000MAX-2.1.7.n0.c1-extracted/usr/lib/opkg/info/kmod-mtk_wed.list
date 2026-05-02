@@ -1,0 +1,2 @@
+/etc/modules.d/64-mtk_wed
+/lib/modules/5.4.281/mtk_wed.ko

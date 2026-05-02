@@ -1,0 +1,11 @@
+Package: datconf
+Version: 1
+Depends: libc, kvcedit
+Source: package/nradio/apps/datconf
+SourceName: datconf
+Section: MTK Properties
+SourceDateEpoch: 1649857235
+Maintainer: Weijie Gao <weijie.gao@mediatek.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 5780
+Description:  Utility for editing dat files used by MediaTek Wi-Fi drivers

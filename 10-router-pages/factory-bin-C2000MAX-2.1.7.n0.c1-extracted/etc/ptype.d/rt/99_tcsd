@@ -1,0 +1,14 @@
+#!/bin/ash
+
+[ "$1" = "reinit" ] && exit 0
+
+_cpecnt=$(uci -q get oem.feature.cpe)
+
+for _i in $(seq 1 "${_cpecnt:-0}"); do
+
+	_name="cpe$((_i-1))"
+	[ "$_i" -eq 1 ] && _name="cpe"
+	uci set tcsd.$_name=interface
+	uci set tcsd.$_name.reset=1
+done
+

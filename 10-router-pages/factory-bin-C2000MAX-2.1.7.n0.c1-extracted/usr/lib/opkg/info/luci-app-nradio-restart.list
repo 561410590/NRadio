@@ -1,0 +1,7 @@
+/usr/lib/lua/luci/view/nradio_adv/restart_clock.htm
+/usr/lib/lua/luci/model/cbi/nradio_adv/restart.lua
+/etc/config/restart
+/usr/lib/lua/luci/controller/nradio_adv/restart.lua
+/usr/lib/lua/luci/view/nradio_adv/restart_time.htm
+/usr/lib/lua/luci/view/nradio_adv/restart_reboot.htm
+/usr/lib/lua/luci/view/nradio_adv/restart_mode.htm

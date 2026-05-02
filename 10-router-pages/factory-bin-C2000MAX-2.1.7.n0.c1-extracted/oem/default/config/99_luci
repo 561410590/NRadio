@@ -1,0 +1,6 @@
+
+if [ ! -f /usr/bin/supass ];then
+    uci set luci.main.agreement='1'
+fi
+
+uci set luci.main.ipv6_relay='1'

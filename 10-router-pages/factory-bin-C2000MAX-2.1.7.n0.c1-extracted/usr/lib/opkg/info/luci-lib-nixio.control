@@ -1,0 +1,10 @@
+Package: luci-lib-nixio
+Version: git-26.103.38496-283ac67-1
+Depends: libc, liblua5.1.5
+Source: package/luci/libs/luci-lib-nixio
+SourceName: luci-lib-nixio
+Section: luci
+SourceDateEpoch: 1748503180
+Architecture: aarch64_cortex-a53
+Installed-Size: 33777
+Description:  NIXIO POSIX library

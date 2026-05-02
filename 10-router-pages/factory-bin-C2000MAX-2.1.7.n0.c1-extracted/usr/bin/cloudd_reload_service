@@ -1,0 +1,32 @@
+#!/usr/bin/lua
+
+local c_debug = require "cloudd.debug"
+local c_lock = require "cloudd.lock"
+local uci = require "luci.model.uci".cursor()
+local fs = require "nixio.fs"
+local reload_action
+local action_cmd = arg[1]
+local action = arg[2]
+local lockf = nil
+
+c_debug.syslog("info", "cloudd reload service", 1)
+lockf = c_lock.flock("cloudd_reload_service")
+c_debug.syslog("info", "cloudd reload service get lock", 1)
+
+for i in string.gmatch(action_cmd, "[^;]+")
+do
+    if i == "network" and action ~= "restart" then
+        reload_action = "wifi"
+        -- wifi will stuck in flock and don't know why so far
+        while fs.access("/var/lock/wifi.lock") do
+            os.execute("sleep 1")
+        end
+    else
+        reload_action = "/etc/init.d/" .. i .. " " .. action
+    end
+    c_debug.syslog("info", reload_action, 1)
+    os.execute(reload_action.." >/dev/null 2>&1 ")
+end
+
+c_lock.unlock(lockf)
+c_debug.syslog("info", "cloudd reload service release lock", 1)

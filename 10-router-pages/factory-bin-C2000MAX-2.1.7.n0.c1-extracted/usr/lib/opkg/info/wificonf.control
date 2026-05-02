@@ -1,0 +1,11 @@
+Package: wificonf
+Version: 1
+Depends: libc
+Source: package/mtk/applications/wificonf
+SourceName: wificonf
+Section: MTK Properties
+SourceDateEpoch: 1768997726
+Maintainer: Hua Shao <nossiac@163.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 7785
+Description:  Read/Write MTK WiFi profiles

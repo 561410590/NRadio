@@ -1,0 +1,10 @@
+Package: pkg-openclash-dep
+Version: 1.0-20260108
+Depends: libc, dnsmasq-full, bash, curl, ca-certificates, ipset, ip-full, libcap, libcap-bin, ruby, ruby-yaml, kmod-tun, unzip
+Source: package/nradio/collections/pkg-openclash-dep
+SourceName: pkg-openclash-dep
+Section: nradiowifi
+SourceDateEpoch: 1767930862
+Architecture: aarch64_cortex-a53
+Installed-Size: 103
+Description:  Pakcages for dependence of openclash

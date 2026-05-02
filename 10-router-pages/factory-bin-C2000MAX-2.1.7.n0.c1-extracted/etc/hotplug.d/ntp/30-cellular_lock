@@ -1,0 +1,78 @@
+. /lib/functions.sh
+TIMEVALIDFILE="/var/state/cellular_freqtime"
+
+[ "$ACTION" = "stratum" ] || exit 0
+
+check_schedule_time(){
+	local ymd_s=$(date +%Y-%m-%d)
+	local now_t=$(date +%s)
+	local starttime
+	local endtime
+	local cfg_start_time="$1"
+	local cfg_end_time="$2"
+
+	if [ -n "$cfg_start_time" ];then
+		starttime="${cfg_start_time}:00"
+	else
+		starttime="00:00:00"
+	fi
+	starttime_s=$(date -d "$ymd_s $starttime" +%s)
+	if [ -n "$cfg_end_time" ];then
+		endtime="${cfg_end_time}:00"
+	else
+		endtime="00:00:00"
+	fi
+	endtime_s=$(date -d "$ymd_s $endtime" +%s)
+	if [ $starttime_s -ge $endtime_s ];then
+		if [ $now_t -lt $endtime_s ];then
+			return 0
+		fi
+		endtime_s=$((endtime_s+86400))
+	fi
+
+	if [ $now_t -ge $starttime_s -a $now_t -lt $endtime_s ];then
+		return 0
+	fi
+	return 1
+}
+loop_cpesim() {
+	local rule=$1
+	local sim_id=${rule##*[A-Za-z]}
+	local cpe_section=""
+	config_get _freq_time $rule freq_time "0"
+	config_get _endtime $rule endtime ""
+	config_get _starttime $rule starttime ""
+
+	if [ "$_freq_time" == "1" ];then
+		cpe_section=$(echo "$rule"|awk -F'sim' '{print $1}'|xargs -r printf)
+		_start_hour=$(echo "$_starttime"|awk -F':' '{print $1}'|xargs -r printf)
+		_start_min=$(echo "$_starttime"|awk -F':' '{print $2}'|xargs -r printf)		
+		_end_hour=$(echo "$_endtime"|awk -F':' '{print $1}'|xargs -r printf)
+		_end_min=$(echo "$_endtime"|awk -F':' '{print $2}'|xargs -r printf)
+
+		if check_schedule_time "$_starttime" "$_endtime" ;then
+			cpetools.sh -l 1 -i $cpe_section $sim_id
+		else
+			cpetools.sh -l 0 -i $cpe_section $sim_id
+		fi
+		sed -i '/cpetools.sh -l.*'"$cpe_section $sim_id"'$/d' /etc/crontabs/root
+		sed -i '$a '"$_end_min $_end_hour * * * cpetools.sh -l 0 -i $cpe_section $sim_id" /etc/crontabs/root
+		sed -i '$a '"$_start_min $_start_hour * * * cpetools.sh -l 1 -i $cpe_section $sim_id" /etc/crontabs/root
+	fi
+
+}
+[ -f "$TIMEVALIDFILE" ] || {
+	echo "cellular_freqtime says time is valid"
+	echo "cellular_freqtime says time is valid" >$TIMEVALIDFILE
+
+	if [ ! -d "/etc/crontabs/" ]; then
+		mkdir -p /etc/crontabs/
+	fi
+	if [ ! -f "/etc/crontabs/root" ];then
+		touch /etc/crontabs/root
+	fi
+	
+	config_load cpecfg
+	config_foreach loop_cpesim cpesim
+	/etc/init.d/cron restart
+}

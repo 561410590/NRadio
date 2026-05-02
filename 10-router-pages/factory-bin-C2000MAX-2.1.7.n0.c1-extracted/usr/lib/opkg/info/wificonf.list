@@ -1,0 +1,3 @@
+/usr/bin/nvram_set
+/usr/bin/nvram_get
+/usr/bin/wificonf

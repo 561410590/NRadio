@@ -1,0 +1,11 @@
+#!/bin/sh
+
+gWdir="/etc/ptype.d"
+gType="oem.board.ptype"
+gName=
+
+if ! uci -q get "$gType"; then
+	gName=$(grep -ioE "^[a-z0-9]+" $gWdir/name)
+	uci set "$gType"="${gName:-rt}"
+	uci commit oem
+fi

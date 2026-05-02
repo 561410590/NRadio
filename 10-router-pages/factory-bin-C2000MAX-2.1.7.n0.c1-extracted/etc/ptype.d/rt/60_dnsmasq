@@ -1,0 +1,15 @@
+#!/bin/sh
+
+_dhcp="dhcp"
+_network="network"
+
+_lan=$(uci -q get network.globals.default_lan)
+[ -z "$_lan" ] && _lan="lan"
+
+uci -q del "${_dhcp}"."${_lan}".ignore
+lan_ip=$(uci -q get "${_network}"."${_lan}".ipaddr)
+domain=$(uci -q get oem.custom.domain)
+if [ -z "$domain" ]; then
+	domain="nradio.cc"
+fi
+uci add_list "${_dhcp}".@dnsmasq[0].address="/${domain}/${lan_ip}"

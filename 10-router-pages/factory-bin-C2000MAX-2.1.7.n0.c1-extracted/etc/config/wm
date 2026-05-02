@@ -1,0 +1,12 @@
+config wm 'config'
+        option version '3.0'
+
+config module 'sniffer'
+        option mode 0
+        option enable_mngt 1
+
+config module 'probe'
+        option enable 0
+
+config module 'nrctrl'
+        option mode 0

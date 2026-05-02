@@ -1,0 +1,4 @@
+config config 'config'
+	option 'enable' '1'
+	option 'iface' 'br-lan'
+	option 'mode' '0'

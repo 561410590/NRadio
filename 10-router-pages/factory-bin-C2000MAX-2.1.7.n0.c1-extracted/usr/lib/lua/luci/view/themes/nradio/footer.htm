@@ -1,0 +1,144 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local nr = require "luci.nradio"
+	local info = nr.system_info()
+	local disp = require "luci.dispatcher"
+
+	local request  = disp.context.path
+	local category = request[1]
+	local second_category = request[2]
+	local third_category = request[3]
+	local class_name ="";
+	local hidden_footer = false
+	local company_info = nr.get_company_info()
+	if not second_category then
+		class_name="first-stand"
+		second_category = "sysauth"
+	else
+		if second_category == "qsetup" then
+			if not third_category then
+				class_name="first-stand"
+			else
+				class_name="second-stand"
+			end			
+		end
+	end
+	if category and (category == "authcheck" or category == "auth" or category == "login" or category == "message" or category == "portal") then
+		hidden_footer=true
+	end
+%>
+		<% if #class_name == 0 and not hidden_footer then%>
+			<div class="container click-top hidden">
+				<div class="row">
+					<div class="col-xs-12 text-center">
+						<div onclick="window.scrollTo(0,0)">
+							<i class="far fa-nradio-top fa-2x icon_disable"></i>	
+							<span><%:BackTop%></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		<%end%>
+		</div>
+	</div>
+</div>
+<%if not disp._INNTER_PAGE and not hidden_footer then%>	
+<footer class="footer footer-<%=class_name%> ">
+	<% if (not nr.support_authvideo()) and (nr.get_firmware_type() == "stand") and (second_category == "sysauth" ) then %>
+	<div class="tail_wave"></div>
+	<%end%>	
+	<div class="container text-center footer_container">
+		<div class="row footer_container_body">
+			<div class="col-lg-12">
+				<ul class="list-inline" style="padding-top: 0px;">					
+					<%						
+						local lng  = require "luci.i18n"
+						local target_name = ""
+						local target_url = ""
+						if company_info["name"] then
+							target_name = company_info["name"]
+						end
+						if (company_info["owe"] and (#company_info["owe"] > 0) ) then
+							target_url = company_info["owe"]							
+						end
+						print ('<li class="click_pointer"><span id="copyright_year"></span><a class="text_white" target="_blank" href="'..target_url..'">'..target_name..'</a></li>')
+					%>
+						<% if nr.get_firmware_type() == "stand" then%>
+							<li class="click_pointer">
+								<span id="powered" >Powered by</span>
+								<span id="powered_1" >NR</span>
+								<span id="powered_2" >OS</span>
+							</li>
+						<%end%>
+				</ul>
+			</div>
+		</div> 
+	</div>
+</footer>
+<%end%>
+
+<style>
+	.mobile-apply-center{
+		padding: 0 30px;
+		text-align: center;
+		position: static;
+		margin: 10px 0;
+		pointer-events: auto
+	}
+	.mobile-apply-btn{
+		width: 100%;
+		max-width: 100%;
+	}
+</style>
+
+<script>	
+function show_current_year(){
+	var date = new Date();
+	$("#copyright_year").html("©"+date.getFullYear()+"  ");
+}
+show_current_year();
+function show_wechat(){
+	var htm = "<div class='wechat'></div>";
+	BootstrapDialog.show({
+		type: BootstrapDialog.TYPE_DEFAULT,
+		title: '',
+		closable: true,
+		cssClass:'picture_box',
+		message: htm
+	});
+
+}
+function rebind_apply(){
+	if (($("div.cbi-page-actions > input.cbi-button-apply").length == 1)&& !$("div.cbi-page-actions > input.cbi-button-apply").prop("disabled") && $("div.cbi-page-actions > input.cbi-button-apply").click){;
+		$("div.cbi-page-actions > input.cbi-button-apply").click();
+	}
+}
+$(window).resize(function(){
+	adapt_symbol_menu();
+	footer_adjust();
+});
+$(document).ready(function(){
+	let apply_html = `
+		<div class="mobile-apply-center visible-xs">
+			<input type="button" class="cbi-button cbi-button-apply btn btn-primary mobile-apply-btn valid" style="font-size: 14px; padding: 8px 12px;" onclick="rebind_apply()" value="<%:Save & Apply%>">
+		</div>
+	`
+	if (($("div.cbi-page-actions > input.cbi-button-apply").length == 1) && !$("div.cbi-page-actions > input.cbi-button-apply").prop("disabled") && $("div.cbi-page-actions > input.cbi-button-apply").click){
+		$("#mobile_apply").removeClass("hide");
+		$('body').append(apply_html);
+	}
+
+	adapt_symbol_menu();			
+	footer_adjust();
+});
+</script>
+</body>
+</html>
+
+
+
+
+

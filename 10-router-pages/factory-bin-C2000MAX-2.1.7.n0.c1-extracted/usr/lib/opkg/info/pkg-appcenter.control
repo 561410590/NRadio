@@ -1,0 +1,10 @@
+Package: pkg-appcenter
+Version: 1.0-20250221
+Depends: libc, appcenter, luci-i18n-nradio-appcenter-zh-cn, luci-i18n-nradio-appcenter-en, luci-app-nradio-appcenter
+Source: package/nradio/collections/pkg-appcenter
+SourceName: pkg-appcenter
+Section: nradiowifi
+SourceDateEpoch: 1740118852
+Architecture: aarch64_cortex-a53
+Installed-Size: 104
+Description:  Pakcages for appcenter

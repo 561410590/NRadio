@@ -1,0 +1,176 @@
+
+<script>
+(function(){
+	function isBand4Channel(chVal) {
+		var chNum = parseInt(chVal, 10);
+		return !isNaN(chNum) && chNum >= 149 && chNum <= 165;
+	}
+
+	function getOptionValues(targetSel) {
+		var optValues = [];
+		for (var optIdx = 0; optIdx < targetSel.options.length; optIdx++) {
+			optValues.push(targetSel.options[optIdx].value);
+		}
+		return optValues;
+	}
+
+	function setOptionValues(targetSel, optValues, curVal, isBwSel) {
+		targetSel.options.length = 0;
+		for (var optIdx = 0; optIdx < optValues.length; optIdx++) {
+			var optVal = optValues[optIdx];
+			var optLabel = optVal;
+			if (isBwSel) {
+				if (optVal === "20")
+					optLabel = "<%:20MHz%>";
+				else if (optVal === "40")
+					optLabel = "<%:40MHz%>";
+				else if (optVal === "80")
+					optLabel = "<%:80MHz%>";
+				else if (optVal === "160")
+					optLabel = "<%:160MHz%>";
+			}
+			else if (optVal === "auto") {
+				optLabel = "<%:Auto%>";
+			}
+			targetSel.options.add(new Option(optLabel, optVal));
+		}
+		if (curVal && optValues.indexOf(curVal) >= 0) {
+			targetSel.value = curVal;
+		} else if (optValues.length > 0) {
+			targetSel.value = optValues[optValues.length - 1];
+		}
+	}
+
+	function is2gChannel(chVal) {
+		var chNum = parseInt(chVal, 10);
+		return !isNaN(chNum) && chNum >= 1 && chNum <= 14;
+	}
+
+	function is5gChannel(chVal) {
+		var chNum = parseInt(chVal, 10);
+		return !isNaN(chNum) && chNum >= 36;
+	}
+
+	function getBandSelect(chSel) {
+		if (!chSel || !chSel.id)
+			return null;
+		var bandId = chSel.id.replace("channel_", "band_");
+		return document.getElementById(bandId);
+	}
+
+	function getCurrentFreq(chSel) {
+		var bandSel = getBandSelect(chSel);
+		if (!bandSel) {
+			return "";
+		}
+		return bandSel.value === "2g" ? "2" : "5";
+	}
+
+	function refreshChannel(chSel) {
+		if (!chSel)
+			return;
+		var bandSel = getBandSelect(chSel);
+		if (!bandSel)
+			return;
+		if (!chSel._origChannelValues) {
+			chSel._origChannelValues = getOptionValues(chSel);
+		}
+		var allChOpts = chSel._origChannelValues.slice();
+		var nextChOpts = [];
+		var is2g = bandSel.value === "2g";
+		for (var optIdx = 0; optIdx < allChOpts.length; optIdx++) {
+			var chVal = allChOpts[optIdx];
+			if (chVal === "auto") {
+				nextChOpts.push(chVal);
+			}
+			else if (is2g && is2gChannel(chVal)) {
+				nextChOpts.push(chVal);
+			}
+			else if (!is2g && is5gChannel(chVal)) {
+				nextChOpts.push(chVal);
+			}
+		}
+		setOptionValues(chSel, nextChOpts, chSel.value, false);
+	}
+
+	function refreshBandwidth(chSel, bwSel) {
+		if (!chSel || !bwSel)
+			return;
+		if (!bwSel._origBwValues) {
+			bwSel._origBwValues = getOptionValues(bwSel);
+		}
+		var allBwOpts = bwSel._origBwValues.slice();
+		var chVal = chSel.value;
+		var nextBwOpts = allBwOpts.slice();
+		var currentFreq = getCurrentFreq(chSel);
+		if (currentFreq === "2") {
+			nextBwOpts = nextBwOpts.filter(function(optVal){
+				return optVal === "20" || optVal === "40";
+			});
+		}
+		if (String(chVal) === "165") {
+			nextBwOpts = ["20"];
+		} 
+		else if (isBand4Channel(chVal)) {
+			nextBwOpts = nextBwOpts.filter(function(optVal){
+				return optVal !== "160";
+			});
+		}
+		var curBw = bwSel.value;
+		setOptionValues(bwSel, nextBwOpts, curBw, true);
+	}
+
+	function collectPairs() {
+		var pairList = [];
+		$("select[id*='channel_']").each(function(){
+			var chSel = this;
+			var bwId = chSel.id.replace("channel_", "htmode_");
+			var bwSel = document.getElementById(bwId);
+			if (bwSel) {
+				pairList.push({
+					channelSelect: chSel,
+					bandwidthSelect: bwSel
+				});
+			}
+		});
+		return pairList;
+	}
+
+	function bindHandlers() {
+		var pairList = collectPairs();
+		for (var pairIdx = 0; pairIdx < pairList.length; pairIdx++) {
+			(function(pair){
+				refreshChannel(pair.channelSelect);
+				refreshBandwidth(pair.channelSelect, pair.bandwidthSelect);
+				$(pair.channelSelect).off("change.wifiBwLinkage").on("change.wifiBwLinkage", function(){
+					refreshBandwidth(pair.channelSelect, pair.bandwidthSelect);
+				});
+			})(pairList[pairIdx]);
+		}
+	}
+
+	$(document).ready(function(){
+		bindHandlers();
+		$(document).off("change.wifiBwLinkageDelegated").on("change.wifiBwLinkageDelegated", "select[id*='channel_']", function(){
+			var bwId = this.id.replace("channel_", "htmode_");
+			var bwSel = document.getElementById(bwId);
+			refreshBandwidth(this, bwSel);
+		});
+		$(document).off("change.wifiBandLinkageDelegated").on("change.wifiBandLinkageDelegated", "select[id*='band_']", function(){
+			var chId = this.id.replace("band_", "channel_");
+			var bwId = this.id.replace("band_", "htmode_");
+			var chSel = document.getElementById(chId);
+			var bwSel = document.getElementById(bwId);
+			refreshChannel(chSel);
+			refreshBandwidth(chSel, bwSel);
+		});
+		$(document).on("cbi-update", function(){
+			bindHandlers();
+		});
+		$(document).off("click.wifiAdvanceBind").on("click.wifiAdvanceBind", ".nradio-adv-toggle", function(){
+			bindHandlers();
+		});
+		setTimeout(bindHandlers, 0);
+	});
+})();
+</script>

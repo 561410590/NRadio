@@ -1,0 +1,433 @@
+#!/bin/ash
+
+readonly MODEM_UPGRADE_FLAG="/tmp/run/modem_upgrade"
+readonly FTP_DIR="/tmp/ftp"
+
+gMax=20
+gName="modem_upgrade"
+gMaxU=3
+gImg=
+gToolImg=
+gMode=0
+gUrl=
+gUsr=
+gPwd=
+gRecovery=0
+gCurlftpPrefix="/tmp/rootfs/curlftp_related"
+usage() {
+	cat <<-EOF
+		Usage: $0 OPTION...
+		Modem upgrade utility.
+
+		  -f      image file or directory
+		  -m      flash mode, 0 is local mode, 1 is local ftp mode, 2 is fota mode
+		  -U      remote server url
+		  -u      remote server username
+		  -p      remote server password
+	EOF
+}
+
+log_info() {
+	logger -t "$gName" "$*"
+}
+
+check_status() {
+	local _status=
+
+	_status=$(cat $MODEM_UPGRADE_FLAG)
+
+	if [ "$_status" = "prepare" ] || [ "$_status" = "upgrading" ]; then
+		log_info "upgrade is processing."
+		exit 0
+	fi
+}
+
+update_status() {
+	log_info "$*"
+	echo -n "$*" > $MODEM_UPGRADE_FLAG
+}
+
+support_qdloader() {
+	local model=
+
+	model=$(uci -q get cellular_init.cpe.model)
+
+	if [ "$model" = "EC200A" ] || \
+		   [ "$model" = "EC200T" ] || \
+		   echo "$model" |grep -q "RM500U"; then
+		return 0
+	fi
+
+	return 1
+}
+
+support_qfirehose() {
+	local model=
+
+	model=$(uci -q get cellular_init.cpe.model)
+
+	if echo "$model" |grep -q "RM520N"; then
+		return 0
+	fi
+	if echo "$model" |grep -q "EC25"; then
+		return 0
+	fi
+	if lsusb|grep -qE '05c6:9008'; then
+		return 0
+	fi
+
+	return 1
+}
+
+support_tdtech() {
+	local model=
+
+	model=$(uci -q get cellular_init.cpe.model)
+
+	if echo "$model" |grep -q "MT5700"; then
+		return 0
+	fi
+
+	return 1
+}
+
+support_tdtech_redcap() {
+	local model=
+
+	model=$(uci -q get cellular_init.cpe.model)
+
+	if echo "$model" |grep -q "MT5710"; then
+		return 0
+	fi
+
+	return 1
+}
+
+support_meig() {
+	local model=
+
+	model=$(uci -q get cellular_init.cpe.model)
+
+	if echo "$model" |grep -q "NU313" || echo "$model" |grep -q "SRM810"; then
+		return 0
+	fi
+
+	return 1
+}
+
+check_modem() {
+	if support_qdloader || support_qfirehose || support_tdtech || support_tdtech_redcap || support_meig; then
+		return 0
+	fi
+
+	return 1
+}
+
+check_recovery() {
+	lsusb|grep -qE '05c6:9008'
+}
+
+stop_service() {
+	/etc/init.d/wanchk stop
+	/etc/init.d/atsd stop
+	if [ "$gRecovery" != 1 ]; then
+		/etc/init.d/cpesel stop
+	fi
+}
+
+restore_service() {
+	/etc/init.d/atsd start
+	/etc/init.d/wanchk start
+	/etc/init.d/cpesel start
+}
+
+mount_ftpfs() {
+	local _url=$1
+	local _usr=$2
+	local _pwd=$3	
+	local curlftp_env=$(cat /tmp/curlftp_env)
+
+	if [ -n "$curlftp_env" ];then
+		export $curlftp_env
+	else
+		gCurlftpPrefix=""
+	fi
+
+	[ ! -f "$gCurlftpPrefix/usr/bin/curlftpfs" ] && return 1
+	[ ! -d "${FTP_DIR}" ] && mkdir -p "${FTP_DIR}"
+
+	umount_ftpfs
+
+	if ! ${gCurlftpPrefix}/usr/bin/curlftpfs "${_url}" "${FTP_DIR}" -o user="${_usr}:${_pwd}",custom_list=LIST; then
+		log_info "mount ftp fs failed, url: $_url, username: $_usr, password: $_pwd"
+		return 1
+	fi
+
+	if ! mount|grep -q curlftpfs; then
+		log_info "mount ftp fs failed"
+		return 1
+	fi
+
+	return 0
+}
+
+umount_ftpfs() {
+	if mount|grep -q curlftpfs; then
+		umount "${FTP_DIR}"
+	fi
+}
+
+detect_modem() {
+	local _tries=0
+	local _iface=$1
+	local _hwid=
+
+	while [ "$_tries" -lt "$gMax" ];do
+		_hwid=$(ubus call infocd get "{\"name\":\"${_iface}_dev\"}"|jsonfilter -e "\$['list'][0]['parameter']['hwid']")
+		[ -n "$_hwid" ] && break
+		_tries=$((_tries+1))
+		sleep 5
+	done
+
+	if [ "$_tries" = "$gMax" ]; then
+		return 1
+	fi
+
+	return 0
+}
+
+process_upgrade() {
+	local _img=$1
+	local _hwid=
+	local _url=
+	local _usr=
+	local _pwd=
+	local _dir=
+	local _desc=
+	local _cnum=
+	local _iface=
+	local _dname=
+	local _opt=
+	local _res=0
+	local _exec=
+	local _tries=0
+	local parameter1=""
+
+	if support_qdloader; then
+		_exec="QDloader"
+		parameter1="-f $_img"
+	elif support_qfirehose; then
+		_exec="QFirehose"
+		if [ "$gMode" = "0" ]; then
+			if unzip $_img -o -d /tmp/modem_unzip ;then
+				parameter1="-f /tmp/modem_unzip"
+			else
+				log_info "cannot find support upgrade binary,unzip error"
+				update_status "upgrade failure"
+				return 1
+			fi
+		else
+			parameter1="-f $_img"
+		fi		
+	elif support_tdtech; then
+		_exec="/tmp/rootfs/usr/bin/UpdateWizard_MT5700"
+		[ ! -f "$_exec" ] && _exec="UpdateWizard_MT5700"
+		parameter1="$_img /PRINTLOG"
+	elif support_tdtech_redcap; then
+		_exec="/tmp/rootfs/usr/bin/UpdateWizard_MT5710"
+		[ ! -f "$_exec" ] && _exec="UpdateWizard_MT5710"
+		parameter1="$_img /PRINTLOG"	
+	elif support_meig; then
+		_exec="MeigUpgradeToolU_Linux"
+		parameter1="-f $_img"
+	else
+		log_info "cannot find support upgrade binary"
+		update_status "upgrade failure"
+		return 1
+	fi
+	
+	_cnum=$(uci -q get oem.feature.cpe)
+
+	for _i in $(seq 0 $((_cnum-1))); do
+		if [ "$_i" = "0" ]; then
+			_iface="cpe"
+		else
+			_iface="cpe$_i"
+		fi
+		if [ "$_cnum" -gt 1 ]; then
+			_dname=$(uci -q get "network.$_iface.devicename")
+			[ -n "$_dname" ] && _opt="-s /sys/bus/usb/devices/$_dname"
+			if [ "$_i" -ge 1 ]; then
+				[ -z "$_dname" ] && break
+			fi
+		fi
+
+		ifdown "$_iface"
+		ubus call network.interface."$_iface" remove
+
+		if [ "$gRecovery" != "1" ]; then
+			if ! detect_modem "$_iface"; then
+				log_info "failed to detect modem"
+				update_status "modem not found"
+				return 1
+			fi
+		fi
+
+		ifdown "$_iface"
+		ubus call network.interface."$_iface" remove
+
+		update_status "upgrading"
+		log_info "$_exec $parameter1 $_opt"
+		while [ "$_tries" -lt "$gMaxU" ]; do
+			if ! "$_exec" $parameter1 "$_opt" >> /tmp/run/modem_upgrade.log; then
+				_tries=$((_tries+1))
+			else
+				_res=1
+				break
+			fi
+		done
+		[ -d "/tmp/modem_unzip" ] && rm -rf /tmp/modem_unzip
+		if [ "$_res" = "1" ]; then
+			rm "/tmp/infocd/cache/${_iface}_dev"
+			rm "/var/run/cellular_init/${_iface}/ready"
+			/etc/init.d/atsd start
+			/etc/init.d/cellular_init start
+			update_status "wait modem"
+			sleep 5
+			if [ "$gRecovery" != "1" ]; then
+				if ! detect_modem "$_iface"; then
+					update_status "restart failure"
+					return 3
+				fi
+			else
+				sleep 30
+			fi
+		else
+			update_status "flash failure"
+			return 2
+		fi
+	done
+
+	update_status "upgrade finish"
+	return 0
+}
+
+process_local_upgrade() {
+	local _img="$gImg"
+	local _res=
+
+	if [ "$gMode" = "1" ]; then
+		_img="${FTP_DIR}/${gImg}"
+
+		if ! mount_ftpfs "$gUrl" "$gUsr" "$gPwd"; then
+			update_status "upgrade failure"
+			exit 2
+		fi
+		if [ ! -d "${FTP_DIR}/${_dir}" ]; then
+			log_info "cannot find image dir ${_dir}"
+			update_status "upgrade failure"
+			umount_ftpfs
+			exit 2
+		fi
+	fi
+
+	stop_service
+
+	process_upgrade "$_img"
+	_res="$?"
+
+	if [ "$gMode" = "1" ]; then
+		umount_ftpfs
+	else
+		rm -f "$_img"
+	fi
+	restore_service
+
+	if [ "$_res" -ne 0 ]; then
+		exit "$_res"
+	fi
+}
+
+while getopts "f:m:U:u:p:t:h" opt; do
+	case "${opt}" in
+	f)
+		gImg=${OPTARG}
+		;;
+	m)
+		gMode=${OPTARG}
+		;;
+	U)
+		gUrl=${OPTARG}
+		;;
+	u)
+		gUsr=${OPTARG}
+		;;
+	p)
+		gPwd=${OPTARG}
+		;;
+	t)
+		gToolImg=${OPTARG}
+		;;
+	h)
+		usage
+		exit
+		;;
+	\?)
+		usage >&2
+		exit 1
+		;;
+	esac
+done
+shift $((OPTIND-1))
+
+check_status
+
+update_status "prepare"
+
+log_info "gMode:$gMode,gToolImg:$gToolImg"
+[ -f "/tmp/curlftp_env" ] && rm /tmp/curlftp_env
+if [ -n "$gToolImg" -a -f "$gToolImg" ] ;then
+	mkdir -p /tmp/tool_image /tmp/rootfs/
+	tar -zxvf "$gToolImg" -C /tmp/tool_image/ | while read -r _line; do
+		if echo "$_line" |grep -q "fuse.ko";then
+			insmod /tmp/tool_image/$_line
+		elif echo "$_line" |grep -q "MeigUpgradeTool";then
+			opkg install /tmp/tool_image/$_line
+		elif echo "$_line" |grep -q "QDloader";then
+			opkg install /tmp/tool_image/$_line
+		elif echo "$_line" |grep -q "QFirehose";then
+			opkg install /tmp/tool_image/$_line
+		elif echo "$_line" |grep -q "UpdateWizard_MT5700";then
+			tar -zxvf /tmp/tool_image/$_line -C /tmp/rootfs/
+			tar -zxvf /tmp/rootfs/data.tar.gz -C /tmp/rootfs/
+		elif echo "$_line" |grep -q "UpdateWizard_MT5710";then
+			tar -zxvf /tmp/tool_image/$_line -C /tmp/rootfs/
+			tar -zxvf /tmp/rootfs/data.tar.gz -C /tmp/rootfs/
+		elif echo "$_line" |grep -q "curlftp_related";then
+			tar -zxvf /tmp/tool_image/curlftp_related.tar.gz  -C /tmp/rootfs/
+			chmod 777 $gCurlftpPrefix/usr/bin/curlftpfs
+			echo -e "LD_LIBRARY_PATH=$gCurlftpPrefix/usr/lib:\$LD_LIBRARY_PATH" > /tmp/curlftp_env
+		fi
+	done
+fi
+
+if check_recovery; then
+	log_info "Modem needs recovery."
+	gRecovery=1
+elif check_modem; then
+	log_info "Modem on board supports upgrade."
+else
+	log_info "No valid modem found"
+	update_status "upgrade failure"
+	exit 1
+fi
+
+if [ "$gMode" = "0" ] || [ "$gMode" = "1" ]; then
+	process_local_upgrade
+else
+	log_info "unsupport mode $gMode"
+	update_status "upgrade failure"
+	exit 1
+fi
+
+exit 0

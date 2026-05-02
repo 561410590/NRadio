@@ -1,0 +1,12 @@
+Package: proto-wwan
+Version: 2022-11-14-1
+Depends: libc
+Source: package/nradio/utils/proto-wwan
+SourceName: proto-wwan
+License: GPL-2.0
+Section: net
+SourceDateEpoch: 1775741501
+Maintainer: John Crispin <john@phrozen.org>
+Architecture: aarch64_cortex-a53
+Installed-Size: 15324
+Description:  Generic Nradio cellular proto wwan handler

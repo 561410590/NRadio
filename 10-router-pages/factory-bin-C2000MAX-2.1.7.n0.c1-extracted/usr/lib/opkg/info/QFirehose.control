@@ -1,0 +1,10 @@
+Package: QFirehose
+Version: 1.0-20230827
+Depends: libc
+Source: package/nradio/quectel/QFirehose
+SourceName: QFirehose
+Section: nradiowifi
+SourceDateEpoch: 1682306694
+Architecture: aarch64_cortex-a53
+Installed-Size: 40064
+Description:  Quectel QFirehose Linux

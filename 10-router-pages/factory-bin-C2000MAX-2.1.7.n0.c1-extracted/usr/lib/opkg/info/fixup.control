@@ -1,0 +1,10 @@
+Package: fixup
+Version: 1.0-20180130
+Depends: libc
+Source: package/nradio/services/fixup
+SourceName: fixup
+Section: nradiowifi
+SourceDateEpoch: 1517485358
+Architecture: all
+Installed-Size: 299
+Description:  Service help to fixup config, run only once after upgrade

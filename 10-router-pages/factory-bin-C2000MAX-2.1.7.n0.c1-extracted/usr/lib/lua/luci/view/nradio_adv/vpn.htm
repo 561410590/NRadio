@@ -1,0 +1,49 @@
+<fieldset class="cbi-section" id="cbi-wan-status">
+	<div class="cbi-section-node table-box form-box full-width">
+		<table class="cbi-section-table">
+			<thead>
+				<tr class="cbi-section-table-titles">
+					<th class="cbi-section-table-cell"></th>
+					<th class="cbi-section-table-cell"><%:Address%></th>
+					<th class="cbi-section-table-cell"><%:Gateway%></th>
+					<th class="cbi-section-table-cell"><%:DNS%></th>
+					<th class="cbi-section-table-cell"><%:Uptime%></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="cbi-section-table-row">
+					<td id="cbi-wan-status-up"></td>
+					<td id="cbi-wan-status-ipaddr"></td>
+					<td id="cbi-wan-status-gwaddr"></td>
+					<td id="cbi-wan-status-dns"></td>
+					<td id="cbi-wan-status-uptime"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<br>
+</fieldset>
+<script type="text/javascript">//<![CDATA[
+$(document).ready(function() {
+	XHR.poll(5, '<%=url('admin/network/iface_status', 'vpn')%>', null,
+		function(x, ifc) {
+			if (ifc && (net = ifc[0])) {
+				if (net.is_up) {
+					$('#cbi-wan-status-up').html('<i class="far fa-link"></i>');
+					if (net.ipaddrs && net.ipaddrs.length) {
+						$('#cbi-wan-status-ipaddr').text(net.ipaddrs[0]);
+					}
+					$('#cbi-wan-status-gwaddr').text(net.gwaddr);
+					if (net.dnsaddrs && net.dnsaddrs.length) {
+						$('#cbi-wan-status-dns').text(net.dnsaddrs.join('/'));
+					}
+					$('#cbi-wan-status-uptime').text(uptime2dhms(net.uptime));
+				} else {
+					$('#cbi-wan-status tbody td').text('');
+					$('#cbi-wan-status-up').html('<i class="far fa-unlink"></i>');
+				}
+			}
+		}
+	);
+});
+//]]></script>

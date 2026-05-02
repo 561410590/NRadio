@@ -1,0 +1,9 @@
+config fwdd config
+        option enabled          '1'
+        option log_level	'1'
+        list   source_iface 	'eth0'
+        list   source_iface 	'lan0'
+        list   source_iface 	'lan1'
+        list   source_iface 	'lan2'
+        list   source_iface 	'lan3'
+        option target_band	'5G'

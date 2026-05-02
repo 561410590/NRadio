@@ -1,0 +1,8 @@
+{
+	"desc":"Quectel EM060K",
+	"vendor":"quectel",
+	"cmdset":2,
+	"type":"qmi_q",
+	"control": "2",
+	"alias":"nophy"
+}

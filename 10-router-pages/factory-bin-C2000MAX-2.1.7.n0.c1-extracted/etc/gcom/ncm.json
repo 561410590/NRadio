@@ -1,0 +1,334 @@
+{
+	"cmcc": {
+		"initialize": [
+			"AT+CFUN=1"
+		],
+		"configure": [
+			"AT+CGDCONT=${profile},\\\"${pdptype}\\\"${apn:+,\\\"$apn\\\"}",
+			"AT+CREG=2",
+			"AT+CEREG=2",
+			"AT+COPS=3,2"
+		],
+		"connect": "AT",
+		"disconnect": "AT+CFUN=0"
+	},
+	"quectel": {
+		"initialize": [
+			"AT",
+			"AT+QCFG=\\\"usbnet\\\",3",
+			"AT+QCFG=\\\"nat\\\",1"
+		],
+		"connect": "AT+QNETDEVCTL=1,1",
+		"disconnect": "AT+QNETDEVCTL=0,1"
+	},
+	"quectel_open": {
+		"initialize": [
+			"AT",
+			"ATE1"
+		],
+		"connect": "AT+QNETDEVCTL=${profile},3,1",
+		"disconnect": "ATE1"
+	},
+	"quectel_eth": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2",
+			"AT+QCFG=\\\"usbnet\\\",1",
+			"AT+QCFG=\\\"nat\\\",0",
+			"AT+QCFG=\\\"ethernet\\\",1"
+		],
+		"connect": "AT+QNETDEVCTL=${profile},1,1",
+		"disconnect": "AT+QNETDEVCTL=${profile},0,1"
+	},
+	"quectel_qualcomm": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2"
+		],
+		"connect": "AT+QMAP=\\\"connect\\\",0,1",
+		"disconnect": "AT+QMAP=\\\"connect\\\",0,0"
+	},
+	"quectel_qualcomm_odu": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2"
+		],
+		"connect": "AT+QMAP=\\\"connect\\\",0,1",
+		"disconnect": "AT+QMAP=\\\"connect\\\",0,0"
+	},
+	"quectel_odu": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2",
+			"AT+QCFG=\\\"usbnet\\\",1",
+			"AT+QCFG=\\\"ethernet\\\",1"
+		],
+		"connect": "AT+QNETDEVCTL=${profile},1,1",
+		"disconnect": "AT+QNETDEVCTL=${profile},0,1"
+	},
+	"quectel_nophy": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2",
+			"AT+QCFG=\\\"usbnet\\\",1",
+			"AT+QCFG=\\\"nat\\\",0",
+			"AT+QCFG=\\\"ethernet\\\",0"
+		],
+		"connect": "AT+QNETDEVCTL=${profile},1,1",
+		"disconnect": "AT+QNETDEVCTL=${profile},0,1"
+	},
+	"meig_odu": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"meig_eth": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"meig": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"meig_qualcomm": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"fibocom_qualcomm_odu": {
+		"initialize": [
+			"AT",
+			"ATE1"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"fibocom_odu": {
+		"initialize": [
+			"AT",
+			"ATE1"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"fibocom_eth": {
+		"initialize": [
+			"AT",
+			"ATE1"
+		],
+		"connect": "AT+GTRNDIS=1,${profile}",
+		"disconnect": "AT+GTRNDIS=0,${profile}"
+	},
+	"fibocom": {
+		"initialize": [
+			"AT",
+			"ATE1"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"fibocom_qualcomm": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+CEREG=2",
+			"AT+C5GREG=2"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"simcom": {
+		"initialize": [
+			"AT",
+			"AT+DIALMODE=0",
+			"AT+CGDCONT=${profile},\\\"${pdptype}\\\"${apn:+,\\\"$apn\\\"}"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"ucloudlink": {
+		"initialize": [
+			"AT",
+			"ATE1",
+			"AT+COPS=3,2"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"huawei": {
+		"initialize": [
+			"AT",
+			"ATQ0",
+			"ATV1",
+			"ATE1",
+			"ATS0=0"
+		],
+		"modes": {
+			"preferlte": "AT^SYSCFGEX=\\\"030201\\\",3fffffff,2,4,7fffffffffffffff,,",
+			"preferumts": "AT^SYSCFGEX=\\\"0201\\\",3fffffff,2,4,7fffffffffffffff,,",
+			"lte": "AT^SYSCFGEX=\\\"03\\\",3fffffff,2,4,7fffffffffffffff,,",
+			"umts": "AT^SYSCFGEX=\\\"02\\\",3fffffff,2,4,7fffffffffffffff,,",
+			"gsm": "AT^SYSCFGEX=\\\"01\\\",3fffffff,2,4,7fffffffffffffff,,",
+			"auto": "AT^SYSCFGEX=\\\"00\\\",3fffffff,2,4,7fffffffffffffff,,"
+		},
+		"connect": "AT^NDISDUP=${profile},1${apn:+,\\\"$apn\\\"}${username:+,\\\"$username\\\"}${password:+,\\\"$password\\\"}${auth:+,$auth}",
+		"disconnect": "AT^NDISDUP=${profile},0"
+	},
+	"tdtech": {
+		"initialize": [
+			"AT",
+			"ATQ0",
+			"ATV1",
+			"ATE1",
+			"ATS0=0"
+		],
+		"connect": "AT^NDISDUP=2,1${apn:+,\\\"$apn\\\"}${username:+,\\\"$username\\\"}${password:+,\\\"$password\\\"}${auth:+,$auth}",
+		"disconnect": "AT^NDISDUP=2,0"
+	},
+	"tdtech_redcap": {
+		"initialize": [
+			"AT",
+			"ATQ0",
+			"ATV1",
+			"ATE1",
+			"ATS0=0"
+		],
+		"connect": "AT^NDISDUP=1,1${apn:+,\\\"$apn\\\"}${username:+,\\\"$username\\\"}${password:+,\\\"$password\\\"}${auth:+,$auth}",
+		"disconnect": "AT^NDISDUP=1,0"
+	},
+	"tdtech_mt5700": {
+		"initialize": [
+			"ATQ0",
+			"ATV1",
+			"ATE1",
+			"ATS0=0"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"tdtech_mt5700_nophy": {
+		"initialize": [
+			"ATQ0",
+			"ATV1",
+			"ATE1",
+			"ATS0=0"
+		],
+		"connect": "AT^NDISDUP=1,1",
+		"disconnect": "AT^NDISDUP=1,0"
+	},
+	"tdtech_mt5700_odu": {
+		"initialize": [
+			"ATQ0",
+			"ATV1",
+			"ATE1",
+			"ATS0=0"
+		],
+		"connect": "AT",
+		"disconnect": "AT"
+	},
+	"tdtech_eth": {
+		"initialize": [
+			"AT",
+			"ATQ0",
+			"ATV1",
+			"ATE1",
+			"ATS0=0"
+		],
+		"connect": "AT^NDISDUN=\"eth0\",1,2",
+		"disconnect": "AT^NDISDUN=\"eth0\",0,2"
+	},
+	"samsung": {
+		"initialize": [
+			"AT",
+			"AT+CGREG=2",
+			"AT+CFUN=5",
+			"AT+MODESELECT=3",
+			"AT+CGDCONT=${profile},\\\"${pdptype}\\\"${apn:+,\\\"$apn\\\"}"
+		],
+		"modes": {
+			"umts": "AT+CHANGEALLPATH=1"
+		},
+		"connect": "AT+CGATT=1",
+		"disconnect": "AT+CGATT=0"
+	},
+	"sierra": {
+		"initialize": [
+			"AT+CFUN=1",
+			"AT+CGDCONT=${profile},\\\"${pdptype}\\\"${apn:+,\\\"$apn\\\"}",
+			"AT$QCPDPP=${profile},${auth:-0}${password:+,\\\"$password\\\"}${username:+,\\\"$username\\\"}"
+		],
+		"modes": {
+			"preferlte": "AT!SELRAT=07",
+			"preferumts": "AT!SELRAT=05",
+			"lte": "AT!SELRAT=06",
+			"umts": "AT!SELRAT=01",
+			"gsm": "AT!SELRAT=02",
+			"auto": "AT!SELRAT=00"
+		},
+		"connect": "AT!SCACT=1,${profile}",
+		"disconnect": "AT!SCACT=0,${profile}"
+	},
+	"sony": {
+		"initialize": [
+			"AT+CFUN=1",
+			"AT+CGDCONT=${profile},\\\"${pdptype}\\\"${apn:+,\\\"$apn\\\"}",
+			"AT*EIAAUW=${profile},1,\\\"${username}\\\",\\\"${password}\\\",${auth:-00111}"
+		],
+		"modes": {
+			"umts": "AT+CFUN=6",
+			"gsm": "AT+CFUN=5"
+		},
+		"connect": "AT*ENAP=1,${profile}",
+		"disconnect": "AT*ENAP=0"
+	},
+	"mtk1": {
+		"initialize": [
+			"AT+CFUN=1"
+		],
+		"configure": [
+			"AT+CGDCONT=${profile},\\\"${pdptype}\\\",\\\"${apn}\\\",0,0"
+		],
+		"connect": "AT+CGACT=1,${profile}",
+		"finalize": "AT+CGDATA=\\\"M-MBIM\\\",${profile},1",
+		"disconnect": "AT+CGACT=0,${profile}"
+	},
+	"spreadtrum": {
+		"initialize": [
+			"AT+CFUN=1"
+		],
+		"connect": "AT",
+		"disconnect": "AT+CFUN=0",
+	}
+}

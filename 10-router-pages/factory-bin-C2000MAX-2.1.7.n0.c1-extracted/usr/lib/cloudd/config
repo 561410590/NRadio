@@ -1,0 +1,17 @@
+local cloudd = require "cloudd.cloudd"
+local cjson = require "cjson"
+local c_api = require "cloudd.api"
+
+function cloudd_main(did, sid, topic, payload, proto, reply)
+	local p_data = cjson.decode(payload)
+
+	if reply == 1 then
+		return
+	end
+
+	c_api.cloudd_apply_config_safe(p_data)
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

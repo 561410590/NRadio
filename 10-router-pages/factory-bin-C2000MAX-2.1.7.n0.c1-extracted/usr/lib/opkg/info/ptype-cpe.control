@@ -1,0 +1,10 @@
+Package: ptype-cpe
+Version: 1.3-20240513
+Depends: libc, pkg-app-tools, pkg-full, system_power, rsyslog, pkg-ttl, pkg-ipv6, pkg-ui-new, pkg-usb-all, uhttpd, ptype
+Source: package/nradio/base/ptype
+SourceName: ptype-cpe
+Section: nradiowifi
+SourceDateEpoch: 1776074034
+Architecture: aarch64_cortex-a53
+Installed-Size: 180
+Description:  cpe mode product type

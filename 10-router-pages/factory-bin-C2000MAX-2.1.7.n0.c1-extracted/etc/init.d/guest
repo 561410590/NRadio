@@ -1,0 +1,11 @@
+#!/bin/ash /etc/rc.common
+
+START=99
+
+USE_PROCD=1
+
+readonly GUEST_UTILS="/usr/sbin/guest.lua"
+
+start_service() {
+	/usr/bin/lua $GUEST_UTILS
+}

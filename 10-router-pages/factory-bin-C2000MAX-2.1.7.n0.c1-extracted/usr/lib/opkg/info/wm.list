@@ -1,0 +1,4 @@
+/usr/sbin/wm
+/etc/init.d/wm
+/etc/config/wm
+/usr/lib/lua/wm/update_apcli

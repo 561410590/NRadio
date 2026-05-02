@@ -1,0 +1,9 @@
+#!/bin/sh
+
+_cfg="/etc/crontabs/root"
+_txt="/usr/sbin/logrotate /etc/logrotate.conf"
+
+if ! grep -q "$_txt" "$_cfg"; then
+	echo "25 */3 * * *	$_txt" | tee -a "$_cfg"
+	crontab "$_cfg"
+fi

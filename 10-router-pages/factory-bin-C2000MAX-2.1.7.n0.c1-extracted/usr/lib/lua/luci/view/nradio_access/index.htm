@@ -1,0 +1,479 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%+header%>
+<style>
+.access-margin-right-btn{
+    min-width: 70px;
+    float: right;
+    margin-right: 180px;
+}
+.access-margin-right-btn1{
+    margin-right: -180px;
+}
+
+
+</style>
+<div class="cbi-map main-box">
+	<h2 name="content"><%:AccessTile%></h2>
+	<form method="post" name="cbi" >
+		<fieldset class="cbi-section">	
+		<div class="cbi-section-node">
+			<div class="cbi-value" data-index="9">
+				<label class="cbi-value-title" ><%:AccessCtl%></label>
+				<div class="cbi-value-field">
+					<div class="checkbox">
+						<input type="hidden" value="0" name="cbi.cbe.access_ctl.config.disabled">
+						<input class="cbi-input-checkbox" data-update="click change" id="config_disabled" name="cbid.access_ctl.disabled" type="checkbox" onclick="disable_ctl(this);" value="1" />
+						<label for="config_disabled" class="switch"></label>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="cbi-section-node" id="cbi-network-lan">
+			<div class="cbi-value">
+				<label class="cbi-value-title" for="cbid.network.lan.ipaddr"><%:AccessMode%></label>
+				<div class="cbi-value-field">				
+					<label >
+						<input type="radio" name="optionsRadios" onclick="show_radio_info(this,change_radio)" value="0">
+						<label class="special">							
+						</label>
+						<%:AccessBlack%>
+						<br>
+					</label>
+					<label>
+						<input type="radio" name="optionsRadios" onclick="show_radio_info(this,change_radio)" value="1">
+						<label class="special">
+							
+						</label>
+						<%:AccessWhite%>
+					</label>
+					<div class="cbi-value-description description_help">
+					</div>
+				</div>
+			</div>	
+		</div>
+	</fieldset>
+		
+		<fieldset class="cbi-section">
+		<div class="cbi-section-node border-bottom">
+			<div class="cbi-value" data-index="9" >
+				<label class="cbi-value-title width_auto"></label>
+
+				<div class="cbi-value-field right_btn btn_add_box click_pointer">
+					<input class="cbi-button cbi-button-apply hidden-xs" type="button" value="<%:Add%>">
+					<i class="visible-xs-block far fa-nradio-add fa-2x icon_color" ></i>
+				</div>
+			</div>
+		</div>
+		</fieldset>
+		<div id="blacklist_box">
+			<div class="form-box full-width hidden-xs">
+				<table class="line text-center no_paddingLeft">
+					<thead>
+						<tr>
+							<th class="text-left" style="width: 40%"><%:AccessNO%></th>
+							<th style="width: 50%"><%:AccessAddress%></th>
+							<th style="width: 10%"><%:Operation%></th>
+						</tr>
+					</thead>
+					<tbody class="address_list">
+					</tbody>
+				</table>
+			</div>
+			<div class="address_list" data-terminal="mobile"></div>
+		</div>
+
+		<div id="whitelist_box">
+			<div class="form-box full-width hidden-xs">
+				<table class="line text-center no_paddingLeft">
+					<thead>
+						<tr>
+							<th class="text-left" style="width: 40%"><%:AccessNO%></th>
+							<th style="width: 50%"><%:AccessAddress%></th>
+							<th style="width: 10%"><%:Operation%></th>
+						</tr>
+					</thead>
+					<tbody class="address_list">
+					</tbody>
+				</table>
+			</div>
+			<div class="address_list" data-terminal="mobile"></div>
+		</div>
+	</form>
+</div>
+
+<div class="cbi-map add-box visible-xs-block hide">
+</div>
+
+<script language="javascript">
+<%
+	local util = require "luci.util"
+	local first_data = {result={}}
+	first_data.result = access_list()
+	local first_data_buffer = util.serialize_json(first_data,nil)
+%>
+	var accessClientTableRow = ''+
+		'<tr>'+
+		'<td style="width: 40%">{{id}}</td>'+
+		'<td style="width: 50%">{{address}}</td>'+
+		'<td style="width: 10%">{{opt}}</td>'+
+		'</tr>';
+	var accessClientTableMobileRow = ''+
+	'<div class="panel panel-info visible-xs-block hide">'+
+		'<div class="panel-heading">'+
+		'	<div class="row">'+
+		'		<div class="col-sm-6 col-xs-6 text-left">'+
+		'			<span>{{id}}</span>'+
+		'		</div>'+
+		'		<div class="col-sm-6 col-xs-6 text-right">'+
+		'			{{opt}}'+
+		'		</div>'+
+		'	</div>'+
+		'</div>'+
+		'<div class="panel-body info-box">'+
+		'	<div class="row">'+
+		'		<div class="col-xs-12 text-left">'+
+		'			<div class="row">'+
+		'				<div class="col-sm-6 col-xs-6 text-left ">'+
+		'					{{address_label}}'+
+		'				</div>'+
+		'				<div class="col-sm-6 col-xs-6 text-right">'+
+		'					<span class="note_info">{{address}}</span>'+
+		'				</div>'+
+		'			</div>'+
+		'		</div>'+
+		'	</div>'+
+		'</div>'+
+		'</div>';
+
+	var loading_save_htm =circling_htm;
+	loading_save_htm +='<p class="cbi-value-title width_auto text-center adapt_label_padding"><%:Waiting for changes to be applied...%></p>';
+
+	function once_refresh(){
+		$.getJSON("<%=controller%>nradioadv/network/access/list", function(refresh_data){
+			load_data(refresh_data);
+		})
+	}
+	function change_radio(obj){
+		var data = {};
+		data['token']='<%=token%>';
+		data['mode']= $(obj).val();
+
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: loading_save_htm,
+			closeByBackdrop: false,
+			onshown: function(dialog) {
+				(new XHR()).post('<%=controller%>nradioadv/network/access/setmode', data, function(){
+					once_refresh();
+					dialog.close();
+				});
+			}
+		});
+	}
+
+	function check_radio(mod_val){
+		if(mod_val == "1"){
+			$("#whitelist_box").removeClass("hide");
+			$("#blacklist_box").removeClass("hide").addClass("hide");
+			$(".description_help").html("<%:AccessWhiteNote%>");
+						
+		}
+		else{
+			$("#blacklist_box").removeClass("hide");
+			$("#whitelist_box").removeClass("hide").addClass("hide");
+			$(".description_help").html("<%:AccessBlackNote%>");
+		}
+	}
+
+	function load_data(data){
+		var htm_white="";
+		var htm_black="";
+		var mobile_htm_black="";
+		var mobile_htm_white="";
+
+		if(data.result){	
+			$.each(data.result.whitelist, function(i, db){
+				if(!db || !db.length)
+					return;
+				var mode = "1";
+				htm_white+=accessClientTableRow.compose({
+					id:i+1,
+					address:db,
+					opt: '<a class="normol_color only_color click_pointer" onclick="del_dev(\''+db+'\',\''+mode+'\')"><i class="far fa-nradio-del fa-fw fa-2x" ></i> </a>',
+				});
+				mobile_htm_white+=accessClientTableMobileRow.compose({
+					id:i+1,
+					address:db,
+					address_label:"<%:AccessAddress%>",
+					opt: '<a class="normol_color only_color click_pointer" onclick="del_dev(\''+db+'\',\''+mode+'\')"><i class="far fa-nradio-del fa-fw fa-2x" ></i> </a>',
+				});
+			});
+			$.each(data.result.blacklist, function(i, db){
+				if(!db || !db.length)
+					return;
+				var mode = "0";
+				htm_black+=accessClientTableRow.compose({
+					id:i+1,
+					address:db,
+					opt: '<a class="normol_color only_color click_pointer" onclick="del_dev(\''+db+'\',\''+mode+'\')"><i class="far fa-nradio-del fa-fw fa-2x" ></i> </a>',
+				});
+				mobile_htm_black+=accessClientTableMobileRow.compose({
+					id:i+1,
+					address:db,
+					address_label:"<%:AccessAddress%>",
+					opt: '<a class="normol_color only_color click_pointer" onclick="del_dev(\''+db+'\',\''+mode+'\')"><i class="far fa-nradio-del fa-fw fa-2x" ></i> </a>',
+				});
+			});
+
+			$("#blacklist_box .address_list").each(function(){		
+				var type_s = $(this).data("terminal");
+				if(type_s == "mobile"){
+					$(this).empty().append(mobile_htm_black);
+				}
+				else{
+					$(this).empty().append(htm_black);
+				}
+			});
+			$("#whitelist_box .address_list").each(function(){		
+				var type_s = $(this).data("terminal");
+				if(type_s == "mobile"){
+					$(this).empty().append(mobile_htm_white);
+				}
+				else{
+					$(this).empty().append(htm_white);
+				}
+			});
+
+			if(data.result.disabled == "1"){
+				$("#config_disabled").prop("checked",false);
+			}
+			else{
+				$("#config_disabled").prop("checked",true);
+			}
+			$(":radio[name=optionsRadios][value=" + data.result.mode + "]").attr("checked","true");
+			check_radio(data.result.mode);
+		}
+	}
+
+	function disable_ctl(obj){
+		var data = {};
+		var chval = $("#config_disabled").prop("checked");
+		data['token']='<%=token%>';
+		if(chval)
+			data['disabled']="0";
+		else
+			data['disabled']="1";
+
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: loading_save_htm,
+			closeByBackdrop: false,
+			onshown: function(dialog) {
+				(new XHR()).post('<%=controller%>nradioadv/network/access/enabled', data, function(){
+					once_refresh();
+					dialog.close();
+				});
+			}
+		});
+	}
+
+	$('.btn_add_box').click(function(){
+		var htm='<div class="main" style="max-height:300px">';
+		htm+='<div class="main-content main-content-sub" >';
+		htm+='<div class="cbi-map">';
+		htm+='<h2 name="content"  class="content-sub"><span><%:Add%></span></h2>';		
+		htm+='<form method="post" name="cbi" >';	
+		htm+='	<fieldset class="cbi-section">';
+		htm+='		<div class="cbi-section-node">';
+		htm+='		<div class="cbi-value">';
+		htm+='			<label class="cbi-value-title" for="cbid.network.lan.ipaddr"><%:AccessMode%></label>';
+		htm+='			<div class="cbi-value-field " style="text-align:left;">';
+		htm+='				<label >';
+		htm+='					<input type="radio" name="pcoptionsRadios" checked value="0">';	
+		htm+='					<label class="special">';		
+		htm+='					</label>';
+		htm+='				</label><%:AccessBlack%>';
+		htm+='				<label>';
+		htm+='					<input type="radio" name="pcoptionsRadios" value="1">';	
+		htm+='					<label class="special">';		
+		htm+='					</label><%:AccessWhite%>';
+		htm+='				</label>';
+		htm+='			</div>';
+		htm+='		</div>';
+		htm+='		<div class="cbi-value" id="cbi-network-lan-ipaddr" data-index="1" data-depends="[]">';
+		htm+='			<label class="cbi-value-title" for="cbid.network.lan.ipaddr"><%:AccessAddress%></label>';
+		htm+='			<div class="cbi-value-field">';
+		htm+='			<input data-update="change" maxlength="64" onblur="check_maddress_input(this)" id="pcaddress" name="pcaddress" type="text" class="cbi-input-text" value=""  />';
+		htm+='			</div>';
+		htm+='		</div>';
+		htm+='		</div>';
+		htm+='	</fieldset>';
+		htm+='</form>';
+		htm+='</div>';
+		htm+='</div>';
+		htm+='</div>';
+		var mobile_htm='<form method="post" name="cbi"  enctype="multipart/form-data">' +
+			'<div class="cbi-map" id="cbi-network">'+
+			'    <h2 name="content"><a class="icon_color click_pointer" onclick="open_box()"> <%:AccessTile%></a> >&nbsp;<span class="normol_color"><%:Add%></span></h2>'+
+			'    <fieldset class="cbi-section">'+
+			'    <div class="cbi-section-node" id="cbi-network-lan">'+
+			'	 <div class="cbi-value">'+
+		 	'		<label class="cbi-value-title" for="cbid.network.lan.ipaddr"><%:AccessMode%></label>'+
+			'		<div class="cbi-value-field">'+
+			'			<div style="display:inline-block">'+
+			'				<input type="radio" name="moptionsRadios" checked value="0">'+	
+			'				<label class="special">'+
+			
+			'				</label><%:AccessBlack%>'+
+			'			</div>'+
+			'			<div style="display:inline-block">'+
+			'				<input type="radio" name="moptionsRadios" value="1">'+
+			'				<label class="special">'+
+			
+			'				</label><%:AccessWhite%>'+
+			'			</div>'+
+			'		</div>'+
+			'	 </div>'+
+			'		<div class="cbi-value" id="cbi-network-lan-ipaddr" data-index="1" data-depends="[]">'+
+			'			<label class="cbi-value-title" for="cbid.network.lan.ipaddr"><%:AccessAddress%></label>'+
+			'			<div class="cbi-value-field">'+
+			'			<input data-update="change" maxlength="64" onblur="check_maddress_input(this)" id="maddress" name="maddress" type="text" class="cbi-input-text" value=""/>'+
+			'			</div>'+
+			'		</div>'+
+			'    </div>'+
+			'    </fieldset>'+
+			'</div></form>';
+
+		if (is_mobile_device()){
+			$(".add-box").removeClass("hide").html(mobile_htm);
+			$(".main-box").addClass("hidden-xs");
+			$('.btn_scan').removeClass("disable-btn-color").prop("disabled","");
+			$("#mobile_apply").removeClass("hide");
+			return;
+		}
+		info_box_obj = BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: htm,
+			closeByBackdrop: false,
+			cssClass: 'list-dialog dialog_box',
+			onhide :function() {
+			},
+			buttons: [{
+				label: "<%:Cancel%>",
+				cssClass: 'recommand-color access-margin-right-btn',
+				action: function(dialog) {
+					dialog.close();
+				}
+			},{
+				label: "<%:Confirm%>",
+				cssClass: 'btn-nradio-apply msg_box_btn access-margin-right-btn1',
+				action: function(dialog) {
+					
+					var address = $("#pcaddress").val();
+					var mode = $(":radio[name=pcoptionsRadios]:checked").val();
+					if(check_maddress_input( $("#pcaddress"))){
+						dialog.close();
+						add_address(address,mode);
+					}
+				}
+			}]
+		});
+	});
+
+	function check_maddress_input(obj){
+		var address_val = $(obj).val();
+		var ip=/^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){6}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^::([\da-fA-F]{1,4}:){0,4}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:):([\da-fA-F]{1,4}:){0,3}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){2}:([\da-fA-F]{1,4}:){0,2}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){3}:([\da-fA-F]{1,4}:){0,1}((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){4}:((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$|^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$|^:((:[\da-fA-F]{1,4}){1,6}|:)$|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)$|^([\da-fA-F]{1,4}:){2}((:[\da-fA-F]{1,4}){1,4}|:)$|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)$|^([\da-fA-F]{1,4}:){4}((:[\da-fA-F]{1,4}){1,2}|:)$|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?$|^([\da-fA-F]{1,4}:){6}:$/;
+		var domain=/^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/;
+		var mac=/^([0-9a-fA-F][02468aceACE])(([:]([0-9a-fA-F]{2})){5})$/;
+		if(!address_val || !address_val.length)
+		{
+			$(obj).css("border-color","red");
+			return false;
+		}
+		if(!ip.test(address_val) && !domain.test(address_val) && !mac.test(address_val)){
+			$(obj).css("border-color","red");
+			return false;
+		}
+		$(obj).css("border-color","#ccc");
+		return true;
+	}
+
+	function add_maddress(){
+		var address = $("#maddress").val();
+		var mode = $(":radio[name=moptionsRadios]:checked").val();
+		if(check_maddress_input( $("#maddress")))
+			add_address(address,mode);		
+	}
+	function open_box(kind){
+		once_refresh();
+		if (is_mobile_device()){
+			$(".add-box").empty().addClass("hide");
+			$(".main-box").removeClass("hidden-xs");
+			$("#mobile_apply").addClass("hide");			
+		}
+		else{
+			info_box_obj.close();
+			
+		}
+	}
+
+	function add_address(address,mode){
+		var data={};
+		data['token']='<%=token%>';
+		data['address']=address;
+		data['mode']=mode;
+		(new XHR()).post('<%=controller%>nradioadv/network/access/add', data, function(xhr){
+			var data_res = null;
+			var code = -1;
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					data_res = eval('(' + xhr.responseText + ')');
+					code = data_res.result.code;
+				}
+				catch(e) {
+					data_res = null;
+				}
+			}
+			open_box();
+		});
+	}
+
+	function del_dev(address,mode){
+		var data={};
+		data['address']=address;
+		data['mode']=mode;
+		data['token']='<%=token%>';
+		var msg = {};
+		msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:AccessDelNodeNote%>';
+		msg.confirm = "<%:Confirm%>";
+		msg.cancel = "<%:Cancel%>";
+		msg.callback = function(){
+			(new XHR()).post('<%=controller%>nradioadv/network/access/del', data, function(){
+				once_refresh();
+			});
+		}
+		confirm_box(msg);
+	}
+
+	$(document).ready(function(){
+		nradio_backend_flash();
+		var first_data=<%=first_data_buffer%>;
+		load_data(first_data);		
+		$("#mobile_apply").click(function(){
+			add_maddress();
+		});
+	});
+	$(".main-content").resize(function(){
+		vertical_margin($(".modal-dialog"));
+	});
+
+
+</script>
+<%+footer%>

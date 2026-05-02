@@ -1,0 +1,144 @@
+
+<script type="text/javascript">//<![CDATA[
+	// $("#cbi-cpecfg-config-cur_id>.cbi-value-field").html('&nbsp;');
+	var model = "<%=model%>";
+
+	var $field = $("#cbi-cpecfg-config-cur_status>.cbi-value-field");
+	var $desc = $field.find(".cbi-value-description.description_help.hidden-xs");
+	globalRequestSIM = 1;
+	$desc.hide();
+	$desc.before('<label class="sim_detail_info"><%:SIMStatusCheck%></label>');
+
+	var max = <%=sim_max%>;
+	for(var i=0;i<max;i++){
+		var index = (i+1);
+		var clean_smds_flow = '<span class="click_pointer icon_color" onclick="del_mon_flow(this,'+index+')"><%:FlowReset%></span>';
+		var clean_total_flow = '<span class="click_pointer icon_color"  onclick="del_total_flow(this,'+index+')"><%:FlowReset%></span>';
+		var smds_data = $("#cbid\\.cpecfg\\.config\\.threshold_smds"+index).val();
+
+		if(!smds_data)
+			smds_data=0;
+		$("#cbi-cpecfg-config-threshold_smds"+index+">.cbi-value-field").addClass("sub_label_color").html(parseFloat(smds_data).toFixed(2) + "  GB &nbsp;&nbsp;&nbsp;&nbsp;"+clean_smds_flow);
+
+		var cds_data = $("#cbid\\.cpecfg\\.config\\.threshold_cds"+index).addClass("sub_label_color").val();
+		if(!cds_data)
+			cds_data=0;
+		$("#cbi-cpecfg-config-threshold_cds"+index+">.cbi-value-field").html(parseFloat(cds_data).toFixed(2)+ "  GB &nbsp;&nbsp;&nbsp;&nbsp;"+clean_total_flow);
+	}
+
+	function clean_flow(data){
+		(new XHR()).post('<%=controller%>nradio/cellular/cpedata/clean', data, function(xhr){
+			location.reload();
+		});		
+	}
+	function del_mon_flow(obj,index){
+		var msg = {};
+		var data={};
+		data['token']='<%=token%>';
+		data['channel']="<%=model%>";
+		data['cur']=index;
+		data['type']="0";
+
+		msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:Are you sure to reset the Monthly Data Usage?%>';
+		msg.confirm = "<%:Confirm%>";
+		msg.cancel = "<%:Cancel%>";
+		msg.onhide = function(){
+		},
+		msg.cancel_callback = function(){
+		},
+		msg.callback = function(){
+			$(obj).prev("input").val(0);
+			$(obj).prev().prev("span").html(0);
+			clean_flow(data);
+		}
+		confirm_box(msg);
+	}
+	function goto_cellular(menu){
+		window.location="<%=url("nradio/cellular")%>"+"/"+menu+"/model/"+model;
+	}
+	function html_format(str){
+		var temp = "";
+		if(str.length == 0) return "";
+		temp = str.replace(/&amp;/g,"&");
+		temp = temp.replace(/&#60;/g,"<");
+		temp = temp.replace(/&#62;/g,">");
+		temp = temp.replace(/&nbsp;/g," ");
+		temp = temp.replace(/&#39;/g,"\'");
+		temp = temp.replace(/&quot;/g,"\"");
+		return temp;
+	}
+	function del_total_flow(obj,index){
+		var msg = {};
+		var data={};
+		data['token']='<%=token%>';
+		data['channel']="<%=model%>";
+		data['cur']=index;
+		data['type']="1";
+
+		msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:Are you sure to reset the Total Data Usage?%>';
+		msg.confirm = "<%:Confirm%>";
+		msg.cancel = "<%:Cancel%>";
+		msg.onhide = function(){
+		},
+		msg.cancel_callback = function(){
+		},
+		msg.callback = function(){
+			$(obj).prev("input").val(0);
+			$(obj).prev().prev("span").html(0);
+			clean_flow(data);
+		}
+		confirm_box(msg);
+	}
+	function get_sim_status(data_res){
+		if(data_res ){
+			if(data_res.cur){
+				$("#cbi-cpecfg-config-cur_id>.cbi-value-field").html(data_res.cur);
+			}
+			if(data_res.status){
+				var $field_status = $("#cbi-cpecfg-config-cur_status>.cbi-value-field");
+				var $label_status = $field_status.find("label");
+				var $desc_status = $field_status.find(".cbi-value-description.description_help.hidden-xs");
+				if(data_res.register){
+					if(data_res.net){
+						$label_status.removeClass("sim_detail_err").addClass("sim_detail_info").text("<%:SIMStatusNetOK%>");
+						$desc_status.hide();
+					}
+					else{
+						$label_status.removeClass("sim_detail_err").addClass("sim_detail_info").text("<%:SIMStatusOK%>");
+						$desc_status.hide();
+					}							
+				}
+				else{
+					$label_status.removeClass("sim_detail_info").addClass("sim_detail_err").text("<%:SIMStatusFail%>");
+					$desc_status.hide();
+				}
+			}
+			else{
+				var $field_status = $("#cbi-cpecfg-config-cur_status>.cbi-value-field");
+				var $label_status = $field_status.find("label");
+				var $desc_status = $field_status.find(".cbi-value-description.description_help.hidden-xs");
+				if (data_res.pin == 1){
+					var $dail = $('select[id="cbid.cpecfg.config.dail_mode"]');
+					var $initOpt = $dail.find('option[selected]').first();
+					let selectedValue = $initOpt.length ? $initOpt.val() : ($dail.find('option').filter(function(){
+						return this.defaultSelected;
+					}).val() || $dail.find('option').first().val());
+					if (selectedValue == 0){
+						$label_status.removeClass("sim_detail_info").addClass("sim_detail_err").text("<%:SIMStatusPinStatus%>");
+						$desc_status.html(html_format("<%:SIMStatusPinHelp2%>"));
+						$desc_status.show();
+					}
+					else{
+						$label_status.removeClass("sim_detail_info").addClass("sim_detail_err").text("<%:SIMStatusPinStatus%>");
+						$desc_status.html(html_format("<%:SIMStatusPinHelp1%>"));
+						$desc_status.show();
+					}
+				}
+				else{
+					$label_status.removeClass("sim_detail_info").addClass("sim_detail_err").text("<%:SIMStatusError%>");
+					$desc_status.hide();
+				}
+			}
+		}
+	}	
+//]]></script>

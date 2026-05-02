@@ -1,0 +1,9 @@
+{
+	"desc":"SIMCom sim6600",
+	"vendor":"simcom",
+	"type":"cdc_ether",
+	"cloud":"1",
+	"cmdset":"2",
+	"alias":"nophy",
+	"ctlchannel": "cloud"
+}

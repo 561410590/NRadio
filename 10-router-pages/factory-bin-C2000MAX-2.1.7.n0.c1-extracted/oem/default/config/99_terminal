@@ -1,0 +1,162 @@
+#!/bin/ash
+board_name="$(uci -q get oem.board.name)"
+wifiauth="$(bdinfo -g wifiauth)"
+
+if [ "$board_name" == "WT2957" ];then
+    uci -q set luci.main.wifiauth_auto=0
+    uci -q set terminal_trackd.onecyber="token"
+    uci -q set terminal_trackd.onecyber.up_url="https://www.open.onecyber.cn:8128/onecyber/cpe/onelink-proxy/wireless/inner/terminalOnline"
+    uci -q set terminal_trackd.onecyber.down_url="https://www.open.onecyber.cn:8128/onecyber/cpe/onelink-proxy/wireless/inner/terminalOffline"
+    uci -q set terminal_trackd.onecyber.list_url="https://www.open.onecyber.cn:8128/onecyber/cpe/onelink-proxy/wireless/inner/getTerminalList"
+    uci -q set terminal_trackd.onecyber.send_sms="https://www.open.onecyber.cn:8128/onecyber/cpe/onelink-proxy/wireless/inner/sendSms"
+    uci -q set terminal_trackd.onecyber.terminal_auth="https://www.open.onecyber.cn:8128/onecyber/cpe/onelink-proxy/wireless/inner/terminalAuth"
+    uci -q set terminal_trackd.onecyber.auth_strategy="https://www.open.onecyber.cn:8128/onecyber/cpe/onelink-proxy/wireless/inner/getTerminalList"
+    uci -q set terminal_trackd.onecyber.type="2"
+fi
+if [ -f "/usr/sbin/terminal_trackd" -a "$board_name" != "WT2957" ];then
+    #uci -q add_list access_ctl.config.hidelist='wireless.cmonelink.com'
+    if [ "$wifiauth" = "1" ]; then
+        uci -q set luci.main.portal=1
+    else
+        uci -q set luci.main.portal=0
+    fi
+
+    uci -q set terminal_trackd.default.up_url="https://wireless.cmonelink.com/wireless/terminalOnline"
+    uci -q set terminal_trackd.default.down_url="https://wireless.cmonelink.com/wireless/terminalOffline"
+    uci -q set terminal_trackd.default.list_url="https://wireless.cmonelink.com/wireless/getTerminalList"
+    uci -q set terminal_trackd.default.send_sms="https://wireless.cmonelink.com/wireless/sendSms"
+    uci -q set terminal_trackd.default.terminal_auth="https://wireless.cmonelink.com/wireless/terminalAuth"
+    uci -q set terminal_trackd.default.token_url="https://wireless.cmonelink.com/wireless/get/token"
+    uci -q set terminal_trackd.default.auth_strategy="https://wireless.cmonelink.com/wireless/getAuthStrategy"
+
+    uci -q set terminal_trackd.default.ct_up_url="https://cmp-api.ctwing.cn:20164/openapi/v1/device/terminalOnline"
+    uci -q set terminal_trackd.default.ct_down_url="https://cmp-api.ctwing.cn:20164/openapi/v1/device/terminalOffline"
+    uci -q set terminal_trackd.default.ct_list_url="https://cmp-api.ctwing.cn:20164/openapi/v1/device/getTerminalList"
+    uci -q set terminal_trackd.default.ct_send_sms="https://cmp-api.ctwing.cn:20164/openapi/v1/device/sendSms"
+    uci -q set terminal_trackd.default.ct_terminal_auth="https://cmp-api.ctwing.cn:20164/openapi/v1/device/terminalAuth"
+    uci -q set terminal_trackd.default.ct_auth_strategy="https://cmp-api.ctwing.cn:20164/openapi/v1/device/getTerminalList"
+
+    if [ -f "/usr/sbin/mentech" ];then
+        uci -q set luci.main.portal='1'
+        uci -q set terminal_trackd.mentech="token"
+        uci -q set terminal_trackd.mentech.skip_slot="1"
+        uci -q set terminal_trackd.mentech.custom_id="g2bz9ePQMx14NFoeGMz3Cw=="
+        uci -q set terminal_trackd.mentech.custom="http://cme-iot.jd.com/api/dme/device/mobileAuth/wireless/token"
+        uci -q set terminal_trackd.mentech.type="1"
+        uci -q set luci.main.wifiauth_auto=0
+        return
+    elif [ -f "/usr/sbin/report-topspeed" ];then
+        #uci -q set terminal_trackd.topspeed="token"
+        #uci -q set terminal_trackd.topspeed.up_url="http://pool.cloud-m2m.com/api/wireless/terminalOnline"
+        #uci -q set terminal_trackd.topspeed.down_url="http://pool.cloud-m2m.com/api/wireless/terminalOffline"
+        #uci -q set terminal_trackd.topspeed.list_url="http://pool.cloud-m2m.com/api/wireless/getTerminalList"
+        #uci -q set terminal_trackd.topspeed.skip_slot="1"
+        #uci -q set terminal_trackd.topspeed.send_sms="http://pool.cloud-m2m.com/api/wireless/sendSms"
+        #uci -q set terminal_trackd.topspeed.terminal_auth="http://pool.cloud-m2m.com/api/wireless/terminalAuth"
+        #uci -q set terminal_trackd.topspeed.auth_strategy="http://pool.cloud-m2m.com/api/wireless/getTerminalList"
+        #uci -q set terminal_trackd.topspeed.type="2"
+        #uci -q set luci.main.wifiauth_auto=0
+        #uci -q set terminal_trackd.topspeed.out_auth_url="https://wireless.cmonelink.com/wirelessAuthentication/authentication"
+        uci -q set terminal_trackd.topspeednew="token"
+        uci -q set terminal_trackd.topspeednew.appid="MHvrAsYAW3LVhb8kaM2eUvzvjA5Wc/rfMFW2JzCVdos="
+        uci -q set terminal_trackd.topspeednew.password="6vmGTDucccHDWZvnfPrTlg=="
+        uci -q set terminal_trackd.topspeednew.skip_slot="1"
+    elif [ -f "/usr/sbin/report-youmao" ];then
+        uci -q set luci.main.portal='1'
+        uci -q set terminal_trackd.youmao="token"
+        uci -q set terminal_trackd.youmao.custom="http://dss-p.youxinmo.com/site-api/crm/api/v1/auth/params"
+        uci -q set terminal_trackd.youmao.type="1"
+        uci -q set terminal_trackd.youmao.skip_slot="1"
+        uci -q set luci.main.wifiauth_auto=0
+
+        #uci -q set terminal_trackd.ct_youmao="token"
+        #uci -q set terminal_trackd.ct_youmao.custom="http://dss-p.youxinmo.com/site-api/crm/api/v1/auth/secret"
+        #uci -q set terminal_trackd.ct_youmao.type="1"
+        #uci -q set terminal_trackd.ct_youmao.skip_slot="1"
+        #uci -q set terminal_trackd.ct_youmao.mno="ct"
+    elif [ "$board_name" == "WT2966" -o "$board_name" == "WT2967" -o "$board_name" == "WT3016" ];then
+        uci -q set terminal_trackd.miaoyue="token"
+        uci -q set terminal_trackd.miaoyue.custom="https://sapi.musmoon.com/operator/api/v1/cmcc/onelink/get/wireless/token"
+        uci -q set terminal_trackd.miaoyue.type="1"
+        uci -q set terminal_trackd.miaoyue.method="get"
+        uci -q set terminal_trackd.miaoyue.appid="Dm5tofYn8inFXYk9FerXc3jBHBNq/9Oq"
+    else
+        uci -q set terminal_trackd.quectel="token"
+        uci -q set terminal_trackd.quectel.class_type="quectel"
+        uci -q set terminal_trackd.quectel.custom_id="+XjExBZr74JafbvnyUOL95mIXpXu/D1E"
+        uci -q set terminal_trackd.quectel.password="nV2tgo7QWraZiF6V7vw9RA=="
+        uci -q set terminal_trackd.quectel.custom="https://api.quectel.com/openapi/wireless/getToken"
+        uci -q set terminal_trackd.quectel.type="1"
+
+        uci -q set terminal_trackd.henanmobile="token"
+        uci -q set terminal_trackd.henanmobile.appid="lUst8L0zuIY4t+KixkF5vBf1Nx+A7PF0"
+        uci -q set terminal_trackd.henanmobile.password="MMBt56Jrrqwf4vWFgFtR1A=="
+        uci -q set terminal_trackd.dongguanmobile="token"
+        uci -q set terminal_trackd.dongguanmobile.appid="PfriXqcKu3hdoWsIYMIzrZpbXm3bqgn3"
+        uci -q set terminal_trackd.dongguanmobile.password="I42f7enQb2Vgl+ysnef79Q=="
+
+        uci -q set terminal_trackd.yiran="token"
+        uci -q set terminal_trackd.yiran.custom="https://auxiliary.szyczl.cn/v2/auth/token"
+        uci -q set terminal_trackd.yiran.custom_id="lGzp8YxzXrAsR7SCiauLl7ORsgT9tCmhmYhele78PUQ="
+        uci -q set terminal_trackd.yiran.password="boeBhtslwZeGhYENFWPb6VHd931/Et7We5etESCWeRUr78R28CiV8g=="
+        uci -q set terminal_trackd.yiran.type="1"
+        uci -q set terminal_trackd.yiran.method="get"
+
+        #uci -q set terminal_trackd.xinjiang="token"
+        #uci -q set terminal_trackd.xinjiang.custom="https://iot.iyunjun.com/api/v1/operator/one/link/wireless/token/get"
+        #uci -q set terminal_trackd.xinjiang.type="1"
+        #uci -q set terminal_trackd.xinjiang.password="7q+oHAyRDgkxOusRhh5QdJmIXpXu/D1E"
+        #uci -q set terminal_trackd.xinjiang.custom_id="yNP3l/TOjsknHz61vx2l3nCGdI5kL5LZ"
+        #uci -q set terminal_trackd.xinjiang.recheck="1"
+
+        uci -q set terminal_trackd.chensheng="token"
+        uci -q set terminal_trackd.chensheng.custom="http://wlw.ghwlmy.com/wlw/api/getYdTwiceToken"
+        uci -q set terminal_trackd.chensheng.type="1"
+        uci -q set terminal_trackd.chensheng.password="EZf5XpvntGXmzkSWx6w3qpmIXpXu/D1E"
+        uci -q set terminal_trackd.chensheng.custom_id="NpS35Jk2vOg="
+        uci -q set terminal_trackd.chensheng.recheck='1'
+
+        if cat "/tmp/sysinfo/board_name"|grep -q "MT7981" ;then
+            uci -q set terminal_trackd.miaoyue="token"
+            uci -q set terminal_trackd.miaoyue.custom="https://sapi.musmoon.com/operator/api/v1/cmcc/onelink/get/wireless/token"
+            uci -q set terminal_trackd.miaoyue.type="1"
+            uci -q set terminal_trackd.miaoyue.method="get"
+            uci -q set terminal_trackd.miaoyue.appid="Dm5tofYn8inFXYk9FerXc3jBHBNq/9Oq"
+            uci -q set terminal_trackd.jiamuhemobile="token"
+            uci -q set terminal_trackd.jiamuhemobile.class_type="quectel"
+            uci -q set terminal_trackd.jiamuhemobile.custom_id="G96a0xXBnGK6r6eSEokUCJmIXpXu/D1E"
+            uci -q set terminal_trackd.jiamuhemobile.password="++hVFgIk9M2ZiF6V7vw9RA=="
+            uci -q set terminal_trackd.jiamuhemobile.custom="https://api.quectel.com/openapi/wireless/getToken"
+            uci -q set terminal_trackd.jiamuhemobile.type="1"
+            uci -q set terminal_trackd.yunshang="token"
+            uci -q set terminal_trackd.yunshang.custom_id="SnPwIOScXF+U8pcmLa3Ar5mIXpXu/D1E"
+            uci -q set terminal_trackd.yunshang.password="fcx4VkszgnZ9QlXfam446YnEoEOLwkhoH5G792u3n8+ZiF6V7vw9RA=="
+            uci -q set terminal_trackd.yunshang.custom="https://api.cme.zmyiot.com/mobile/wireless/token/v2"
+            uci -q set terminal_trackd.yunshang.type="1"
+            
+            uci -q set terminal_trackd.ronglian="token"
+            uci -q set terminal_trackd.ronglian.up_url="http://wlw.ghwlmy.com/wlw/api/terminalOnline"
+            uci -q set terminal_trackd.ronglian.down_url="http://wlw.ghwlmy.com/wlw/api/terminalOffline"
+            uci -q set terminal_trackd.ronglian.list_url="http://wlw.ghwlmy.com/wlw/api/getTerminalList"
+            uci -q set terminal_trackd.ronglian.send_sms="http://wlw.ghwlmy.com/wlw/api/sendSms"
+            uci -q set terminal_trackd.ronglian.terminal_auth="http://wlw.ghwlmy.com/wlw/api/terminalAuth"
+            uci -q set terminal_trackd.ronglian.auth_strategy="http://wlw.ghwlmy.com/wlw/api/getTerminalList"
+            uci -q set terminal_trackd.ronglian.type="2"
+
+            uci -q set terminal_trackd.haoshubeijing="token"
+            uci -q set terminal_trackd.haoshubeijing.appid="NKegNfd+RXhCPNhY/XLavVYw9+K/2hLG"
+            uci -q set terminal_trackd.haoshubeijing.password="0vpeDcBKE1bq6b2MwLaZGA=="
+            uci -q set terminal_trackd.haoshushandong="token"
+            uci -q set terminal_trackd.haoshushandong.appid="bnqLoZIge0a798MWJKFY7vibosP9pY6O"
+            uci -q set terminal_trackd.haoshushandong.password="mWmJbYjD8EinQdkTM2QenA=="
+        fi
+        #uci -q set terminal_trackd.beiwei="token"
+        #uci -q set terminal_trackd.beiwei.up_url="https://dmp.combmobile.com/mifi-portal/api/reportTerminalOnlineStatus"
+        #uci -q set terminal_trackd.beiwei.down_url="https://dmp.combmobile.com/mifi-portal/api/reportTerminalOnlineStatus"
+        #uci -q set terminal_trackd.beiwei.list_url="https://dmp.combmobile.com/mifi-portal/api/listAuthedTerminal"
+        #uci -q set terminal_trackd.beiwei.send_sms="https://dmp.combmobile.com/mifi-portal/api/sendSms"
+        #uci -q set terminal_trackd.beiwei.terminal_auth="https://dmp.combmobile.com/mifi-portal/api/terminalAuth"
+        #uci -q set terminal_trackd.beiwei.auth_strategy="https://dmp.combmobile.com/mifi-portal/api/listAuthedTerminal"
+        #uci -q set terminal_trackd.beiwei.type="2"
+    fi
+fi

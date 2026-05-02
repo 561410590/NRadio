@@ -1,0 +1,85 @@
+
+<%
+local nr = require "luci.nradio"
+local odm = nr.get_firmware_type()
+%>
+<%+header%>
+	<div class="row clearfix">
+		<div class="col-sm-12 column">
+			<div class="row clearfix">
+				<div class="col-sm-12 column">
+					<div class=" status-icon-padding text-center">
+						<div class="<% if nr.get_firmware_type() ~= "oem" then print "nradio-logo" end%> first-logo-size"></div>
+					</div>
+					<%if odm == "stand" then %>
+					<h4 class="text-center first_title" >
+						<%:QSetupWelcome%>
+					</h4>
+					<%end%>
+				</div>
+			</div>
+			<div id="login-next0" class="row clearfix <%if odm ~= "stand" then print "hide" end%>">
+				<div class="col-sm-12 column">
+					<li id="login-btn" class="first-btn login-first-btn"><%:QSetupFirst%></li>
+					<div class="form-check title-padding-top text-center">
+						<label class="form-check-label ">
+							<input id="click-box" type="checkbox" checked="checked" class="form-check-input" value="">
+						</label>
+						<a id="click-pri-box" class="click_pointer text_white">
+							<%:QSetupPrivacy%>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div id="login-next1" class="row clearfix  <%if odm == "stand" then print "hide" end%>">
+				<div class="col-sm-12 column">
+					<li id="login-next2" class="first-btn login-next-btn"><%:QSetupStart%></li>
+					<li id="ret-btn" class="first-li"><span class="login-ret-btn"><%:QSetupSkip%></span></li>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<iframe id='background_form' name='background_form' style='display: none'>
+	</iframe>
+
+	<script type="text/javascript">
+		$('#click-pri-box').click(function () {
+			location.href = "/cgi-bin/luci/nradio/qsetup/privacy_agreement";
+		});
+		$('#click-box').click(function(){
+			if($(this).prop('checked')){
+				$('#login-btn').removeClass("disable-btn-color");
+				$('#login-btn').bind('click',function(){
+					$('#login-next0').addClass("hide");
+					$('#login-next1').removeClass("hide");
+				});
+			}else{
+				$('#login-btn').addClass("disable-btn-color");
+				$('#login-btn').unbind('click');
+			}
+		});
+
+		$('#login-btn').click(function(){
+			$('#login-next0').addClass("hide");
+			$('#login-next1').removeClass("hide");
+		});
+
+		$('#login-next2').click (function(){
+			location.href="/cgi-bin/luci/nradio/qsetup/second";
+		});
+
+		$('#ret-btn').click (function(){
+			var data={};
+			data['token']='<%=token%>';
+
+			(new XHR()).post('<%=controller%>nradio/qsetup/next', data, function(){
+				setTimeout(function(){
+					location.href="/cgi-bin/luci/nradio/system/overview";
+				},1000);
+			});
+		});
+
+	</script>
+
+<%+footer%>

@@ -1,0 +1,10 @@
+Package: sigma_daemon
+Version: 1
+Depends: libc, libpthread, librt
+Source: package/mtk/applications/sigma_daemon
+SourceName: sigma_daemon
+Section: MTK Properties
+SourceDateEpoch: 1768997726
+Architecture: aarch64_cortex-a53
+Installed-Size: 288799
+Description:  SIGMA_DAEMON

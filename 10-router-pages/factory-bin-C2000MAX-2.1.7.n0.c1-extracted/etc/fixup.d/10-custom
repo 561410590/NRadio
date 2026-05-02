@@ -1,0 +1,379 @@
+#!/bin/ash
+
+. /lib/functions/oem.sh
+. /lib/functions.sh
+
+readonly PATH_SWITCH_DEFAULT='/oem/default/config/02_switch'
+
+handle_radio() {
+	local _section="$1"
+	local _disall=
+	local _wlan_sec=
+	local _rsuf=
+	local _wsuf=
+
+	# Loop radio suffix
+	for _rsuf in "0" "1" "2"; do
+		config_get disall "$_section" "disall_radio$_rsuf"
+		if [ -n "$_disall" ]; then
+			if echo "$_disall"|grep -qE "disall=1$"; then
+				uci -q set "cloudd.$_section.disall_radio$_rsuf=wireless.radio$_rsuf.disall=0"
+				_wlan_sec=${_section/radio/wlan}
+				uci -q set "cloudd.$_wlan_sec=interface"
+				# Loop wlan suffix
+				for _wsuf in "" "_0" "_1" "_2"; do
+					uci -q set "cloudd.${_wlan_sec}.disabled_wlan$_rsuf$_wsuf=wireless.wlan$_rsuf$_wsuf.disabled=1"
+				done
+			fi
+		fi
+	done
+}
+
+handle_wifi_device() {
+	local _section="$1"
+	local _band
+	local _hwmode
+	local _axmode
+	local _htmode
+	local _new_hwmode
+	local _bw
+
+	config_get _band "$_section" band
+	config_get _axmode "$_section" axmode
+	config_get _hwmode "$_section" hwmode
+	config_get _htmode "$_section" htmode
+
+	# fixup for band
+	if [ -z "$_band" ]; then
+		if [ "$_hwmode" = "11g" ]; then
+			_band="2g"
+		else
+			_band="5g"
+		fi
+
+		_bw=$(echo $_htmode|tr -d A-Z)
+
+		if [ "$_axmode" = "1" ]; then
+			_hwmode="11ax"
+		else
+			if [ "$_band" = "2g" ]; then
+				_hwmode="11n"
+			else
+				_hwmode="11ac"
+			fi
+		fi
+
+		if [ "$_hwmode" = "11be" ]; then
+			_htmode="EHT${_bw}"
+		elif [ "$_hwmode" = "11ax" ]; then
+			_htmode="HE${_bw}"
+		elif [ "$_hwmode" = "11ac" ]; then
+			_htmode="VHT${_bw}"
+		else
+			_htmode="HT${_bw}"
+		fi
+
+		uci -q set wireless."$_section".band="$_band"
+		uci -q set wireless."$_section".hwmode="$_hwmode"
+		uci -q set wireless."$_section".htmode="$_htmode"
+	else
+		# fixup for hwmode
+		if echo $_htmode|grep -q HE; then
+			_new_hwmode="11ax"
+		elif echo $_htmode|grep -q VHT; then
+			_new_hwmode="11ac"
+		elif echo $_htmode|grep -q EHT; then
+			_new_hwmode="11be"
+		else
+			_new_hwmode="11n"
+		fi
+		if [ "$_new_hwmode" != "$_hwmode" ]; then
+			uci -q set wireless."$_section".hwmode="$_new_hwmode"
+		fi
+	fi
+}
+
+custom_vlan_fixup() {
+	local _path="/oem/$1/config/02_switch"
+
+	if [ -f "$PATH_SWITCH_DEFAULT" ]; then
+		sh "$PATH_SWITCH_DEFAULT"
+	fi
+
+	if [ -f "$_path" ]; then
+		sh "$_path"
+	fi
+
+	uci commit network.nrswitch
+}
+
+custom_switch_vlan_fixup() {
+	uci -q add network switch
+	uci -q set network.@switch[-1].name="switch0"
+	uci -q set network.@switch[-1].reset="1"
+	uci -q set network.@switch[-1].enable_vlan="1"
+
+	uci -q add network switch_vlan
+	uci -q set network.@switch_vlan[-1].device="switch0"
+	uci -q set network.@switch_vlan[-1].vlan="1"
+
+	uci -q add network switch_vlan
+	uci -q set network.@switch_vlan[-1].device="switch0"
+	uci -q set network.@switch_vlan[-1].vlan="2"
+
+	uci -q set network.lan.def_ifname="eth0.1"
+	uci -q set network.wan.def_ifname="eth0.2"
+	uci -q set network.wan6.def_ifname="eth0.2"
+	uci commit network
+}
+
+custom_wifi_radio_fixup() {
+	config_load cloudd
+	config_foreach handle_radio radio
+
+	config_load wireless
+	config_foreach handle_wifi_device wifi-device
+}
+
+custom_cpesel_fixup() {
+	local stype gvals max lastsim1 lastsim2 lastsimval1 lastsimval2 newgvals newstype cur
+
+	stype=$(uci -q get cpesel.sim.stype)
+	gvals=$(uci -q get cpesel.sim.gval)
+	max=$(uci -q get cpesel.sim.max)
+	cur=$(uci -q get cpesel.sim.cur)
+
+	max=${max:-1}
+
+	if [ "$max" -lt 2 ]; then
+		return
+	fi
+
+	lastsim1=$(echo "$stype"|cut -d, -f"$max")
+	lastsim2=$(echo "$stype"|cut -d, -f"$((max-1))")
+
+	if [ "$lastsim2" = "3" ] && [ "$lastsim1" = "2" ]; then
+		lastsimval1=$(echo "$gvals"|cut -d, -f"$max")
+		lastsimval2=$(echo "$gvals"|cut -d, -f"$((max-1))")
+
+		if [ "$max" -gt 2 ]; then
+			newgvals="$(echo "$gvals"|cut -d, -f1)"
+			newstype="$(echo "$stype"|cut -d, -f1)"
+			for i in $(seq 2 $((max-2))); do
+				newgvals="$newgvals,$(echo "$gvals"|cut -d, -f"$i")"
+				newstype="$newstype,$(echo "$stype"|cut -d, -f"$i")"
+			done
+			newgvals="$newgvals,$lastsimval1,$lastsimval2"
+			newstype="$newstype,$lastsim1,$lastsim2"
+		else
+			newgvals="$lastsimval1,$lastsimval2"
+			newstype="$lastsim1,$lastsim2"
+		fi
+
+		if [ "$cur" = "$max" ]; then
+			cur=$((max-1))
+		elif [ "$cur" = "$((max-1))" ]; then
+			cur="$max"
+		fi
+
+		uci -q set cpesel.sim.stype="$newstype"
+		uci -q set cpesel.sim.gval="$newgvals"
+		uci -q set cpesel.sim.cur="$cur"
+		uci commit cpesel
+	fi
+}
+
+custom_cpecfg_fixup() {
+	local _cellular=$(uci -q get network.globals.default_cellular)
+	[ -z "$_cellular" ] && _cellular="cpe"
+	local _cpenu=$(uci -q get oem.feature.cpe)
+	_cpenu="${_cpenu:-0}"
+	local diff=0
+
+	prefix_cellular=${_cellular%%[0-9]*}
+	if [ "$gIndex" == "0" ];then
+			gIndex=""
+	fi
+
+	for _i in $(seq 1 "${_cpenu:-0}"); do
+		local cpesel_key="sim"
+		local cpecfg_key="$_cellular"
+		if [ "$_i" -gt "1" ];then
+			cpesel_key="${cpesel_key}$((_i-1))"
+			cpecfg_key="$prefix_cellular$((_i-1))"
+		fi
+		max=$(uci -q get cpesel.$cpesel_key.max)
+		max=${max:-1}
+		for _j in $(seq 1 "${max:-0}"); do
+			if ! uci -q get cpecfg.${cpecfg_key}sim${_j};then
+				uci -q set cpecfg.${cpecfg_key}sim${_j}="cpesim"
+				diff=1
+			fi
+		done
+	done
+	if [ $diff -eq 1 ];then
+		uci commit cpecfg
+	fi
+}
+
+ip6class_set(){
+	local nat="$1"
+	local lan_section="$(uci get network.globals.default_lan)"
+	[ -z "$lan_section" ] && lan_section="lan"
+
+	local wan6_section="$(uci get network.globals.default_wan6)"
+	[ -z "$wan6_section" ] && wan6_section="wan6"
+
+	local old_prefix=$(uci get network.globals.def_ula_prefix)
+	if [ -n "$old_prefix" ];then
+		uci delete network.globals.def_ula_prefix
+		uci set network.globals.ula_prefix="$old_prefix"
+	fi
+	uci delete network.$lan_section.ip6class
+	if [ "$nat" == "1" ]; then
+		uci set network.$lan_section.ip6class="local"
+	else
+		config_load network
+
+		handle_interface_ip6class()
+		{
+			local _section="$1"
+			local _proto
+			local _disabled
+
+			config_get _proto "$_section" proto
+			config_get _disabled "$_section" disabled
+			
+			if [ "$_proto" == "wwan" -o "$_proto" == "tdmi" ];then
+				if [ "$_disabled" != "1" ]; then
+					if [ -f "/usr/sbin/atcmd" -o -f "/usr/bin/qlnet"  ];then
+						uci add_list network.$lan_section.ip6class="$_section"
+					else
+						uci add_list network.$lan_section.ip6class="${_section}_6"
+					fi
+				fi
+			elif [ "$_section" == "$wan6_section" ]; then
+				if uci get "network.nrswitch"; then
+					local disable_wan="$(uci get network.nrswitch.disable_wan)"
+					if [ $disable_wan != "1" ]; then
+						uci add_list network.$lan_section.ip6class="$_section"
+					fi
+				elif [ "$_disabled" != "1" ]; then
+					uci add_list network.$lan_section.ip6class="$_section"
+				fi
+			fi
+		}
+
+		config_foreach handle_interface_ip6class interface
+	fi
+	uci set dhcp.$lan_section.ndp=server
+	uci set dhcp.$lan_section.dhcpv6=server
+	uci set dhcp.$lan_section.ra=server
+	uci set dhcp.$lan_section.ra_default=1
+	uci set dhcp.$lan_section.ra_management=0
+	uci delete dhcp.$lan_section.ra_useleasetime
+	uci delete dhcp.$lan_section.ra_lifetime
+	uci delete dhcp.$lan_section.ra_maxinterval
+
+	uci delete dhcp.wan.ra
+	uci delete dhcp.wan.dhcpv6
+	uci delete dhcp.wan.ndp
+	uci delete dhcp.wan.master
+	uci commit dhcp
+	uci commit network
+}
+oem_network_v6_fixup(){
+	local ipv6_ctl="$(uci get network.globals.ipv6)"
+	local nat_disabled="$(uci get luci.main.ipv6_nat_disabled)"
+	local nat_enabled="$(uci get firewall.@defaults[0].ipv6_nat)"
+	local ipv6_local="$(uci get luci.main.ipv6_local)"
+	local do_job=0
+	if [ "$ipv6_ctl" != "1" ];then
+		return 
+	fi
+
+	if [ -f "/usr/sbin/atcmd" ]; then
+		do_job=1
+	elif [ -f "/usr/bin/qlnet" ]; then
+		do_job=1
+	elif [ "$ipv6_local" == "1" ]; then
+		do_job=1
+	fi
+
+	if [ $do_job -eq 1 ];then
+		if [ "$nat_disabled" == "1" ] || [ "$nat_enabled" == "0" ];then
+			ip6class_set 0
+		else
+			ip6class_set 1
+		fi		
+	fi
+}
+oem_network_fixup() {
+	local _name="$(get_def_board)"
+	if uci -q get network.globals.odu|grep -qsE '^1$';then
+		uci -q delete network.globals.odu
+	fi
+	if [ -e "/oem/$_name/config" ]; then
+		if (! uci -q get network.nbdevice) && cat /oem/$_name/config/20_network |grep "nbdevice"; then
+			find -L "/oem/$_name/config/20_network" -type f|sort|xargs -n 1 sh
+		fi
+		find -L "/oem/$_name/config/02_switch" -type f 2>/dev/null|xargs grep ovlan|xargs uci -q 2>/dev/null
+	fi
+
+	if [ -f "/usr/sbin/mwan3" ];then
+		if ! uci -q get mwan3.default_rule;then
+			/etc/ptype.d/$(uci -q get oem.board.ptype)/20_network
+		fi
+	fi
+
+	uci commit
+}
+
+oem_logservice_fixup() {
+	local board_name=$(cat /tmp/sysinfo/board_name)
+	if echo "$board_name"|grep -qv "\-S" && echo "$board_name"|grep -qv "HCMT7628"&& echo "$board_name"|grep -qv "HCMT7621";then
+		uci -q set logservice.root.size=512000
+		uci commit logservice
+	fi
+	local size=$(uci -q get logservice.root.size)
+	if [ -n "$size" ];then
+		if [ -f "/etc/logrotate.d/rsyslog.rotate" ];then
+			sed -i '/size/s/[0-9]\+[A-Za-z]*/'$size'/'  /etc/logrotate.d/rsyslog.rotate
+		fi
+		uci set system.@system[0].log_size="$((size/1024))"
+		uci commit system
+	fi	
+}
+oem_mosq_fixup() {
+	local no_remote_access=$(uci get mosquitto.mosquitto.no_remote_access)
+	uci set mosquitto.listener=listener
+	uci set mosquitto.listener.port=1883
+	uci set mosquitto.mosquitto=mosquitto
+	uci set mosquitto.mosquitto.allow_anonymous='1'
+	uci delete mosquitto.mosquitto.log_type
+	if [ -n "$no_remote_access" ];then
+		uci delete mosquitto.mosquitto.no_remote_access
+		uci set mosquitto.listener.no_remote_access="$no_remote_access"
+	else
+		uci set mosquitto.listener.no_remote_access="0"
+	fi
+	uci set mosquitto.mosquitto.log_types=warning	
+	uci commit mosquitto
+}
+
+
+if ! uci -q get network.nrswitch.ovlan; then
+	custom_vlan_fixup "$(get_def_board)"
+fi
+
+if ! uci -q get network.@switch[-1] && command -v swconfig; then
+	custom_switch_vlan_fixup
+fi
+
+custom_wifi_radio_fixup
+[ -f "/etc/config/cpesel" ] && custom_cpesel_fixup
+[ -f "/etc/config/cpecfg" ] && custom_cpecfg_fixup
+oem_network_fixup
+oem_network_v6_fixup
+oem_logservice_fixup
+oem_mosq_fixup

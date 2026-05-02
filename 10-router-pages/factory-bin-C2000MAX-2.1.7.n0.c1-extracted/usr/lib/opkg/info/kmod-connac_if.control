@@ -1,0 +1,10 @@
+Package: kmod-connac_if
+Version: 5.4.281+TEST-1
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mt_hwifi
+Source: package/mtk/drivers/mt_hwifi
+SourceName: kmod-connac_if
+Section: kernel
+SourceDateEpoch: 1768997726
+Architecture: aarch64_cortex-a53
+Installed-Size: 8734
+Description:  MediaTek HWIFI CONNAC3/5 interface layer driver

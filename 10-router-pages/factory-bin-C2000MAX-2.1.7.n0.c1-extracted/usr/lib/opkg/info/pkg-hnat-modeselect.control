@@ -1,0 +1,10 @@
+Package: pkg-hnat-modeselect
+Version: 1.0-20260227
+Depends: libc, luci-i18n-nradio-modeselect-zh-cn, luci-i18n-nradio-modeselect-en, luci-app-nradio-modeselect
+Source: package/nradio/collections/pkg-hnat-modeselect
+SourceName: pkg-hnat-modeselect
+Section: nradiowifi
+SourceDateEpoch: 1772176103
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for hant modeselect

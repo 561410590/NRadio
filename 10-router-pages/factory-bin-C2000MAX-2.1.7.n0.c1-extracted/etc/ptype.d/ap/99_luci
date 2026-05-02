@@ -1,0 +1,6 @@
+#!/bin/ash
+
+if [ -f "/etc/config/filestore" ]; then
+	uci set luci.module=internal
+	uci set luci.module.fileserver='0'
+fi

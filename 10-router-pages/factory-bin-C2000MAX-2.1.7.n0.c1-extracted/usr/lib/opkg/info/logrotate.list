@@ -1,0 +1,3 @@
+/etc/logrotate.conf
+/usr/sbin/logrotate
+/etc/fixup.d/50-logrotate

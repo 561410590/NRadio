@@ -1,0 +1,3 @@
+/etc/init.d/wanswd
+/usr/bin/wanswd.sh
+/lib/upgrade/keep.d/wanswd

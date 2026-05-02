@@ -1,0 +1,10 @@
+Package: qtt_daemon
+Version: 1.0
+Depends: libc
+Source: package/mtk/applications/qtt_daemon
+SourceName: qtt_daemon
+Section: MTK Properties
+SourceDateEpoch: 1768997726
+Architecture: aarch64_cortex-a53
+Installed-Size: 58188
+Description:  QT Tool daemon

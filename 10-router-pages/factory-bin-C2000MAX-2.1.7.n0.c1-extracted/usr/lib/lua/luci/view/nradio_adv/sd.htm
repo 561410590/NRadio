@@ -1,0 +1,244 @@
+
+<%+header%>
+
+<style>
+	.bootstrap-dialog .bootstrap-dialog-title {
+		text-align: center;
+		width: 100%;
+		margin-bottom: 15px
+	}
+	@media (min-width: 10px) and (max-width: 767px){
+		.cbi-input-apply{width: 100%;}
+	}
+</style>
+
+
+<h2 name="content"><%: SdMaker %></h2>
+
+<form>
+	<fieldset class="cbi-section">
+		<div class="cbi-section-node">
+			<div class="cbi-value">
+				<label class="cbi-value-title"><%: BootSdTitle %></label>
+				<div class="cbi-value-field">
+					<p id="boot_value_status" class="sim_detail_err"><%: BootSdStatusError %></p>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+</form>
+
+<fieldset class="cbi-section">
+	<div class="cbi-section-node">
+		<form class="inline" id="boot_creat_sd_form" method="post" action="<%=url('nradioadv/system/sd/creat')%>" enctype="multipart/form-data">
+			<div class="cbi-value cbi-value-last">
+				<label class="cbi-value-title" for="boot_creat_sd_file"><%: BootSdCreat %></label>
+				<div class="cbi-value-field">
+					<input type="hidden" name="token" value="<%=token%>" />
+					<input type="file" name="boot_creat_sd_file" id="boot_creat_sd_file" style="visibility: hidden;" />
+				</div>
+			</div>
+			<br />
+			<div class="cbi-page-actions">
+				<input type="submit" class="cbi-button cbi-input-apply btn_save_stand_width" id="boot_creat_sd_submit" disabled="true" value="<%:Upload%>" />
+			</div>
+		</form>
+	</div>
+</fieldset>
+
+<script>
+	var INTERVAL;
+	var gEffect = false;
+	var SD_SIZE = 0;
+	var CHUNK_SIZE = 512 * 1024;
+
+	function nradio_apply_callback() {
+		msg = '<%: BootSdCreatLoad %>';
+		let htm = '<fieldset class="cbi-section">';
+			htm += circling_htm;
+			htm += '<br>';
+			htm += '<span>' + msg + '</span>';
+			htm += '</fieldset>';
+		let intervalDialog = BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			closable: false,
+			cssClass: 'nradio_apply_info',
+			message: htm
+		});
+		return intervalDialog;
+	}
+
+	function getBootInfo() {
+		$.ajax({
+			url: '<%=url('nradioadv/system/sd/info')%>',
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) {
+				if (data.mode === 1)
+					$('#boot_mode_sd').attr('selected', true);
+				else
+					$('#boot_mode_flash').attr('selected', true);
+
+				if (!data.mounted){
+					$('#boot_value_status').removeClass('sim_detail_info').addClass('sim_detail_err')
+					$('#boot_value_status').text('<%: BootSdStatusError %>');
+				}
+				else if(data.mounted && data.size) {
+					let sd_name = data.name || "NO LABLE";
+					SD_SIZE = data.avai_size;
+
+					const sizeInGB = Number(data.size) / (1024 * 1024);
+					const sizeGB = sizeInGB.toFixed(1);
+
+					const status_label = `${sd_name} (Disk 2)[${sizeGB} GB]`;
+					$('#boot_value_status').removeClass('sim_detail_err').addClass('sim_detail_info');
+					$('#boot_value_status').text(status_label);
+				}
+			}
+		})
+	}
+
+	function getExpandInfo() {
+		$.ajax({
+			url: '<%=url('nradioadv/system/sd/partinfo')%>',
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) {
+				gEffect = data.effect;
+			}
+		})
+	}
+
+	function syscreat_submit_listen(chunk_size) {
+		var $fileInput = $('#boot_creat_sd_file');
+		var $submitBtn = $('#boot_creat_sd_submit');
+		var $form = $('#boot_creat_sd_form');
+
+		var endpoint = '<%=url('nradioadv/system/sd/creat')%>';
+   		var chunkSize = chunk_size || (1024 * 512);
+		var csrfToken = $form.find('input[name="token"]').val();
+
+		function updateSubmitBtn() {
+			var hasFile = $fileInput[0] && $fileInput[0].files && $fileInput[0].files.length > 0;
+			var disabled = !hasFile;
+			$submitBtn.prop('disabled', disabled);
+		}
+
+		updateSubmitBtn();
+		$fileInput.on('change', function() { updateSubmitBtn(); });
+
+		$submitBtn.on('click', function(e) {
+			if (gEffect === true) {
+				e.preventDefault();
+				create_info_box({msg: '<%: SdInEffectNote %>',btn_val:"<%:OK%>"});
+				return;
+			}
+			if ($submitBtn.prop('disabled')) return;
+
+			e.preventDefault();
+
+			var file = $fileInput[0].files && $fileInput[0].files[0];
+			if (!file) return;
+
+			if (file.size > SD_SIZE  * 1024 * 0.7) {
+				let memory = Math.floor(SD_SIZE / 1024 * 0.7).toFixed(1);
+				let msg = '<%: BootSdCreatFailedNote %>' + '<%: BootSysMemory %>' + memory + " MB";
+				create_info_box({msg: msg ,btn_val: "<%:OK%>"});
+				return;
+			}
+
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '<%: BootSdCreatWarn %>',
+				message: '<%: BootSdCreatWarnNote %>',
+				buttons: [{
+					label: '<%:No%>',
+					cssClass: 'btn-nradio-cancel bootstrap-dialog-title-centered',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						dialog.close();
+						var applyDialog = nradio_apply_callback('');
+						var total = file.size;
+						var offset = 0;
+						var index = 0;
+
+						function sendChunk() {
+							var end = Math.min(offset + chunkSize, total);
+							var blob = file.slice(offset, end);
+
+							var fromdate = new FormData();
+							fromdate.append('boot_creat_sd_file', blob, file.name);
+							fromdate.append('chunk_offset', offset);
+							fromdate.append('chunk_total', total);
+							fromdate.append('chunk_index', index);
+							fromdate.append('is_last', end >= total ? 1 : 0);
+
+							if (csrfToken){
+								fromdate.append('token', csrfToken);
+							}
+
+							$.ajax({
+								url: endpoint,
+								method: 'POST',
+								data: fromdate,
+								processData: false,
+								contentType: false,
+								dataType: 'json'
+							}).done(function(data) {
+								var result = (data && typeof data === 'object' && data.status === 0);
+								if (!result) {
+									if (applyDialog){
+										applyDialog.close();
+									}
+									setTimeout(() => {location.reload();}, 3000);
+									create_info_box({msg:"<%:BootSdErrCode%>" ,btn_val:"<%:OK%>" ,onClose: () => location.reload()});
+									return;
+								}
+								if (end >= total) {
+									if (applyDialog){
+										applyDialog.close();
+									}
+									setTimeout(() => {location.reload();}, 3000);
+									create_info_box({msg:"<%:BootSdSuccCode%>" ,btn_val:"<%:OK%>" ,onClose: () => location.reload()});
+								}
+								else {
+									offset = end;
+									index += 1;
+									setTimeout(sendChunk, 0);
+								}
+							}).fail(function() {
+								if (applyDialog){
+									applyDialog.close();
+								}
+								setTimeout(() => {location.reload();}, 3000);
+								create_info_box({msg:"<%:BootSdErrCode%>" ,btn_val:"<%:OK%>" ,onClose: () => location.reload()});
+							});
+						}
+						sendChunk();
+					}
+				}]
+			});
+		});
+	}
+
+	function initPage(info) {
+		getBootInfo();
+		getExpandInfo();
+		INTERVAL = setInterval(getBootInfo, 3000);
+		syscreat_submit_listen(CHUNK_SIZE);
+	}
+
+	$(document).ready(function() { 
+		initPage();
+	});
+
+</script>
+
+
+<%+footer%>

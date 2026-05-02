@@ -1,0 +1,10 @@
+Package: kmod-mt798x-2p5g-phy
+Version: 5.4.281+1-1
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), mt798x-2p5g-phy-firmware-internal
+Source: feeds/mtk_openwrt_feed/feed/app/mt798x-2p5g-phy-firmware-internal
+SourceName: kmod-mt798x-2p5g-phy
+Section: kernel
+SourceDateEpoch: 1756806390
+Architecture: aarch64_cortex-a53
+Installed-Size: 7238
+Description:  MediaTek MT798x 2.5G PHY kernel driver with auto-load support

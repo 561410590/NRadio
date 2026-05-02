@@ -1,0 +1,3 @@
+uci set factory_check.switch.special='7,2500'
+uci set factory_check.button.buttons='reset wps'
+uci set factory_check.cpe.ignore='sim1'

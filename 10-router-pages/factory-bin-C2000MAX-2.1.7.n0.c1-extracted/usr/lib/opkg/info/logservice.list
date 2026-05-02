@@ -1,0 +1,4 @@
+/usr/sbin/logservice
+/usr/sbin/logclient
+/etc/init.d/logservice
+/etc/config/logservice

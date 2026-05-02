@@ -1,0 +1,21 @@
+#!/bin/sh /etc/rc.common
+
+START=97
+STOP=10
+
+USE_PROCD=1
+
+_exec="/usr/bin/ledctrl.sh"
+
+start_service() {
+	_disabled=$(uci -q get ledctrl.ledctrl.disabled)
+	_mode=0
+	if [ "$_disabled" = "1" ]; then
+		_mode=1
+	fi
+
+	procd_open_instance
+	procd_set_param command "$_exec" -m "$_mode"
+	procd_set_param respawn
+	procd_close_instance
+}

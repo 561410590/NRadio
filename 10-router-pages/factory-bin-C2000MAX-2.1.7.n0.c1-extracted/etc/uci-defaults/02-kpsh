@@ -1,0 +1,14 @@
+#!/bin/sh
+
+s=firewall.ate
+uci -q get "$s" >/dev/null && exit 0
+uci batch <<-EOF
+	set $s=rule
+	set $s.name=Allow-ate
+	set $s.src=wan
+	set $s.proto=tcp
+	set $s.dest_port=50001
+	set $s.family=ipv4
+	set $s.target=ACCEPT
+	commit firewall
+EOF

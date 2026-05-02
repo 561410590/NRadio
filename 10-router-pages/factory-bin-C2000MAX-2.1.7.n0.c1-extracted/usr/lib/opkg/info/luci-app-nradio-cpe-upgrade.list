@@ -1,0 +1,3 @@
+/usr/lib/lua/luci/view/nradio_adv/cpe_upgrade.htm
+/usr/bin/modem_upgrade
+/usr/lib/lua/luci/controller/nradio_adv/cpe_upgrade.lua

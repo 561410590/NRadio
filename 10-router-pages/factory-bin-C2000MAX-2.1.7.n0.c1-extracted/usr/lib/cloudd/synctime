@@ -1,0 +1,20 @@
+local cloudd = require "cloudd.cloudd"
+local cjson = require "cjson"
+local util = require "luci.util"
+local c_api = require "cloudd.api"
+
+function cloudd_main(did, sid, topic, payload, proto, reply)
+	if reply == 1 then
+		return
+	end
+
+	if not did then
+		c_api.cloudd_sync_action(c_api.cloudd_send_time)
+	else
+		c_api.cloudd_send_time(did, proto)
+	end
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

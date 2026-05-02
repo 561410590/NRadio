@@ -1,0 +1,61 @@
+<%+header%>
+	<div class="column second-text-padding">
+		<form class="form-horizontal" role="form">
+			<div class="row">
+				<div class="col-sm-8 col-xs-8 col-sm-offset-4 col-xs-offset-1">
+					<div class="text-left qsetup-title">
+						<span><%:QSetupInternetMode%></span>
+					</div>
+					<div class="radio detect-mode-text">
+						<label>
+							<input type="radio" name="optionsRadios" onclick="show_radio_info(this)" value="pppoe" checked><%:PPPoE%>
+						</label>
+						<br>
+						<span class="note_info"><%:QSetupPPPoeNote%></span>
+					</div>
+					<div class="radio detect-mode-text">
+						<label>
+							<input type="radio" name="optionsRadios" onclick="show_radio_info(this)"   value="dhcp"><%:QSetupInternetDHCP%>
+						</label>
+						<br>
+						<span class="note_info hide"><%:QSetupDHCPNote%></span>
+					</div>
+					<div class="radio detect-mode-text">
+						<label>
+							<input type="radio" name="optionsRadios" onclick="show_radio_info(this)"  value="static"><%:StaticIP%>
+						</label>
+						<br>
+						<span class="note_info hide"><%:QSetupStaticNote%></span>
+					</div>
+				</div>
+			</div>
+			<div class="row clearfix second-text-padding">	
+				<div class="clearfix second-btn-padding">
+					<div class="double_btn_box">
+						<li class="second-btn second-btn-left recommand-color" onclick='location.href="/cgi-bin/luci/nradio/qsetup/second";'><%:Back%></li>
+						<li id="next-btn" class="second-btn second-btn-right btn-color"><%:Next%></li>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+<script type="text/javascript">
+	$('#next-btn').click(function(){
+		var checked_val = $("input[type=radio]:checked").val();
+		if(checked_val == "pppoe"){
+			location.href="/cgi-bin/luci/nradio/qsetup/second_pppoe";
+		}
+		else if(checked_val == "dhcp"){
+			var data={};
+			data['token']='<%=token%>';
+			(new XHR()).post('<%=controller%>nradio/qsetup/dhcpset', data, function(){
+				location.href="/cgi-bin/luci/nradio/qsetup/second_wifi";
+			});
+		}
+		else if(checked_val == "static"){
+			location.href="/cgi-bin/luci/nradio/qsetup/second_static";
+		}	
+	});
+</script>
+<%+footer%>

@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-authmodule-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-authmodule
+Source: package/luci/applications/luci-app-nradio-authmodule
+SourceName: luci-i18n-nradio-authmodule-zh-cn
+Section: luci
+SourceDateEpoch: 1748503180
+Architecture: all
+Installed-Size: 455
+Description:  Translation for luci-app-nradio-authmodule - 中文 (Chinese)

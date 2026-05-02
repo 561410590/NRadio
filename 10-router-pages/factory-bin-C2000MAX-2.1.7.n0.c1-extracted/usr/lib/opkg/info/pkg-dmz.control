@@ -1,0 +1,10 @@
+Package: pkg-dmz
+Version: 1.0-20250205
+Depends: libc, luci-i18n-nradio-dmz-zh-cn, luci-i18n-nradio-dmz-en, luci-app-nradio-dmz
+Source: package/nradio/collections/pkg-dmz
+SourceName: pkg-dmz
+Section: nradiowifi
+SourceDateEpoch: 1738751694
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for dmz

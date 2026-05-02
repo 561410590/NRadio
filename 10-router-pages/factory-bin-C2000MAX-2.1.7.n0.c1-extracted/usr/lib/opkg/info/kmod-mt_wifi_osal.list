@@ -1,0 +1,3 @@
+/etc/modules.d/60-mt_wifi_osal
+/etc/modules-boot.d/60-mt_wifi_osal
+/lib/modules/5.4.281/mt_wifi_osal.ko

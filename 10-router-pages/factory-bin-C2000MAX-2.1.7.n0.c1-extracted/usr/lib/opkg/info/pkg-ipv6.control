@@ -1,0 +1,10 @@
+Package: pkg-ipv6
+Version: 1.0-20230619
+Depends: libc, odhcp6c, ip6tables, ip6tables-extra, ip6tables-mod-nat, iptables-mod-u32, kmod-ipt-nat6, odhcpd, luci-i18n-nradio-ipv6-zh-cn, luci-i18n-nradio-ipv6-en, luci-app-nradio-ipv6
+Source: package/nradio/collections/pkg-ipv6
+SourceName: pkg-ipv6
+Section: nradiowifi
+SourceDateEpoch: 1687832017
+Architecture: aarch64_cortex-a53
+Installed-Size: 104
+Description:  Pakcages for ipv6

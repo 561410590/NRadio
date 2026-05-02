@@ -1,0 +1,21 @@
+#!/bin/sh
+sync_bdinfo
+
+cpetools.sh -c cleanims
+cpetools.sh -d
+
+STORAGE_DIR=$(uci -q get filestore.basic.filestore)
+if [ -z "$STORAGE_DIR" ]; then
+    STORAGE_DIR="/mnt/storage/data/"
+fi
+if [ -d "$STORAGE_DIR" ]; then
+    find "$STORAGE_DIR" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+fi
+LOG_DIR=$(uci -q get logservice.root.syncpath)
+if [ -z "$LOG_DIR" ]; then
+    LOG_DIR="/mnt/app_data/log/"
+fi
+if [ -d "$LOG_DIR" ]; then
+    find "$LOG_DIR" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+fi
+/sbin/jffs2reset -y -r

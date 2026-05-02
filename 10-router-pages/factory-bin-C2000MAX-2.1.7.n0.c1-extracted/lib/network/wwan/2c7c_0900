@@ -1,0 +1,11 @@
+{
+	"desc":"Quectel RG500U",
+	"vendor":"quectel",
+	"cmdset":2,
+	"dver":"eth",
+	"type":"cdc_ether",
+	"control":2,
+	"cmdctrl":3,
+	"data": 0,
+	"nrcap": 1
+}

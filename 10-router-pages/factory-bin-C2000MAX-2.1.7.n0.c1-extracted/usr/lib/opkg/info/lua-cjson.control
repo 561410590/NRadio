@@ -1,0 +1,13 @@
+Package: lua-cjson
+Version: 2.1.0-2
+Depends: libc, lua
+Source: feeds/packages/lang/lua-cjson
+SourceName: lua-cjson
+License: MIT
+LicenseFiles: LICENSE
+Section: lang
+SourceDateEpoch: 1570903294
+Maintainer: Dirk Chang <dirk@kooiot.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 12649
+Description:  Lua CJSON is a fast JSON encoding/parsing module for Lua.

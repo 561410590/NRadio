@@ -1,0 +1,5 @@
+#!/bin/sh
+
+uci batch <<EOF
+set msad.msad.mode=129
+EOF

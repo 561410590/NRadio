@@ -1,0 +1,12 @@
+#!/bin/sh /etc/rc.common
+
+START=05
+STOP=75
+
+start() {
+	cpetools.sh -k &
+}
+
+shutdown() {
+	cpetools.sh -d 
+}

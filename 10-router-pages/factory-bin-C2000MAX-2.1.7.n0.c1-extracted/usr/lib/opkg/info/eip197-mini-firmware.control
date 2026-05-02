@@ -1,0 +1,11 @@
+Package: eip197-mini-firmware
+Version: 20211216-1
+Depends: libc
+Source: package/firmware/linux-firmware
+SourceName: eip197-mini-firmware
+Section: firmware
+SourceDateEpoch: 1640817937
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: aarch64_cortex-a53
+Installed-Size: 432
+Description:  Inside Secure EIP197 mini firmware

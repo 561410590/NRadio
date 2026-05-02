@@ -1,0 +1,71 @@
+#!/bin/sh
+. /lib/mwan3/mwan3.sh
+. /usr/share/libubox/jshn.sh
+
+if [ -e /var/run/mwan3track-$1.pid ] ; then
+	kill $(cat /var/run/mwan3track-$1.pid) &> /dev/null
+	rm /var/run/mwan3track-$1.pid &> /dev/null
+fi
+
+echo "$$" > /var/run/mwan3track-$1.pid
+
+score=$(($7+$8))
+#track_ips=$(echo $* | cut -d ' ' -f 9-99)
+host_up_count=0
+lost=0
+
+while true; do
+	status=$(get_wanchk_state "$1")
+	if [ "$status" == "up" ];then
+		let host_up_count++
+	elif [ "$status" == "block" ];then
+		#logger -t mwan3track -p notice "Interface $1 ($2) ,wait ping result"
+		sleep $6 &
+		wait
+		continue
+	else
+		let lost++
+	fi
+	if [ $host_up_count -lt $3 ]; then
+		let score--
+
+		if [ $score -lt $8 ]; then score=0 ; fi
+		if [ $score -eq $8 ]; then
+			logger -t mwan3track -p notice "Interface $1 ($2) is offline"
+			env -i ACTION=ifdown INTERFACE=$1 DEVICE=$2 /sbin/hotplug-call iface
+			score=0
+		fi
+
+	else
+
+		if [ $score -lt $(($7+$8)) ] && [ $lost -gt 0 ]; then
+
+			logger -t mwan3track -p info "Lost $(($lost*$4)) ping(s) on interface $1 ($2)"
+
+		fi
+
+		let score++
+		lost=0
+
+		if [ $score -gt $8 ]; then score=$(($7+$8)); fi
+		if [ $score -eq $8 ]; then
+			logger -t mwan3track -p notice "Interface $1 ($2) is online"
+			env -i ACTION=ifup INTERFACE=$1 DEVICE=$2 FROM=mwan3 /sbin/hotplug-call iface
+			rm /var/run/mwan3track-$1.pid
+			exit 0
+		fi
+	fi
+
+	if [ "$(mwan3_get_iface_hotplug_state $1)" != "online" -a "$status" == "up" ];then
+		logger -t mwan3track -p notice "Interface $1 ($2) is online hardcheck"
+		env -i ACTION=ifup INTERFACE=$1 DEVICE=$2 FROM=mwan3 /sbin/hotplug-call iface
+		rm /var/run/mwan3track-$1.pid
+		exit 0
+	fi
+	
+	host_up_count=0
+	sleep $6 &
+	wait
+done
+
+exit 1

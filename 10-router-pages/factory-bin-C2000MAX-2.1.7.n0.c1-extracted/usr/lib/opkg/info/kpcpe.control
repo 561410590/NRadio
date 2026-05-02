@@ -1,0 +1,10 @@
+Package: kpcpe
+Version: 1.0-20251107
+Depends: libc, libubox20210516, libubus20210630, libcurl4, libuci20130104, nradio-utils, rpcd, libjson-c5, libpthread, libopenssl1.1
+Source: package/nradio/services/kpcpe
+SourceName: kpcpe
+Section: nradiowifi
+SourceDateEpoch: 1770117876
+Architecture: aarch64_cortex-a53
+Installed-Size: 52514
+Description:  NRadio CPE Control

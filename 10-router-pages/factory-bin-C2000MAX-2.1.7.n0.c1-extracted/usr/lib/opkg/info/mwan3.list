@@ -1,0 +1,6 @@
+/etc/hotplug.d/iface/15-mwan3
+/etc/hotplug.d/net/15-mwan3
+/usr/sbin/mwan3
+/usr/sbin/mwan3track
+/lib/mwan3/mwan3.sh
+/etc/config/mwan3

@@ -1,0 +1,3 @@
+/usr/lib/lua/luci/controller/nradio_adv/cpestat.lua
+/usr/lib/lua/luci/view/nradio_cpestat/stat.htm
+/usr/lib/lua/luci/model/cbi/nradio_cpestat/cpestat.lua

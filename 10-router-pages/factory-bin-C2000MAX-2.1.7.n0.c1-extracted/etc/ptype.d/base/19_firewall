@@ -1,0 +1,12 @@
+#!/bin/ash
+
+[ "$1" = "reinit" ] && exit 0
+
+uci batch <<EOF
+set firewall.ssh=rule
+set firewall.ssh.src=lan
+set firewall.ssh.proto=tcp
+set firewall.ssh.dest_port=22
+set firewall.ssh.target=REJECT
+set firewall.@defaults[0].ipv6_nat=1
+EOF

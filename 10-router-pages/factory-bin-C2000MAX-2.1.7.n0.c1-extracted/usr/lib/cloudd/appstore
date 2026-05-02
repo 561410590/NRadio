@@ -1,0 +1,152 @@
+local cloudd = require "cloudd.cloudd"
+local c_api = require "cloudd.api"
+local cjson = require "cjson"
+local util = require "luci.util"
+local c_debug = require "cloudd.debug"
+local c_firmware = require "cloudd.firmware"
+local fs = require "nixio.fs"
+local os = os
+local appstore_base = "/tmp/appstore/"
+local appstore_json_file = "nradio-appstore.json"
+local appstore_icon_path = "icon"
+
+local appstore_code = {
+	APPSTORE_OK=0,
+	APPSTORE_ERROR_DATA=1,
+	APPSTORE_ERROR_URL=2,
+	APPSTORE_ERROR_MD5=3,
+	APPSTORE_ERROR_SIZE=4,
+	APPSTORE_ERROR_MD5_SAME=5,
+	APPSTORE_ERROR_SPACE=6,
+	APPSTORE_ERROR_DOWNLOAD=7,
+	APPSTORE_ERROR_PLATFORM=8,
+	APPSTORE_ERROR_UBUS = 9,
+	APPSTORE_ERROR_TIMEOUT = 10,
+	APPSTORE_ERROR_PACKAGE = 11,
+	APPSTORE_ERROR_BUSY = 12,
+	APPSTORE_PREPARE = 13,
+	APPSTORE_WAIT = 14
+}
+
+function check_size(size)
+	local util = require "luci.util"
+
+	local sysinfo = util.ubus("system", "info") or { }
+	local space_enough=false
+	local meminfo = sysinfo.memory or {
+			total = 0,
+			free = 0,
+			buffered = 0,
+			shared = 0
+	}
+	local free_left = tonumber(meminfo.free)
+	
+	if free_left*0.8 > tonumber(size) then
+		space_enough=true
+	end
+
+	return space_enough
+end
+
+function callback_status(code)
+	local data_callback = {code=code}
+	util.ubus("appcenter", "callback", data_callback)
+end
+
+function cloudd_main(did, sid, event, payload, proto, reply)
+	local uci = require "uci".cursor()
+	local type = type
+	local data = cjson.decode(payload)   
+	local cmd = ""
+	local timestamp = ""
+	local platform = ""
+	local appcenter_cfg = uci:get_all("appcenter", "config")
+	local no_verify = true
+
+	if reply ~= 1 then
+		return
+	end
+	if not data then
+		c_debug.syslog("err", "appstore get data error", 1)
+		callback_status(appstore_code.APPSTORE_ERROR_DATA)
+		return
+	end
+	if not data.url or #data.url == 0 then
+		c_debug.syslog("err", "appstore get data url error", 1)
+		callback_status(appstore_code.APPSTORE_ERROR_URL)
+		return
+	end
+
+	if not data.md5 or #data.md5 == 0 then
+		c_debug.syslog("err", "appstore get data md5 error", 1)
+		callback_status(appstore_code.APPSTORE_ERROR_MD5)
+		return
+	end
+
+	if not data.size or type(data.size) ~= "number" then
+		c_debug.syslog("err", "appstore get data size error", 1)
+		callback_status(appstore_code.APPSTORE_ERROR_SIZE)
+		return
+	end
+
+	if appcenter_cfg and appcenter_cfg.md5 and #appcenter_cfg.md5 > 0 and appcenter_cfg.md5 == data.md5 then
+		c_debug.syslog("err", "appstore get data md5 is the same", 1)
+		callback_status(appstore_code.APPSTORE_ERROR_MD5_SAME)
+		return
+	end
+
+	local zip_release_path = appstore_base.."/release/"
+	local zip_file = "nradio-appstore.zip"
+	
+	if not check_size(data.size) then
+		c_debug.syslog("err", "appstore space not enough", 1)
+		callback_status(appstore_code.APPSTORE_ERROR_SPACE)
+		return
+	end
+	if fs.access(appstore_base) then
+		os.execute("rm -rf "..zip_release_path)
+	end
+	cmd = "unzip -o -d "..zip_release_path
+	local ret, err_text = c_firmware.download_upgrade(data.url, data.md5, cmd,appstore_base,zip_file,no_verify)
+
+	if ret ~= 0 then
+		if ret == 2 then
+			callback_status(appstore_code.APPSTORE_ERROR_MD5)
+		elseif ret == 3 then
+			callback_status(appstore_code.APPSTORE_ERROR_TIMEOUT)
+		elseif ret == 4 then
+			callback_status(appstore_code.APPSTORE_ERROR_BUSY)
+		end
+		c_debug.syslog("err", "appstore download_upgrade code:"..ret.." error:"..err_text, 1)		
+		return
+	end
+
+	timestamp = data.timestamp or ""
+	platform = data.platform or ""
+	local cur_platform = util.exec("grep 'DISTRIB_ARCH' /etc/openwrt_release|xargs printf") or ""
+	cur_platform = cur_platform:match("%C+=(%C+)")
+
+	if cur_platform ~= platform and platform ~= "all" then
+		c_debug.syslog("err", "appstore appstore platform no match:"..cur_platform.." error:"..platform, 1)
+		callback_status(appstore_code.APPSTORE_ERROR_PLATFORM)
+		return
+	end
+
+	if fs.access(zip_release_path..appstore_icon_path) then
+		os.execute("cp -rf "..zip_release_path..appstore_icon_path.. " /www/luci-static/nradio/images/")
+	end
+	if fs.access(zip_release_path..appstore_json_file) then
+		local app_data = fs.readfile(zip_release_path..appstore_json_file)
+		local app_json =  cjson.decode(app_data)
+		local data_callback = {code=appstore_code.APPSTORE_OK,list={},md5=data.md5,platform=platform,timestamp=timestamp}
+		data_callback.list = app_json.list or {}
+		util.ubus("appcenter", "callback", data_callback)
+	else
+		c_debug.syslog("err", "appstore appstore package format error", 1)
+		callback_status(appstore_code.APPSTORE_ERROR_PACKAGE)
+	end	
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

@@ -1,0 +1,10 @@
+Package: appcenter
+Version: 1.0-20250207
+Depends: libc, uci, ubus, libubox20210516, libiwinfo20210430, libjson-c5, libcurl4, nradio-utils, libopenssl1.1
+Source: package/nradio/services/appcenter
+SourceName: appcenter
+Section: nradiowifi
+SourceDateEpoch: 1769154477
+Architecture: aarch64_cortex-a53
+Installed-Size: 31402
+Description:  Information distribution center

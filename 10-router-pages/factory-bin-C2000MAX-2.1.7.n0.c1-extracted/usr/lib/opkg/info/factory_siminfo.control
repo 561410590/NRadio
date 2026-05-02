@@ -1,0 +1,10 @@
+Package: factory_siminfo
+Version: 1.0-20251231
+Depends: libc
+Source: package/nradio/services/factory_siminfo
+SourceName: factory_siminfo
+Section: nradiowifi
+SourceDateEpoch: 1769046401
+Architecture: all
+Installed-Size: 2329
+Description:  Factory self detect daemon

@@ -1,0 +1,3 @@
+/etc/config/fanctrl
+/usr/bin/fanctrl.sh
+/etc/init.d/fanctrl

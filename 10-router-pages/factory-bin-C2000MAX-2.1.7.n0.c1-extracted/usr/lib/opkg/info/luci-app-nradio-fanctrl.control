@@ -1,0 +1,10 @@
+Package: luci-app-nradio-fanctrl
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-fanctrl
+SourceName: luci-app-nradio-fanctrl
+Section: luci
+SourceDateEpoch: 1774591661
+Architecture: all
+Installed-Size: 8892
+Description:  LuCI Support for FAN Control

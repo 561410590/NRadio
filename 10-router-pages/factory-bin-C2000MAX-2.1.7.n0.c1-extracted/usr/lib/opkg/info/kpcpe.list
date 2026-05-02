@@ -1,0 +1,3 @@
+/usr/bin/kpcpe-ctl
+/usr/sbin/kpcped
+/etc/init.d/kpcped

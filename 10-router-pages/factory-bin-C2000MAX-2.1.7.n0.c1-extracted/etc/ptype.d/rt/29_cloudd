@@ -1,0 +1,45 @@
+#!/bin/ash
+
+[ "$1" = "reinit" ] && exit 0
+
+_cpenu=$(uci -q get oem.feature.cpe)
+_cpenu="${_cpenu:-0}"
+
+if [ "$_cpenu" = "0" ]; then
+	# Set Wireless as NRadio Mesh Slave Device Mode
+	uci set cloudd.g1radio.nrctrl_mode_radio0=wireless.radio0.nrctrl_mode=2
+	uci set cloudd.g1radio.nrctrl_mode_radio1=wireless.radio1.nrctrl_mode=2
+else
+	uci set cloudd.g1radio.nrctrl_mode_radio0=wireless.radio0.nrctrl_mode=0
+	uci set cloudd.g1radio.nrctrl_mode_radio1=wireless.radio1.nrctrl_mode=0
+fi
+
+if uci -q get oem.feature.cpe; then
+	uci set cloudd.t0='template'
+	uci set cloudd.t0.encryption_wlan='Xpsk-mixed'
+	uci set cloudd.t0.key_wlan='X12345678'
+
+	# Set default combo config
+	uci set cloudd.combo='combo_sysconf'
+	uci set cloudd.combo.Dsg='1'
+
+	uci set cloudd.limit_accumulate='speedlimit'
+	uci set cloudd.limit_accumulate.enabled='0'
+	uci add_list cloudd.limit_accumulate.stage='0,1'
+
+	uci set cloudd.limit_month='speedlimit'
+	uci set cloudd.limit_month.enabled='0'
+	uci add_list cloudd.limit_month.stage='2000,512'
+
+	uci set cloudd.limit_rvp='speedlimit'
+	uci set cloudd.limit_rvp.enabled='0'
+	uci add_list cloudd.limit_rvp.stage='0,1'
+
+	uci set cloudd.limit_daily='speedlimit'
+	uci set cloudd.limit_daily.enabled='0'
+	uci add_list cloudd.limit_daily.stage='30,512'
+
+	uci set cloudd.limit_nocombo='speedlimit'
+	uci set cloudd.limit_nocombo.enabled='1'
+	uci add_list cloudd.limit_nocombo.stage='1,1'
+fi

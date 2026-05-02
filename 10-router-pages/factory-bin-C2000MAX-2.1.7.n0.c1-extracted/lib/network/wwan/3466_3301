@@ -1,0 +1,18 @@
+{
+	"desc": "TD Tech MT5700",
+	"type": "cdc_ether",
+	"vendor": "tdtech",
+	"alias": "mt5700",
+	"control": "1",
+	"data": "1",
+	"nrcap": 1,
+	"TDTECH MT571X":{
+		"desc":"TD Tech MT5710",
+		"type": "cdc_ether",
+		"vendor": "tdtech",
+		"control": "1",
+		"data": "1",
+		"nrcap": 1,
+		"alias": "redcap"
+	}	
+}

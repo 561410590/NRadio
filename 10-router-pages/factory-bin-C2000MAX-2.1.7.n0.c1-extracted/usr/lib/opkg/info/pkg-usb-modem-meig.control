@@ -1,0 +1,10 @@
+Package: pkg-usb-modem-meig
+Version: 1.0-20230327
+Depends: libc, meig-cm
+Source: package/nradio/collections/pkg-usb-modem-meig
+SourceName: pkg-usb-modem-meig
+Section: nradiowifi
+SourceDateEpoch: 1679921551
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for USB Modem Meig

@@ -1,0 +1,11 @@
+Package: wifi-profile
+Version: 1-2.1.7.n0.c1
+Depends: libc, datconf-lua, lua, libuci-lua
+Source: package/mtk/drivers/wifi-profile
+SourceName: wifi-profile
+License: GPL-2.0
+Section: MTK Properties
+SourceDateEpoch: 1774495456
+Architecture: aarch64_cortex-a53
+Installed-Size: 57918
+Description:  This package helps to build l1profile on demand & install wifi l2 profile.

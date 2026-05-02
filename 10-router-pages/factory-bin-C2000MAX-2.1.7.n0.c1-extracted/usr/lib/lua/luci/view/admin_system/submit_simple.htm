@@ -1,0 +1,36 @@
+<fieldset class="cbi-section">
+	<div class="cbi-page-actions">
+		<input class="cbi-button cbi-button-apply mobile_note_btn" type="button" id="btn-save-simple" value="<%:SimpleApply%>" />
+	</div>
+</fieldset>
+<script>
+$(document).ready(function(){
+	$('#btn-save-simple').click(function(){
+		var htm = '<div><%:SaveConfigSimpleNote%></div>';
+		if (cbi_validate_form(this.form, '<%:Invalid parameters. Save failed. Check and retry.%>')) {
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: htm,
+				cssClass:'mobile_note',
+				buttons: [{
+					label: '<%:No%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						dialog.close();
+						$(reloadFieldset).insertAfter('h2');
+						nradio_ajax_submit('form', null, "<%:Waiting for changes to be applied...%>");
+						$('form').submit();
+					}
+				}]
+			});
+		}
+	});
+});
+</script>

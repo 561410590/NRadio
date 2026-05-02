@@ -1,0 +1,10 @@
+Package: spectrumd
+Version: 1
+Depends: libc, libnl-tiny1, libubox20210516, libpthread, librt
+Source: package/mtk/applications/spectrumd
+SourceName: spectrumd
+Section: MTK Properties
+SourceDateEpoch: 1768997726
+Architecture: aarch64_cortex-a53
+Installed-Size: 7909
+Description:  Spectrum analysis daemon using nl80211 for MTK devices.

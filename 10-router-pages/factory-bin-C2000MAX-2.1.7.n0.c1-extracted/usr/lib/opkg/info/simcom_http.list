@@ -1,0 +1,3 @@
+/etc/init.d/simcom_http
+/usr/sbin/simcom_http_cli
+/usr/sbin/simcom_http

@@ -1,0 +1,10 @@
+Package: cloudd
+Version: 1.7.1-20250611
+Depends: libc, libubox20210516, libubus20210630, libubus-lua, nradio-utils, libjson-c5, lua, lua-cjson, lua-md5, luasec, luasocket, luafilesystem, lua-readline
+Source: package/nradio/services/cloudd
+SourceName: cloudd
+Section: nradiowifi
+SourceDateEpoch: 1774519013
+Architecture: all
+Installed-Size: 59219
+Description:  Provide supporting nradiowifi cloud message daemon.

@@ -1,0 +1,32 @@
+#!/usr/bin/lua
+
+local capi = require "cloudd.api"
+local fs = require "nixio.fs"
+local groupnames = {}
+local sed_del_cmd = "sed -i /cloudd_sysupgrade/d "
+local cron_file = "/etc/crontabs/root"
+sed_del_cmd = sed_del_cmd..cron_file
+local function cron_group(g_id)
+	group_dversion = capi.cloudd_get_dest_version_group(g_id)
+	cron_cmd = "echo "
+
+	os.execute(sed_del_cmd)
+	if group_dversion ~= nil then
+		upgrade_time = capi.cloudd_get_firmware_time(g_id)
+		if upgrade_time ~= nil then
+			hour = upgrade_time / 3600
+			print(hour)
+			minute = upgrade_time % 3600 / 60
+			print(minute)
+			cron_cmd = "echo " .. "\"" .. minute .. " " .. hour .. " * * * " .. "/usr/bin/cloudd_sysupgrade " .. g_id .. "\"" .. ">> "..cron_file
+
+			os.execute(cron_cmd)
+		end
+	end
+end
+
+capi.cloudd_get_all_group(groupnames)
+for k, v in pairs(groupnames)
+do
+	cron_group(v)
+end

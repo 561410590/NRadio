@@ -1,0 +1,12 @@
+Package: lua-md5
+Version: 1.3-1
+Depends: libc, lua
+Source: feeds/packages/lang/lua-md5
+SourceName: lua-md5
+License: MIT
+Section: lang
+SourceDateEpoch: 1614187565
+Maintainer: Dirk Chang <dirk@kooiot.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 5648
+Description:  MD5 offers basic cryptographic facilities for Lua

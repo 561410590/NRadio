@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-appcenter-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-appcenter
+Source: package/luci/applications/luci-app-nradio-appcenter
+SourceName: luci-i18n-nradio-appcenter-zh-cn
+Section: luci
+SourceDateEpoch: 1774605325
+Architecture: all
+Installed-Size: 1698
+Description:  Translation for luci-app-nradio-appcenter - 中文 (Chinese)

@@ -1,0 +1,10 @@
+Package: luci-app-nradio-vpn
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-vpn
+SourceName: luci-app-nradio-vpn
+Section: luci
+SourceDateEpoch: 1747987798
+Architecture: all
+Installed-Size: 2172
+Description:  LuCI Support for VPN config

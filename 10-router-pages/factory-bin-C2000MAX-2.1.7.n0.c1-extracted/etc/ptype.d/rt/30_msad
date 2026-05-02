@@ -1,0 +1,16 @@
+#!/bin/sh
+
+. /lib/network/switch.sh
+
+if [ "$1" = "reinit" ]; then
+	cports=$(get_ports "S")
+	if [ -n "$cports" ] || [ -f /usr/lib/lua/luci/controller/nradio_adv/ac.lua ]; then
+		uci batch <<EOF
+		set msad.msad.mode=145
+EOF
+	else
+		uci batch <<EOF
+		set msad.msad.mode=1
+EOF
+	fi
+fi

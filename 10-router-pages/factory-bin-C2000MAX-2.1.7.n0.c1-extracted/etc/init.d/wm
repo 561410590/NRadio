@@ -1,0 +1,15 @@
+#!/bin/sh /etc/rc.common
+
+START=80
+STOP=65
+
+SERVICE_DAEMONIZE=1
+SERVICE_WRITE_PID=1
+
+start() {
+	service_start /usr/sbin/wm -s "$(uci get oem.board.id|tr -d :)"
+}
+
+stop() {
+	service_stop /usr/sbin/wm
+}

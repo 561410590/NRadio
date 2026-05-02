@@ -9,5 +9,6 @@
 *.yml text eol=lf
 *.yaml text eol=lf
 LICENSE text eol=lf
+10-router-pages/factory-bin-C2000MAX-2.1.7.n0.c1-extracted/** -text
 *.png binary
 *.exe binary

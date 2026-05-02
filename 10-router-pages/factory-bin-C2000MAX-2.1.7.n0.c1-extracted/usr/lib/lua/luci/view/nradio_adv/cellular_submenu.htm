@@ -1,0 +1,46 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<%
+	local lng  = require "luci.i18n"
+	local disp = require "luci.dispatcher"
+	local request  = disp.context.requestpath
+	local util = require "luci.util"
+	local uci  = require "luci.model.uci".cursor()
+	
+	local nr = require "luci.nradio"
+
+	local menu = request[3]
+	local model_str,cpe_section = nr.get_cellular_last(request[5])
+	local sub_menu_info = nr.get_cellular_menu(request[5])
+	for key,item in pairs(sub_menu_info) do
+		if menu then
+			item.match = false
+		end
+		if key == menu then
+			item.match = true
+		end
+	end
+	local target_menu_info = {}
+	for key,item in pairs(sub_menu_info) do
+		target_menu_info[item.index] = item
+	end
+%>
+<script type="text/javascript">
+var globalRequestEarfcn = 0;
+var globalRequestSIM = 0;
+</script>
+
+<ul class="cbi-tabmenu">
+	<%for key,item in pairs(target_menu_info) do%>
+		<%if item.support then%>
+			<%if item.match then%>
+			<li class="cbi-tab"><a href="#"><%=item.language%></a></li>
+			<%else%>
+			<li class="cbi-tab-disabled" id="menu-<%=item.name%>" <% if item.hidden then %>style="display: none"<% end %>><a href="<%=url("nradio/cellular/"..item.name.."/model/"..cpe_section)%>"><%=item.language%></a></li>
+			<%end%>
+		<%end%>
+	<%end%>	
+</ul>

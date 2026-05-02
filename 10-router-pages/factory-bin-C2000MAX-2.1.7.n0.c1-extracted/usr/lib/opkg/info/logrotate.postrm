@@ -1,0 +1,6 @@
+#!/bin/sh
+FILE="${IPKG_INSTROOT}/etc/crontabs/root"
+CRON="${IPKG_INSTROOT}/etc/init.d/cron"
+sed -i '/logrotate/d' "${FILE}"
+test -x ${CRON} && ${CRON} restart
+exit 0

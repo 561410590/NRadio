@@ -1,0 +1,42 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+<ul class="cbi-tabmenu">
+
+<%
+local nr = require "luci.nradio"
+local uci  = require "luci.model.uci".cursor()
+local count_cpe = nr.count_cpe()
+local celluar_index=0
+local nbcpe_index=0
+local cellular_prefix,cellular_default = nr.get_cellular_prefix()
+for i = 1, count_cpe do
+	local index_str=""
+	local iface = (i == 1 and cellular_default or cellular_prefix..(i-1))
+	local iface_odu_mode = uci:get("network",iface, "mode") or ""
+	if iface_odu_mode == "odu" then
+		nbcpe_index=nbcpe_index+1
+		if nbcpe_index > 1 then
+			index_str=(nbcpe_index-1)
+		else
+			index_str=""
+		end
+	else
+		celluar_index=celluar_index+1
+		if celluar_index > 1 then
+			index_str=(celluar_index-1)
+		else
+			index_str=""
+		end
+	end
+%>
+	<%if i == tonumber(model) then%>	
+		<li class="cbi-tab"><a href="#"><%if iface_odu_mode == "odu" then %><%:CellularNBCPE%><%else%><%:Cellular%><%end%><%=index_str%></a></li>
+	<%else%>
+		<li class="cbi-tab-disabled"><a href="<%=url("nradio/cellular/cpecfg/model/"..i)%>"><%if iface_odu_mode == "odu" then %><%:CellularNBCPE%><%else%><%:Cellular%><%end%><%=index_str%></a></li>
+	<%end%>
+<%
+end
+%>	
+</ul>

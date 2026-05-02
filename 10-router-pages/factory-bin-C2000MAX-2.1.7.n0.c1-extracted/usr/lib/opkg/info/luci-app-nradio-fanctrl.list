@@ -1,0 +1,6 @@
+/usr/lib/lua/luci/view/nradio_fanctrl/temperature_ajax.htm
+/usr/lib/lua/luci/view/nradio_fanctrl/fanspeed.htm
+/usr/lib/lua/luci/controller/nradio_adv/fanctrl.lua
+/usr/lib/lua/luci/model/cbi/nradio_adv/fanctrl.lua
+/usr/lib/lua/luci/view/nradio_fanctrl/hmvalue.htm
+/usr/lib/lua/luci/view/nradio_fanctrl/temperature.htm

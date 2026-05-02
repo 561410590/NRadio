@@ -1,0 +1,4 @@
+/usr/lib/lua/luci/view/nradio_dividing/index.htm
+/usr/lib/lua/luci/view/nradio_dividing/protocol.htm
+/usr/lib/lua/luci/controller/nradio_adv/dividing.lua
+/etc/config/dividing

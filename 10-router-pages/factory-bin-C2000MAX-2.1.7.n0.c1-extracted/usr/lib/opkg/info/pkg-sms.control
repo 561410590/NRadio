@@ -1,0 +1,10 @@
+Package: pkg-sms
+Version: 1.0-20231202
+Depends: libc, luci-app-nradio-sms, smsd, luci-i18n-nradio-sms-zh-cn, luci-i18n-nradio-sms-en
+Source: package/nradio/collections/pkg-sms
+SourceName: pkg-sms
+Section: nradiowifi
+SourceDateEpoch: 1709799544
+Architecture: aarch64_cortex-a53
+Installed-Size: 104
+Description:  Pakcages for sms

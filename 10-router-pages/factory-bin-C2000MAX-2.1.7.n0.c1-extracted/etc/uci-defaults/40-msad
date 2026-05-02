@@ -1,0 +1,12 @@
+#!/bin/sh
+
+_name="msad"
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@${_name}[-1]
+	add ucitrack ${_name}
+	set ucitrack.@${_name}[-1].init=${_name}
+	del_list ucitrack.@network[-1].affects=${_name}
+	add_list ucitrack.@network[-1].affects=${_name}
+	commit ucitrack
+EOF

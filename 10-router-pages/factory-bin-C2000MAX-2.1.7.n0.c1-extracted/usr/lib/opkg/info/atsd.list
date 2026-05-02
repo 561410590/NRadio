@@ -1,0 +1,3 @@
+/etc/init.d/atsd
+/usr/sbin/atsd_cli
+/usr/sbin/atsd

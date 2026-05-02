@@ -1,0 +1,52 @@
+<%+header%>
+<%
+local uci  = require "luci.model.uci"
+local uci = uci.cursor()
+local lan_section = uci:get("network", "globals", "default_lan") or "lan"
+local ipaddr = uci:get("network",lan_section,"ipaddr")
+%>
+<style>
+	.nradio-bg{
+		background-image:none
+	}	
+	.main-content{
+		background-color: white;
+		margin: 10% auto;
+		width:60%;
+	}
+	.authcheck_title{
+		color:#1890ff;
+		font-size: 28px;
+		margin: 20px;
+	}
+	.top_class{
+		margin: 20px 0;
+	}
+	.return_class{
+		text-decoration: underline;
+    	color: #1890ff;
+		cursor: pointer;
+	}
+</style>
+<form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI"))%>">
+	<div class="row clearfix">
+		<div class="col-sm-12 column top_class">
+			<div class="authcheck_title text-center ">
+				<%:AuthFailed%>
+				<div class="col-sm-12 column detect_error" style="margin-top:10px"><i class="far fa-nradio-detect-error fa-2x fa-fw nradio-width fail_color"></i></div>
+			</div>
+			<div class="row">                                                                                             
+				<div class="col-xs-12 text-right">                                                                   
+					<span class="return_class" onclick="goback()"><%:QSetupThirdBack%></span>                                                                                              
+				</div>                                                                                                
+		</div> 
+		</div>
+
+	</div>
+</form>
+<script type="text/javascript">
+	function goback(){
+		window.location.href = "http://<%=ipaddr%>:2060";
+	}
+</script>
+<%+footer%>

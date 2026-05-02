@@ -1,0 +1,7 @@
+[ ifup = "$ACTION" ] && {
+	[ -n "$DEVICE" ] && {
+		if [ "$INTERFACE" = "cpe" ]; then
+			echo 3 > /sys/class/net/${DEVICE}/queues/rx-0/rps_cpus
+		fi
+	}
+}

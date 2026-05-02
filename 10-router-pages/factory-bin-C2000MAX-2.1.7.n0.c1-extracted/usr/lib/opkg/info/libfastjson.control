@@ -1,0 +1,13 @@
+Package: libfastjson
+Version: 0.99.8-1
+Depends: libc
+Source: package/nradio/feeds/libs/libfastjson
+SourceName: libfastjson
+License: MIT
+LicenseFiles: COPYING
+Section: libs
+SourceDateEpoch: 1588063990
+Maintainer: Dov Murik <dmurik@us.ibm.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 18225
+Description:  libfastjson - A fast JSON library for C

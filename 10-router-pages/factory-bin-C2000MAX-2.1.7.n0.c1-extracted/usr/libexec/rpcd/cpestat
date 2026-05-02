@@ -1,0 +1,68 @@
+#!/bin/ash
+
+. /usr/share/libubox/jshn.sh
+
+readonly CPESTAT_KEY_FILE="/var/run/rpcd/cpestat.json"
+
+set_key() {
+	local _dest=$1
+	local _msg=$2
+	local _tmp=
+	local _key=
+	local _val=
+
+	# Parse input message
+	json_load "$_msg"
+	json_get_var _key key
+	json_get_var _val val
+	json_cleanup
+
+	# Set val by key
+	_tmp=$(cat "$_dest")
+	json_load "${_tmp:-{}}"
+	json_add_string "$_key" "${_val:-none}"
+	json_dump|tee "$_dest"
+	json_cleanup
+}
+
+get_key() {
+	local _dest=$1
+	local _msg=$2
+	local _tmp=
+	local _key=
+	local _val=
+
+	# Parse input message
+	json_load "$_msg"
+	json_get_var _key key
+	json_cleanup
+
+	# Get val by key
+	_tmp=$(cat "$_dest")
+	json_load "${_tmp:-{}}"
+	json_get_var _val "$_key"
+	json_cleanup
+
+	# Gen output message
+	json_init
+	json_add_string "$_key" "${_val:-none}"
+	json_dump
+	json_cleanup
+}
+
+case "$1" in
+	list)
+		echo '{ "set": { "key": "", "val": "" }, "get": { "key": "" } }'
+	;;
+	call)
+		read -r input;
+		case "$2" in
+			set)
+				set_key "$CPESTAT_KEY_FILE" "$input"
+			;;
+			get)
+				get_key "$CPESTAT_KEY_FILE" "$input"
+			;;
+		esac
+	;;
+esac

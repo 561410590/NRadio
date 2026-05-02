@@ -1,0 +1,1615 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local tonumber = tonumber
+	local nr = require "luci.nradio"
+	local lng = require "luci.i18n"
+	local util = require "luci.util"
+	local info = nr.system_info(true)
+	local firmware_type = nr.get_firmware_type()
+	local platform = nr.get_platform()
+	local uci = require "luci.model.uci".cursor()
+	local val
+	local dhcp_enable = lng.translate("N/A")
+	local lan_section = uci:get("network", "globals", "default_lan") or "lan"
+	local lan_ip = lng.translate("N/A")
+	local device_code = lng.translate("N/A")
+	local wifi_info
+	local wifi_info_buffer="{}"
+	local ssid_arr="[]"
+	local enable_sysmbol = lng.translate("StatusEnable")
+	local disable_sysmbol = lng.translate("StatusDisable")
+	lan_ip = uci:get("network", lan_section, "ipaddr") or nil
+	local index_imei = uci:get("luci", "main", "index_imei") or "0"
+	local index_traffic = uci:get("luci", "main", "index_traffic") or "1"
+	local net_type = nr.get_network_type()
+	local has_nbcpe_only = nr.has_nbcpe_only()
+	local is_low_cpu = nr.is_low_cpu()
+	if has_nbcpe_only then
+		status_nbcpe_signal_lng = lng.translate("StatusNBCPEOnlySignal")
+		status_nbcpe_detail_lng = lng.translate("StatusNBCPEOnlyDetail")		
+	else
+		status_nbcpe_signal_lng = lng.translate("StatusNBCPESignal")
+		status_nbcpe_detail_lng = lng.translate("StatusNBCPEDetail")
+	end
+	val = uci:get("dhcp", lan_section, "ignore") or "0"
+	if val == "1" then
+		dhcp_enable = lng.translate("StatusDisable")
+	else
+		dhcp_enable = lng.translate("StatusEnable")
+	end
+
+	if info.device_code and #info.device_code > 0 then
+		device_code = info.device_code;
+	end
+
+	if nr.has_own_wlan() then
+		wifi_info = nr.get_wifi_info()
+		wifi_info_buffer = util.serialize_json(wifi_info,nil)
+	end
+
+	local info_api_result_buffer = util.serialize_json({result=nr.get_runtime_info()},nil)
+	local net_type_buffer = util.serialize_json(net_type,nil)
+	local acmode = luci.nradio.support_ac() or false
+	local ac_hide = "hide"
+	local flow_hide = ""
+	local width_percent = "15%"
+	local local_mac = uci:get("oem", "board", "id") or ""
+	local local_ipaddr = lan_ip or ""
+	local wans_data = util.serialize_json(nr.get_wans_data(),nil)
+	if acmode then
+		ac_hide = ""
+		width_percent = "12%"
+	end
+	if platform == "tdtech" or platform == "quectel"  then
+		flow_hide="hide"
+	end
+	local cellular_prefix,cellular_default = nr.get_cellular_prefix()
+	local cpe_key = cellular_default
+	local board = util.ubus("system", "board") or {board_name = ""}
+
+
+%>
+<%+header%>
+
+<style>
+	.overflow_label{
+		color:white ;
+		display: inline-block;
+		font-weight: bold;
+		font-size: 10px;
+		padding: 2px;
+		background-color: red;
+	}
+	.tmp_hide{
+		display: none;
+	}
+	.panel-title.no_paddingLeft{
+		    padding-left: 0px;
+	}
+	.next-button::before {
+		top: 7px;
+	}
+
+
+	.body-container.container{
+		width: 100%;
+	}
+	.main{
+		background: none;
+	}
+
+	.speedflow_combine_box{
+		display: block;
+		float: left;
+		width: 30%;
+		margin-left:1.5%;
+		margin-right:1.5%;
+		margin-bottom: 20px;
+		height:338px;
+	}
+	.pc_box{
+		width: 30%;
+		float: left;
+		margin-left:1.5%;
+		margin-right:1.5%;
+		height:338px;
+	}
+	.pc_box.pc_box1,.pc_box.pc_box2{
+		height:159px;
+		margin-left: 0px;
+		margin-right: 0px;
+		margin-bottom: 10px;
+	}
+	.pc_box.pc_box3,.pc_box.pc_box4{
+		height:159px;		
+		margin-left: 0px;
+		margin-right: 0px;
+		margin-top: 10px;
+	}
+	.pc_box.pc_box2,.pc_box.pc_box4{
+		float:right;
+	}
+
+	.panel-heading{
+		border: none;
+	}
+	.speedflow_box{
+		line-height: 30px;
+		height: 30px;
+	}
+	.panel-info>.panel-heading {
+		font-size: 14px;
+		font-weight: bold;
+		color: white;
+		padding: 10px 15px 0px 15px;
+	}
+
+	.title_info{
+		overflow: hidden;
+		height: 20px;
+		padding-right: 0px;
+	}
+	.row.no_padding{
+		padding: 0px;
+	}
+	.pc_box1 .panel-heading,.pc_box2 .panel-heading,.pc_box3 .panel-heading,.pc_box4 .panel-heading{
+		padding-left: 15px;
+		padding-right: 0px;
+	}
+	@media (min-width: 768px) and (max-width: 1200px) {
+		.main-content{
+			padding:unset;
+		}
+		.pre_info{
+			display: none;
+		}
+		.last_info{
+			display: none;
+		}
+		.flowup_data,.flowdown_data,.speedup_data,.speeddown_data{
+			font-size: 16px;
+		}
+		.pc_box.pc_box1,.pc_box.pc_box3,.pc_box.pc_box2{
+			height:80px;
+			width: 100%;
+			margin-left: 0px;
+			margin-right: 0px;
+			margin-bottom: 6px;
+			margin-top: 0px;
+		}
+		.pc_box1 .row,.pc_box2 .row,.pc_box3 .row,.pc_box4 .row{
+			padding: 0;
+		}
+		.pc_box.pc_box4{
+			height:80px;
+			width: 100%;
+			margin-left: 0px;
+			margin-right: 0px;
+			margin-bottom: 0px;
+			margin-top: 0px;
+		}
+		.speedup_data,.speeddown_data,.flowup_data,.flowdown_data{
+			text-align: right;
+		}
+		.speedup_unit,.speeddown_unit,.flowup_unit,.flowdown_unit{
+			text-align: left;
+		}
+		.speedflow_box{
+			line-height: 25px;
+			height: 25px;
+		}		
+	}
+
+	.dnn_ip,.wan_ip{
+		max-height: 36px;
+		overflow: hidden;
+	}
+
+	@media (min-width: 1201px){
+		.special_width{
+			width: 80%;
+			padding-left: 0px;
+		}
+		.special_width1{
+			width: 50%;;
+			padding-left: 0px;
+		}
+		.right_title{
+			width: 20%;
+		}
+	}
+
+	.eth_box{
+		cursor: pointer;
+		padding-left: 0px;
+	}
+</style>
+<style>
+	#canvas-box .stand_net_box{
+		position: relative;
+	}
+	#canvas-box .stand_net_box .panel-heading{
+		overflow: visible;
+	}
+	#canvas-box .stand_net_box .panel-heading .row{
+		position: relative;
+	}
+	#canvas-box .stand_net_box .panel-heading .wan_mode_extra_scoped{
+		position: absolute;
+		right: 0;
+		top: calc(100% + 0px);
+		white-space: nowrap;
+		pointer-events: none;
+		font-size: 12px;
+	}
+</style>
+		<div class="hidden-xs">
+			<div id="single-box" class="hide">
+				<div id="canvas-box" ></div>
+				<div id="single_net_wifi" >
+
+				</div>
+				<div class="speedflow_combine_box hide" ></div>
+				<div id="net-box"></div>
+			</div>
+
+			<div id="multi-box" class="hide"></div>
+			<div id="multi_net_wifi" class="hide"></div>
+			<div id="wifi-box">
+
+			</div>
+			<div class="panel panel-info device-panel pc_box hide">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-sm-12 col-xs-12 text-left"><%:StatusDevice%></div>
+					</div>
+				</div>
+				<div class="panel-body info-box">
+					<div class="row">
+						<div class="col-sm-12 col-xs-12 text-left no_padding">
+							<div class="row">
+								<div class="col-sm-5 col-xs-5 text-left ">
+									<%:StatusDeviceModule%>:
+								</div>
+								<div class="col-sm-7 col-xs-7 text-right">
+									<%=info.model%>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-5 col-xs-5 text-left ">
+									<%:StatusDeviceFirmware%>:
+								</div>
+								<div class="col-sm-7 col-xs-7 text-right">
+									<%=info.ver%>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-5 col-xs-5 text-left ">
+									<%:RouterIP%>:
+								</div>
+								<div class="col-sm-7 col-xs-7 text-right visible-lg lan_ip">
+									<%=lan_ip%>
+								</div>
+								<div class="col-sm-7 col-xs-7 text-right hidden-lg lan_ip">
+									<%=lan_ip%>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-4 col-xs-4 text-left " >									
+									<%:DHCP%>:
+								</div>
+								<div class="col-sm-8 col-xs-8 text-right">
+									<%=dhcp_enable%>	
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-5 col-xs-5 text-left ">
+									<%:MAC Address%>:
+								</div>
+								<div class="col-sm-7 col-xs-7 text-right">
+									<%=info.mac%>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-4 col-xs-4 text-left ">									
+									<%:StatusDeviceCode%>:
+								</div>
+								<div class="col-sm-8 col-xs-8 text-right device_code" onclick="toggle_eye_show(this,secretshow)">										
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-5 col-xs-5 text-left ">
+									<%:Runtime%>:
+								</div>
+								<div class="col-sm-7 col-xs-7 text-right sys_uptime">
+									<script>document.write(uptime2dhms("<%=info.upt%>", 3))</script>
+								</div>
+							</div>
+							<div class='row batinfo hide'>
+								<div class='col-sm-4 col-xs-4 text-left'>
+									<%:BatInfo%>:
+								</div>
+								<div class='col-sm-8 col-xs-8 text-right'>
+									<span class='batinfo_text'></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	
+<script language="javascript">
+var board_name = "<%=board.board_name%>";
+var empty_val = "<%:N/A%>";
+var cpe_stand_key = "<%=cpe_key%>";
+
+var wan_stand_key = "wan";
+var wans_data = <%=wans_data%>;
+var has_cpe = false;
+var cpe_count = <%=nr.count_cpe()%>;
+var net_type_list = <%=net_type_buffer%>;
+var ter_arcProgress = null;
+var ter_multi_arcProgress = null;
+var interval = 2;
+var ter_max_client = 0;
+var wifi_hd_count = 0;
+var speed_interval = 2;
+var secretshow = true;
+var low_cpu = false;
+var proto={'dhcp':"<%:QSetupInternetDHCP%>",'dhcpv6':"<%:QSetupInternetDHCPv6%>",'static':"<%:StaticIP%>",'pppoe':"<%:PPPoE%>"};
+<%if nr.has_cpe() then%>
+has_cpe = true;
+interval=4;
+<%end%>
+<% if is_low_cpu then%>
+	low_cpu = true;
+<%end%>
+
+function match_overlap_dividing(value){
+	var key_info = "";
+	for (key in net_type_list){
+		if(net_type_list[key] == value){
+			key_info=key;
+			break;
+		}
+	}
+	if(key_info.length && (key_info.indexOf("Overlap") != -1 ) || (key_info.indexOf("Dividing") != -1)){
+		return 1;
+	}
+	return 0;
+}
+var old_link_str = "";
+function load_link(data,nbcpe_work){
+	var htm = "";
+	if (!data || !data.length){
+		$(".data_box").parent().parent().parent().addClass("tmp_hide");
+		return;
+	}
+	$(".data_box").parent().parent().parent().remove("tmp_hide");
+	if (!old_link_str.length){
+		old_link_str = JSON.stringify(data);
+	}
+	else if( JSON.stringify(data) == old_link_str){
+		return;
+	}
+	else{
+		old_link_str = JSON.stringify(data);
+	}
+	var msg = {"unconnected":"<%:Unconnected%>"};
+	htm = genarate_port_link(data,msg,nbcpe_work);
+	$(".data_box").empty().append(htm);
+}
+function stats_info(data){
+	if(!data || !data.result)
+		return;
+	if(data.result.link && data.result.link.length)
+		$(".eth_box").css("display","block");
+	var terminal_count = 0;	
+	var nbcpe_work = match_priority(data.result.global.net_prefer,"NBCPE");
+	var wan_linked = get_wank_link(data.result.link,nbcpe_work);
+	var priority = match_priority(data.result.global.net_prefer,"Priority");
+	load_link(data.result.link,nbcpe_work);
+	if(data.result.global.uptime)
+		$('.sys_uptime').html(uptime2dhms(data.result.global.uptime, 3));
+	ter_max_client = 0;
+	if(data.result.wlan)
+		wlan_show(data.result.wlan);
+	if(!wifi_hd_count)
+	{
+		if(board_name.match("HCMT7981")||board_name.match("HCMT7987"))
+			ter_max_client=512;
+		else if(board_name.match("HCMT7628") ||board_name.match("HCMT7620")||board_name.match("HCMT7621"))
+			ter_max_client=128;
+		else if(board_name.match("moses")||board_name.match("sprd"))
+			ter_max_client=32;
+		else
+			ter_max_client=32;
+	}
+	if(data.result.wans)
+		net_show(data.result.wans,data.result.cpe,wan_linked);
+	
+	if(data.result.lans)
+		lan_show(data.result.lans);
+	
+	if(has_cpe && data.result.cpe)
+		cpe_show(data.result.cpe);
+	reset_box_item(wans_data);
+	if(cpe_count && priority){
+		var wan_active = 0;
+		if(data.result.wans){
+			$.each(data.result.wans, function(i, db){
+				if(db.name == wan_stand_key){
+					wan_active = 1;
+					$('.box_wans_'+wan_stand_key+' .last_info').html("("+"<%:StatusPriorityMain%>"+")");
+				}
+			});
+		}
+		if(data.result.cpe && wan_active){
+			var celluar_cnt = 0;
+			$.each(data.result.cpe, function(i, db){
+				var cur_display = $('.box_wans_'+db.name).css("display");
+				if(cur_display != "none"){
+					celluar_cnt++;
+				}
+			});
+			$.each(data.result.cpe, function(i, db){
+				var sortindex = $('.box_wans_'+db.name).data("cpeindex");
+				var cur_display = $('.box_wans_'+db.name).css("display");
+				if(sortindex && (celluar_cnt>1))
+					$('.box_wans_'+db.name+' .last_info').html("("+"<%:StatusPriorityOther%>"+sortindex+")");
+				else
+					$('.box_wans_'+db.name+' .last_info').html("("+"<%:StatusPriorityOther%>"+")");
+				if(cur_display != "none"){
+					celluar_cnt++;
+				}
+			});
+		}
+	}
+	else{
+		$('.stand_net_box .last_info').html("");
+	}
+	<%if nr.ui_bat_support() then %>
+	if (data.result.bat && data.result.bat.percent != -1 )
+	{
+		var text_info = "<%:Charging%>";
+		$(".batinfo").removeClass("hide");
+		if(data.result.bat.charging == 0)
+			text_info = "<%:Discharging%>";
+			text_info = data.result.bat.percent+"%,"+text_info;
+		$(".batinfo_text").html(text_info);
+	}
+	<%end%>
+	if(data.result.terminal_all){
+		$.each(data.result.terminal_all.client, function(index, db){
+			if (db.exsit != 1)
+				return;			
+			terminal_count++;			
+		});
+	}
+	ter_arcProgress = wired_show(ter_arcProgress,"single-progress-container",terminal_count,ter_max_client);
+	ter_multi_arcProgress = wired_show(ter_multi_arcProgress,"multi-progress-container",terminal_count,ter_max_client);
+	for(var i=0;i<wans_data.length;i++){
+		if($("#cpuprogress-container-"+wans_data[i].name+"single").length){
+			wans_data[i].arcProgressCPUSingle = canvas_val_show(wans_data[i].arcProgressCPUSingle,"cpuprogress-container-"+wans_data[i].name+"single",data.result.global.cpu_percent,100,cpu_range,cpu_lang,"%");
+		}
+		if($("#cpuprogress-container-"+wans_data[i].name+"multi").length){
+			wans_data[i].arcProgressCPUMulti = canvas_val_show(wans_data[i].arcProgressCPUMulti,"cpuprogress-container-"+wans_data[i].name+"multi",data.result.global.cpu_percent,100,cpu_range,cpu_lang,"%");
+		}
+		
+		if($("#memprogress-container-"+wans_data[i].name+"single").length){
+			wans_data[i].arcProgressMEMSingle = canvas_val_show(wans_data[i].arcProgressMEMSingle,"memprogress-container-"+wans_data[i].name+"single",data.result.global.mem_percent,100,mem_range,mem_lang,"%");
+		}
+		if($("#memprogress-container-"+wans_data[i].name+"multi").length){
+			wans_data[i].arcProgressMEMMulti = canvas_val_show(wans_data[i].arcProgressMEMMulti,"memprogress-container-"+wans_data[i].name+"multi",data.result.global.mem_percent,100,mem_range,mem_lang,"%");
+		}
+	}
+	if(data.result.global.cpu_percent){
+		$("#single-box").find(".cpu_data").html(data.result.global.cpu_percent+"%");
+		$("#multi-box .box_wans_wan .cpu_data").html(data.result.global.cpu_percent+"%");
+		$(".cpu_des").html(format_cpu_val(data.result.global.cpu_percent));
+	}
+
+	if(data.result.global.mem_percent){
+		$("#single-box").find(".mem_data").html(data.result.global.mem_percent+"%");
+		$("#multi-box .box_wans_wan .mem_data").html(data.result.global.mem_percent+"%");
+		$(".mem_des").html(format_mem_val(data.result.global.mem_percent));
+		
+	}
+}
+
+function wlan_show(data){
+	if (data && data.radio){
+		if(!wifi_hd_count && data.radio.length){
+			htm = format_wifi_section("",data.radio,null,1);
+			wifi_hd_count = data.radio.length;
+			$("#wifi-box").append(htm);
+		}
+		for (i = 0; i < data.radio.length; i++) {
+			cboard = data.radio[i];
+			if (!cboard.name.match("^wlan\\d+$") ) {
+				continue;
+            }
+			ter_max_client+=nradio_phyname_maxclients(cboard.phyname);
+
+			$(".wifi_section_"+cboard.device_id+cboard.name+" .sta_num").html(cboard.sta);
+			$(".wifi_section_"+cboard.device_id+cboard.name+" .auto_channel").html("("+cboard.channel+")");
+		}
+	}
+}
+
+function cpe_show(cpe){
+	var mode='2G';
+	var ipslist={};
+	var sigper='<%:Unknown%>';
+	var isp='';
+	var status = {};
+	var iccid='<%:Unknown%>';
+
+	var match_flag = 0;
+	var sims_alias = <%=util.serialize_json(nr.get_sim_alias(),nil)%>;
+	var overflow_label = "  <span class='overflow_label'><%:Overflow%></span>";
+	var overdate_label = "  <span class='overflow_label'><%:Overdate%></span>";
+	$.each(cpe, function(i, db){
+		status = db;
+		var nocard = 1;
+		var isSlot = 1;
+		var siminfo='<%:Unknown%>';
+		var simidinfo='<%:Unknown%>';
+		var isp_ori = "";
+		sigper='<%:Unknown%>';
+
+		$('.box_wans_'+status.name+' .status_icon').data("cellularType","");
+		if ((status.odu == "1") && (status.disabled != "1")){
+			if(status.odu_interface && status.odu_interface.length)
+			{				
+				$('.box_wans_'+status.name+' .status_icon').html("<%=status_nbcpe_signal_lng%>");
+				$('.box_wans_'+status.name+' .status_details').html( "<%=status_nbcpe_detail_lng%>");
+				$('.box_wans_'+status.name+' .status_icon').data("cellularType","nbcpe");
+			}
+			else
+			{
+				$('.box_wans_'+status.name+' .status_icon').html( "<%:StatusCellularSignal%>");
+				$('.box_wans_'+status.name+' .status_details').html( "<%:StatusCellularDetail%>");
+			}
+		}
+		else{
+			$('.box_wans_'+status.name+' .status_icon').html( "<%:StatusCellularSignal%>");
+			$('.box_wans_'+status.name+' .status_details').html( "<%:StatusCellularDetail%>");
+		}		
+
+		if(status.cellular_as_wan)
+			return;
+
+		var wan_item = get_wans_item(status.name,wans_data);
+		if(wan_item){
+			if(status.disabled == "1"){
+				wan_item.disabled="1";
+			}
+		}
+
+		if(low_cpu)
+			speed_show(wan_item,status.upload,status.download,interval);
+		
+		flow_show(wan_item,db.sim_flow,db.sim_mon);
+		sim_alias = sims_alias?sims_alias[i]:[];
+		if (status.iccid && status.iccid != "none") {
+			isp_ori = status.isp?status.isp:"";
+			isp = format_isp_info(status.sim_isp,status.isp);
+			
+			iccid=status.iccid;
+			
+			if (status.mode == "LTE")
+			{
+				mode='4G';
+				if (status.rsrp){
+					sigper=(status.rsrp);
+				}
+			}
+			else if (status.mode.match("NR") != null)
+			{
+				mode='5G';
+				if (status.rsrp){
+					sigper=(status.rsrp);
+				}
+			}
+			else if (status.mode == "WCDMA" || status.mode == "TD-SCDMA")
+			{
+				mode='3G';
+				if (status.rssi){
+					sigper=(status.rssi);
+				}
+			}
+			else if (status.mode == "GSM" || status.mode == "CDMA")
+			{
+				mode='2G';
+				if (status.rssi){
+					sigper=(status.rssi);
+				}
+			}
+			else
+				mode = '<%:Unknown%>';
+			
+
+			nocard=0;
+		}
+		else
+			mode = '<%:Unknown%>';
+		if (!isp_ori.length || isp_ori == "none"){
+			sigper="";
+		}
+		
+		if (status.switchmode && status.switchmode.length){
+			if (status.switchmode == "1")
+				siminfo='<%:StatusManual%>';
+			else
+				siminfo='<%:Auto%>';
+		}
+		if (status.simno && status.simno.length){
+			simidinfo=sim_alias[status.simno - 1];
+			if((sim_alias[status.simno - 1].indexOf("Embedded") != -1) || (sim_alias[status.simno - 1].indexOf("内置") != -1))
+				isSlot = 0;
+		}
+		if (status.flow_overflow == "1"){			
+			$('.box_wans_'+status.name+' .right_title').html(overflow_label);
+		}
+		if (status.flow_overflow == "2"){
+			$('.box_wans_'+status.name+' .right_title').html(overdate_label);
+		}
+		var bandcombine = 0;
+		if (status.band && status.band != "none") {
+			var data_str = "";
+			var band_max = status.band_count;
+			for (var i=0;i<band_max;i++){
+				if(i){
+					cur_band = status["band"+i];
+					if (mode=="5G"){
+						cur_band = "n"+status["band"+i];
+						if (i && status.mode && status.mode.match("NSA"))
+						{
+							cur_band = "B"+status["band"+i];
+						}
+					}
+					else if (mode=="4G"){
+						cur_band = "B"+status["band"+i];
+					}
+					else{
+						cur_band = status["band"+i];
+					}
+					cur_dlbw = status["DLBW"+i];
+				}
+				else{
+					if (mode=="5G"){
+						cur_band = "n"+status["band"];
+					}
+					else if (mode=="4G"){
+						cur_band = "B"+status["band"];
+					}
+					else{
+						cur_band = status["band"];
+					}
+					
+					cur_dlbw = status["DLBW"];
+				}
+				if(cur_dlbw && cur_dlbw.length)
+					bandcombine += parseInt(cur_dlbw)/1000;
+				if(cur_band && cur_band.length)
+				{
+					data_str += cur_band;
+				}
+				if(cur_dlbw && cur_dlbw.length)
+				{
+					data_str += " ("+cur_dlbw/1000+"MHz)";
+				}
+				if(i<(band_max-1))
+					data_str+=" + ";
+			}
+			$('.box_wans_'+status.name+' .cpe_band').html(data_str);
+		}
+
+		if(status.nrcap == "0" || status.nrcap == "")
+			$('.box_wans_'+status.name+' .rtemp_label').html("<%:LTETemp%>");
+		else
+			$('.box_wans_'+status.name+' .rtemp_label').html("<%:NRTemp%>");
+		if(status.odu == "1"){
+			$('.box_wans_'+status.name+' .cpu_data').html(status.cpu_percent?(status.cpu_percent+"%"):"-");
+			$('.box_wans_'+status.name+' .mem_data').html(status.mem_percent?(status.mem_percent+"%"):"-");
+		}
+				
+		$('.box_wans_'+status.name+' .model_temp').html(format_temp_val(status.model_temp));
+		$('.box_wans_'+status.name+' .temp_des').html(format_temp_des(status.model_temp));	
+		$('.box_wans_'+status.name+' .cpe_signal').html(sigper);
+		if (status.imei != "none")
+			$('.box_wans_'+status.name+' .cpe_imei').html(secret_show(status.imei));
+		$('.box_wans_'+status.name+' .cpe_earfcn').html(status.imei?status.earfcn:"");
+		$('.box_wans_'+status.name+' .cpe_register').html(status.mode?status.mode:"");
+
+		if(wan_item){
+			if($("#progress-container-"+status.name+"single").length){
+				wan_item.arcProgressSingle = signal_show(wan_item.arcProgressSingle,"progress-container-"+status.name+"single",mode,sigper,nocard,isSlot);
+			}
+				
+			if($("#progress-container-"+status.name+"multi").length){
+				wan_item.arcProgressMulti = signal_show(wan_item.arcProgressMulti,"progress-container-"+status.name+"multi",mode,sigper,nocard,isSlot);
+			}
+			if($("#tempprogress-container-"+status.name+"single").length){
+				wan_item.arcProgressTempSingle = canvas_val_show(wan_item.arcProgressTempSingle,"tempprogress-container-"+status.name+"single",status.model_temp,125,temp_range,temp_lang,"℃");
+			}
+			if($("#tempprogress-container-"+status.name+"multi").length){
+				wan_item.arcProgressTempMulti = canvas_val_show(wan_item.arcProgressTempMulti,"tempprogress-container-"+status.name+"multi",status.model_temp,125,temp_range,temp_lang,"℃");
+			}
+		}
+
+		$('.box_wans_'+status.name+' .cpe_iccid').html(secret_show((status.iccid == "none")?"":status.iccid));
+		if(status.simcount && status.simcount>1){
+			$('.box_wans_'+status.name+' .cpe_mode_line').removeClass("hide");
+			$('.box_wans_'+status.name+' .cpe_mode').html(siminfo);
+			$('.box_wans_'+status.name+' .cpe_sim_id').html(simidinfo);			
+		}
+		else{
+			$('.box_wans_'+status.name+' .cpe_mode_line').removeClass("hide").addClass("hide");
+		}
+
+		if(check_5ga(status.sim_isp,mode,status.band_count,bandcombine)){
+			mode="5G-A";
+		}
+		$('.box_wans_'+status.name+' .wan_mode').html(isp+' '+mode);
+
+		var $cpe_row = $('#canvas-box .box_wans_'+status.name+' .wan_mode').closest('.row');
+		if (status.sim_name != "unknown" && status.sim_name){
+			$cpe_row.find('> .wan_mode_extra_scoped').remove();
+			$cpe_row.append('<span class="wan_mode_extra_scoped sub_label_color">'+status.sim_name+'</span>');
+		}
+		else{
+			$cpe_row.find('> .wan_mode_extra_scoped').remove();
+		}
+	});
+
+}
+
+function toggle_eye_show(obj,open){
+	if(open){
+		secretshow = false;
+		$(".toggle_eye").html(' <i class=\'far fa-nradio-eye-open fa-1x\'></i>');
+		$(".toggle_eye").each(function(){
+			var target_obj = $(this).parent().find(".word_info");			
+			$(target_obj).html($(target_obj).data("ori"));
+		});
+	}
+	else{
+		secretshow = true;
+		$(".toggle_eye").html(' <i class=\'far fa-nradio-eye-close fa-1x\'></i>');
+		$(".toggle_eye").each(function(){
+			var target_obj = $(this).parent().find(".word_info");
+			$(target_obj).html($(target_obj).data("secret"));
+		});
+	}
+}
+function escapeHtml(str) {
+  return str.replace(/[<>&"']/g, function(match) {
+    switch (match) {
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&#039;';
+    }
+  });
+}
+function secret_show(val){
+	var htm = "";
+	var target_val = val;
+	var secret_word = val;
+	var far_class = "fa-nradio-eye-open";
+	if (typeof(val) == "number")
+		val = val.toString();
+	else if (typeof(val) != "string")
+		return "";
+	else if(!val.length)
+		return "";
+	
+	secret_word = val.replace(/./g, "·");
+	val = escapeHtml(val);
+	if(secretshow){
+		target_val = secret_word;
+		far_class = "fa-nradio-eye-close";
+	}
+
+	htm = '<span class="word_info" data-ori="'+val+'" data-secret="'+secret_word+'">'+target_val+'</span><span class="icon toggle_eye" > <i class="far '+far_class+' fa-1x"></i></span>';
+	return htm;
+}
+
+function format_wans_detail_box(name,class_name,cpe_data,pre_label_info,label_info){
+	var html="";
+	html+="<div "+cpe_data+" class='"+class_name+" panel panel-info stand_net_box internet-panel pc_box box_wans_"+name+"'>";
+	html+="<div class='panel-heading'>";
+	html+="		<div class='row'>";
+	html+="			<div class='col-sm-8 col-xs-8 text-left special_width'><span class='pre_info'>"+pre_label_info+"</span><span class='main_info status_details'>"+label_info+"</span><span class='last_info'></span></div>";
+	html+="			<div class='col-sm-4 col-xs-4 text-right title_info right_title'></div>";
+	html+="		</div>";
+	html+="</div>";
+	html+="\
+		<div class='cpe_box panel-body info-box'>\
+			<div class='row'>\
+				<div class='col-sm-12 .col-xs-12 text-left no_padding'>\
+					<div class='row'>\
+						<div class='col-sm-6 col-xs-6 text-left '>\
+							<%:Registered Mode%>:\
+						</div>\
+						<div class='col-sm-6 col-xs-6 text-right cpe_register'>\
+						</div>\
+					</div>\
+					<div class='row'>\
+						<div class='col-sm-3 col-xs-4 text-left '>\
+							<%:WAN IP%>:\
+						</div>\
+						<div class='col-sm-9 col-xs-8 text-right no_paddingLeft hidden-lg wan_ip'>\
+						</div>\
+						<div class='col-sm-9 col-xs-8 text-right no_paddingLeft visible-lg wan_ip'>\
+						</div>\
+					</div>\
+					<div class='row wan_multi_ip'></div>\
+					<div class='row'>\
+						<div class='col-sm-6 col-xs-6 text-left '>\
+							<%:StatusInterOnline%>:\
+						</div>\
+						<div class='col-sm-6 col-xs-6 text-right wan_uptime'>\
+						</div>\
+					</div>\
+					<div class='row'>\
+						<div class='col-sm-5 col-xs-6 text-left '>\
+							<%:Earfcn%>:\
+						</div>\
+						<div class='col-sm-7 col-xs-6 text-right cpe_earfcn'>\
+						</div>\
+					</div>\
+					<div class='row'>\
+						<div class='col-sm-5 col-xs-6 text-left '>\
+							<%:CelluarBand%>:\
+						</div>\
+						<div class='col-sm-7 col-xs-6 text-right cpe_band'>\
+						</div>\
+					</div>\
+					<div class='row cpe_mode_line'>\
+						<div class='col-sm-5 col-xs-6 text-left '>\
+							<%:SwitchMode%>:\
+						</div>\
+						<div class='col-sm-7 col-xs-6 text-right cpe_mode'>\
+						</div>\
+					</div>\
+					<div class='row cpe_mode_line'>\
+						<div class='col-sm-5 col-xs-6 text-left '>\
+							<%:CurSim%>:\
+						</div>\
+						<div class='col-sm-7 col-xs-6 text-right cpe_sim_id'>\
+						</div>\
+					</div>\
+					<div class='row'>\
+						<div class='col-sm-3 col-xs-3 text-left '>\
+							<%:ICCID%>:\
+						</div>\
+						<div class='col-sm-9 col-xs-9 text-right cpe_iccid' onclick=\"toggle_eye_show(this,secretshow)\">\
+						</div>\
+					</div>\
+					<div class='row'>\
+						<div class='col-sm-4 col-xs-4 text-left '>\
+							<%:IMEI%>:\
+						</div>\
+						<div class='col-sm-8 col-xs-8 text-right cpe_imei' onclick=\"toggle_eye_show(this,secretshow)\">\
+						</div>\
+					</div>\
+				</div>\
+			</div>\
+		</div>\
+		<div class='wan_box panel-body info-box'>\
+			<div class='row'>\
+				<div class='col-sm-12 .col-xs-12 text-left no_padding'>\
+					<div class='row'>\
+						<div class='col-sm-6 col-xs-6 text-left' >\
+							<%:StatusInterType%>:\
+						</div>\
+						<div class='col-sm-6 col-xs-6 text-right wired_type'>\
+						</div>\
+					</div>\
+					<div class='row'>\
+						<div class='col-sm-3 col-xs-4 text-left'>\
+							<%:WAN IP%>:\
+						</div>\
+						<div class='col-sm-9 col-xs-8 text-right no_paddingLeft hidden-lg wan_ip'>\
+						</div>\
+						<div class='col-sm-9 col-xs-8 text-right no_paddingLeft visible-lg wan_ip'>\
+						</div>\
+					</div>\
+					<div class='row pppoe'>\
+						<div class='col-sm-6 col-xs-6 text-left'>\
+							<%:Username%>:\
+						</div>\
+						<div class='col-sm-6 col-xs-6 text-right wired_username'>\
+						</div>\
+					</div>\
+					<div class='row pppoe'>\
+						<div class='col-sm-6 col-xs-6 text-left'>\
+							<%:Password%>:\
+						</div>\
+						<div class='col-sm-6 col-xs-6 text-right wired_password' onclick=\"toggle_eye_show(this,secretshow)\">\
+						</div>\
+					</div>\
+					<div class='row'>\
+						<div class='col-sm-6 col-xs-6 text-left'>\
+							<%:Netmask%>:\
+						</div>\
+						<div class='col-sm-6 col-xs-6 text-right wan_mask'>\
+						</div>\
+					</div>\
+					<div class='row'>\
+						<div class='col-sm-6 col-xs-6 text-left'>\
+							<%:Gateway%>:\
+						</div>\
+						<div class='col-sm-6 col-xs-6 text-right wired_gateway'>\
+						</div>\
+					</div>\
+					<div class='row'>\
+						<div class='col-sm-6 col-xs-6 text-left '>\
+							<%:StatusInterOnline%>:\
+						</div>\
+						<div class='col-sm-6 col-xs-6 text-right wan_uptime'>\
+						</div>\
+					</div>\
+				</div>\
+			</div>\
+		</div>";
+	
+	html+="</div>"	
+	return html;
+}
+function format_wans_icon_box(name,class_name,cpe_data,pre_label_info,label_info,type,canvas_size){
+	var html="";
+	html+="<div "+cpe_data+" class='"+class_name+" panel panel-info internet-panel stand_net_box pc_box box_wans_"+name+"'>\
+		<div class='panel-heading'>\
+			<div class='row'>\
+				<div class='cpe_box col-sm-4 col-xs-4 text-left title_info special_width1'><span class='pre_info'>"+pre_label_info+"</span><span class='main_info status_icon'>"+label_info+"</span></div>\
+				<div class='cpe_box col-sm-8 col-xs-8 text-right wan_mode title_info special_width1'></div>\
+				<div class='wan_box col-sm-12 col-xs-12 text-left'><span class='pre_info'>"+pre_label_info+"</span><span class='main_info status_icon'>"+label_info+"</span></div>\
+			</div>\
+		</div>\
+		<div class='panel-body info-box'>\
+			<div class='row'>\
+				<div class='col-sm-12 .col-xs-12 text-left'>\
+					<div class='row'>\
+						<div class='text-center'>\
+							<div id='progress-container-"+name+type+"' data-size='"+canvas_size+"' class='text-center'>\
+							</div>\
+							<div class='progress-bg' style='display: none;' class='text-center'>\
+							</div>\
+						</div>\
+					</div>\
+				</div>\
+			</div>\
+		</div>\
+	</div>";
+	return html;
+}
+function format_wans_box(wans_data,cpe_count,canvas_size){
+	var html="";
+	var canvas_html="";
+	var speedflow_html="";
+	var cpe_index = 0;
+	var count = 1;
+	var active_index = -1;
+	
+	for(var i=0;i<wans_data.length;i++){
+		var data = wans_data[i].name;
+		var index="";
+		var cpe_num="";
+		var class_name = "";		
+		var cpe_data = "";
+		var label_info = "";
+		var label_detail_info = "";
+		var pre_label_info = "<%:Line%>"+count+"-";
+
+		if(wans_data[i].disabled != "1"){
+			count++;
+		}
+
+		if(data == "wan"){
+			class_name="wan_box";
+			label_info = "<%:StatusWiredTitle%>";
+			label_detail_info = "<%:StatusWiredDetailTitle%>";
+		}
+		else if((cpe_num = data.indexOf(cpe_stand_key)) != -1){
+			if(cpe_count>1){
+				index = data.substr(cpe_num+cpe_stand_key.length);
+				if (index == "")
+					index=0;
+				else
+					index = parseInt(index);
+				index++;
+			}
+			cpe_index++;	
+			cpe_data='data-cpeindex="'+cpe_index+'"';			
+			class_name="cpe_box"
+			label_info = "<%:StatusCellularSignal%>";
+			label_detail_info = "<%:StatusCellularDetail%>";
+		}
+		wans_data[i].singlecanvas=format_wans_icon_box(data,class_name,cpe_data,pre_label_info,label_info,"single",canvas_size);
+		wans_data[i].multicanvas=format_wans_icon_box(data,class_name,cpe_data,pre_label_info,label_info,"multi",canvas_size);
+		wans_data[i].detail=format_wans_detail_box(data,class_name,cpe_data,pre_label_info,label_detail_info);
+		wans_data[i].singlespeedflow=format_wans_speedflow_box(data,class_name,cpe_data,pre_label_info,"single");
+		wans_data[i].multispeedflow=format_wans_speedflow_box(data,class_name,cpe_data,pre_label_info,"multi");
+
+		$("#multi-box").append(wans_data[i].multicanvas+wans_data[i].detail+"<div class='stand_net_box speedflow_combine_box box_wans_"+wans_data[i].name+"'>"+wans_data[i].multispeedflow+"</div>");
+		if(wans_data[i].disabled != "1"){
+			if(active_index == -1){
+				active_index = i;
+				$("#single-box").data("module",wans_data[i].name);
+				$("#canvas-box").html(wans_data[i].singlecanvas);
+				$("#single-box .speedflow_combine_box").removeClass("hide").html(wans_data[i].singlespeedflow);
+				$("#net-box").html(wans_data[i].detail);				
+			}
+		}
+	};
+	reset_box_item(wans_data);
+	reset_box_speed(wans_data);
+}
+
+function reset_box_item(wans_data){
+	var show_count = 0;
+	var item = null;
+	var index = 0;
+
+	for(var i=0;i<wans_data.length;i++){
+		 if(wans_data[i].disabled != "1"){
+			show_count++;
+			var pre_label_info = "<%:Line%>"+show_count+"-";
+			$("#multi-box").find(".box_wans_"+wans_data[i].name).each(function(){
+				$(this).find(".pre_info").html(pre_label_info);
+			});
+			item = wans_data[i];
+		 }
+	}
+
+	if(show_count>1){
+		$("#single-box").addClass("hide");
+		$("#single_net_wifi").addClass("hide");
+		$("#multi_net_wifi").removeClass("hide");
+		$("#multi-box").removeClass("hide");		
+	}
+	else if(show_count==1){
+		var cur_module = $("#single-box").data("module");
+
+		if(cur_module != item.name){
+			$("#single-box").data("module",item.name);
+			$("#canvas-box").html(item.singlecanvas);
+			$("#single-box .speedflow_combine_box").removeClass("hide").html(item.singlespeedflow);
+			$("#net-box").html(item.detail);
+			item.arcProgressSingle = null;
+			item.arcProgressMEMSingle = null;
+			item.arcProgressTempSingle = null;
+			item.arcProgressCPUSingle = null;
+		}
+		else{
+			$("#single-box .speedflow_combine_box").removeClass("hide");
+		}
+		$("#single-box").removeClass("hide");
+		$("#single_net_wifi").removeClass("hide");
+		$("#multi_net_wifi").addClass("hide");
+		$("#multi-box").addClass("hide");	
+	}
+	else{
+		$("#single-box").removeClass("hide");
+		$("#single-box .speedflow_combine_box").addClass("hide");
+		$("#single_net_wifi").removeClass("hide");
+		$("#multi_net_wifi").addClass("hide");
+		$("#multi-box").addClass("hide");	
+	}
+	$("#single-box").find(".pre_info").html("");
+	$("#single-box").find(".last_info").html("");
+	$("#single-box .box_wans_wan").find(".rtemp_label").html("<%:CPUusage%>");	
+	$("#multi-box .box_wans_wan .pre_info").html("");
+	$("#multi-box .box_wans_wan .rtemp_label").html("<%:CPUusage%>");
+	$(".device-panel").removeClass("hide");
+}
+function lan_show(data){
+	var lan_one_data = data[0];
+	var lan_ip_html="";
+
+	var cat_lan_ip_html="";
+	var lan_ip="";
+	var ip_count = 0;
+	if (lan_one_data) {
+		if (lan_one_data.ipaddrs && lan_one_data.ipaddrs.length) {
+				for(i=0;i<lan_one_data.ipaddrs.length;i++){
+					var ip_show = lan_one_data.ipaddrs[i].ipaddr;
+					if (ip_show){
+						var split_index = ip_show.search("/");
+						if(-1 != split_index){
+							ip_show = ip_show.substr(0, split_index);
+							lan_ip+=ip_show+" ";
+							var cat_ip_show=ip_show;
+							if(ip_show.indexOf(":")!=-1){
+								var ip_len = ip_show.length;
+								if(ip_len>17){
+									cat_ip_show=ip_show.substr(0,17)+"...";
+								}
+							}
+							ip_count++;
+							if(ip_count>2)
+								continue;
+							lan_ip_html=lan_ip_html+ip_show+"<br>";
+							cat_lan_ip_html=cat_lan_ip_html+cat_ip_show+"<br>";
+						}
+
+					}
+				}
+				$('.visible-lg.lan_ip').html(lan_ip_html);
+				$('.hidden-lg.lan_ip').html(cat_lan_ip_html);
+				$('.lan_ip').prop("title",lan_ip);
+			}
+	}
+}
+
+function net_show(data,cpe_data,isWanLinked){
+	var net = {};
+	var cpe_up = false;
+	var wan_up = false;
+	$(".stand_net_box").each(function(){
+		$(this).data('disabled',"1");
+		$(this).find(".wan_uptime").data("uptime","");
+	});
+	reset_wans_item(wans_data);
+	if (data) {
+		wan_up = false;
+		cpe_up = false;
+		var cpe_index = 999;
+		$('.wan_ip').text("");
+		$('.wan_mask').text("");
+		$('.wan_ip').data("ip","");
+		$('.wan_ip').data("ip_count","");
+		var net_status = {};
+		$.each(data, function(i, db){				
+			if(db.name != cpe_stand_key && db.name.indexOf(wan_stand_key) != -1){
+				db.name=wan_stand_key;
+				$('.box_wans_'+db.name).css('display',"block");
+			}
+				
+			if(db.name.indexOf("_") != -1)
+				db.name=db.name.split("_")[0];
+			$('.box_wans_'+db.name).data('disabled',"0");
+			var wan_item = get_wans_item(db.name,wans_data);
+			if(wan_item)
+				wan_item.disabled="0";
+			if(db.status == 0 ){
+				if (db.proto_text && db.proto_text.length)
+					db.proto_text+="<br>";
+				else
+					db.proto_text="";
+				db.proto_text +=proto[db.proto];
+				if(db.name != cpe_stand_key &&  db.name.indexOf(wan_stand_key) != -1){
+					net = db;					
+					wan_up = true;					
+				}
+				if(((cpe_num=db.name.indexOf(cpe_stand_key)) != -1) && cpe_count && $('.box_wans_'+db.name).length){
+					cpe_up = true;
+
+					if ((cpe_count == 1) || (db.gateway_if && db.gateway_if == 1)){
+						if(!wan_up)
+							net = db;
+					}
+				}
+				
+				if(db.proto == "dhcp"){
+					if(db.uptime ){
+						$('.box_wans_'+db.name+' .wan_uptime').html(uptime2dhms(db.uptime, 3));
+						$('.box_wans_'+db.name+' .wan_uptime').data("uptime",db.uptime);
+					}						
+				}
+				else{
+					if(db.uptime){
+						var last_data = $('.box_wans_'+db.name+' .wan_uptime').data("uptime");
+						if(!last_data ){
+							$('.box_wans_'+db.name+' .wan_uptime').html(uptime2dhms(db.uptime, 3));
+						}
+					}	
+				}
+			}
+			else if(!wan_up && !cpe_up){
+				$('.box_wans_'+db.name+' .wan_uptime').text(empty_val);
+			}
+
+			var address_count = 0;
+			$.each(db, function(key, value){
+				if(key.indexOf("ipaddrs") != -1){
+					address_count++;
+				}
+			});
+			var append_html = "<div class='col-sm-3 col-xs-4 text-left'><%:DNN IP%>:</div><div class='col-sm-9 col-xs-8 text-right no_paddingLeft hidden-lg dnn_ip'></div><div class='col-sm-9 col-xs-8 text-right no_paddingLeft visible-lg dnn_ip'></div>";
+			var dnn_ip = "";
+			if(address_count>1){
+				$('.box_wans_'+db.name+' .wan_multi_ip').html(append_html).css("display","block");
+			}
+			else{
+				$('.box_wans_'+db.name+' .wan_multi_ip').css("display","none");
+			}
+			for(var index =0;index<address_count;index++){
+				var addr_key = "ipaddrs";
+				var class_key = "wan_ip";
+				if(index>0){
+					addr_key+=index;
+					class_key="dnn_ip";				
+				}
+
+				if (db[addr_key] && db[addr_key].length) {
+					for(i=0;i<db[addr_key].length;i++){
+						var ip_show = db[addr_key][i].ipaddr;
+						if (ip_show){
+							var split_index = ip_show.search("/");
+							if(-1 != split_index){
+								ip_show = ip_show.substr(0, split_index);
+							}
+							var title_info = $('.box_wans_'+db.name+' .'+class_key).data("ip") || "";
+							$('.box_wans_'+db.name+' .'+class_key).data("ip",title_info+" "+ip_show);
+							$('.box_wans_'+db.name+' .'+class_key).prop("title",title_info+" "+ip_show);
+
+							var ip_count = $('.box_wans_'+db.name+' .'+class_key).data("ip_count");
+							if(!ip_count)
+								ip_count=0;
+							ip_count++;
+							var cat_ip_show=ip_show;
+							if(ip_show.indexOf(":")!=-1){
+								var ip_len = ip_show.length;
+								if(ip_len>17){
+									cat_ip_show=ip_show.substr(0,17)+"...";
+								}					
+							}
+							if(ip_count<=2){
+								$('.box_wans_'+db.name+' .hidden-lg.'+class_key).append(cat_ip_show+"<br>");
+								$('.box_wans_'+db.name+' .visible-lg.'+class_key).append(ip_show+"<br>");
+								$('.box_wans_'+db.name+' .'+class_key).data("ip_count",ip_count);
+							}
+						}
+						var mask_show = db[addr_key][i].netmask;
+						if (mask_show){
+							if(index==0){
+								$('.box_wans_'+db.name+' .wan_mask').append(mask_show+"<br>");
+							}
+						}
+					}
+				}
+			}
+			if(typeof(net_status[db.name]) == "undefined" || net_status[db.name] == 1){
+				net_status[db.name] = db.status;
+			}
+				
+			var cpe_info = get_cpe_data(db.name ,cpe_data);
+			var cellular_as_wan = 0;
+			if (cpe_info && cpe_info.net_prefer>-1){
+				var net_info = get_priority(cpe_info.net_prefer);
+				if (net_info == "WiredOnly"){
+					cellular_as_wan = 1;
+				}
+				else if ((net_info.indexOf("Cellular") != -1) && (net_info.indexOf("Priority") != -1)){
+					if((net_status[db.name] == 0) && !cpe_info.gateway_if){
+						cellular_as_wan = 1;
+					}
+				}
+				if(cellular_as_wan && (net_status[db.name] == 0))
+					wan_up = 1;
+			}
+			if(cpe_info)
+				cpe_info.cellular_as_wan = cellular_as_wan;
+			$('.box_wans_'+db.name).data('cellular_as_wan',"0");
+			if(db.name == "wan" || cellular_as_wan){
+				if(low_cpu)			
+					speed_show(wan_item,db.upload,db.download,interval);
+				if(cellular_as_wan)
+					$('.box_wans_'+db.name).data('cellular_as_wan',"1");
+	
+				flow_show(wan_item,db.upload,db.download);
+
+				if(wan_item){
+					if($("#progress-container-"+db.name+"single").length)
+						wan_item.arcProgressSingle = wan_show(wan_item.arcProgressSingle,"progress-container-"+db.name+"single",isWanLinked,wan_up?1:0);
+					if($("#progress-container-"+db.name+"multi").length)
+						wan_item.arcProgressMulti = wan_show(wan_item.arcProgressMulti,"progress-container-"+db.name+"multi",isWanLinked,wan_up?1:0);
+				}
+				$(".box_wans_"+db.name+" .wired_gateway").html(db.gateway);
+				if(db.proto == "pppoe"){
+					$(".box_wans_"+db.name+" .pppoe").css("display","block");
+					$(".box_wans_"+db.name+" .wired_username").html(db.username);
+					$(".box_wans_"+db.name+" .wired_password").html(secret_show(db.password));
+				}
+				else{
+					$(".box_wans_"+db.name+" .pppoe").css("display","none");
+				}
+				$(".box_wans_"+db.name+" .wired_type").html(db.proto_text);
+			}
+		});
+
+		$(".stand_net_box").each(function(){
+			var disabled_status = $(this).data('disabled');
+			var cellular_as_wan_status = $(this).data('cellular_as_wan');
+			var child_cpe_box_show = "block";
+			var child_box_box_show = "none";
+			if(disabled_status == "1"){
+				$(this).css('display',"none");
+			}
+			else{
+				if(cellular_as_wan_status == "1"){
+					child_cpe_box_show = "none";
+					child_box_box_show = "block";
+					$(this).find(".rtemp_label").html("<%:CPUusage%>");	
+					$(this).find(".pre_info").html("");
+					$(this).find(".rtemp_label").html("<%:CPUusage%>");
+				}
+
+				if($(this).hasClass("cpe_box")){
+					var sortindex = $(this).data("cpeindex");
+					if(has_cpe && (sortindex <= cpe_count)){
+						$(this).css('display',"block");
+					}
+					else{
+						$(this).css('display',"none");
+					}
+					
+					$(this).find(".cpe_box").css('display',child_cpe_box_show);
+					$(this).find(".wan_box").css('display',child_box_box_show);
+				}
+				else{
+					child_cpe_box_show = "none";
+					child_box_box_show = "block";
+					$(this).css('display',"block");
+					$(this).find(".cpe_box").css('display',child_cpe_box_show);
+					$(this).find(".wan_box").css('display',child_box_box_show);
+				}				
+			}
+		});
+	}
+	return net;
+}
+
+function format_terminal_box(name,canvas_size){
+	var html="";
+	html+="\
+			<div class='panel panel-info internet-panel pc_box'>\
+				<div class='panel-heading'>\
+					<div class='row'>\
+						<div class='col-sm-6 col-xs-6 text-left visible-lg'><%:StatusTerCount%></div>\
+						<div class='col-sm-6 col-xs-6 text-left hidden-lg no_paddingLeft'><%:StatusTerCountSimple%></div>\
+						<div class='col-sm-6 col-xs-6 text-right normol_color eth_box' style='display:none'><span></span><%:StatusEthInfo%><div class='updown-button'>&nbsp;</div></div>\
+					</div>\
+				</div>\
+				<div class='panel-body info-box terminal_box_detail'>\
+					<div class='row'>\
+						<div class='col-sm-12 .col-xs-12 text-left'>\
+							<div class='row'>\
+								<div class='text-center'>\
+									<div id='"+name+"-progress-container' data-size='"+canvas_size+"' class='text-center'>\
+									</div>\
+									<div class='progress-bg' style='display: none;' class='text-center'>\
+									</div>\
+								</div>	\
+							</div>\
+						</div>\
+					</div>\
+				</div>\
+				<div class='panel-body info-box eth_box_detail' style='display:none'>\
+					<div class='row'>\
+						<div class='col-sm-12 .col-xs-12 text-left'>\
+							<div class='row'>\
+								<ul class='list-inline text-center data_box'>\
+								</ul>	\
+							</div>\
+						</div>\
+					</div>\
+				</div>\
+			</div>";
+	return html;
+}
+function format_wifi_section(title,radio,id,hide_power){
+	var wifi_double_sysmbol = ["2.4GHz","5GHz"];
+	var wifi_triple_sysmbol = ["2.4GHz","5.2GHz","5.8GHz"];
+	var device_id = id;
+	
+	
+	var htm ='<div class="panel panel-info pc_box">';
+	htm +='	<div class="panel-heading">';
+	htm +='		<div class="row">';
+	htm +='			<div class="col-sm-12 col-xs-12 text-left"><%:StatusWifiTitle%>'+title+'</div>';;
+	htm +='		</div>';
+	htm +='	</div>';
+	htm +='<div class="panel-body info-box">';
+	var wifi_section_len = radio.length;
+	var wifi_sysmbol = wifi_double_sysmbol;
+	if(!device_id)
+		device_id = radio[0].device_id;
+
+	if(wifi_section_len >2 )
+		wifi_sysmbol = wifi_triple_sysmbol;
+	else if (wifi_section_len == 1) {
+		if (radio[0].band == "5g" || (radio[0].frequency && (radio[0].frequency.indexOf("5") != -1)))
+			wifi_double_sysmbol = ["5GHz"];
+		wifi_sysmbol = wifi_double_sysmbol;
+	}
+
+	for (var i = 0; i < wifi_section_len; i++) {
+		var enable_str = "<%=enable_sysmbol%>";
+		var wifi_item = radio[i];
+		var channel_str = wifi_item.channel;
+		var power_str = "";
+		var encryption_str = "";
+		var power = parseInt(wifi_item.txpower);
+		var section_id = wifi_item.section?wifi_item.section:wifi_item.name;
+
+		if (power == 100){
+			power_str = '<%:Strong%>';
+		}
+		else if (power == 80){
+			power_str = '<%:Normal%>';
+		}
+		else if (power == 50){
+			power_str = '<%:Poor%>';
+		}
+
+		var encryption = wifi_item.encryption;
+		var key = wifi_item.key;
+		if (encryption == "none"){
+			encryption_str ='<%:No Encryption%>';
+		}
+		else{
+			if (key && key.length)
+				encryption_str = key;
+		}
+
+		if ((wifi_item.channel == "auto") || (wifi_item.channel == "0")){
+			channel_str = "<%:Automatic%><lable class='auto_channel'></lable>";
+		}
+
+		if (wifi_item.disabled == "1"){
+			enable_str = "<%=disable_sysmbol%>";
+		}
+
+		htm +='				<div class="col-sm-12 .col-xs-12 text-left no_padding wifi_section_'+device_id+section_id+'">';
+		htm +='					<div class="row">';
+		htm +='						<div class="col-sm-6 col-xs-6 text-left ">';
+		htm +='							'+wifi_sysmbol[i]+' <%:Status%>:';
+		htm +='						</div>';
+		htm +='						<div class="col-sm-6 col-xs-6 text-right">';
+		htm +='							'+enable_str;
+		htm +='						</div>';
+		htm +='					</div>';
+		htm +='					<div class="row">';
+		htm +='						<div class="col-sm-5 col-xs-5 text-left no_paddingRight">';
+		htm +='							'+wifi_sysmbol[i]+' <%:WifiNameLabel%>:';
+		htm +='						</div>';
+		htm +='						<div class="col-sm-7 col-xs-7 text-right no_paddingLeft" style="padding-right:10px;">';
+		htm +='							'+wifi_item.ssid;
+		htm +='						</div>';
+		htm +='					</div>';
+		htm +='					<div class="row">';
+		htm +='						<div class="col-sm-6 col-xs-6 text-left ">';
+		htm +='							'+wifi_sysmbol[i]+' <%:Channel%>:';
+		htm +='						</div>';
+		htm +='						<div class="col-sm-6 col-xs-6 text-right">';
+		htm +='							'+channel_str;
+		htm +='						</div>';
+		htm +='					</div>';
+
+		htm +='					<div class="row">';
+		htm +='						<div class="col-sm-5 col-xs-5 text-left ">';
+		htm +='							<%:WifiPassword%>:';
+		htm +='						</div>';
+		htm +='						<div class="col-sm-7 col-xs-7 text-right" onclick="toggle_eye_show(this,secretshow)">';
+		htm +='							'+secret_show(encryption_str);
+		htm +='						</div>';
+		htm +='					</div>';
+		if((wifi_section_len == 1) && !hide_power){
+		htm +='					<div class="row">';
+		htm +='						<div class="col-sm-5 col-xs-5 text-left ">';
+		htm +='							<%:TransimitPower%>:';
+		htm +='						</div>';
+		htm +='						<div class="col-sm-7 col-xs-7 text-right">';
+		htm +='							'+power_str;
+		htm +='						</div>';
+		htm +='					</div>';
+		}
+		htm +='					<div class="row">';
+		htm +='						<div class="col-sm-5 col-xs-5 text-left ">';
+		htm +='							<%:ConnectedClient%>:';
+		htm +='						</div>';
+		htm +='						<div class="col-sm-7 col-xs-7 text-right sta_num">';
+		htm +='						</div>';
+		htm +='					</div>';
+		htm +='				</div>';
+	}
+	htm +='	</div>';
+	htm +='</div>';
+	return htm;
+}
+function init_wifi_box(){	
+	var wifi_info = <%=wifi_info_buffer%>;
+	if (wifi_info.wifi && wifi_info.wifi.length){
+		wifi_hd_count = wifi_info.wifi.length;	
+		for (var index = 0; index < wifi_info.wifi.length; index++) {
+			var title_extra = "";			
+			if (wifi_info.wifi.length > 1){
+				title_extra = "("+(index+1)+"/"+wifi_info.wifi.length+")";
+			}
+			htm = format_wifi_section(title_extra,wifi_info.wifi[index].radio,wifi_info.wifi[index].id);
+
+			$("#wifi-box").append(htm);
+		}
+	}
+
+	return wifi_hd_count;
+}
+function init_terminal_box(canvas_size){
+	var count_box_htm = "";
+	count_box_htm = format_terminal_box("single",canvas_size);
+	$("#single_net_wifi").html(count_box_htm);
+	count_box_htm = format_terminal_box("multi",canvas_size);
+	$("#multi_net_wifi").html(count_box_htm);
+	$(".eth_box").click(function(){		 
+		if($(this).children(".updown-button").hasClass("arrow-up")){
+			$(this).children(".updown-button").removeClass("arrow-up");			
+			$(this).parent().parent().parent().find(".terminal_box_detail").slideDown();
+			$(this).parent().parent().parent().find(".eth_box_detail").slideUp();
+		}
+		else{
+			$(this).children(".updown-button").addClass("arrow-up");
+			$(this).parent().parent().parent().find(".terminal_box_detail").slideUp();
+			$(this).parent().parent().parent().find(".eth_box_detail").slideDown();
+		}
+	});
+}
+function renew_stat(){
+	$.getJSON('<%=url('nradio/status/runtime', 'wan,cpe_4')%>', function(data) {
+        stats_info(data);
+	});
+}
+
+$(window).resize(function(){
+	reset_canvas();
+});
+
+$(document).ready(function(){
+	history.replaceState(null, "", "<%=controller%>nradio/system/overview");
+	<%if nr.has_own_wlan() then%>
+	wifi_hd_count = init_wifi_box();	
+	<%end%>
+
+	var width = (window.innerWidth || document.documentElement.clientWidth);
+	var canvas_size = 300;
+	if(width >= 768 && width <= 1100){
+		canvas_size = 240;
+	}
+	$(".device_code").html(secret_show(("<%=device_code%>" == "<%=lng.translate("N/A")%>")?"":"<%=device_code%>"));
+	init_terminal_box(canvas_size);
+	format_wans_box(wans_data,cpe_count,canvas_size);
+	stats_info(<%=info_api_result_buffer%>);
+
+	//reset_canvas();
+	<%
+		if nr.support_ac() then
+	%>
+
+	nradio_backend_flash();
+	<%
+		end
+	%>
+	
+	setInterval(renew_stat, interval*1000);
+	if(!low_cpu)
+		setInterval(get_speed_data, speed_interval*1000);
+});
+</script>
+<%+footer%>

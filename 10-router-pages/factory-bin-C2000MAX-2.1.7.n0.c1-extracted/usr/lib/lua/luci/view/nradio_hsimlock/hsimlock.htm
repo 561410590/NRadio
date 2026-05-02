@@ -1,0 +1,265 @@
+
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local util = require "luci.util"
+	local token_tmp = luci.http.formvalue("token")
+	local session_data = luci.dispatcher.context.authsession or ""
+	local simtoken=""
+	local sdat = util.ubus("session", "get", {ubus_rpc_session=session_data, keys = {"simtoken"}})
+	if sdat and sdat.values and sdat.values.simtoken then
+		simtoken=sdat.values.simtoken
+	end	
+%>
+<%+header%>
+	<style>
+		table.no_paddingLeft>thead>tr>th:first-child{
+			padding-left:10px;
+		}
+		table.no_paddingLeft>tbody>tr>td:first-child, table.no_paddingLeft>thead>tr>th:first-child{
+			padding-left:10px;
+		}
+	</style>
+	<div class="column  second-text-padding">
+		<div class="cbi-map main-box hsetup">
+			<h2 name="content"  id="menu_item"><%:HSimLockTitle%></h2>
+			<%if #simtoken > 0 then%>
+			<form method="post" name="cbi" id="show_box">
+				<div class="address_list" data-terminal="mobile"></div>
+				<div class="form-box full-width hidden-xs" >
+					<table class="line text-center no_paddingLeft">
+						<thead style="background-color: #d8d8d8;">
+							<tr>
+								<th width="25%"><%:HSimInner%></th>
+								<th width="50%"><%:ICCID%></th>
+								<th width="25%"><%:HSimStatus%></th>
+							</tr>
+						</thead>
+						<tbody class="address_list_inner">
+						</tbody>
+					</table>
+				</div>
+				<div class="form-box full-width hidden-xs" style="margin-top: 40px;">
+					<table class="line text-center no_paddingLeft">
+						<thead style="background-color: #d8d8d8;">
+							<tr>
+								<th width="25%"><%:HSimExtern%></th>
+								<th width="50%"><%:ICCID%></th>
+								<th width="25%"><%:HSimStatus%></th>
+							</tr>
+						</thead>
+						<tbody class="address_list_simslot">
+						</tbody>
+					</table>			
+				</div>
+				<fieldset class="cbi-section">	
+					<div class="cbi-section-node">
+						<div class="cbi-value" style="margin:0px">
+							<input id="btn_rst" class="cbi-button clean_btn" type="button" value="<%:HSimLockBtn%>">
+						</div>
+					</div>
+					</fieldset>
+			</form>
+			<%end%>
+		</div>		
+	</div>
+
+
+<script type="text/javascript">
+	var lable_array = {"status":"<%:HSimStatus%>","iccid":"<%:ICCID%>","simalias":"<%:HSimLockHead%>"};
+
+	function load_data(data){
+		var htm_simslot ='';
+		var htm ='';
+		var htm_mobile = '';
+		var inner_index=0;
+		var simslot_index=0;
+		$.each(data, function(i, db){
+			if(!db)
+				return;		
+			var thbody_tr_htm="";
+			var thbody_tr_simslot_htm="";
+			var htm_mobile_extra="";		
+			
+			htm_mobile_extra="";
+			htm_mobile += ''+
+			'<div class="panel panel-info visible-xs-block hide">'+
+				'<div class="panel-heading">'+
+				'	<div class="row">'+
+				'		<div class="col-sm-6 col-xs-6 text-left">'+
+				'			<span>'+(i+1)+'</span>'+
+				'		</div>'+
+				'		<div class="col-sm-6 col-xs-6 text-right">'+
+				'		</div>'+
+				'	</div>'+
+				'</div>'+
+				'<div class="panel-body info-box">';
+			for (let key in db) {
+				var key_buffer=lable_array[key]?lable_array[key]:'';
+				if (key == "simslot"){
+					continue;
+				}
+				if (key == "status"){
+					if (db[key] == "0")
+						db[key] = "<%:HSimUnLockStatus%>";
+					else
+						db[key] = "<%:HSimLockStatus%>";
+				}
+				
+				htm_mobile_extra+=''+
+				'	<div class="row">'+
+				'		<div class="col-xs-12 text-left">'+
+				'			<div class="row">'+
+				'				<div class="col-sm-6 col-xs-6 text-left ">'+
+					key_buffer+
+				'				</div>'+
+				'				<div class="col-sm-6 col-xs-6 text-right">'+
+				'					<span class="note_info">'+db[key]+'</span>'+
+				'				</div>'+
+				'			</div>'+
+				'		</div>'+
+				'	</div>';
+			}
+			htm_mobile+=htm_mobile_extra;
+			htm_mobile+=''+
+				'</div>'+
+			'</div>';
+			if (db["simslot"] == 1){
+				simslot_index++;
+				thbody_tr_simslot_htm+='<tr>';
+				thbody_tr_simslot_htm+='<td>'+ "<%:HSimAlias%>"+(simslot_index)+'</td>'+'<td>'+ db["iccid"]+'</td>'+'<td>'+ db["status"]+'</td>';
+				thbody_tr_simslot_htm+='</tr>'
+				htm_simslot+=	thbody_tr_simslot_htm;
+			}
+			else{
+				inner_index++;
+				thbody_tr_htm+='<tr>';
+				thbody_tr_htm+='<td>'+ "<%:HSimAlias%>"+(inner_index)+'</td>'+'<td>'+ db["iccid"]+'</td>'+'<td>'+ db["status"]+'</td>';
+				thbody_tr_htm+='</tr>'
+				htm+=	thbody_tr_htm;
+			}
+
+
+		});
+
+		$(".address_list_simslot").each(function(){
+			$(this).empty().append(htm_simslot);			
+		});
+		$(".address_list_inner").each(function(){
+			$(this).empty().append(htm);			
+		});
+		$(".address_list").each(function(){		
+			var type_s = $(this).data("terminal");
+			if(type_s == "mobile"){
+				$(this).empty().append(htm_mobile);
+			}
+
+		});
+	}
+
+	$('.clean_btn').click(function(){
+		var msg = {};
+		var dialogMsg = null;
+		msg.message = '<div style="padding:0 20px;text-align:left"><i class="far fa-nradio-note fa-fw icon_disable" ></i><%:HSimCleanInfo%></div>';
+		msg.confirm = "<%:Yes%>";
+		msg.cancel = "<%:No%>";
+		msg.confirm_keep = 1;
+		msg.callback = function(){
+			$(".modal-footer").css("display","none");
+			$.ajax({
+			url  : "/cgi-bin/luci/nradio/hsimlock/lock",
+			type : 'POST',
+			data : {'simtoken':'<%=simtoken%>'},
+			timeout: 2000,
+			success: function(data){
+				if(data && data.result && data.result.code == 0){
+					dialogMsg.setMessage("<%:HSimUnlockOk%>");
+				}
+				else{
+					dialogMsg.setMessage("<%:HSimUnlockError%>");
+				}
+			},
+			complete:function(){
+				window.setTimeout(function(){dialogMsg.close();}, 3000);
+			}
+		});
+		}       
+		dialogMsg = confirm_box(msg);
+	});
+
+	function show_password_dial(){
+		var msg = {};
+		var dialogPwdMsg = null;
+		var row='<tr><td class="cbi-value-title" style="vertical-align:top">{{lb}}:</td><td style="vertical-align:top">'+
+			'<input class="cbi-input-text" id="{{id}}"><br>'+
+			'<div class="f_note"></div>';
+		var htm='<div class="form-box temp-select"><table>';
+		htm+=row.compose({
+			'lb': '<%:HSimPWD%>',
+			'id': 'sim_pwd'
+		});
+		htm+='</table></div>';
+		
+		msg.message = htm;
+		msg.confirm = "<%:Yes%>";
+		msg.cancel = "<%:No%>";
+		msg.confirm_keep = 1;
+		msg.callback = function(){
+			var result = 0;
+			$.ajax({
+			url  : "/cgi-bin/luci/nradio/hsimlock/auth",
+			type : 'POST',
+			data : {'sim_pwd':$("#sim_pwd").val(),'token':"<%=token%>"},
+			timeout: 2000,
+			success: function(data){
+				if(data && data.result && data.result.code == 0){
+					$(".modal-footer").css("display","none");
+					$(".f_note").html("");
+					result = 1;
+					init_process();
+					window.setTimeout(function(){
+						dialogPwdMsg.close();
+						location.href='<%=controller%>nradio/hsimlock';
+					}, 1000);
+				}
+				else if(data && data.result && data.result.code == -1){
+					result = -1;
+				}
+			},
+			complete:function(){
+				console.log(result);
+				if(result == -1){
+					$(".f_note").html("<span style=\"color:red;float:left\"><%:HSimPWDError%></span>");
+				}
+				else if(result == 0){
+					$(".f_note").html("<span style=\"color:red;float:left\"><%:HSimcommunicationError%></span>");
+				}
+			}
+		});
+		}       
+		dialogPwdMsg = confirm_box(msg);
+	}
+	function init_process(){
+		var checkInterval=setInterval(function(){
+			$.ajax({
+				url  : "/cgi-bin/luci/nradio/hsimlock/simstatus",
+				type : 'GET',
+				timeout: 2000,
+				success: function(data){
+					load_data(data.result.simstatus);
+				}
+			});
+		},2000);
+	}
+	$(document).ready(function(){
+		<%if #simtoken > 0 then%>
+			init_process();
+		<%else%>
+			show_password_dial();
+		<%end%>
+	});
+	
+</script>
+<%+footer%>

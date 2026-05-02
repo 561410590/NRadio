@@ -1,0 +1,10 @@
+Package: atsd
+Version: 1.0-20221010
+Depends: libc, uci, ubus, libubox20210516, libiwinfo20210430, libjson-c5, nradio-utils, libopenssl1.1
+Source: package/nradio/services/atsd
+SourceName: atsd
+Section: nradiowifi
+SourceDateEpoch: 1773831699
+Architecture: aarch64_cortex-a53
+Installed-Size: 50498
+Description:  Information distribution center

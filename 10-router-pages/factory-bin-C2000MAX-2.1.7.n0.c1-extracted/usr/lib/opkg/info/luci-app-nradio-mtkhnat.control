@@ -1,0 +1,10 @@
+Package: luci-app-nradio-mtkhnat
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-mtkhnat
+SourceName: luci-app-nradio-mtkhnat
+Section: luci
+SourceDateEpoch: 1772265212
+Architecture: all
+Installed-Size: 709
+Description:  LuCI Support for MTK HNAT config

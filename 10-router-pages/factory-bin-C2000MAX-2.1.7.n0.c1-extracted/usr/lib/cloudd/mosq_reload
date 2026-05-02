@@ -1,0 +1,7 @@
+local c_api = require "cloudd.api"
+
+function cloudd_main()
+	c_api.cloudd_reload_mosq_safe()
+end
+
+cloudd_main()

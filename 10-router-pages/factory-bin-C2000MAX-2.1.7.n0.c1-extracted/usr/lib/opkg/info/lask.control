@@ -1,0 +1,10 @@
+Package: lask
+Version: 1.2.0
+Depends: libc, liblua5.1.5, libopenssl1.1, zlib, librt, lua
+Source: package/nradio/apps/lask
+SourceName: lask
+Section: lang
+SourceDateEpoch: 1742434265
+Architecture: aarch64_cortex-a53
+Installed-Size: 96507
+Description:  The Wifidogx depends.

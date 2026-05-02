@@ -1,0 +1,150 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+<%
+local uci  = require "luci.model.uci"
+local util = require "luci.util"
+local keys, vals = { }, { }
+local cur = uci.cursor()
+local cpe_total = {Dds=0,Mds=0,Cds=0,date=""}
+cpe_total.date = os.date("%Y-%m-%d")
+
+cur:foreach("network", "interface",
+	function(s)
+		if s.disabled ~= "1" and s.ifname ~= "lo" then
+			if (s.ifname or s.device) and s.proto and not s.proto:match("6") then
+				if s.type == "bridge" then
+					keys[#keys+1] = "br-"..s[".name"]
+				else
+					keys[#keys+1] = s.ifname or s.device
+				end
+				vals[#vals+1] = s[".name"]
+			else
+				if s.proto == "wwan" or s.proto == "tdmi" or s.proto == "netmanager" then
+					local cellular_info = util.ubus("infocd", "get", { name = s[".name"].."_dev" }) or {list={}}
+					if cellular_info and cellular_info.list and cellular_info.list[1] and cellular_info.list[1].parameter and cellular_info.list[1].parameter.ifname then
+						keys[#keys+1] = cellular_info.list[1].parameter.ifname
+						vals[#vals+1] = s[".name"]
+					end
+				end
+			end
+		end
+	end
+)
+
+luci.sys.net.ipv4_hints(function(ip, name)
+	if ip and #ip > 0 then
+		keys[#keys+1] = ip
+		vals[#vals+1] = '%s (%s)' %{ ip, name }
+	end
+end)
+%>
+<%+header%>
+<script type="text/javascript" src="<%=resource%>/cbi.js?v=git-22.090.52087-c996e41"<%=attr("data-strings", luci.util.serialize_json({
+	label = {
+			choose = translate('-- Please choose --'),
+			custom = translate('-- custom --'),
+	},
+	path = {
+			resource = resource,
+			browser  = url("admin/filebrowser")
+	}
+}))
+%>></script>
+<h2><%:Diagnostics%></h2>
+
+<fieldset class="cbi-section">
+	<form>
+		<div class="cbi-section-node">
+			<div class="cbi-value">
+				<label class="cbi-value-title" for="tool"><%:Tool%></label>
+				<div class="cbi-value-field">
+					<select id="tool" name="tool" class="cbi-input-select" onclick="toolchange(this)">
+						<option value="ping"><%:Ping%></option>
+						<option value="traceroute"><%:Traceroute%></option>
+						<option value="nslookup"><%:Nslookup%></option>
+					</select>
+				</div>
+			</div>
+			<div class="cbi-value">
+				<label class="cbi-value-title" for="addr"><%:Address%></label>
+				<div class="cbi-value-field">
+					<input type="text" id="addr" name="addr" class="cbi-input-text" />
+				</div>
+			</div>
+			<div class="cbi-value" id="src_div">
+				<label class="cbi-value-title" for="src"><%:Source%></label>
+				<div class="cbi-value-field">
+					<input type="text" data-update="change" data-type="network" class="cbi-input-text" id="src" name="src" placeholder="<%=luci.i18n.translate('-- Please choose --')%>" data-type="host"  data-optional="true" <%=
+					ifattr(#keys > 0, "data-choices", {keys, vals})
+				%>/>
+				</div>
+
+			</div>
+			<div class="cbi-page-actions">
+				<input type="button" class="cbi-button cbi-button-apply" id="btn-perform" value="<%:Perform%>" />
+			</div>
+		</div>
+	</form>
+</fieldset>
+<br />
+<fieldset class="cbi-section" style="display:none">
+	<legend id="diag-rc-legend"><%:Collecting data...%></legend>
+	<span id="diag-rc-output"></span>
+</fieldset>
+<script>
+	function toolchange(obj)
+	{
+		if(obj.value == "nslookup")
+			$("#src_div").css("display","none");
+		else
+			$("#src_div").css("display","block");
+	}
+	function update_status()
+	{
+		var tool = $('#tool').val();
+		var addr = $('#addr').val();
+		var src = $('#src').val();
+
+		var legend = document.getElementById('diag-rc-legend');
+		var output = document.getElementById('diag-rc-output');
+
+		output.innerHTML =
+			'<img src="<%=resource%>/icons/loading.gif" alt="<%:Loading%>" style="vertical-align:middle" /> ' +
+			'<%:Waiting for command to complete...%>'
+		;
+
+		legend.parentNode.style.display = 'block';
+		legend.style.display = 'inline';
+
+		(new XHR()).post('<%=url('admin/network')%>/diag_' + tool + '/' + addr, { token: '<%=token%>',src:src },
+			function(x)
+			{
+				legend.style.display = 'none';
+
+				if (x.responseText)
+					output.innerHTML = '<pre>' + x.responseText + '</pre>';
+				else
+					output.innerHTML = '<span class="error"><%:Bad address specified!%></span>';
+			}
+		);
+	}
+
+	$(document).ready(function(){
+		$('#btn-perform').click(function(){
+			update_status();
+		});
+		$(document).on("keypress", "form", function(event) {
+			if (event.keyCode != 13)
+				return true;
+			else
+				$('#btn-perform').click();
+
+			return false;
+		});
+
+		$('#addr').focus();
+	});
+</script>
+<script type="text/javascript">cbi_init();</script>
+<%+footer%>

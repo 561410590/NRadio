@@ -1,0 +1,10 @@
+Package: luci-nradio-v3
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-mod-nradio-v3, luci-theme-nradio-v3, luci-proto-ppp, libiwinfo-lua, luci-proto-ipv6
+Source: package/luci/collections/luci-nradio-v3
+SourceName: luci-nradio-v3
+Section: luci
+SourceDateEpoch: 1762169130
+Architecture: all
+Installed-Size: 104
+Description:  Standard OpenWrt set including full admin with ppp support and the nradio theme V2

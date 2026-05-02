@@ -1,0 +1,22 @@
+#!/bin/sh
+
+[ "$1" = "reinit" ] && exit 0
+
+if [ "X$(uci -q get oem.board.id)" = "X00:66:88:00:00:00" ]; then
+	pos=$(uci -q get oem.board.pos)
+	uci set network.lan.macaddr="00:66:88:01:01:0${pos:-0}"
+fi
+
+defip='192.168.88.2'
+
+uci set network.lan.ipaddr="$defip"
+uci set network.lan.def_ipaddr="$defip"
+uci del network.lan.ip6addr
+
+uci set network.lan.ip6class="local"
+uci set network.wan6.ipv6="0"
+uci delete dhcp.lan.dhcpv6
+uci delete dhcp.lan.ra
+uci delete dhcp.lan.ra_default
+uci delete dhcp.lan.ra_management
+uci delete network.globals.ipv6

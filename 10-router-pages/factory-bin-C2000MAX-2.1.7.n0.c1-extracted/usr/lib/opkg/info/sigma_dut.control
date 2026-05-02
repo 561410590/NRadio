@@ -1,0 +1,10 @@
+Package: sigma_dut
+Version: 1
+Depends: libc, libpthread, librt
+Source: package/mtk/applications/sigma_dut_v9.0.0
+SourceName: sigma_dut
+Section: MTK Properties
+SourceDateEpoch: 1768997726
+Architecture: aarch64_cortex-a53
+Installed-Size: 98526
+Description:  SIGMA_DUT

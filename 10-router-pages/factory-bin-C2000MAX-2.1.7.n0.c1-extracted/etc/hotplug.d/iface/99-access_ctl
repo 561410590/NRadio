@@ -1,0 +1,29 @@
+#!/bin/sh
+. /lib/functions/network.sh
+[ "$ACTION" = ifup ] || exit 0
+proto=$(uci -q get network.$INTERFACE.proto)
+[ -x /usr/sbin/ipsec ]  && {
+	network_get_subnet subnet $INTERFACE
+	network_get_protocol protocol $INTERFACE
+	[ -n "$subnet" -a "$protocol" == "dhcp" ] && {
+		logger -t access_ctl "Reloading ipsec subnet $subnet $INTERFACE ($DEVICE)"
+		iptables -t raw -N ipsec_rule_local_$INTERFACE
+		iptables -t raw -F ipsec_rule_local_$INTERFACE
+		iptables -t raw -D ipsec_rule_local -j ipsec_rule_local_$INTERFACE
+		iptables -t raw -I ipsec_rule_local -j ipsec_rule_local_$INTERFACE
+		iptables -t raw -A ipsec_rule_local_$INTERFACE -d  $subnet -p all -j ACCEPT
+		logger -t access_ctl "iptables -t raw -A ipsec_rule_local_$INTERFACE -d  $subnet -p all -j ACCEPT"
+	}
+}
+
+if echo "$INTERFACE"|grep "wan" || [ "$proto" == "wwan" -o "$proto" == "tdmi" ];then
+	access_ctl.sh -u &
+fi
+
+[ "$proto" == "wwan" -o "$proto" == "tdmi" ] || exit 0
+background=$(uci -q get network.$INTERFACE.background)
+if [ -n "$DEVICE" -a "$background" == "1" ];then
+	iptables -t mangle -I OUTPUT -o $DEVICE -m set ! --match-set cloud-access-list dst -j MARK --set-mark 6868
+	ip6tables -t mangle -I OUTPUT -o $DEVICE -m set ! --match-set cloud-access-list6 dst -j MARK --set-mark 6868
+	logger -t access_ctl "Reloading access_ctl due to $ACTION of $INTERFACE ($DEVICE)"
+fi

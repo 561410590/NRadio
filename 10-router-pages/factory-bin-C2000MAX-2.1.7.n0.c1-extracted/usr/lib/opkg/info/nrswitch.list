@@ -1,0 +1,4 @@
+/usr/libexec/rpcd/nrswitch
+/etc/hotplug.d/gmac/02_nrswitch
+/etc/init.d/nrswitch
+/usr/sbin/nrswitch

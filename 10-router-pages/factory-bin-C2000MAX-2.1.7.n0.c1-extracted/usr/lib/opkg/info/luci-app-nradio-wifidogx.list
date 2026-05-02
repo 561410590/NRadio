@@ -1,0 +1,5 @@
+/usr/lib/lua/luci/view/nradio_authcheck/fail.htm
+/usr/lib/lua/luci/view/nradio_adv/wifiauth.htm
+/usr/lib/lua/luci/controller/nradio_adv/wifiauth.lua
+/usr/lib/lua/luci/view/nradio_authcheck/index.htm
+/usr/lib/lua/luci/view/nradio_authcheck/success.htm

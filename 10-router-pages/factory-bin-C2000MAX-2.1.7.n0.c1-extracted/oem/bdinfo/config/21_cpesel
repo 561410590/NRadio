@@ -1,0 +1,122 @@
+#!/bin/ash
+. /lib/functions.sh
+[ ! -f "/etc/config/cpesel" ] && return
+
+disable_sim(){
+
+	[ "$disable_intsim" != "1" ] && return
+
+	max=$(uci -q get cpesel.sim.max)
+	max=${max:-1}
+
+	[ "$max" -lt 2 ] && return
+
+	stypes=$(uci -q get cpesel.sim.stype)
+	gvals=$(uci -q get cpesel.sim.gval)
+	new_stypes=""
+	new_gvals=""
+
+	for i in $(seq "$max" -1 1); do
+		stype=$(echo "$stypes"|cut -d, -f"$i")
+		gval=$(echo "$gvals"|cut -d, -f"$i")
+		stype=${stype:-0}
+		if [ "$stype" = "0" ]; then
+			new_stypes="$stype,$new_stypes"
+			new_gvals="$gval,$new_gvals"
+		fi
+	done
+
+	uci -q set cpesel.sim.stype="${new_stypes%,}"
+	uci -q set cpesel.sim.gval="${new_gvals%,}"
+
+	max="$(echo "$new_gvals"|awk -F, '{print NF-1}')"
+	if [ "$max" -gt 1 ]; then
+		uci -q set cpesel.sim.max="$max"
+	else
+		uci -q delete cpesel.sim.max
+		uci -q delete cpesel.sim.gval
+		uci -q delete cpesel.sim.stype
+	fi
+	uci -q set cpesel.sim.cur=1
+
+}
+
+cpesel_data(){
+	local buffer="$1"
+	local model="$2"
+	local index=0
+	local gval_index=0
+	local mode cur gval gmval stype max
+	[ -z "$buffer" ] && return
+
+	mode=$(echo "$buffer"|cut -d/ -f1)
+	cur=$(echo "$buffer"|cut -d/ -f2)
+	gval=$(echo "$buffer"|cut -d/ -f3)
+	gmval=$(echo "$buffer"|cut -d/ -f4)
+	stype=$(echo "$buffer"|cut -d/ -f5)
+
+	gval_index=$(echo "$gval"|grep -o ','| wc -l)
+	gmval_index=$(echo "$gmval"|grep -o ','| wc -l)
+	stype_index=$(echo "$stype"|grep -o ','| wc -l)
+
+	max=$gval_index
+	[ $max -lt $gmval_index ] && max=$gmval_index
+	[ $max -lt $stype_index ] && max=$stype_index
+	max=$((max+1))
+
+	if [ $max -gt 1 ];then
+		uci set cpesel.sim${model}.max=$max
+	else
+		uci delete cpesel.sim${model}.max
+	fi
+
+	[ -n "$gmval" ] && uci set cpesel.sim${model}.gmval="$gmval"
+	[ -n "$gval" ] && uci set cpesel.sim${model}.gval="$gval"
+	[ -n "$stype" ] && uci set cpesel.sim${model}.stype="$stype"
+	[ -n "$mode" ] && uci set cpesel.sim${model}.mode="$mode"
+	[ -n "$cur" ] && uci set cpesel.sim${model}.cur="$cur"
+}
+
+loop_cpesel(){
+	config_load cpesel
+	loop_sim()
+	{
+		local rule="$1"
+		config_get _cur $rule cur "1"
+		uci set cpesel.$rule.default=$_cur
+	}
+	config_foreach loop_sim cpesel
+}
+
+disable_intsim=$(bdinfo -g "disable_intsim")
+
+if [ -n "$disable_intsim" ];then
+	disable_sim "$disable_intsim"
+else
+	cpesel="$(bdinfo -g cpesel)"
+	cpesel1="$(bdinfo -g cpesel1)"
+	smdtmsd=""
+	smdtmsd1=""
+	smdtmsd_combine=""
+
+	if [ -n "$cpesel" ];then
+		cpesel_data "$cpesel"
+		smdtmsd=$(echo "$cpesel"|cut -d/ -f6)
+	fi
+	uci get cpesel.sim.max
+
+	if [ -n "$cpesel1" ];then
+		cpesel_data "$cpesel1" 1
+		smdtmsd1=$(echo "$cpesel1"|cut -d/ -f6)
+	fi
+
+	if [ -n "$smdtmsd" ];then
+		smdtmsd_combine="$smdtmsd"
+		if [ -n "$smdtmsd1" ];then
+			smdtmsd_combine="$smdtmsd_combine $smdtmsd1"
+		fi
+		uci set cloudd.combo='combo_sysconf'
+		uci set cloudd.combo.SMdtMsd="$smdtmsd_combine"
+	fi
+fi
+loop_cpesel

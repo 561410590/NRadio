@@ -1,0 +1,133 @@
+. /lib/functions.sh
+TIMEVALIDFILE="/var/state/cellular_peaktime"
+
+[ "$ACTION" = "stratum" ] || exit 0
+
+rule=
+sim_id=
+cpe_section=""
+
+check_schedule_time(){
+	local peaktime=$1
+
+	local _day=$(echo "$peaktime"|awk -F',' '{print $1}'|xargs -r printf)
+	local _start_hour=$(echo "$peaktime"|awk -F',' '{print $2}'|xargs -r printf)
+	local _start_min=$(echo "$peaktime"|awk -F',' '{print $3}'|xargs -r printf)
+	local _end_hour=$(echo "$peaktime"|awk -F',' '{print $4}'|xargs -r printf)
+	local _end_min=$(echo "$peaktime"|awk -F',' '{print $5}'|xargs -r printf)
+	sed -i '/cpetools.sh -L.*'"$cpe_section $sim_id"'$/d' /etc/crontabs/root
+	sed -i '$a '"$_end_min $_end_hour * * $_day cpetools.sh -L 0 -i $cpe_section $sim_id" /etc/crontabs/root
+	sed -i '$a '"$_start_min $_start_hour * * $_day cpetools.sh -L 1 -i $cpe_section $sim_id" /etc/crontabs/root
+
+	local _ntp_day=$(date +%u)
+	local _ntp_hour=$(date +%H)
+	local _ntp_min=$(date +%M)
+
+	local _now=$(( _ntp_hour * 60 + _ntp_min ))
+	local _start=$(( _start_hour * 60 + _start_min ))
+	local _end=$(( _end_hour * 60 + _end_min ))
+
+	[ "$_day" -eq "$_ntp_day" ] || return 1
+
+	if [ "$_now" -ge "$_start" ] && [ "$_now" -lt "$_end" ]; then
+		return 0
+	fi
+	
+	return 1
+}
+
+merge_peak_time() {
+	local s="$1"
+	awk -v S="$s" '
+	function trim(x) { sub(/^[ \t]+/, "", x); sub(/[ \t]+$/, "", x); return x }
+	function push(d, st, en, i) { cnt[d]++; starts[d, cnt[d]] = st; ends[d, cnt[d]] = en }
+	function push_days(d, st, en, k) {
+		if (d >= 1 && d <= 7) {
+			push(d, st, en)
+		} else if (d == 8) {
+			for (k = 1; k <= 5; k++) push(k, st, en)
+		} else if (d == 9) {
+			for (k = 6; k <= 7; k++) push(k, st, en)
+		} else if (d == 10) {
+			for (k = 1; k <= 7; k++) push(k, st, en)
+		}
+	}
+	BEGIN {
+		split(S, segs, /;/);
+		for (i = 1; i <= length(segs); i++) {
+			g = trim(segs[i]);
+			if (g == "") continue;
+			split(g, a, /,/);
+			if (length(a) != 5) continue;
+			d = a[1] + 0; sh = a[2] + 0; sm = a[3] + 0; eh = a[4] + 0; em = a[5] + 0;
+			st = sh * 60 + sm; en = eh * 60 + em;
+			if (st >= en) continue;
+			push_days(d, st, en);
+		}
+		out = "";
+		for (d = 1; d <= 7; d++) {
+			n = cnt[d] + 0;
+			if (n < 1) continue;
+			for (i = 1; i <= n; i++)
+				for (j = i + 1; j <= n; j++)
+					if (starts[d, j] < starts[d, i]) {
+						t = starts[d, i]; starts[d, i] = starts[d, j]; starts[d, j] = t;
+						t = ends[d, i]; ends[d, i] = ends[d, j]; ends[d, j] = t;
+					}
+			cs = starts[d, 1]; ce = ends[d, 1];
+			for (i = 2; i <= n; i++) {
+				s2 = starts[d, i]; e2 = ends[d, i];
+				if (s2 <= ce) { if (e2 > ce) ce = e2; }
+				else {
+					sh = int(cs / 60); sm = cs % 60; eh = int(ce / 60); em = ce % 60;
+					seg = d "," sh "," sm "," eh "," em;
+					out = (out == "" ? seg : out ";" seg);
+					cs = s2; ce = e2;
+				}
+			}
+			sh = int(cs / 60); sm = cs % 60; eh = int(ce / 60); em = ce % 60;
+			seg = d "," sh "," sm "," eh "," em;
+			out = (out == "" ? seg : out ";" seg);
+		}
+		print out;
+	}'
+}
+
+loop_cpesim() {
+	rule=$1
+	sim_id=${rule##*[A-Za-z]}
+	cpe_section=$(echo "$rule"|awk -F'sim' '{print $1}'|xargs -r printf)
+
+	local status=0
+
+	config_get _peak_hour $rule peak_hour "0"
+	config_get _peak_time $rule peaktime
+
+	local _merged_peak_time=$(merge_peak_time "$_peak_time")
+	local _peak_time_list=$(echo "$_merged_peak_time"|tr ';' '\n')
+
+	if [ "$_peak_hour" = "1" ];then
+		for time in $_peak_time_list; do
+			if check_schedule_time "$time"; then
+				status=1
+			fi
+		done
+
+		cpetools.sh -L "$status" -i "$cpe_section" "$sim_id"
+	fi
+}
+
+[ -f "$TIMEVALIDFILE" ] || {
+	echo "cellular_freqtime says time is valid" > $TIMEVALIDFILE
+
+	if [ ! -d "/etc/crontabs/" ]; then
+		mkdir -p /etc/crontabs/
+	fi
+	if [ ! -f "/etc/crontabs/root" ];then
+		touch /etc/crontabs/root
+	fi
+
+	config_load cpecfg
+	config_foreach loop_cpesim cpesim
+	/etc/init.d/cron restart
+}

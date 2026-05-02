@@ -1,0 +1,815 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+<%+header%>
+<%
+local notetips="Notes:<br>"..
+"1. Auto-switch has no signal or data thresholds by default. It switches to the next active SIM per the \"Switch Loop\" if the current SIM loses connectivity.<br>"..
+"2. Signal Thresh.: Disabled by default. Set a value between -140 and -80 to enable. A lower value indicates poorer signal.<br>"..
+"3. Data Monitoring: Disabled by default. Triggers auto-switch when usage reaches the monthly/total data threshold or the total threshold expires.<br>"..
+"4. Data Threshold: Disabled by default (0 GB monthly). 0 GB = unlimited data. Set a value >0 to enable limits.<br>"..
+"5. Monitor(%): Default 100% (triggers when full threshold is consumed).<br>"..
+"6. Start Date: Configurable for monthly thresholds (default: 1st). Resets \"Monthly Data\" at 00:00:00 on that date.<br>"..
+"7. End Date: Configurable for total thresholds. Resets \"Total Data\" at 00:00:00 on the set date.<br>"..
+"8. Device data is for reference only. Set thresholds prudently and rely on carrier billing to avoid service interruptions."
+
+local notetips2="Notes:<br>"..
+"1. Data Monitoring: Disabled by default. Automatically disconnects when usage reaches the monthly/total data threshold or the total threshold expires.<br>"..
+"2. Data Threshold: Disabled by default (0 GB monthly). 0 GB = unlimited data. Set a value >0 to enable limits.<br>"..
+"3. Monitor(%): Default 100% (triggers when full threshold is consumed).<br>"..
+"4. Start Date: Configurable for monthly thresholds (default: 1st). Resets \"Monthly Data\" at 00:00:00 on that date.<br>"..
+"5. End Date: Configurable for total thresholds. Resets \"Total Data\" at 00:00:00 on the set date.<br>"..
+"6. Device data is for reference only. Set thresholds prudently and rely on carrier billing to avoid service interruptions."
+
+local data = luci.controller.nradio_adv.cpedata.cpedata_refresh(model)
+local notetips_target = translate(notetips2)
+if data and data.data and #data.data[1] > 1 then
+	notetips_target=translate(notetips)
+end
+local simsdata_buffer = luci.util.serialize_json(data,nil)
+%>
+<h2 name="content"><%:SwitchTitle%></h2>
+<script src="/luci-static/nradio/js/calendar.min.js"></script>
+<style>
+	.form-box .cbi-input-select.self_style{
+		min-width: 60px;
+		padding: 0px;
+	}
+	.form-box .cbi-input-text.self_style{
+		width: 50px;
+		display: unset;
+		height: 39px !important;
+	}
+	.select-win input.cbi-input-text.self_style{
+		width: 120px;
+		padding: 6px 0px;
+	}
+	input.cbi-input-text.self_style{
+		width: 50px;
+		display: unset;
+		height: 34px !important;
+	}
+	form div.cbi-page-actions{
+		margin-left:0
+	}
+	.panel-info>.panel-heading {
+		padding-left: 10px
+	}
+	.info-box {
+		padding: 10px 10px;
+	}
+	.title_label {
+		color: #f5f5f5;
+		display: inline-block;
+		font-weight: bold;
+		font-size: small;
+		padding: 3px;
+		background-color: #5c9171;
+	}
+	.overflow_label{
+		color:white ;
+		display: inline-block;
+		font-weight: bold;
+		font-size: 10px;
+		padding: 2px;
+		background-color: red;
+	}
+	.key-name-edit{
+		color: unset;
+		fill: unset;
+	}
+	table>thead>tr>th{
+		padding: 8px 1px;
+	}
+	@media (min-width: 10px) and (max-width: 767px){
+		div.checkbox .switch {
+		top: -2px;
+	}
+
+</style>
+<%
+	local disp = require "luci.dispatcher"
+	local request  = disp.context.requestpath
+	nr = require "luci.nradio"
+
+	model_str,cpe_section = nr.get_cellular_last(model)
+	cellular_data = nr.get_cellular_list(cpe_section)
+	if cellular_data.cnt > 1 then
+%>
+<ul class="cbi-tabmenu">
+	<%
+	local cellular_index = 0
+	for _,item in pairs(cellular_data.celluar) do
+		local index_str=""
+		local class_name="cbi-tab"
+		local iface = item.name
+
+		if item.cur_index > 0 then
+			index_str=item.cur_index
+		end
+		
+		if cpe_section and cpe_section == iface then
+			class_name="cbi-tab"
+		else
+			class_name="cbi-tab-disabled"
+		end
+	%>
+		<li class="<%=class_name%> sim-selector" data-model="<%=item.name%>"><a href="<%=url("nradio/cellular/cpedata/model/"..iface)%>"><%if item.nbcpe then %><%:CellularNBCPE%><%else%><%:Cellular%><%end%><%=index_str%></a></li>
+	<%end%>
+</ul>
+<%end%>
+<div class="cbi-map main-box">
+	<form method="post" name="cbi" >
+		<div class="form-box full-width hidden-xs">
+			<div class="panel device-panel sims_list">
+			</div>
+
+		</div>
+		<fieldset class="cbi-section">
+			<div class="cbi-section-node border-bottom">
+				<div class="cbi-value" data-index="9" >
+					<div class="cbi-value-field cbi-page-actions left_btn click_pointer">
+						<input type="button" class="cbi-button cbi-button-apply" id="btn-save"  value="<%:Save & Apply%>" />
+					</div>
+				</div>
+			</div>
+		</fieldset>
+		<fieldset class="cbi-section">
+			<div class="cbi-section-node  hidden-xs">
+				<div class="cbi-value " data-index="9">
+					<p class="cbi-value-title width_auto text-left adapt_label_padding" style="line-height:20px;"><%=notetips_target%></p>
+				</div>
+			</div>
+		</fieldset>
+		
+		<div class="sims_list mobile_list visible-xs-block hide"  data-terminal="mobile"></div>
+	</form>
+</div>
+
+<script language="javascript">
+	var gModel = "<%=model%>";
+	var gmsg = {'total_threshold':'<%:Total%>','monthly_threshold':'<%:Monthly%>','enable':'<%:Enable%>','disable':'<%:Disable%>','attention':'<%:Note%>','total_label':'<%:Total%>','monthly_label':'<%:Monthly%>'};
+	var gdate_trans = {'comfirm':'<%:Comfirm%>','clear':'<%:Clear%>','clock':'<%:clock%>','today':'<%:Today%>','year':'<%:Year%>','time':'<%:time%>','month':'<%:Month%>','Mon':'<%:Mon%>','Tues':'<%:Tues%>','Wed':'<%:Wed%>','Thur':'<%:Thur%>','Fri':'<%:Fri%>','Sat':'<%:Sat%>','Sun':'<%:Sun%>'};
+	var I18N_MONTH_DAYS = [<% for i=1,28 do %>, '<%=translate("theday" .. i)%>'<% end %>];
+	
+	var simListTableRow = ''+
+		'<tr data-id={{id}}>'+
+		'<td >{{alias}}</td>'+
+		'<td >{{enable_info}}</td>'+
+		'<td >{{signal_info}}</td>'+
+		'<td >{{threshold_enable}}</td>'+		
+		'<td >{{threshold_info}}</td>'+
+		'<td >{{threshold_percent}}</td>'+
+		'<td class="threshold_date{{model_name}}{{id}}">{{threshold_date}}</td>'+
+		'<td >{{threshold_flow}}</td>'+
+		'<td ><span class="modify_class name" data-name="name" data-modelname="{{model_name}}" data-simid="{{index}}">{{name}}</span><span class="key-name-edit"><i class="far fa-edit"></i></span></td>'+
+		'</tr>';
+	var simListTableRowSimple = ''+
+		'<tr data-id={{id}}>'+
+		'<td >{{threshold_enable}}</td>'+		
+		'<td >{{threshold_info}}</td>'+
+		'<td >{{threshold_percent}}</td>'+
+		'<td class="threshold_date{{model_name}}{{id}}">{{threshold_date}}</td>'+
+		'<td >{{threshold_flow}}</td>'+
+		'<td ><span class="modify_class name" data-name="name" data-modelname="{{model_name}}" data-simid="{{index}}">{{name}}</span><span class="key-name-edit"><i class="far fa-edit"></i></span></td>'+
+		'</tr>';
+	var simListTableMobileRow = ''+
+	'<div class="panel panel-info visible-xs-block hide">'+
+	'<div class="panel-heading">'+
+	'	<div class="row">'+
+	'		<div class="col-sm-6 col-xs-6 text-left" data-device-id={{id}}>'+
+	'			<span>{{alias}}</span>'+
+	'		</div>'+
+	'		<div class="col-sm-6 col-xs-6 text-right">'+
+	'		</div>'+
+	'	</div>'+
+	'</div>'+
+	'<div class="panel-body info-box">'+
+	'	<div class="row {{hide_extra}}">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left " onclick="show_help(\'enabled\')">'+
+	'					<%:Active%>'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					{{enable_info}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border {{hide_extra}}">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row" data-id={{id}}>'+
+	'				<div class="col-sm-5 col-xs-5 text-left " onclick="show_help(\'signal\')">'+
+	'					<%:Signal Thresh.(dBm)%>'+
+	'				</div>'+
+	'				<div class="col-sm-7 col-xs-7 text-right">'+
+	'					{{signal_info}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row {{top_border}}">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row" data-id={{id}}>'+
+	'				<div class="col-sm-5 col-xs-5 text-left " onclick="show_help(\'threshold_enabled\')">'+
+	'					<%:Data Monitoring%>'+
+	'				</div>'+
+	'				<div class="col-sm-7 col-xs-7 text-right">'+
+	'					{{threshold_enable}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row" data-id={{id}}>'+
+	'				<div class="col-sm-5 col-xs-5 text-left " onclick="show_help(\'threshold_type\')">'+
+	'					<%:Data Thresh.(GB)%>'+
+	'				</div>'+
+	'				<div class="col-sm-7 col-xs-7 text-right" data-terminal="mobile">'+
+	'					{{threshold_info}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row" data-id={{id}}>'+
+	'				<div class="col-sm-5 col-xs-5 text-left " onclick="show_help(\'threshold_percent\')">'+
+	'					<%:Monitor(%)%>'+
+	'				</div>'+
+	'				<div class="col-sm-7 col-xs-7 text-right">'+
+	'					{{threshold_percent}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row" data-id={{id}}>'+
+	'				<div class="col-sm-6 col-xs-6 text-left " onclick="show_help(\'threshold_date\')" id="mobile_date{{model_name}}{{id}}">'+
+	'					<%:Start/End Date%>'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right threshold_date_mobile{{model_name}}{{id}}">'+
+	'					{{threshold_date}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row" data-id={{id}}>'+
+	'				<div class="col-sm-6 col-xs-6 text-left " onclick="show_help(\'threshold_data\')">'+
+	'					<%:Monthly/Total(GB)%>'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+		
+	'					{{threshold_flow}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row" data-id={{id}}>'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					<%:Note%>'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					<span class="modify_class name" data-name="name" data-modelname="{{model_name}}" data-simid="{{index}}">{{name}}</span><span class="key-name-edit"><i class="far fa-edit"></i></span>'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+	
+	'</div>'+
+	'</div>';
+	var loading_save_htm =circling_htm;
+	loading_save_htm +='<p class="cbi-value-title width_auto text-center adapt_label_padding"><%:Waiting for changes to be applied...%></p>';
+	function format_date_info(select_data,modelname,index){
+		var i = 1;
+		var html = '<select class="cbi-input-select modify_class self_style" data-name="threshold_date" data-modelname="'+modelname+'" data-simid="'+index+'">';
+		for(i=1;i<=28;i++){
+			if(i == select_data)
+				html+='<option selected="selected" value='+i+'>'+I18N_MONTH_DAYS[i]+'</option>';
+			else
+				html+='<option value='+i+'>'+I18N_MONTH_DAYS[i]+'</option>';
+		}
+		html+="</select>";
+		return html;
+	}
+	function clean_flow(data){
+		(new XHR()).post('<%=controller%>nradio/cellular/cpedata/clean', data, function(xhr){
+			once_refresh();
+		});		
+	}
+	function del_mon_flow(obj,modelname,index){
+		var msg = {};
+		var data={};
+		data['token']='<%=token%>';
+		data['channel']=modelname;
+		data['cur']=index;
+		data['type']="0";
+
+		msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:Are you sure to reset the Monthly Data Usage?%>';
+		msg.confirm = "<%:Confirm%>";
+		msg.cancel = "<%:Cancel%>";
+		msg.onhide = function(){
+		},
+		msg.cancel_callback = function(){
+		},
+		msg.callback = function(){
+			$(obj).prev("input").val(0);
+			$(obj).prev().prev("span").html(0);
+			clean_flow(data);
+		}
+		confirm_box(msg);
+	}
+	function del_total_flow(obj,modelname,index){
+		var msg = {};
+		var data={};
+		data['token']='<%=token%>';
+		data['channel']=modelname;
+		data['cur']=index;
+		data['type']="1";
+
+		msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:Are you sure to reset the Total Data Usage?%>';
+		msg.confirm = "<%:Confirm%>";
+		msg.cancel = "<%:Cancel%>";
+		msg.onhide = function(){
+		},
+		msg.cancel_callback = function(){
+		},
+		msg.callback = function(){
+			$(obj).prev("input").val(0);
+			$(obj).prev().prev("span").html(0);
+			clean_flow(data);
+		}
+		confirm_box(msg);
+	}
+	function valid_int_check(obj){
+		var data = parseInt(obj.value);
+
+		if(Number.isNaN(data)){
+			obj.value="";
+			return;
+		}
+		obj.value=Math.abs(data);
+	}
+
+	function valid_range_check(obj,min, max)
+	{
+		var val = parseInt(obj.value);
+		if(!(/^-?\d+(?:\.\d+)?$/.test(val))){
+			obj.value="";
+		}
+		
+		if (val > max || val < min){
+			obj.value="";
+		}
+	}
+	function load_data(data_all){
+		var htm="";
+		var mobile_htm="";
+		var rcnt=0;
+		var cellular_index=0;
+		var cellular_odu_index=0;
+		var hide_extra = "";
+		var top_border="top-border";
+		var width_extra = "9";
+		var width_extra2 = "11";
+		var width_extra3 = "11";
+		var width_extra4 = "12";
+		data = data_all.data;
+		for(var i=0;i<data.length;i++){
+			model_db=data[i];
+			if(model_db.length == 1){
+				hide_extra="hide";
+				top_border="";
+				width_extra = "15";
+				width_extra2="20";
+				width_extra3 = "20";
+				width_extra4="20";
+			}
+			htm+='<div class="panel panel-info device-panel">'+
+				'<div class="panel-body info-box">'+
+				'	<table class="line text-center no_paddingLeft">'+
+				'		<thead>'+
+				'			<tr>';
+			if(model_db.length > 1){
+				htm+='			<th class="text-left" style="width: 11%"><%:Switch Loop%></th>'+
+				'				<th style="width: 7%" onclick="show_help(\'enabled\')"><%:Active%></th>'+
+				'				<th style="width: 12%" onclick="show_help(\'signal\')"><%:Signal Thresh.(dBm)%></th>';
+			}		
+
+			htm+='				<th style="width: '+width_extra+'%" onclick="show_help(\'threshold_enabled\')"><%:Data Monitoring%></th>'+
+				'				<th style="width: 17%" onclick="show_help(\'threshold_type\')"><%:Data Thresh.(GB)%></th>'+
+				'				<th style="width: '+width_extra2+'%" onclick="show_help(\'threshold_percent\')"><%:Monitor(%)%></th>'+
+				'				<th style="width: '+width_extra3+'%" onclick="show_help(\'threshold_date\')"><%:Start/End Date%></th>'+
+				'				<th style="width: '+width_extra2+'%" onclick="show_help(\'threshold_data\')"><%:Monthly/Total(GB)%></th>'+
+				'				<th style="width: 8%"><%:Note%></th>'+
+				'			</tr>'+
+				'		</thead>'+
+				'		<tbody class="pc_list">';
+
+			mobile_htm+='<div >'+
+				'	<h3 class="panel-title"></h3>'+
+				'</div>';
+			$.each(model_db, function(index, db){
+				rcnt++;			
+				var threshold_total_label = "";
+				var disable_label = "";
+				var threshold_disable_label = ""
+				var alias_label = db.alias;
+				var pc_threshold = "";
+				var overflow_label = "  <span class='overflow_label'><%:Overflow%></span>";
+				var overdate_label = "  <span class='overflow_label'><%:Overdate%></span>";
+				var month_color ="";
+				var total_color ="";
+				var threshold_flow = '';
+				var threshold_flow_mobile = '';
+				var threshold_date_html = "";
+				var threshold_date_mobile_html = "";
+				if (db.enabled != "0")
+					disable_label = 'checked="checked"';
+				if (db.threshold_enabled == "1")
+					threshold_disable_label = 'checked="checked"';
+
+				enable_html='<div class="checkbox" style="width: auto;">';
+				enable_html+='<input class="cbi-input-checkbox modify_class self_style" '+disable_label+' name="enabled'+db.modelname+db.index+'"  id="enabled'+db.modelname+db.index+'" data-name="enabled"  data-modelname="'+db.modelname+'" data-simid="'+db.index+'" type="checkbox" value="1" />';
+				enable_html+='<label for="enabled'+db.modelname+db.index+'" class="switch"></label>';
+				enable_html+='</div>';
+				enable_mobile_html='<div class="checkbox" style="width: auto;">';
+				enable_mobile_html+='<input class="cbi-input-checkbox modify_class self_style" '+disable_label+' name="enabled'+db.modelname+db.index+'"  id="mobile_enabled'+db.modelname+db.index+'" data-name="enabled"  data-modelname="'+db.modelname+'" data-simid="'+db.index+'" type="checkbox" value="1" />';
+				enable_mobile_html+='<label for="mobile_enabled'+db.modelname+db.index+'" class="switch"></label>';
+				enable_mobile_html+='</div>';
+
+				threshold_enable='<div class="checkbox" style="width: auto;">';
+				threshold_enable+='<input class="cbi-input-checkbox modify_class self_style" '+threshold_disable_label+' name="threshold_enabled'+db.modelname+db.index+'"  id="threshold_enabled'+db.modelname+db.index+'" data-name="threshold_enabled"  data-modelname="'+db.modelname+'" data-simid="'+db.index+'" type="checkbox" value="1" />';
+				threshold_enable+='<label for="threshold_enabled'+db.modelname+db.index+'" class="switch"></label>';
+				threshold_enable+='</div>';
+				threshold_mobile_enable='<div class="checkbox" style="width: auto;">';
+				threshold_mobile_enable+='<input class="cbi-input-checkbox modify_class self_style" '+threshold_disable_label+' name="threshold_enabled'+db.modelname+db.index+'"  id="mobile_threshold_enabled'+db.modelname+db.index+'" data-name="threshold_enabled"  data-modelname="'+db.modelname+'" data-simid="'+db.index+'" type="checkbox" value="1" />';
+				threshold_mobile_enable+='<label for="mobile_threshold_enabled'+db.modelname+db.index+'" class="switch"></label>';
+				threshold_mobile_enable+='</div>';
+
+				signal_info_html='<input onblur="valid_range_check(this,-140,-80)" class="cbi-input-text valid modify_class self_style" data-name="signal" data-modelname="'+db.modelname+'" data-simid="'+db.index+'" value="'+db.signal+'">';
+				if(model_db.length == 1){
+					alias_label="";
+				}
+				month_flow=db.threshold_smds.toFixed(2);
+				total_flow=db.threshold_cds.toFixed(2);
+				var threshold_percent = 100;
+				if(db.threshold_percent)
+					threshold_percent = parseInt(db.threshold_percent);
+				if (db.threshold_enabled == "1" ){
+					if(db.cross_datetime){
+						total_color="style='color:red'";
+						alias_label += overdate_label;
+					}
+					if(db.cross_flow){
+						month_color="style='color:red'";
+						alias_label += overflow_label;						
+					}
+				}
+				if(model_db.length == 1){
+					pc_threshold=alias_label;
+				}
+				
+				percent_info_html='<input onblur="valid_range_check(this,1,100)" class="cbi-input-text valid modify_class self_style" data-name="threshold_percent" data-modelname="'+db.modelname+'" data-simid="'+db.index+'" value="'+threshold_percent+'">';
+				if (db.threshold_type != "0"){
+					threshold_date_html = '<div class="select-win" id="datesWrap'+db.modelname+db.index+'"><input type="text" data-name="threshold_date" placeholder="YYYY-MM-DD hh:mm" id="date'+db.modelname+db.index+'" value="'+db.threshold_date+'" data-modelname="'+db.modelname+'" data-simid="'+db.index+'" class="select-text modify_class self_style cbi-input-text valid "/></div>';
+					threshold_date_mobile_html ='<div class="select-win" id="datesWrap_mobile'+db.modelname+db.index+'"><input type="text" data-name="threshold_date" placeholder="YYYY-MM-DD hh:mm" id="date_mobile'+db.modelname+db.index+'" value="'+db.threshold_date+'" data-modelname="'+db.modelname+'" data-simid="'+db.index+'" class="select-text modify_class self_style cbi-input-text valid "/></div>';
+					threshold_total_label = 'selected="selected"';
+					threshold_flow = '<span '+total_color+'>'+total_flow+'</span> <input class="cbi-input-text valid modify_class self_style" type="hidden" data-name="threshold_cds" data-modelname="'+db.modelname+'" data-simid="'+db.index+'" value=""> <span class="click_pointer icon_color" style="float:right" onclick="del_total_flow(this,\''+db.modelname+'\',\''+db.index+'\')"><%:FlowReset%></span>';
+					threshold_flow_mobile = '<span '+total_color+'>'+total_flow+'</span> <input class="cbi-input-text valid modify_class self_style" type="hidden" data-name="threshold_cds" data-modelname="'+db.modelname+'" data-simid="'+db.index+'" value=""> <span class="click_pointer icon_color" onclick="del_total_flow(this,\''+db.modelname+'\',\''+db.index+'\')"><%:FlowReset%></span>';
+				}
+				else{
+					var date_day = db.threshold_date;
+					if(!date_day || !date_day.length)
+						date_day=1;
+					threshold_date_html=format_date_info(date_day,db.modelname,db.index);
+					threshold_date_mobile_html=threshold_date_html;
+					threshold_flow = '<span '+month_color+'>'+month_flow+'</span> <input class="cbi-input-text valid modify_class self_style" type="hidden" data-name="threshold_smds" data-modelname="'+db.modelname+'" data-simid="'+db.index+'" value=""> <span class="click_pointer icon_color" style="float:right" onclick="del_mon_flow(this,\''+db.modelname+'\',\''+db.index+'\')"><%:FlowReset%></span>';
+					threshold_flow_mobile = '<span '+month_color+'>'+month_flow+'</span> <input class="cbi-input-text valid modify_class self_style" type="hidden" data-name="threshold_smds" data-modelname="'+db.modelname+'" data-simid="'+db.index+'" value=""> <span class="click_pointer  icon_color" onclick="del_mon_flow(this,\''+db.modelname+'\',\''+db.index+'\')"><%:FlowReset%></span>';
+				}
+				threshold_html='<select class="cbi-input-select modify_class self_style" data-name="threshold_type" onchange="change_type(this)" data-modelname="'+db.modelname+'" data-simid="'+db.index+'"><option value=0>'+gmsg.monthly_label+'</option><option value=1 '+threshold_total_label+'>'+gmsg.total_label+'</option></select>   <input onblur="valid_int_check(this)" class="cbi-input-text valid modify_class self_style" data-name="threshold_data" data-modelname="'+db.modelname+'" data-simid="'+db.index+'" value="'+db.threshold_data+'">';
+				if(model_db.length == 1){
+					htm+=simListTableRowSimple.compose({
+						id: rcnt,
+						index:db.index,
+						model_name:db.modelname,
+						threshold_enable:threshold_enable+pc_threshold,
+						threshold_info:threshold_html,
+						threshold_percent:percent_info_html,
+						threshold_date:threshold_date_html,
+						threshold_flow:threshold_flow,
+						name: db.name
+					});
+				}
+				else{
+					htm+=simListTableRow.compose({
+						id: rcnt,
+						index:db.index,
+						model_name:db.modelname,
+						alias: alias_label,
+						enable_info:enable_html,
+						signal_info:signal_info_html,
+						threshold_enable:pc_threshold+threshold_enable,
+						threshold_info:threshold_html,
+						threshold_percent:percent_info_html,
+						threshold_date:threshold_date_html,
+						threshold_flow:threshold_flow,
+						name: db.name
+					});
+				}
+
+				mobile_htm+=simListTableMobileRow.compose({
+					id: rcnt,
+					index:db.index,
+					model_name:db.modelname,
+					alias: alias_label,
+					enable_info:enable_mobile_html,
+					signal_info:signal_info_html,
+					threshold_enable:threshold_mobile_enable,
+					threshold_info:threshold_html,
+					threshold_date:threshold_date_mobile_html,
+					threshold_percent:percent_info_html,
+					threshold_flow:threshold_flow_mobile,
+					name: db.name,
+					top_border:top_border,
+					hide_extra:hide_extra
+				});
+			});
+
+			htm+='		</tbody>'+
+				'	</table>'+
+				'</div></div>';
+			htm+="<p>";
+			$(".sims_list").each(function(){		
+				var type_s = $(this).data("terminal");
+				if(type_s == "mobile"){
+					$(this).empty().append(mobile_htm);
+					$.each(model_db, function(index, db){
+						if (db.threshold_type == "1"){
+							var opts = {
+								'trans':gdate_trans,
+								'targetId':'date_mobile'+db.modelname+db.index,//时间写入对象的id
+								'alignId':'mobile_date'+db.modelname+db.index,//日历对齐对象
+								'format':'-',//时间格式 默认'YYYY-MM-DD HH:MM:SS'
+								'min':'2025-09-26 00:00',//最大时间
+								'max':'2099-10-30 10:00'//最小时间
+							};
+							xvDate(opts);
+						}
+					});
+				}
+				else{
+					$(this).empty().append(htm);
+					$.each(model_db, function(index, db){
+						if (db.threshold_type == "1"){
+							var opts = {
+								'trans':gdate_trans,
+								'targetId':'date'+db.modelname+db.index,//时间写入对象的id
+								'alignId':'datesWrap'+db.modelname+db.index,//日历对齐对象
+								'format':'-',//时间格式 默认'YYYY-MM-DD HH:MM:SS'
+								'min':'2025-09-26 00:00',//最大时间
+								'max':'2099-10-30 10:00'//最小时间
+							};
+							xvDate(opts);
+						}
+					});
+				}
+
+			});
+		};	
+	}
+	function change_type(obj){
+		var id = $(obj).data("simid");
+		var modelname = $(obj).data("modelname");
+		if($(obj).parent().data("terminal") == "mobile"){
+			if ($(obj).val() == "1"){
+				threshold_date_html = '<div class="select-win" id="datesWrap_mobile'+modelname+id+'"><input type="text" data-name="threshold_date" placeholder="YYYY-MM-DD hh:mm" id="date_mobile'+modelname+id+'" value="" data-modelname="'+modelname+'" data-simid="'+id+'" class="select-text modify_class self_style cbi-input-text valid "/></div>';
+				$(".threshold_date_mobile"+modelname+id).html(threshold_date_html);
+				var opts = {
+					'trans':gdate_trans,
+					'targetId':'date_mobile'+modelname+id,//时间写入对象的id
+					'alignId':'mobile_date'+modelname+id,//日历对齐对象
+					'format':'-',//时间格式 默认'YYYY-MM-DD HH:MM:SS'
+					'min':'2025-09-26 00:00',//最大时间
+					'max':'2099-10-30 10:00'//最小时间
+				};
+				xvDate(opts);
+			}
+			else{
+				threshold_date_html=format_date_info(1,modelname,id);
+				$(".threshold_date_mobile"+modelname+id).html(threshold_date_html);
+			}
+		}
+		else{
+			if ($(obj).val() == "1"){
+				threshold_date_html ='<div class="select-win" id="datesWrap'+modelname+id+'"><input type="text" data-name="threshold_date" placeholder="YYYY-MM-DD hh:mm" id="date'+modelname+id+'" value="" data-modelname="'+modelname+'" data-simid="'+id+'" class="select-text modify_class self_style cbi-input-text valid "/></div>';
+				$(".threshold_date"+modelname+id).html(threshold_date_html);
+				var opts = {
+					'trans':gdate_trans,
+					'targetId':'date'+modelname+id,//时间写入对象的id
+					'alignId':'datesWrap'+modelname+id,//日历对齐对象
+					'format':'-',//时间格式 默认'YYYY-MM-DD HH:MM:SS'
+					'min':'2025-09-26 00:00',//最大时间
+					'max':'2099-10-30 10:00'//最小时间
+				};
+				xvDate(opts);
+			}
+			else{
+				threshold_date_html=format_date_info(1,modelname,id);
+				$(".threshold_date"+modelname+id).html(threshold_date_html);
+			}
+		}
+	}
+	function once_refresh(){
+		var data = {};
+		data['channel'] = gModel;
+
+		(new XHR()).post('<%=controller%>nradio/cellular/cpedata/refresh', data, function(xhr){
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					var data_res = eval('(' + xhr.responseText + ')');
+
+					if(data_res && data_res.result){
+						load_data(data_res.result);
+					}
+				}
+				catch(e) {
+				}
+			}
+		});		
+	}
+
+	$('#btn-save').click(function(){
+		var data={};
+		var data_item = {};
+		var item_class = "pc_list";
+		if (is_mobile_device()){
+			item_class = "mobile_list";
+		}
+		data['token']='<%=token%>';
+		$("."+item_class+" .modify_class").each(function(){
+			var objname = $(this).data("name");
+			var modelname = $(this).data("modelname");
+			var simid = $(this).data("simid");
+			var objvalue = $(this).val();
+			if(objname == "name")
+				objvalue = $(this).html();
+			else if(objname == "enabled"){
+				objvalue=0;
+				if($(this).prop("checked")){
+					objvalue=1;
+				}
+			}
+			else if(objname == "threshold_enabled"){
+				objvalue=0;
+				if($(this).prop("checked")){
+					objvalue=1;
+				}
+			}			
+			else{
+				if (objname == "threshold_cds" || objname == "threshold_smds"){
+					if (!objvalue || !objvalue.length)
+						return;
+				}
+				if (objname != "threshold_date" ){
+					objvalue=parseInt(objvalue);
+					if(Number.isNaN(objvalue)){
+						objvalue="";
+					}
+					if (objname == "signal"){
+						if(!(/^-?\d+(?:\.\d+)?$/.test(objvalue))){
+							objvalue="";
+						}
+						if (objvalue > -80 || objvalue < -140){
+							objvalue="";
+						}
+					}
+					else if (objname == "threshold_percent"){
+						if(!(/^-?\d+(?:\.\d+)?$/.test(objvalue))){
+							objvalue="";
+						}
+						if (objvalue > 100 || objvalue <= 0){
+							objvalue="100";
+						}
+					}
+					else{					
+						objvalue=Math.abs(objvalue);
+					}
+				}				
+			}
+			var key=modelname+"_"+simid+"_"+objname;
+			data[key] = objvalue;
+		});
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: loading_save_htm,
+			closeByBackdrop: false,
+			onshown: function(dialog) {
+				(new XHR()).post('<%=controller%>nradio/cellular/cpedata/save', data, function(xhr){
+					var data_res = null;
+					var code = -1;
+					if (xhr.getResponseHeader("Content-Type") == "application/json") {
+						try {
+							data_res = eval('(' + xhr.responseText + ')');
+							code = data_res.result.code;
+						}
+						catch(e) {
+							data_res = null;
+						}
+					}
+
+					once_refresh();
+					dialog.close();
+				});
+			}
+		});
+	});
+	function show_help(type){
+		var msg = "";
+		if(type == "enabled"){
+			msg="<%:When enabled, the system will automatically switch to the next enabled SIM card in the predefined sequence if the signal (RSRP) or data usage of the current SIM meets the configured threshold. Disabled SIM cards are skipped.%>";
+		}
+		else if(type == "signal"){
+			msg="<%:The RSRP value for triggering a switch. Leave blank to disable. Recommended range: -140 to -80. If the RSRP falls below this threshold, the system switches to the next enabled SIM.%>";
+		}
+		else if(type == "threshold_enabled"){
+			msg="<%:When enabled, the system will switch to the next enabled SIM if the data usage exceeds the configured threshold.%>";
+		}
+		else if(type == "threshold_type"){
+			msg="<%:Monthly Threshold: The maximum data allowed per calendar month.Total Threshold: The maximum cumulative data allowed across multiple months.%>";
+		}
+		else if(type == "threshold_percent"){
+			msg="<%:Actions are triggered when usage reaches this percentage of the data threshold (e.g., 95% of 100GB = 95GB).%>";
+		}
+		else if(type == "threshold_date"){
+			msg="<%:Set a cycle start date (default: 1st) for monthly thresholds.Set an expiry date for total thresholds; counters reset automatically at 00:00:00 on that date.%>";
+		}
+		else if(type == "threshold_data"){
+			msg="<%:Displays the current monthly usage (for monthly thresholds) or cumulative usage (for total thresholds).%>";
+		}
+
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: msg,
+			closeByBackdrop: true
+		});
+	}
+	$('body').on('click', '.key-name-edit', function(){
+		var data={};
+		var row='<tr><td class="cbi-value-title">{{lb}}</td><td>'+
+			'<input class="cbi-input-text" id="{{id}}" value="{{val}}">'+
+			'</td></tr>';
+		var obj=null;
+		if($(this).closest('td').find('.name').length)
+			obj=$(this).closest('td').find('.name');
+		else if($(this).closest('div').find('.name').length)
+			obj=$(this).closest('div').find('.name');
+
+		var sel=$(this);
+		var htm='<div class="form-box temp-select"><table>';
+		htm+=row.compose({
+			'lb': '<%:Alias%>',
+			'id': 'ap-new-name',
+			'val': obj?$(obj).html():"",
+		});
+		htm+='</table></div>';
+
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: htm,
+			onshown: function(dialog) {
+				$('#ap-new-name').select();
+			},
+			buttons: [{
+				label: '<%:No%>',
+				cssClass: 'btn-nradio-cancel',
+				action: function(dialog) {
+					dialog.close();
+				}
+			}, {
+				label: '<%:Yes%>',
+				cssClass: 'btn-nradio-apply',
+				action: function(dialog) {
+					dialog.close();
+					if(obj)
+						$(obj).html($('#ap-new-name').val());
+				}
+			}]
+		});
+	});	
+
+	$(document).ready(function(){
+		nradio_backend_flash();
+		var first_data=<%=simsdata_buffer%>;
+		load_data(first_data);		
+	});
+</script>
+<%+footer%>

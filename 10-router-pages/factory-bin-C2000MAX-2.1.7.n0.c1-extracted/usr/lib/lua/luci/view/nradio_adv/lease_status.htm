@@ -1,0 +1,225 @@
+<%
+	local uci = require "luci.model.uci".cursor()
+	local ip = require "luci.ip"
+	local nr = require "luci.nradio"
+	local clients = {}
+	local statics = {}
+	local lan_section = uci:get("network", "globals", "default_lan") or "lan"
+	local ipv4 = uci:get("network", lan_section, "ipaddr")
+	local mask = uci:get("network", lan_section, "netmask")
+	local host = ip.new(ipv4.."/"..mask)
+	local network = host:network()
+	local maxhost = host:maxhost()
+
+	uci:foreach("cloudd_cli", "client",
+				function(s)
+					if s.mac then
+						local client = {mac = s.mac, name = s.name or ""}
+						clients[#clients + 1] = client
+					end
+				end
+	)
+
+	uci:foreach("dhcp", "host",
+				function(s)
+					if s.mac then
+						statics[#statics + 1] = {mac = s.mac}
+					end
+				end
+	)
+%>
+<script type="text/javascript">//<![CDATA[
+	var clients = {};
+	var statics = {};
+<%
+	for i = 1, #clients do
+		local client = clients[i]
+%>
+	clients["<%=client.mac:lower()%>"] = "<%=client.name%>";
+<%
+	end
+%>
+<%
+	for i = 1, #statics do
+		local static = statics[i]
+%>
+	statics["<%=static.mac%>"] = 1;
+<%
+	end
+%>
+	function change_to_static(ip, mac, hostname) {
+		var data={};
+		data['token']='<%=token%>';
+		data['ip']=ip;
+		data['mac']=mac;
+		data['hn']=hostname;
+		(new XHR()).post('<%=controller%>nradioadv/network/dhcp/add', data, function(){
+			window.location.href = '<%=controller%>nradioadv/network/dhcp';
+		});
+	}
+
+	function ip_to_num(ip) {
+		var ip_array = ip.split(".");
+		return Number(ip_array[0] * 256 * 256 *256 + ip_array[1] * 256 * 256 + ip_array[2] * 256 + ip_array[3] * 1);
+	}
+
+	function num_to_ip(num) {
+		var ip_array = [0, 0, 0, 0];
+		var tmp = num;
+		ip_array[3] = tmp % 256;
+		tmp = (tmp - ip_array[3]) / 256;
+		ip_array[2] = tmp % 256;
+		tmp = (tmp - ip_array[2]) / 256;
+		ip_array[1] = tmp % 256;
+		tmp = (tmp - ip_array[1]) / 256;
+		ip_array[0] = tmp;
+		return ip_array
+	}
+
+	function ip_to_str(ip) {
+		return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
+	}
+
+	function calc_ip_range() {
+		var start = Number($("#cbid\\.dhcp\\.lan\\.start").val());
+		var limit = Number($("#cbid\\.dhcp\\.lan\\.limit").val());
+		var subnet = "<%=network%>";
+		var maxhost = "<%=maxhost%>"
+		var maxhost_num = ip_to_num(maxhost);
+		var subnet_num = ip_to_num(subnet);
+		var start_num = subnet_num + start;
+		var end_num = start_num + limit - 1;
+		var start_array = num_to_ip(start_num);
+		var end_array = num_to_ip(end_num);
+
+		$("#cbid\\.dhcp\\.lan\\.range").val(ip_to_str(start_array) + " ~ " + ip_to_str(end_array));
+		if (maxhost_num < end_num) {
+			$("#cbid\\.dhcp\\.lan\\.range").addClass("cbi-input-invalid");
+		}
+		else {
+			$("#cbid\\.dhcp\\.lan\\.range").removeClass("cbi-input-invalid");
+		}
+	}
+
+	var hosts = <%=luci.http.write_json(luci.sys.net.host_hints())%>;
+
+	XHR.poll(10, '<%=url('admin/network/dhcplease_status')%>', null,
+		function(x, st)
+		{
+			var tb = document.getElementById('lease_status_table');
+			if (st && st[0] && tb)
+			{
+				/* clear all rows */
+				while( tb.rows.length > 1 )
+					tb.deleteRow(1);
+
+				for( var i = 0; i < st[0].length; i++ )
+				{
+					var timestr;
+
+					if (st[0][i].expires === false)
+						timestr = '<em><%:unlimited%></em>';
+					else if (st[0][i].expires <= 0)
+						timestr = '<em><%:expired%></em>';
+					else
+						timestr = uptime2dhms(st[0][i].expires,3);
+
+					if(statics[st[0][i].macaddr])
+						continue;
+
+					var tr = tb.insertRow(-1);
+						tr.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
+
+					var hn = st[0][i].hostname ? st[0][i].hostname : '?';
+					hn = clients[st[0][i].macaddr] ? clients[st[0][i].macaddr] : hn;
+					tr.insertCell(-1).innerHTML = '<div class="editable-fixed-val"><span>'+hn+'</span></div> <div class="editable-fixed-btn" edit-value="'+st[0][i].macaddr+'"><i class="far fa-edit"></i></div>';
+					tr.insertCell(-1).innerHTML = st[0][i].ipaddr;
+					tr.insertCell(-1).innerHTML = st[0][i].macaddr.toUpperCase();
+					tr.insertCell(-1).innerHTML = timestr;
+					tr.insertCell(-1).innerHTML = '<input class="cbi-button" type="button" value="<%:Change to Static%>" onclick="change_to_static(\''+st[0][i].ipaddr+'\',\''+st[0][i].macaddr+'\',\''+hn+'\')">';
+				}
+
+				if( tb.rows.length == 1 )
+				{
+					var tr = tb.insertRow(-1);
+						tr.className = 'cbi-section-table-row';
+
+					var td = tr.insertCell(-1);
+						td.colSpan = 4;
+						td.innerHTML = '<em><br /><%:There are no active leases.%></em>';
+				}
+			}
+		}
+	);
+
+	$('body').on('click', '.editable-fixed-btn', function(){
+		var data={};
+		var row='<tr><td class="cbi-value-title">{{lb}}</td><td>'+
+			'<input class="cbi-input-text" id="{{id}}" value="{{val}}">'+
+			'</td></tr>';
+
+		var sel=$(this);
+		data['mac']=$(this).attr('edit-value');
+		data['name']=$(this).prev().children().first().text();
+		data['type']='name';
+		data['token']='<%=token%>';
+		var htm='<div class="form-box temp-select"><table>';
+		htm+=row.compose({
+			'lb': '<%:Hostname%>',
+			'id': 'cli-new-host',
+			'val': data['name'],
+		});
+		htm+='</table></div>';
+
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: htm,
+			onshown: function(dialog) {
+				$('#cli-new-host').select();
+			},
+			buttons: [{
+				label: '<%:No%>',
+				cssClass: 'btn-nradio-cancel',
+				action: function(dialog) {
+					dialog.close();
+				}
+			}, {
+				label: '<%:Yes%>',
+				cssClass: 'btn-nradio-apply',
+				action: function(dialog) {
+					dialog.close();
+					data['name']=$('#cli-new-host').val();
+					(new XHR()).post('<%=controller%>nradio/client/set', data, function(){
+						window.location.href = '<%=controller%>nradioadv/network/dhcp';
+					});
+				}
+			}]
+		});
+	})
+
+	$("#cbid\\.dhcp\\.lan\\.start").keyup(function(e){
+		calc_ip_range();
+	})
+
+	$("#cbid\\.dhcp\\.lan\\.limit").keyup(function(e){
+		calc_ip_range();
+	})
+	calc_ip_range();
+//]]></script>
+
+<fieldset class="cbi-section">
+	<legend><%:Active Leases%></legend>
+	<table class="cbi-section-table" id="lease_status_table">
+		<tr class="cbi-section-table-titles">
+			<th class="cbi-section-table-cell"><%:Hostname%></th>
+			<th class="cbi-section-table-cell"><%:IPv4 Address%></th>
+			<th class="cbi-section-table-cell"><%:MAC Address%></th>
+			<th class="cbi-section-table-cell"><%:Remaining Lease Time%></th>
+			<th class="cbi-section-table-cell"><%:Operation%></th>
+		</tr>
+		<tr class="cbi-section-table-row">
+			<td colspan="4"><em><br /><%:Collecting data...%></em></td>
+		</tr>
+	</table>
+</fieldset>

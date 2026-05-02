@@ -1,0 +1,105 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/functions/network.sh
+. /lib/mwan3/mwan3.sh
+
+FIRST_UP_TAG="$MWAN3_STATUS_DIR/first_up"
+
+[ "$ACTION" == "ifup" -o "$ACTION" == "ifdown" ] || exit 1
+[ -n "$INTERFACE" ] || exit 2
+
+if [ "$ACTION" == "ifup" ]; then
+        [ -n "$DEVICE" ] || exit 3
+fi
+
+[ -x /usr/bin/ip ] || [ -x /sbin/ip ] || exit 4
+[ -x /usr/sbin/ipset ] || exit 5
+[ -x /usr/sbin/iptables ] || exit 6
+[ -x /usr/sbin/ip6tables ] || exit 7
+[ -x /usr/bin/logger ] || exit 8
+
+mkdir -p $MWAN3_STATUS_DIR
+
+interface_target="$INTERFACE"
+
+config_load mwan3
+config_get enabled $interface_target enabled 1
+[ "$enabled" == "1" ] || exit 0
+config_get family $interface_target family ""
+
+if [ "$family" == "ipv4" ]; then
+	network_get_gateway gateway $interface_target 1
+	mwan3_lock
+	mwan3_set_connected_iptables
+	mwan3_unlock
+elif [ "$family" == "ipv6" ]; then
+	network_get_gateway6 gateway $interface_target 1
+	mwan3_lock
+	mwan3_set_connected6_iptables
+	mwan3_unlock
+else
+	mwan3_lock
+	mwan3_set_connected_iptables
+	mwan3_set_connected6_iptables
+	mwan3_unlock
+	exit 0
+fi
+
+if [ "$ACTION" == "ifup" ]; then
+	[ -n "$gateway" ] || exit 9
+fi
+
+mwan3_lock
+if [ "$(mwan3_get_iface_hotplug_state $interface_target)" = "online" -a "$ACTION" == "ifup" ];then
+	$LOG warn "ignore $interface_target action up"
+	mwan3_unlock
+	exit 0
+fi
+if [ "$(mwan3_get_iface_hotplug_state $interface_target)" = "offline" -a "$ACTION" == "ifdown" ];then
+	$LOG warn "ignore $interface_target action down"
+	mwan3_unlock
+	exit 0
+fi
+
+$LOG notice "$ACTION interface $interface_target (${DEVICE:-unknown}) FROM:$FROM"
+
+case "$ACTION" in
+	ifup)
+		[ ! -f "$FIRST_UP_TAG" ] && {
+			mwan3_set_general_rules
+			mwan3_set_general_iptables
+			touch $FIRST_UP_TAG
+		}
+
+		mwan3_create_iface_rules $interface_target $DEVICE
+		mwan3_create_iface_iptables $interface_target $DEVICE
+		#mwan3_create_iface_route $interface_target $DEVICE
+		mwan3_track $interface_target $DEVICE
+		if [ -z "$FROM" ];then
+			status=$(get_wanchk_state "$interface_target")
+			if [ "$status" != "up" ];then
+				$LOG warn "ignore physic up,as for status not up"
+				mwan3_unlock
+				exit 0
+			fi
+		fi
+		mwan3_set_iface_hotplug_state $interface_target "online"
+		mwan3_set_policies_iptables $interface_target
+		mwan3_set_user_rules $interface_target
+	;;
+	ifdown)
+		mwan3_set_iface_hotplug_state $interface_target "offline"
+		cur_net=$(mwan3_get_net_state)
+		if [ "$cur_net" = "$interface_target" ];then
+			mwan3_set_net_state ""
+		fi
+		mwan3_delete_iface_ipset_entries $interface_target
+		mwan3_set_policies_iptables $interface_target
+		mwan3_set_user_rules $interface_target
+	;;
+esac
+
+mwan3_unlock
+
+exit 0

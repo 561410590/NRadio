@@ -1,0 +1,3 @@
+/etc/config/cellular_init
+/usr/sbin/cellular_init
+/etc/init.d/cellular_init

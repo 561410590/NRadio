@@ -1,0 +1,45 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2014 OpenWrt.org
+
+START=12
+timezone="CST-8"
+USE_PROCD=1
+system_config() {
+	local cfg="$1"
+	local log_level_info="info"
+	local logpath=
+	local c_md5=
+	local n_md5=
+	local times=10
+	config_get tmp_timezone "$cfg" "timezone"
+	config_get conloglevel "$cfg" "conloglevel"
+
+	if [ -n "$tmp_timezone" ];then
+		timezone=$tmp_timezone
+	fi
+	if [ -z "$conloglevel" ];then
+		conloglevel="7"
+	fi
+	case $conloglevel in
+		"1")	log_level_info="emerg" ;;
+		"2")	log_level_info="alert" ;;
+		"3")	log_level_info="crit" ;;
+		"4")	log_level_info="err" ;;
+		"5")	log_level_info="warning" ;;
+		"6")	log_level_info="notice" ;;
+		"7")	log_level_info="info" ;;
+		"8")	log_level_info="debug" ;;
+	esac
+
+	echo "*.$log_level_info;mail.none;authpriv.none;cron.none  /var/log/messages" > /tmp/rsyslog.d/level.conf
+}
+start_service() {
+	mkdir -p /tmp/rsyslog.d
+	config_load system
+	config_foreach system_config system
+
+	procd_open_instance
+	procd_set_param command /usr/sbin/rsyslogd -n
+	procd_set_param env TZ="$timezone"
+	procd_close_instance
+}

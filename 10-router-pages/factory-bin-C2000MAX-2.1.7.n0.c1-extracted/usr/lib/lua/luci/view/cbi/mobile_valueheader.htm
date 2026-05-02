@@ -1,0 +1,9 @@
+    <div class="row <%if loop_index > 1 then%>top-border<%end%>">
+        <div class="col-xs-12 text-left">
+            <div class="row">
+                <div class="col-sm-6 col-xs-6 text-left ">
+                    <%-=label_title-%>
+                </div>
+                <div class="col-sm-6 col-xs-6 text-right ">
+                    <div class="cbi-value-field<% if self.error and self.error[section] then %> cbi-value-error<% end %>">
+                        <div id="cbi-<%=self.config.."-"..section.."-"..self.option%>" data-index="<%=self.index%>" data-depends="<%=pcdata(self:deplist2json(section))%>">

@@ -1,0 +1,14 @@
+Package: miniupnpd-iptables
+Version: 2.3.9-2
+Depends: libc, libcap-ng, libmnl0, libuuid1, ip6tables, libip6tc2, iptables, libip4tc2, libnetfilter-conntrack3
+Provides: miniupnpd
+Source: package/nradio/feeds/miniupnpd
+SourceName: miniupnpd-iptables
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1772007389
+CPE-ID: cpe:/a:miniupnp_project:miniupnpd
+Architecture: aarch64_cortex-a53
+Installed-Size: 80394
+Description:  Lightweight UPnP IGD & PCP/NAT-PMP daemon (iptables)

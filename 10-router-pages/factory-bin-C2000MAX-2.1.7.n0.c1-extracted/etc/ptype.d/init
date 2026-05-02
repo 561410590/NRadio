@@ -1,0 +1,28 @@
+#!/bin/ash
+
+gWdir="/etc/ptype.d"
+
+ApplyConfig() {
+	local _name=$1
+	local _init=$2
+
+	# Apply base config
+	find -L "$gWdir/base" -type f -maxdepth 1|sort|{
+		while read -r line; do
+			sh "$line" "$_init"
+		done
+	}
+
+	# Apply type config
+	find -L "$gWdir/$_name" -type f -maxdepth 1|sort|{
+		while read -r line; do
+			sh "$line" "$_init"
+		done
+	}
+}
+
+[ "X$1" = "X" ] && exit 1
+
+ApplyConfig "$@"
+
+uci commit

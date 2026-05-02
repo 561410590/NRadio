@@ -1,0 +1,16 @@
+Package: cJSON
+Version: 1.7.15-3
+Depends: libc
+Source: feeds/packages/libs/cjson
+SourceName: cJSON
+License: MIT
+LicenseFiles: LICENSE
+Section: libs
+SourceDateEpoch: 1664184646
+CPE-ID: cpe:/a:cjson_project:cjson
+Maintainer: Karl Palsson <karlp@etactica.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 11256
+Description:  Ultralightweight JSON parser in ANSI C.
+ cJSON aims to be the dumbest possible parser that you can get your
+ job done with. It's a single file of C, and a single header file.

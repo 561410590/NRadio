@@ -1,0 +1,80 @@
+#!/bin/sh /etc/rc.common
+
+START=90
+STOP=10
+
+USE_PROCD=1
+
+_name="wanchk"
+_exec="/usr/bin/${_name}.sh"
+
+checker_instance() {
+	local enable=
+	local network=
+	local period=
+	local ipaddr=
+	local dns=
+	local iscpe=
+	local reconnect="-r"
+	local cpe=
+	local mode=
+	local timeout=
+	local try=
+	local flow_info=
+	local dnsopen_info=
+	local pingopen_info=
+	local max_info=
+	local powermax_info=
+
+	config_get enable "$1" enable
+	[ "X$enable" != "X1" ] && return
+	config_get network "$1" network
+	config_get period "$1" period
+	config_get ipaddr "$1" ipaddr
+	config_get ip6addr "$1" ip6addr
+	config_get timeout "$1" timeout
+	config_get try "$1" try
+	config_get dns "$1" dns
+	config_get dns6 "$1" dns6
+	config_get iscpe "$1" iscpe
+	config_get max "$1" max
+	config_get powermax "$1" powermax
+	config_get dnsopen "$1" dnsopen
+	config_get pingopen "$1" pingopen
+	config_get flowlimit "$1" flowlimit
+
+	[ -n "$max" ] && max_info="-m $max"
+	[ -n "$powermax" ] && powermax_info="-M $powermax"
+	[ -n "$dnsopen" ] && dnsopen_info="-D $dnsopen"
+	[ -n "$pingopen" ] && pingopen_info="-P $pingopen"
+	[ -n "$flowlimit" ] && flow_info="-l $flowlimit"
+	gNet="${network%%_*}"
+	[ "$iscpe" != "1" ] && gIndex=${gNet##*[A-Za-z]}
+
+	if echo "$gNet" |grep -sq "cpe" || [ "$iscpe" = "1" ]; then
+		cpe="-C"
+		if uci -q get cpesel.sim${gIndex}.max; then
+			mode=$(uci -q get cpesel.sim${gIndex}.mode)
+			if [ "$mode" != "1" ]; then
+				reconnect=""
+			fi
+		fi
+	fi
+
+	if ! uci -q get network."$gNet".proto|grep -qsw wwan \
+		&& ! uci -q get network."$gNet".ifname && ! uci -q get network."$gNet".device; then
+		return
+	fi
+
+	procd_open_instance
+	procd_set_param command "$_exec" -i "${network:-wan}" -w "$period" -E "$ip6addr" -e "$ipaddr" -d "${dns}" -R "${dns6}" -t "${timeout}" -c "${try}" ${max_info} ${powermax_info} ${dnsopen_info} ${pingopen_info} ${flow_info} ${reconnect} ${cpe}
+	procd_set_param respawn
+	procd_set_param limits core="unlimited"
+	procd_close_instance
+}
+
+start_service() {
+	rm -f /var/run/rpcd/wanchk*
+	config_load "$_name"
+	config_foreach checker_instance checker
+}

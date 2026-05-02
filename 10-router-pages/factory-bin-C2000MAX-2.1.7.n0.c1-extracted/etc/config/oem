@@ -1,0 +1,4 @@
+config system board
+	option name 'nradiowifi_router'
+
+config system feature

@@ -1,0 +1,15 @@
+#!/bin/ash
+
+[ "$1" = "reinit" ] && exit 0
+
+# Set default bandwidth for all ap
+uci set cloudd.g0radio=radio
+uci set cloudd.g0radio.htmode_radio0=wireless.radio0.htmode=HT20
+uci set cloudd.g0radio.htmode_radio1=wireless.radio1.htmode=VHT40
+uci set cloudd.g0radio.htmode_radio2=wireless.radio2.htmode=VHT40
+
+# Enable Unique SSID
+uci set cloudd.t0.diff_2_4_wlan=0
+uci set cloudd.t0.diff_2_4_wlan_0=0
+uci set cloudd.t0.diff_2_4_wlan_1=0
+uci set cloudd.t0.diff_2_4_wlan_2=0

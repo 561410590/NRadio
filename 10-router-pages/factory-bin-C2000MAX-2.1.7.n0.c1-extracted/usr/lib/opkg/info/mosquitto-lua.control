@@ -1,0 +1,13 @@
+Package: mosquitto-lua
+Version: 0.1-1
+Depends: libc, libmosquitto, lua
+Source: package/nradio/feeds/mosquitto-lua
+SourceName: mosquitto-lua
+License: MIT
+LicenseFiles: LICENSE
+Section: lang
+SourceDateEpoch: 1562898867
+Maintainer: Karl Palsson <karlp@remake.is>
+Architecture: aarch64_cortex-a53
+Installed-Size: 6441
+Description:  Lua bindings to libmosquitto

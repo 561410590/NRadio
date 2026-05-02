@@ -1,0 +1,15 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/functions/network.sh
+. /lib/mwan3/mwan3.sh
+
+[ "$ACTION" == "add" -o "$ACTION" == "remove" ] || exit 1
+[ -n "$DEVICENAME" ] || exit 1
+
+if echo "$DEVICENAME"|grep -q "^tun" ;then
+	mwan3_lock
+	mwan3_set_connected_iptables
+	mwan3_set_connected6_iptables
+	mwan3_unlock
+fi

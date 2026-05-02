@@ -1,0 +1,10 @@
+Package: luci-app-nradio-ipv6
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-ipv6
+SourceName: luci-app-nradio-ipv6
+Section: luci
+SourceDateEpoch: 1776076244
+Architecture: all
+Installed-Size: 4203
+Description:  LuCI Support for NRadio IPv6

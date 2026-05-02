@@ -1,0 +1,11 @@
+/etc/freq.json
+/lib/netifd/proto/adapt_apn.sh
+/etc/apn.json
+/lib/netifd/proto/wwan.sh
+/etc/hotplug.d/usbmisc/00_wwan.sh
+/lib/netifd/proto/ncm.sh
+/lib/netifd/proto/odu.sh
+/lib/netifd/proto/cloud.sh
+/etc/gcom/ncm.json
+/etc/hotplug.d/usb/00_wwan.sh
+/lib/netifd/proto/qmi.sh

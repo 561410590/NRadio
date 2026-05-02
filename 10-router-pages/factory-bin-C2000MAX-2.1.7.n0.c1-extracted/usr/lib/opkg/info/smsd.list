@@ -1,0 +1,3 @@
+/usr/sbin/smsd
+/etc/init.d/smsd
+/etc/config/smsd

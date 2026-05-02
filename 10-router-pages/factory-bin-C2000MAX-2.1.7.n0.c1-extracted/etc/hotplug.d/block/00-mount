@@ -1,0 +1,182 @@
+#!/bin/sh
+
+. /lib/functions.sh
+# . /lib/functions/nand.sh
+# . /lib/functions/storage.sh
+
+blkdev=$(dirname $DEVPATH)
+device=$(basename $DEVPATH)
+board=$(cat /tmp/sysinfo/board_name)
+
+STORAGE_PATH_PREFIX="/tmp/storage"
+INTERNAL_STORAGE_PATH="/tmp/istorage"
+
+istorage_cb() {
+	local action=$1
+
+
+	for action_file in /etc/hotplug.d/block/cb/* ; do
+		$action_file $action
+	done
+}
+
+start_istorage() {
+	# create soft link
+	if [ -L $INTERNAL_STORAGE_PATH ]; then
+		rm -rf $INTERNAL_STORAGE_PATH
+		ln -ns $1 $INTERNAL_STORAGE_PATH
+	fi
+
+	while [ ! -L $INTERNAL_STORAGE_PATH ]
+	do
+		cp -rf $INTERNAL_STORAGE_PATH/* $1
+		rm -rf $INTERNAL_STORAGE_PATH
+		ln -ns $1 $INTERNAL_STORAGE_PATH
+	done
+
+	# start cb
+	istorage_cb "start"
+}
+
+stop_istorage() {
+	istorage_cb "stop"
+
+	rm -rf $INTERNAL_STORAGE_PATH
+}
+
+init_fileserver() {
+	if [ ! -f "/etc/config/filestore" ]; then
+		logger -t "storage" "not support NRadio fileserver"
+		return
+	fi
+
+	local folder=$(uci -q get filestore.basic.folder)
+	if [ -z "$folder" ] ;then
+		folder="NROS/"
+	fi
+
+	local operation=$(uci -q get filestore.basic.operate)
+	if [ -z "$operation" ] ;then
+		"$operation"="nros_operating_steps"
+	fi
+
+	mkdir -p  "$mount_point/$folder"
+	if [ ! -f "$mount_point/$folder$operation" ] ;then
+		touch "$mount_point/$folder$operation"
+		uci -c $mount_point/$folder add $operation symbol
+		uci -c $mount_point/$folder rename $operation.@symbol[-1]='basic'
+		uci -c $mount_point/$folder set $operation.'basic'.flag='1'
+		uci -c $mount_point/$folder commit $operation
+	else
+		if ! uci -q -c $mount_point/$folder get $operation.basic.flag; then
+			logger -t "storage" "NRadio fileserver config is broken."
+			rm -f "$mount_point/$folder$operation"
+			init_fileserver
+		fi
+	fi
+	rm -f "$mount_point/$folder/.${operation}.uci-*"
+}
+
+case "$board" in
+	*EMMC | *EPHY)
+		if echo "$device"|grep -q "mmcblk0"; then
+			return 0
+		fi
+		;;
+esac
+
+case "$device" in
+"sd"* | "mmcblk"*)
+	if [ ! -f "/etc/config/filestore" ]; then
+		mount_point="$STORAGE_PATH_PREFIX/$device"
+	else
+		mount_point="/mnt/storage/usbdata"
+	fi
+	case "$ACTION" in
+	add)
+		ID_FS_TYPE=""
+		ID_FS_UUID=""
+		ID_PART_TABLE_TYPE=""
+		dev_path="/dev/$device"
+
+		logger -t "storage" "start with $dev_path"
+		eval `blkid -o udev $dev_path`
+
+		# cannot mount and use?
+		[ -n "$ID_PART_TABLE_TYPE" ] && {
+			logger -t "storage" "$dev_path skip"
+			return 0
+		}
+
+		# no filesystem type
+		[ -z $ID_FS_TYPE ] && {
+			echo "$DEVPATH" | grep -q "ata"
+			if [ $? -eq 0 ]; then
+				echo y | mkfs.ext4 $dev_path
+				mkdir -p $mount_point
+				mount -o noatime $dev_path $mount_point
+				init_fileserver
+				logger -t "storage" "$dev_path msata partition"
+			else
+				logger -t "storage" "$dev_path no filesystem"
+			fi
+
+			return 0
+		}
+
+		mkdir -p $mount_point
+
+		if [ "$ID_FS_TYPE" == "msdos" -o "$ID_FS_TYPE" == "vfat" ] ; then
+			mount -t vfat -o noatime,fmask=0000,dmask=0000,iocharset=utf8 $dev_path $mount_point
+		elif [ "$ID_FS_TYPE" == "ntfs" ] ; then
+			ntfs-3g -o big_writes,noatime,nls=utf8 $dev_path $mount_point
+		elif [ "$ID_FS_TYPE" == "exfat" ] ; then
+			mount -t exfat -o noatime,fmask=0,dmask=0,iocharset=utf8 $dev_path $mount_point
+		elif [ "$ID_FS_TYPE" == "ext4" -o "$ID_FS_TYPE" == "ext3" -o "$ID_FS_TYPE" == "ext2" ] ; then
+			mount -o noatime $dev_path $mount_point
+		elif [ "$ID_FS_TYPE" == "f2fs" ] ; then
+			mount -t f2fs -o noatime $dev_path $mount_point
+		fi
+
+		if [ $? -eq "0" ]; then
+			case "$device" in
+			"mmcblk"*)
+				start_istorage $mount_point
+				;;
+			esac
+			init_fileserver
+		else
+			logger -t "storage" "$dev_path mount failed($ID_FS_TYPE)"
+		fi
+		;;
+	remove)
+		OVERLAY_DEV=$(grep ' /overlay ' /proc/mounts 2>/dev/null | awk '{print $1}' | sed 's|/dev/||')
+
+		if [ -n "$OVERLAY_DEV" ]; then
+			case "$device" in
+			"$OVERLAY_DEV" | "${OVERLAY_DEV}"*)
+				logger -t "storage" "Info: Overlay device $device is removed."
+
+				stop_istorage
+				(sleep 2 && reboot) &
+				exit 0
+				;;
+			esac
+		fi
+		mount | grep -qs "$mount_point"
+		if [ $? -eq 0 ]; then
+			case "$device" in
+			"mmcblk"*)
+				stop_istorage
+				;;
+			esac
+
+			logger -t "storage" "umount $dev_path $mount_point"
+
+			#fuser -m -k $mount_point
+			umount -l $dev_path $mount_point
+		fi
+		;;
+	esac
+	;;
+esac

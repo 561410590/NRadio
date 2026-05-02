@@ -1,0 +1,31 @@
+local cloudd = require "cloudd.cloudd"
+local c_api = require "cloudd.api"
+local cjson = require "cjson"
+local util = require "luci.util"
+
+function cloudd_main(did, sid, event, payload, proto, reply)
+	local r_topic = "combo"
+	local value = {errcode=""}
+	local data = cjson.decode(payload)   
+	if reply == 1 then
+		return
+	end
+
+	local combo_array = {}
+	if data.combo then
+		combo_array = data.combo
+	end
+
+	if #combo_array == 0 then
+		combo_array[1]= {}
+	end
+
+	local update_info = util.ubus("combo", "update", { trans_id = "123456" ,from="cloud",combo=combo_array}) or {code="3"}
+	value.errcode = update_info.code
+	value.list = update_info.list or {{}}
+	cloudd.cloudd_send(sid, r_topic, value, proto, 1)
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

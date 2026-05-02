@@ -1,0 +1,10 @@
+Package: kmod-qmi_wwan_q
+Version: 5.4.281-20221118
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-wdm, kmod-usb-core, kmod-usb-net
+Source: package/nradio/kernel/qmi_wwan_q
+SourceName: kmod-qmi_wwan_q
+Section: quectel
+SourceDateEpoch: 1715851916
+Architecture: aarch64_cortex-a53
+Installed-Size: 15337
+Description:  Quectel QMI WWAN Driver

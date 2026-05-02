@@ -1,0 +1,10 @@
+Package: combo
+Version: 1.4-20240112
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, libbdinfo, libpthread, tc, nradio-utils, libopenssl1.1
+Source: package/nradio/services/combo
+SourceName: combo
+Section: nradiowifi
+SourceDateEpoch: 1770366973
+Architecture: aarch64_cortex-a53
+Installed-Size: 55596
+Description:  Combo operation center

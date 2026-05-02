@@ -1,0 +1,10 @@
+Package: pkg-ui-new
+Version: 2.0-20251103
+Depends: libc, luci-app-nradio-cpedata, luci-i18n-nradio-cpedata-zh-cn, luci-app-nradio-terminal-limit, luci-i18n-nradio-terminal-limit-zh-cn, luci-nradio-v3, luci-i18n-nradio-v3-zh-cn, luci-i18n-nradio-v3-en, luci-app-nradio-authmodule, luci-i18n-nradio-authmodule-zh-cn, luci-app-nradio-simpleroutes
+Source: package/nradio/collections/pkg-ui-new
+SourceName: pkg-ui-new
+Section: nradiowifi
+SourceDateEpoch: 1770117876
+Architecture: all
+Installed-Size: 105
+Description:  Pakcages for LuCI NRadio V3

@@ -1,0 +1,10 @@
+Package: kmod-mtk_pci
+Version: 5.4.281+TEST-1
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mt_hwifi, kmod-mt_wifi_osal
+Source: package/mtk/drivers/mt_hwifi
+SourceName: kmod-mtk_pci
+Section: kernel
+SourceDateEpoch: 1768997726
+Architecture: aarch64_cortex-a53
+Installed-Size: 21417
+Description:  MediaTek HWIFI PCI driver

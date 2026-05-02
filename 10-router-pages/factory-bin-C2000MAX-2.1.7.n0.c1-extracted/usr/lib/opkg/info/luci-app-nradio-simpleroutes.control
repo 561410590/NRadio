@@ -1,0 +1,10 @@
+Package: luci-app-nradio-simpleroutes
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-simpleroutes
+SourceName: luci-app-nradio-simpleroutes
+Section: luci
+SourceDateEpoch: 1770106473
+Architecture: all
+Installed-Size: 1071
+Description:  LuCI Support for NRadio Routes

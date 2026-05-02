@@ -1,0 +1,45 @@
+<div class="cbi-page-wizard">
+	<input type="button" class="cbi-button cbi-button-back" name="wizard.back" value="<%:« Back%>" />
+	<input type="button" class="cbi-button cbi-button-next" name="wizard.next" value="<%:Next »%>" />
+	<input type="button" class="cbi-button cbi-button-skip" name="wizard.skip" value="<%:Skip%>" />
+	<input type="submit" class="cbi-button cbi-button-apply" name="cbi.apply" value="<%:Finish%>" />
+</div>
+<script>
+function nradio_wizard_init(cur, sum) {
+	$('div.cbi-page-wizard > .cbi-button').css('display', 'none')
+
+	if (cur != 1) {
+		$('div.cbi-page-wizard > .cbi-button-back').css('display', 'inline');
+	}
+
+	if (cur == sum) {
+		$('div.cbi-page-wizard > .cbi-button-apply').css('display', 'inline');
+	} else {
+		$('div.cbi-page-wizard > .cbi-button-next').css('display', 'inline');
+		//$('div.cbi-page-wizard > .cbi-button-skip').css('display', 'inline');
+	}
+}
+
+function nradio_wizard_onload() {
+	var total = $('fieldset > ul.cbi-tabmenu > li').length;
+	var idx = $('ul.cbi-tabmenu > li.cbi-tab').index('ul.cbi-tabmenu > li') + 1;
+
+	nradio_wizard_init(idx, total);
+}
+
+function nradio_wizard_step_change(event) {
+	var target=$(event.target);
+	var total = $('fieldset > ul.cbi-tabmenu > li').length;
+	var idx = target.closest('li').index('ul.cbi-tabmenu > li') + 1;
+
+	nradio_wizard_init(idx, total);
+}
+
+$(document).ready(function(){
+	nradio_wizard_onload();
+	$('ul.cbi-tabmenu > li > a').click(nradio_wizard_step_change);
+});
+</script>
+<style>
+.cbi-page-actions {display:none}
+</style>

@@ -1,0 +1,10 @@
+Package: wanswd
+Version: 1.2-20240807
+Depends: libc, rpcd
+Source: package/nradio/services/wanswd
+SourceName: wanswd
+Section: nradiowifi
+SourceDateEpoch: 1752111467
+Architecture: all
+Installed-Size: 2488
+Description:  Auto wan switch

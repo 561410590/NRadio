@@ -1,0 +1,11 @@
+Package: kmod-ata-ahci
+Version: 5.4.281-1
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ata-core
+Source: package/kernel/linux
+SourceName: kmod-ata-ahci
+License: GPL-2.0
+Section: kernel
+SourceDateEpoch: 1755595010
+Architecture: aarch64_cortex-a53
+Installed-Size: 7506
+Description:  Support for AHCI Serial ATA controllers

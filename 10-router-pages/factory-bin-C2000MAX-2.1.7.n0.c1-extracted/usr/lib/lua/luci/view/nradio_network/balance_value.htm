@@ -1,0 +1,180 @@
+<%
+	local i, key
+	local util = require "luci.util"
+	local uci = require "luci.model.uci".cursor()
+	local id_str=cbid:gsub('%.', '_');
+	local count_cpe = luci.nradio.count_cpe()
+	local cellular_count = 0
+	local nbcpe_count = 0
+	local support_wan = uci:get("nrswitch", "disable_wan") or "0"
+%>
+
+
+
+<%+cbi/valueheader%>
+<style>
+	fieldset div.cbi-value-field>.cbi-input-text.small-width{
+		width:80px;
+	}
+
+</style>
+		<input data-update="change"<%=
+			attr("id", cbid) ..
+			attr("name", cbid) ..
+			attr("type", "hidden") ..
+			attr("class", self.password and "cbi-input-password" or "cbi-input-text") ..
+			attr("value", self:cfgvalue(section) or self.default) ..
+			ifattr(self.size, "size") ..
+			ifattr(self.placeholder, "placeholder") ..
+			ifattr(self.readonly, "readonly") ..
+			ifattr(self.maxlength, "maxlength") ..
+			ifattr(self.datatype, "data-type", self.datatype) ..
+			ifattr(self.datatype, "data-optional", self.optional or self.rmempty) ..
+			ifattr(self.combobox_manual, "data-manual", self.combobox_manual) ..
+			ifattr(#self.keylist > 0, "data-choices", { self.keylist, self.vallist })
+		%> />
+		<div class="balance_label" style="display: inline-block;width: auto;height: 34px;font-weight: bold;margin-right: 10px;"></div>		
+		<%
+		local label_info = translate("Wired")
+		local wan_html_info = "<input class=\"cbi-input-text balance_wan small-width balance_input\" data-module=\"wan\" onblur=\"valid_int_check(this)\" style=\"display: inline-block\" onchange=\"set_balance(this)\""..attr("id", cbid.."-wan") ..attr("name", cbid.."-wan")..">"
+		io.write(wan_html_info)
+		local label_nonbcpe_info = label_info
+		local label_nonwan_info = ""
+		local label_all_info = label_info
+		local cellular_prefix,cellular_default = luci.nradio.get_cellular_prefix()
+		local nbcpe_info = ""
+		local cellular_info = ""
+		local nbcpe_html_info = ""
+		local cellular_html_info = ""
+		if support_wan == "1" then
+			label_info=""
+		end
+
+		for i = 0, count_cpe - 1 do
+			local dis_class = "";
+			local iface = (i == 0 and cellular_default or cellular_prefix..i)
+			local iface_odu_mode = uci:get("network",iface, "mode") or ""
+			local suffix = ""
+
+			if iface_odu_mode == "odu" then
+				suffix = (nbcpe_count == 0 and "" or tostring(i+1))
+				nbcpe_count = nbcpe_count + 1
+				suffix = translate("CellularNBCPE")..suffix
+				dis_class = "balance_nbcpe"
+				if #nbcpe_info > 0 then
+					nbcpe_info = nbcpe_info.." : "
+				end
+				nbcpe_info = nbcpe_info..suffix
+				nbcpe_html_info = nbcpe_html_info.."<div class=\""..dis_class.." \" style=\"float:left;height:34px;width:10px;\">:</div><input class=\"cbi-input-text small-width balance_input "..dis_class.."\" style=\"display: inline-block\" onblur=\"valid_int_check(this)\" data-module=\""..iface.."\" onchange=\"set_balance(this)\" "..attr("id", cbid.."-"..iface) ..attr("name", cbid.."-"..iface)..">"
+			else
+				suffix = (cellular_count == 0 and "" or tostring(i+1))
+				cellular_count = cellular_count + 1
+				suffix =  translate("CellularLNBCPE")..suffix
+				if #cellular_info > 0 then
+					cellular_info = cellular_info.." : "
+				end
+				cellular_info = cellular_info..suffix
+				cellular_html_info = cellular_html_info.."<div class=\""..dis_class.." \" style=\"float:left;height:34px;width:10px;\">:</div><input class=\"cbi-input-text small-width balance_input "..dis_class.."\" style=\"display: inline-block\"  onblur=\"valid_int_check(this)\" data-module=\""..iface.."\" onchange=\"set_balance(this)\" "..attr("id", cbid.."-"..iface) ..attr("name", cbid.."-"..iface)..">"
+			end		
+		end
+		
+		if #nbcpe_info > 0 then
+			if #label_info > 0 then
+				label_info = label_info.." : "
+			end
+			label_info = label_info..nbcpe_info
+			label_nonwan_info=nbcpe_info
+
+			if #label_all_info > 0 then
+				label_all_info = label_all_info.." : "
+			end
+			label_all_info = label_all_info..nbcpe_info
+			
+			io.write(nbcpe_html_info)
+		end
+		if #cellular_info > 0 then
+			if #label_info > 0 then
+				label_info = label_info.." : "
+			end
+			label_info = label_info..cellular_info
+
+			if #label_nonwan_info > 0 then
+				label_nonwan_info = label_nonwan_info.." : "
+			end
+			label_nonwan_info = label_nonwan_info..cellular_info
+			if #label_nonbcpe_info > 0 then
+				label_nonbcpe_info = label_nonbcpe_info.." : "
+			end
+			label_nonbcpe_info = label_nonbcpe_info..cellular_info
+
+			if #label_all_info > 0 then
+				label_all_info = label_all_info.." : "
+			end
+			label_all_info = label_all_info..cellular_info
+			io.write(cellular_html_info)
+		end
+		
+		%>
+
+		<script>
+			function show_balance(type){				
+				if(type == "nonwan"){
+					$(".balance_label").html("<%=label_nonwan_info%>");
+				}
+				else if(type == "nonbcpe"){
+					$(".balance_label").html("<%=label_nonbcpe_info%>");
+				}
+				else if(type == "all"){
+					$(".balance_label").html("<%=label_all_info%>");
+				}
+			}
+			
+			var data_<%=id_str%>=document.getElementById("<%=cbid%>").value;
+			if(data_<%=id_str%>){
+				console.log(data_<%=id_str%>);
+				var iface_data = data_<%=id_str%>.split("-");
+				for(i=0;i<iface_data.length;i++){
+					var item = iface_data[i].split(":");
+					var iface = item[0];
+					var weight = item[1];
+					console.log("<%=cbid%>"+"-"+iface);
+					document.getElementById("<%=cbid%>"+"-"+iface).value=(weight);
+				}				
+			}
+			function valid_int_check(obj){
+				var data = parseInt(obj.value);
+				if(!(/^-?\d+(?:\.\d+)?$/.test(data))){
+					obj.value="";
+				}
+				if(obj.value.length == 0)
+					obj.value=obj.defaultValue;
+				else
+					obj.value=Math.abs(data);
+			}
+			function set_balance(obj){
+				var id_var = $(obj).attr("id").split("-")[0];
+				var data = "";
+				$(".balance_input").each(function(){
+					var combine_str = "";
+					var val_weight = $(this).val();
+					var val_iface = $(this).data("module");
+
+					val_weight=parseInt(val_weight);
+					if(!(/^-?\d+(?:\.\d+)?$/.test(val_weight))){
+						val_weight="";
+					}
+					if(val_weight.length == 0)
+						val_weight=obj.defaultValue;
+					else
+						val_weight=Math.abs(val_weight);
+
+					combine_str = val_iface+":"+val_weight;
+					if (data.length)
+						data += "-";
+					data += combine_str;
+				});
+				document.getElementById(id_var).value=data;
+				console.log("id:"+id_var+" val:"+data);
+			}
+		</script>
+<%+cbi/valuefooter%>

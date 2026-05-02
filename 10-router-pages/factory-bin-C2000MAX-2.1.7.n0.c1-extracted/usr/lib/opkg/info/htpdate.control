@@ -1,0 +1,14 @@
+Package: htpdate
+Version: 1.1.1-6-20160216
+Depends: libc
+Source: package/nradio/feeds/htpdate
+SourceName: htpdate
+Section: net
+SourceDateEpoch: 1751271717
+Architecture: aarch64_cortex-a53
+Installed-Size: 7867
+Description:  The HTTP Time Protocol (HTP) is used to synchronize a computer's time
+ with web servers as reference time source. Htpdate will synchronize your
+ computer's time by extracting timestamps from HTTP headers found
+ in web server responses. Htpdate can be used as a daemon, to keep your
+ computer synchronized.

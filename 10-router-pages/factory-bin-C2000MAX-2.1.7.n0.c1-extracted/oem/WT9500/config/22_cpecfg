@@ -1,0 +1,4 @@
+uci set cpecfg.cpesim1=cpesim
+uci set cpecfg.cpesim2=cpesim
+uci set cpecfg.cpesim3=cpesim
+uci set cpecfg.cpesim4=cpesim

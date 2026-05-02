@@ -1,0 +1,8 @@
+{
+	"desc":"Quectel RM500Q",
+	"vendor":"quectel",
+	"cmdset":2,
+	"type":"qmi_q",
+	"nrcap": 1,
+	"control": "2",
+}

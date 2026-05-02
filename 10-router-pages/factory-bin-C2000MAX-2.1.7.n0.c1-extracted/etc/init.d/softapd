@@ -1,0 +1,40 @@
+#!/bin/sh /etc/rc.common
+
+START=18
+STOP=92
+
+USE_PROCD=1
+
+readonly WIFI_FIRST_INIT="/tmp/run/wifi_first_init"
+
+wifi_first_init() {
+	[ -f "$WIFI_FIRST_INIT" ] && return
+
+	iwconfig 2>/dev/null | grep -E 'mt[0-9]*' | {
+		while read -r _line; do
+			_iface=$(echo "$_line"|awk -F' ' '{print $1}')
+			_driver=$(echo "$_line"|awk -F' ' '{print $2}')
+
+			if [ "$_driver" = "mt7915" ]; then
+				if ! lsmod|grep -qE "mt7915"; then
+					ifconfig "$_iface" up
+				fi
+			elif [ "$_driver" = "mt7981" ]; then
+				ifconfig "$_iface" up
+			fi
+		done
+	}
+
+	touch "$WIFI_FIRST_INIT"
+}
+
+start_service() {
+	mac_addr=$(uci get oem.board.id)
+
+	wifi_first_init
+
+	procd_open_instance
+	procd_set_param command /usr/sbin/softapd -m "$mac_addr"
+	procd_set_param respawn 5 5 -1
+	procd_close_instance
+}

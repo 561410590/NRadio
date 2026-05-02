@@ -1,0 +1,141 @@
+<%
+    local util = require "luci.util"
+    local id_str = cbid:gsub('%.', '_')
+    local cur = self:cfgvalue(section)
+    local reboot_value = cur
+%>
+
+<%+cbi/valueheader%>
+
+<style>
+    fieldset div.cbi-value-field select.cbi-input-select.time-width { width: 80px; min-width: 80px; max-width: 80px; }
+    fieldset div.cbi-value-field .time-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    fieldset div.cbi-value-field .time-row-content { display: inline-flex; align-items: center; gap: 8px; }
+</style>
+
+<input data-update="change"<%=
+    attr("id", cbid) ..
+    attr("name", cbid) ..
+    attr("type", "hidden") ..
+    attr("class", "cbi-input-text") ..
+    attr("value", reboot_value)
+%> />
+
+<div id="<%=id_str%>-rows"></div>
+
+<script>
+    var timeRow = document.getElementById("<%=id_str%>-rows");
+    var timeHidden = document.getElementById("<%=cbid%>");
+
+    var I18N_MONTH_DAYS = [null<% for i=1,28 do %>, '<%=translate("theday" .. i)%>'<% end %>];
+
+    function initSelects(row) {
+        var $row = $(row);
+        var monthSelect = $row.find('.action_month');
+        var hourSelect = $row.find('.action_hour');
+        var minuteSelect = $row.find('.action_minute');
+
+        for (var i = 1; i <= 28; i++) {
+            var $option = $('<option>');
+            $option.text(html_format(I18N_MONTH_DAYS[i])).val(i);
+            monthSelect.append($option);
+        }
+        for (var i = 0; i < 24; i++) {
+            hourSelect.append($('<option>', { value: i, text: i }));
+        }
+        for (var i = 0; i < 60; i++) {
+            minuteSelect.append($('<option>', { value: i, text: i }));
+        }
+
+        var initialValue = $(timeHidden).val();
+        if (initialValue && initialValue.length > 0) {
+            var parts = initialValue.split(',');
+            if (parts.length === 4) {
+                $row.find('.action_week').val(parts[0]);
+                $row.find('.action_month').val(parts[1]);
+                $row.find('.action_hour').val(parts[2]);
+                $row.find('.action_minute').val(parts[3]);
+            }
+        }
+    }
+
+    function updateHidden() {
+        var row = $(timeRow).find('.time-row');
+        if (row.length > 0) {
+            var week = row.find('.action_week').val();
+            var month = row.find('.action_month').val();
+            var hour = row.find('.action_hour').val();
+            var minute = row.find('.action_minute').val();
+
+            var newValue = [week, month, hour, minute].join(',');
+            timeHidden.value = newValue;
+        }
+    }
+
+    function createTimeRow() {
+        var row = document.createElement('div');
+        row.innerHTML = `
+            <div class="time-row">
+                <div class="time-row-content">
+                    <select class="cbi-input-select time-width action_week" hidden>
+                        <option value="1"><%=translate("Monday")%></option>
+                        <option value="2"><%=translate("Tuesday")%></option>
+                        <option value="3"><%=translate("Wednesday")%></option>
+                        <option value="4"><%=translate("Thursday")%></option>
+                        <option value="5"><%=translate("Friday")%></option>
+                        <option value="6"><%=translate("Saturday")%></option>
+                        <option value="0"><%=translate("Sunday")%></option>
+                    </select>
+                    <select class="cbi-input-select time-width action_month" hidden></select>
+                    <span>   </span>
+                    <select class="cbi-input-select time-width action_hour"></select>
+                    <span> : </span>
+                    <select class="cbi-input-select time-width action_minute"></select>
+                </div>
+            </div>
+        `;
+
+        initSelects(row);
+        $(row).find('select').on('change', updateHidden);
+        timeRow.appendChild(row);
+    }
+
+    function actionSlect(mode) {
+        var weekSelect = $(timeRow).find('.action_week');
+        var monthSelect = $(timeRow).find('.action_month');
+
+        weekSelect.prop('hidden', true);
+        monthSelect.prop('hidden', true);
+
+        if (mode == '1') 
+            weekSelect.prop('hidden', false);
+        else if (mode == '2') 
+            monthSelect.prop('hidden', false);
+    }
+
+    function html_format(str){
+        var temp = "";
+        if(str.length == 0) return "";
+        temp = str.replace(/&amp;/g,"&");
+        temp = temp.replace(/&#60;/g,"<");
+        temp = temp.replace(/&#62;/g,">");
+        temp = temp.replace(/&nbsp;/g," ");
+        temp = temp.replace(/&#39;/g,"\'");
+        temp = temp.replace(/&quot;/g,"\"");
+        return temp;
+    }
+
+    createTimeRow();
+    var initialMode = $('input[name="upgrade_mode"]:checked').val() || '0';
+    if (initialMode) {
+        actionSlect(initialMode);
+    }
+
+    $('input[name="upgrade_mode"]').on('change', function() {
+        actionSlect(this.value);
+        updateHidden();
+    });
+
+</script>
+
+<%+cbi/valuefooter%>

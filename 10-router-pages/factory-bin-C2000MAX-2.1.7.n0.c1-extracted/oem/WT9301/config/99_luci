@@ -1,0 +1,3 @@
+uci set luci.module.auto='0'
+uci set luci.module.cpeodu='0'
+uci set luci.module.pgyvpn='0'

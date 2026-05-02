@@ -1,0 +1,2 @@
+config owrt owrt
+	option use_uci 1

@@ -1,0 +1,4 @@
+/usr/lib/lua/luci/model/cbi/nradio_adv/upnp.lua
+/etc/uci-defaults/40_luci-miniupnp
+/usr/lib/lua/luci/controller/nradio_adv/upnp.lua
+/usr/lib/lua/luci/view/nradio_adv/upnp_status.htm

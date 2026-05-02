@@ -1,0 +1,10 @@
+Package: pkg-usb-all
+Version: 1.0-20220609
+Depends: libc, pkg-usb-modem, pkg-usb-modem-quectel, pkg-usb-modem-meig, pkg-io-ata, pkg-fs, pkg-usb-storage, pkg-usb, pkg-usb3
+Source: package/nradio/collections/pkg-usb-all
+SourceName: pkg-usb-all
+Section: nradiowifi
+SourceDateEpoch: 1709799544
+Architecture: aarch64_cortex-a53
+Installed-Size: 104
+Description:  Pakcages for USB All

@@ -1,0 +1,12 @@
+Package: nand-utils
+Version: 2.1.2-1
+Depends: libc
+Source: package/utils/mtd-utils
+SourceName: nand-utils
+License: GPLv2
+Section: utils
+SourceDateEpoch: 1768997726
+Maintainer: John Crispin <john@phrozen.org>
+Architecture: aarch64_cortex-a53
+Installed-Size: 72292
+Description:  Utilities for NAND devices.

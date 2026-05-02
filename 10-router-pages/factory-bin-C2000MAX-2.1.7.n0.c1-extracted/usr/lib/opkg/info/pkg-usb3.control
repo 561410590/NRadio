@@ -1,0 +1,10 @@
+Package: pkg-usb3
+Version: 1.0-20220609
+Depends: libc
+Source: package/nradio/collections/pkg-usb3
+SourceName: pkg-usb3
+Section: nradiowifi
+SourceDateEpoch: 1664193374
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for USB3

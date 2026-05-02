@@ -1,0 +1,10 @@
+Package: telnetd
+Version: 1.0-20221129
+Depends: libc
+Source: package/nradio/services/telnetd
+SourceName: telnetd
+Section: nradiowifi
+SourceDateEpoch: 1772005767
+Architecture: all
+Installed-Size: 387
+Description:  Telnetd daemon service

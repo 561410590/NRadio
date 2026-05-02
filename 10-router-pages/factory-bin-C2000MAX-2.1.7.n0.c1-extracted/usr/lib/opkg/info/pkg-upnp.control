@@ -1,0 +1,10 @@
+Package: pkg-upnp
+Version: 1.0-20250205
+Depends: libc, luci-i18n-nradio-upnp-zh-cn, luci-i18n-nradio-upnp-en, luci-app-nradio-upnp
+Source: package/nradio/collections/pkg-upnp
+SourceName: pkg-upnp
+Section: nradiowifi
+SourceDateEpoch: 1738752510
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for upnp

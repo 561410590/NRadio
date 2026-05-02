@@ -1,0 +1,7 @@
+uci set cpecfg.cpesim1=cpesim
+uci set cpecfg.cpesim2=cpesim
+uci set cpecfg.cpesim3=cpesim
+uci set cpecfg.cpesim4=cpesim
+
+uci set cpecfg.cpe1sim1=cpesim
+uci set cpecfg.cpe1sim2=cpesim

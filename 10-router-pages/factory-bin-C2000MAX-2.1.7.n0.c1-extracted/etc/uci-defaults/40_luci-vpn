@@ -1,0 +1,19 @@
+#!/bin/ash
+
+if ! uci -q get network.vpn >/dev/null; then
+	uci set network.vpn=interface
+	uci set network.vpn.disabled=1
+	uci set network.vpn.pptp_mppe_disabled=0
+	uci set network.vpn.defaultroute=0
+	uci set network.vpn.peerdns=0
+	uci set network.vpn.checkup_interval=5
+	uci commit network.vpn
+
+	_wanfw=$(uci show firewall|grep -E "zone\[[0-9]+\].name='*wan'*"|sed 's/name=.*/network/')
+	uci del_list "${_wanfw}=vpn"
+	uci add_list "${_wanfw}=vpn"
+	uci commit firewall
+fi
+
+rm -f /tmp/luci-indexcache
+exit 0

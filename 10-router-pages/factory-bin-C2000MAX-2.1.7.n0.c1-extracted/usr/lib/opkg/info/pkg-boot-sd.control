@@ -1,0 +1,10 @@
+Package: pkg-boot-sd
+Version: 1.0-20251222
+Depends: libc, luci-i18n-nradio-sd-zh-cn, luci-i18n-nradio-sd-en, luci-app-nradio-sd
+Source: package/nradio/collections/pkg-boot-sd
+SourceName: pkg-boot-sd
+Section: nradiowifi
+SourceDateEpoch: 1766385983
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for NRadio SD boot sequence

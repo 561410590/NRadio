@@ -1,0 +1,32 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+
+START=49
+BIN=htpdate
+RUN_D=/var/run
+PID_F=$RUN_D/htpdate.pid
+DEFAULT=/etc/default/$BIN
+BASE_TIME=1776146288
+
+start() {
+	[ -f $DEFAULT ] && . $DEFAULT
+	local extra_param=" -d -l "
+	local country=$(uci -q get oem.board.country)
+	local option_info="$OPTIONS"
+
+	if [ -n "$country" -a "$country" != "CN" ];then
+		extra_param=""
+		option_info="$OPTIONS_ABROAD"
+	fi
+	mosq_server="$(uci -q get mosquitto.@bridge[0].addresses)"
+	mkdir -p $RUN_D
+	if [ -n "$mosq_server" ]; then
+		$BIN -4 -D $extra_param -s -t -u nobody "$mosq_server"
+	else
+		$BIN -4 -D $extra_param -s -t -T $BASE_TIME -u nobody $option_info
+	fi
+}
+
+stop() {
+	[ -f $PID_F ] && kill -9 $(cat $PID_F) && rm $PID_F
+}

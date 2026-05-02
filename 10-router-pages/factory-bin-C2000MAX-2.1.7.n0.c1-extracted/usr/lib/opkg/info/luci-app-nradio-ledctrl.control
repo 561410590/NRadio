@@ -1,0 +1,10 @@
+Package: luci-app-nradio-ledctrl
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-ledctrl
+SourceName: luci-app-nradio-ledctrl
+Section: luci
+SourceDateEpoch: 1722948739
+Architecture: all
+Installed-Size: 1849
+Description:  LuCI Support for LED Control

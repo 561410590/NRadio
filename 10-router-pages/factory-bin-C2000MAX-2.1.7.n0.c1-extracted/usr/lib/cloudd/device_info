@@ -1,0 +1,24 @@
+local cloudd = require "cloudd.cloudd"
+local c_api = require "cloudd.api"
+local cjson = require "cjson"
+
+function cloudd_main(did, sid, event, payload, proto, reply)
+--[[
+	local p_data = cjson.decode(payload)
+	local bname = p_data["name"]
+
+	local sversion = p_data["sversion"]
+	local dversion = c_api.cloudd_get_dest_version(sid)
+
+	if dversion ~= nil then
+		if dversion ~= sversion then
+			c_api.cloudd_firmware_upgrade(sid, bname, dversion, proto)
+		end
+	end
+]]--
+	print("Nothing")
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

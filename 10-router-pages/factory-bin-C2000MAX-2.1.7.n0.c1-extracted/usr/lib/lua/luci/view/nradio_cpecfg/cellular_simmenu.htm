@@ -1,0 +1,90 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<%
+	local disp = require "luci.dispatcher"
+	local request  = disp.context.requestpath
+	local uci  = require "luci.model.uci".cursor()	
+	local nr = require "luci.nradio"
+	local sims_alias = nr.get_sim_alias()
+	local is_low_cpu = nr.is_low_cpu()
+	local menu = request[3]
+	local model_str,cpe_section,model_index = nr.get_cellular_last(request[5])
+	local sim_section="sim"..model_str
+	local max = tonumber(uci:get("cpesel", sim_section, "max") or 1)
+	local mode = uci:get("cpesel", sim_section, "mode") or "1"
+	local sim_id = tonumber(uci:get("cpesel", sim_section, "cur") or 1)
+	local sim_position_displayclass = ""
+    if sims_alias then
+        sims_alias=sims_alias[model_index]
+    end
+	if sim_position == "hidden" and mode == "1" then
+		sim_position_displayclass = "hide"
+	end
+	local start_index = sort_index or 1
+	local company = nr.get_sim_company(cpe_section,sim_id) or ""
+%>
+
+<%if max > 1 then%>
+<div class="cbi-value <%=sim_position_displayclass%>" data-index="<%=start_index%>"><label class="cbi-value-title "><%:CurSim%></label>
+	<div class="cbi-value-field">	
+		<input class="cbi-input-radio" data-update="click change" type="hidden" id="sim<%=sim_id%>" name="sim" value="<%=sim_id%>">
+		<label style="display: inline-block;" class="sim_detail_info sim_position">
+			<%=sims_alias[sim_id]%>
+		</label>
+	</div>
+</div>
+<%end%>
+<div class="cbi-value" data-index="<%=start_index+1%>"><label class="cbi-value-title"><%:SIM Operator%></label>
+	<div class="cbi-value-field">	
+		<label style="display: inline-block;" class="sim_detail_info sim_company">
+			<%=company%>&nbsp;
+		</label>
+	</div>
+</div>
+<script type="text/javascript">
+	<% if is_low_cpu then%>
+	var cellular_info_interval = 10000;
+	<%else%>
+	var cellular_info_interval = 3000;
+	<%end%>
+	function get_sim_company(){
+		var data = {};
+		data['model'] ="<%=cpe_section%>";
+		data['sim_id'] ="<%=sim_id%>";
+		if(globalRequestEarfcn)
+			data['earfcn'] = 1;
+		if(globalRequestSIM)
+			data['sim'] = 1;
+		(new XHR()).post('<%=controller%>nradio/cellular/cpestatus/info', data, function(xhr){
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					var data_res = eval('(' + xhr.responseText + ')');
+
+					if(data_res && data_res.result && data_res.result.sim_company){
+						$(".sim_company").html(data_res.result.sim_company);
+					}
+					else{
+						$(".sim_company").html("&nbsp;");
+					}
+					
+					if(globalRequestEarfcn){						
+						get_cellular_earfcn(data_res);
+					}
+					if(globalRequestSIM){
+						get_sim_status(data_res.result.sim);
+					}
+				}
+				catch(e) {
+				}
+			}
+		});
+	}
+
+
+	window.setInterval(function(){
+		get_sim_company();
+	},cellular_info_interval);
+</script>

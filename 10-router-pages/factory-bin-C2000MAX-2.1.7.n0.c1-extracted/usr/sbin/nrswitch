@@ -1,0 +1,252 @@
+#!/bin/ash
+
+. /lib/network/switch.sh
+
+dSwitch="switch0"
+gSwitch=$dSwitch
+gVendor=$(uci -q get network.nrswitch.vendor)
+
+read_port_status() {
+	local _port=$1
+	local _val _status _speed _duplex
+	local _result
+
+	if [ "$_port" != "0" ]; then
+		echo "link:down"
+		return
+	fi
+
+	# NOTE: implement for YT8512
+	_val=$(mdio-tool r eth0 0 0x11|awk -F: '{print $4}')
+	_status=$(printf "%d" $(((_val&0x400)>>10)))
+	_speed=$(printf "%d" $(((_val&0xc000)>>14)))
+	_duplex=$(printf "%d" $(((_val&0x2000)>>13)))
+
+
+	if [ "$_status" = "1" ]; then
+		_result="link:up"
+		[ "$_speed" = "1" ] && _result="$_result,100Mbps" || _result="$_result,10Mbps"
+		[ "$_duplex" = "1" ] && _result="$_result,full" || _result="$_result,half"
+	else
+		 _result="link:down,n/a,n/a"
+	fi
+
+	echo "$_result"
+}
+
+read_gpy211_port_status() {
+	local _ifname="$1"
+	local _phy_addr=$(ethtool "$_ifname"|grep PHYAD|awk -F: '{print $2}'|xargs -r printf)
+	if [ "$_phy_addr" = "0" ]; then
+		_phy_addr="15"
+	fi
+	local _phy_status=$(mii_mgr -g -p "$_phy_addr" -d 0 -r 18|awk -F= '{print $2}')
+	local _status=$(echo "$_phy_status"|awk '{printf "%d", and(rshift($1,10),1)}')
+	local _mode=$(echo "$_phy_status"|awk '{printf "%d", and(rshift($1,3),1)}')
+	local _speed=$(echo "$_phy_status"|awk '{printf "%d", and($1,7)}')
+	local _result="link:"
+
+	if [ "$_status" = "0" ]; then
+		_result="${_result}down,n/a,n/a"
+	else
+		_result="${_result}up"
+		if [ "$_mode" = "0" ]; then
+			_result="${_result},half"
+		else
+			_result="${_result},full"
+		fi
+		if [ "$_speed" = "0" ]; then
+			_result="${_result},10Mbps"
+		elif [ "$_speed" = "1" ]; then
+			_result="${_result},100Mbps"
+		elif [ "$_speed" = "2" ]; then
+			_result="${_result},1000Mbps"
+		elif [ "$_speed" = "4" ]; then
+			_result="${_result},2500Mbps"
+		fi
+	fi
+	echo "${_result}"
+}
+
+read_ethtool_port_status() {
+	local _port=$1
+	local _status _speed _duplex
+	local _info=
+	local _ifname
+	local _no_switch=$(uci -q get network.nrswitch.no_switch)
+	local _port_prefix=
+	local _has_gpy211=0
+
+	if [ "${_no_switch}" = 1 ]; then
+		_port_prefix="eth"
+	else
+		_port_prefix="port"
+	fi
+
+	if [ -f "/bin/serial_atcmd" ] || [ -f "/usr/bin/qlnet" ]; then
+		_ifname="eth$_port"
+	elif [ "$_port" = "$GMAC1_PHY_PORT" ]; then
+		_ifname="eth1"
+	elif [ "$gVendor" = "tdtech" ]; then
+		_ifname="eth${_port}"
+	else
+		_ifname="${_port_prefix}$_port"
+		if find /proc/device-tree/ethernet@15100000/ -name "mac@0" 2>/dev/null|grep -q "mac"; then
+			_has_gpy211=1
+		fi
+		if [ "${_no_switch}" = 1 ] && [ "$_ifname" = "eth0" ] && [ "$_has_gpy211" = "1" ]; then
+			read_gpy211_port_status "$_ifname"
+			return
+		fi
+	fi
+
+	_info=$(ethtool "$_ifname" 2>/dev/null)
+	_status=$(echo "$_info"|grep "Link detected:"|awk -F': ' '{print $2}')
+	_speed=$(echo "$_info"|grep "Speed:"|awk -F': ' '{print $2}'|sed 's/b\/s/bps/g')
+	_duplex=$(echo "$_info"|grep "Duplex:"|awk -F': ' '{print $2}'|tr 'A-Z' 'a-z')
+
+	if [ -z "$_status" ] || [ "$_status" = "no" ]; then
+		echo "link:down,n/a,n/a"
+	else
+		echo "link:up,${_duplex},${_speed}"
+	fi
+}
+
+get_port_status() {
+	local _port=$1
+
+	if [ -f /sbin/swconfig ];then
+		swconfig dev "$gSwitch" port "$_port" show | grep "link"
+	elif [ -f /usr/sbin/ethtool ]; then
+		read_ethtool_port_status "$_port"
+	elif [ -f /usr/bin/switch ];then
+		switch port "$_port"
+	elif [ -f /sbin/mdio-tool ]; then
+		read_port_status "$_port"
+	else
+		echo "not support yet"
+	fi
+}
+
+get_port_connect() {
+	local _result=$1
+	local _status=""
+
+	_status=$(echo "$_result" | grep -oE "link:[a-z]+" | grep -oiE "(up|down)")
+
+	echo "${_status:-N/A}"
+}
+
+get_port_mode() {
+	local _result=$1
+	local _mode=""
+
+	_mode=$(echo "$_result" | grep -ioE "(full|half)")
+
+	echo "${_mode:-N/A}"
+}
+
+get_port_speed() {
+	local _result=$1
+	local _speed=""
+
+	_speed=$(echo "$_result" | grep -oE "(1|25)0+(Mbps|baseT)" | grep -oE "(1|25)0+")
+
+	echo "${_speed:-N/A}"
+}
+
+dump_port() {
+	local _port_msg=""
+	local _port_num=""
+	local _port_mac=""
+	local _port_itm=""
+
+	if [ -f /usr/bin/switch ];then
+		switch dump | grep -vE "(hash|found)" | while read _line; do
+			_port_itm=$(echo "$_line" | awk 'FS="[ ]+" {print NF}')
+			if [ "$_port_itm" = "8" ]; then
+				_port_msg=$(echo "$_line" | awk 'FS="[ ]+" {print $2}')
+			else
+				_port_msg=$(echo "$_line" | awk 'FS="[ ]+" {print $2$3}')
+			fi
+			_port_num=$(awk -v _a="$_port_msg" -v _b="1" 'BEGIN{print index(_a,_b)}')
+			if [ "$_port_itm" = "8" ]; then
+				_port_mac=$(echo "$_line" | sed -E 's/[ ]+/ /g' | cut -d' ' -f6)
+			else
+				_port_mac=$(echo "$_line" | sed -E 's/[ ]+/ /g' | cut -d' ' -f7)
+			fi
+
+			echo "$_port_mac,$((_port_num-1))" | tr A-Z a-z
+		done
+	elif [ -f /sbin/swconfig ];then
+		swconfig dev "$gSwitch" get arl_table | grep "Port" | while read _line; do
+			_port_num=$(echo "$_line" | cut -d' ' -f2 | tr -d ":")
+			_port_mac=$(echo "$_line" | cut -d' ' -f4 | tr -d ":")
+
+			echo "$_port_mac,$_port_num" | tr A-Z a-z
+		done
+	else
+		echo "not support yet"
+	fi
+}
+
+get_port() {
+	local _port=
+	local _port_status=
+	local _port_connect=
+	local _port_mode=
+	local _port_speed=
+	local _ports=$(get_ports "EMLmWS")
+
+	for _port in $_ports; do
+		_port_status=$(get_port_status "$_port")
+
+		_port_connect=$(get_port_connect "$_port_status")
+		_port_mode=$(get_port_mode "$_port_status")
+		_port_speed=$(get_port_speed "$_port_status")
+
+		echo "$_port,$_port_connect,$_port_mode,$_port_speed" | tr A-Z a-z
+	done
+
+	return 0
+}
+
+usage() {
+	cat <<-EOF
+		usage: $0 OPTION...
+		NRadio switch tool
+
+		  -g	  get all ports' message
+		  -s	  choose switch, default $dSwitch
+		  -d	  dump all the stations' message
+	EOF
+}
+
+while getopts "gds:h" opt; do
+	case "${opt}" in
+		g)
+			get_port
+			exit 0
+			;;
+		d)
+			dump_port
+			exit 0
+			;;
+		s)
+			gSwitch=${OPTARG}
+			;;
+		h)
+			usage
+			exit
+			;;
+		\?)
+			usage >&2
+			exit 1
+			;;
+	esac
+done
+shift $((OPTIND-1))
+
+if [ -z "$*" ]; then
+	usage >&2
+fi

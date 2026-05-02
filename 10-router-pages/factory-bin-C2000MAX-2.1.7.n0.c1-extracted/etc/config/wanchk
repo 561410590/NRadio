@@ -1,0 +1,4 @@
+config checker 'wan'
+	option 'network' 'wan'
+	option 'enable' '1'
+	option 'period' '10'

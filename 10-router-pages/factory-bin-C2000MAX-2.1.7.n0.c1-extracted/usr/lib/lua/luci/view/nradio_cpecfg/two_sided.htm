@@ -1,0 +1,73 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+<%
+local nr = require "luci.nradio"
+local platform = nr.get_platform()
+local imgname = ""
+if platform == "tdtech" then
+	imgname="flat_sim"
+else
+	imgname="circle_sim"
+end
+%>
+<style>
+	.sim-image{
+		width:256px;
+		height: 160px;
+		background: url(/luci-static/nradio/images/<%=imgname%>.png) no-repeat center center;
+		background-size: contain;
+		
+	}
+	@media (min-width: 768px){
+		.col-sm-12, fieldset div.cbi-value-field>div.sim-image {
+			width:256px;
+		}
+	}
+
+</style>
+<div class="cbi-value" id="two_sided_view" style="display:none;">
+	<label class="cbi-value-title" for="cbid.cpecfg.config.two_sided"></label>
+	<div class="cbi-value-field">
+		<div class="sim-image"> </div>
+	</div>
+</div>
+
+
+<script>
+	var external_lang="<%:SIM Slot%>"
+	var default_text = $("#cbid\\.cpecfg\\.config\\.cur").find("option:selected").text();
+	console.log(default_text);
+	if (default_text.indexOf(external_lang) != -1){
+		$("#two_sided_view").css("display","block");
+	}
+	else{
+		$("#two_sided_view").css("display","none");
+	}
+
+	$("#cbid\\.cpecfg\\.config\\.cur").change(function(){
+		var cur_text=$(this).find("option:selected").text();		
+		if (cur_text.indexOf(external_lang) != -1){
+			$("#two_sided_view").css("display","block");
+		}
+		else{
+			$("#two_sided_view").css("display","none");
+		}
+	});
+
+	$("#cbid\\.cpecfg\\.config\\.dail_mode").change(function(){
+		var value_data = $(this).val();
+		window.setTimeout(function(){
+			var cur_text=$("#cbid\\.cpecfg\\.config\\.cur").find("option:selected").text();
+			if ((value_data == "1") && (cur_text.indexOf(external_lang) != -1)){
+				$("#two_sided_view").css("display","block");
+			}
+			else{
+				$("#two_sided_view").css("display","none");
+			}
+		},50);
+
+	});	
+</script>
+

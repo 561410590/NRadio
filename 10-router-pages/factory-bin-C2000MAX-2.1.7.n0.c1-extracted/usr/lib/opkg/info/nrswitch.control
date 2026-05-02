@@ -1,0 +1,10 @@
+Package: nrswitch
+Version: 1.2-20240807
+Depends: libc
+Source: package/nradio/utils/nrswitch
+SourceName: nrswitch
+Section: nradiowifi
+SourceDateEpoch: 1755606081
+Architecture: aarch64_cortex-a53
+Installed-Size: 3174
+Description:  provide NRadio switch tool

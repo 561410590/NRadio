@@ -1,0 +1,570 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+<%
+local util = require "luci.util"
+local uci  = require "luci.model.uci"
+local uci = uci.cursor()
+local rv = util.ubus("terminal", "token") or {}
+local out_auth_url = nil
+local iccid = nil
+local nr = require "luci.nradio"
+local device_mac =  uci:get('oem', 'board', 'id')
+local wifiauth_auto = uci:get("luci", "main", "wifiauth_auto") or "1"
+device_mac = string.gsub(device_mac, ':', '-')
+if rv.code == 0 then
+    if rv.out_auth_url then
+		out_auth_url = rv.out_auth_url
+    end
+    if rv.iccid then
+		iccid = rv.iccid
+    end
+end
+%>
+<%+header%>
+    <style>
+		.auth-container {
+		    display: flex;
+		    flex-direction: column;
+		    align-items: center;
+		    margin-top: 20px; 
+		}
+
+		.input-style {
+		    width: 300px;
+		    height: 40px; 
+		    border-radius: 5px;
+		    padding: 5px;
+		    font-size: 14px;
+		    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		    margin-bottom: 10px;
+		}
+
+		.input-style:focus {
+		    outline: none;
+		    border-color: #3498db;
+		    box-shadow: 0 0 8px rgba(52, 152, 219, 0.6); 
+		}
+
+		.input-code-style {
+		    width: 200px;
+		    margin-right: 10px;
+		}
+
+		.flex-container {
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		}
+
+		.button-style {
+		    height: 32px; 
+		    width: 90px;
+		    padding: 0 0px;
+		    border: none;
+		    cursor: pointer;
+		}
+
+		.authed_note{
+		    border-radius: 50%;
+		    background: unset;
+		    width: 10px;
+		    height: 10px;
+		    background-color: #9DEB36;
+		    display: inline-block;
+		}
+		.unauthed_note{
+		    border-radius: 50%;
+		    background: unset;
+		    width: 10px;
+		    height: 10px;
+		    background-color: #F34141;
+		    display: inline-block;
+		}
+		.other_help{
+			width: 300px;
+			text-align: left;
+			color:#069956;
+		}
+    </style>
+
+
+<div class="cbi-map main-box">
+	<h2 name="content"><%:WiFi Auth%></h2>
+	<form method="post" name="cbi" >
+		<%if wifiauth_auto ~= "0" then%>
+		<fieldset class="cbi-section">	
+		<div class="cbi-section-node">
+			<div class="cbi-value" data-index="9">
+				<label class="cbi-value-title" ><%:AuthEnabled%></label>
+				<div class="cbi-value-field">
+					<div class="checkbox">
+						<input type="hidden" value="0" name="cbi.cbe.access_ctl.config.disabled">
+						<input class="cbi-input-checkbox" data-update="click change" id="config_disabled" name="cbid.access_ctl.disabled" type="checkbox" onclick="disable_ctl(this);" value="1" />
+						<label for="config_disabled" class="switch"></label>
+					</div>
+					<div class="cbi-value-description">
+					 	<%:AuthCtlHelp%>
+					</div>
+				</div>
+			</div>
+		</div>
+		</fieldset>
+		<%end%>
+		<div class="form-box full-width note_help_info hide">
+			<div  id="scan_loading"><img alt="loading" src="<%=media%>/images/loading.gif" ></div>
+			<div class="text-center note_msg" style="padding: 10px;"></div>
+		</div>
+		<div class="list_box form-box full-width hidden-xs">
+		    <table class="line text-center no_paddingLeft">
+				<thead>
+					<tr>
+						<th class="text-left" style="width: 20%"><%:MAC%></th>
+						<th style="width: 15%"><%:TerminalType%></th>
+						<th style="width: 15%"><%:AuthStatus%></th>
+						<th style="width: 30%"><%:AuthExpire%></th>
+						<th style="width: 20%"><%:Operation%></th>
+				    </tr>
+				</thead>
+				<tbody class="address_list">
+				</tbody>
+			</table>
+		</div>
+		<fieldset class="cbi-section">
+			<div class="cbi-section-node  hidden-xs">
+				<div class="cbi-value " data-index="9">
+					<p class="cbi-value-title width_auto text-left" style="line-height:20px;"><%=translate("AuthHelp")%></p>
+				</div>
+			</div>
+		</fieldset>
+		
+		<div class="list_box address_list" data-terminal="mobile"></div>
+	</form>
+</div>
+
+<div class="cbi-map add-box visible-xs-block hide">
+</div>
+
+<script>
+<%
+	local util = require "luci.util"
+	local first_data = {result={}}
+	first_data.result = action_all_data()
+	local first_data_buffer = util.serialize_json(first_data,nil)
+%>
+	var refresh_interval = null;
+    var loading_htm = '<div  id="scan_loading"><img alt="loading" src="<%=media%>/images/loading.gif" ></div>';
+	var accessClientTableRow = ''+
+		'<tr>'+
+		'<td >{{mac}}</td>'+
+		'<td >{{type}}</td>'+
+		'<td>{{status}}</td>'+
+		'<td >{{expire}}</td>'+
+		'<td >{{opt}}</td>'+
+		'</tr>';
+	var accessClientTableMobileRow = ''+
+	'<div class="panel panel-info visible-xs-block hide">'+
+		'<div class="panel-heading">'+
+		'	<div class="row">'+
+		'		<div class="col-sm-6 col-xs-6 text-left">'+
+		'			<span></span>'+
+		'		</div>'+
+		'		<div class="col-sm-6 col-xs-6 text-right">'+
+		'			{{opt}}'+
+		'		</div>'+
+		'	</div>'+
+		'</div>'+
+		'<div class="panel-body info-box">'+
+		'	<div class="row">'+
+		'		<div class="col-xs-12 text-left">'+
+		'			<div class="row">'+
+		'				<div class="col-sm-6 col-xs-6 text-left ">'+
+		'					{{address_label}}'+
+		'				</div>'+
+		'				<div class="col-sm-6 col-xs-6 text-right">'+
+		'					<span class="note_info">{{mac}}</span>'+
+		'				</div>'+
+		'			</div>'+
+		'		</div>'+
+		'	</div>'+
+		'	<div class="row">'+
+		'		<div class="col-xs-12 text-left">'+
+		'			<div class="row">'+
+		'				<div class="col-sm-6 col-xs-6 text-left ">'+
+		'					{{type_label}}'+
+		'				</div>'+
+		'				<div class="col-sm-6 col-xs-6 text-right">'+
+		'					<span class="note_info">{{type}}</span>'+
+		'				</div>'+
+		'			</div>'+
+		'		</div>'+
+		'	</div>'+
+		'	<div class="row">'+
+		'		<div class="col-xs-12 text-left">'+
+		'			<div class="row">'+
+		'				<div class="col-sm-6 col-xs-6 text-left ">'+
+		'					{{status_label}}'+
+		'				</div>'+
+		'				<div class="col-sm-6 col-xs-6 text-right">'+
+		'					<span class="note_info">{{status}}</span>'+
+		'				</div>'+
+		'			</div>'+
+		'		</div>'+
+		'	</div>'+
+ 		'	<div class="row">'+
+		'		<div class="col-xs-12 text-left">'+
+		'			<div class="row">'+
+		'				<div class="col-sm-6 col-xs-6 text-left ">'+
+		'					{{expire_label}}'+
+		'				</div>'+
+		'				<div class="col-sm-6 col-xs-6 text-right">'+
+		'					<span class="note_info">{{expire}}</span>'+
+		'				</div>'+
+		'			</div>'+
+		'		</div>'+
+		'	</div>'+
+		'</div>'+
+		'</div>';
+
+		function refresh_data(){
+			var data = {};
+			(new XHR()).post('<%=controller%>nradioadv/auth/device', data, function(xhr){
+				if (xhr.getResponseHeader("Content-Type") == "application/json") {
+					try {
+						var data_res = eval('(' + xhr.responseText + ')');
+
+						if(data_res && data_res.result){
+							load_data(data_res);
+						}
+					}
+					catch(e) {
+					}
+				}
+			});
+			
+		}
+		function goto_url(url,iccid,terminalMac,mac){
+		    var data={};
+		    data['token']='<%=token%>';
+		    
+		    (new XHR()).post('<%=url("nradioadv/auth/keep")%>', data, function(xhr){
+				if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				    try {
+						
+				    }
+				    catch(e) {
+				    }
+				}
+		    });		 
+
+		    window.open(url, '_blank');
+		}
+		function load_data(data){
+		var htm="";
+		var mobile_htm="";
+		var out_auth_url = "<%=out_auth_url%>";
+		if(data.result){
+			var show_info = "";
+   			if(data.result.enabled == "1"){
+				$("#config_disabled").prop("checked",true);
+				$(".list_box ").css("display","block");
+				show_info="block";
+			}
+			else{
+				$("#config_disabled").prop("checked",false);
+				$(".list_box ").css("display","none");
+				show_info="none";
+			}
+
+			if (show_info == "block"){
+				if(data.result.skip == 1){
+					$(".note_help_info ").removeClass("hide");
+					$(".note_msg ").html("<%:AuthHelpMsg2%>");
+					$(".list_box ").css("display","none");
+					return;
+				}
+				if(data.result.cloud_sync == 1){
+					$(".note_help_info ").removeClass("hide");
+					$(".note_msg ").html("<%:AuthHelpMsg%>");
+					$(".list_box ").css("display","none");
+					return;
+				}
+			}
+
+			$(".note_help_info").addClass("hide");
+			$(".list_box ").css("display",show_info);
+			$.each(data.result.list, function(i, db){
+				if(!db )
+					return;
+				var hostname = db.hostname?db.hostname:"";
+				var link_data = { };
+				var auth_btn_note="<%:AuthOperate%>";
+
+				var type_html = "";
+				var expire_html = "-";
+				var status_html = '<div class="unauthed_note"></div> <%:AuthStatusUnauthed%>';
+				if(db.type == 1 ){
+				    link_data.type="wireless";
+				    link_data.alias="";
+				    link_data.symbol = "5GHz";
+				    link_data.signal=-40;
+				}
+				else if(db.type == 0 ){
+				    link_data.type="wireless";
+				    link_data.alias="";
+				    link_data.symbol = "2.4GHz";
+				    link_data.signal=-40;
+				}
+				else{
+				    link_data.type="wired";				    
+				}
+
+				if(db.authed){
+				    status_html = '<div class="authed_note"></div> <%:AuthStatusAuthed%>';
+				    expire_html = db.expire_date;
+				    auth_btn_note = "<%:AuthReAuth%>";
+				}
+
+				type_html = link_type_show(link_data);
+				if(out_auth_url.length){					
+				    opt_html = '<input class="cbi-button cbi-button-apply" type="button" name="cbi.apply"  onclick="goto_url(\''+out_auth_url+'?iccid=<%=iccid%>&terminalMac='+db.mac+'&mac=<%=device_mac%>\')" value="'+auth_btn_note+'">';
+				}
+				else{					
+				    opt_html = '<input class="cbi-button cbi-button-apply" type="button" name="cbi.apply"  onclick="show_auth_dial(\''+db.mac+'\')" value="'+auth_btn_note+'">';
+				}
+
+				htm+=accessClientTableRow.compose({
+					id:hostname,
+					mac:db.mac,
+					type:type_html,
+					status:status_html,
+					expire: expire_html,
+					opt: opt_html,
+
+				});
+				mobile_htm+=accessClientTableMobileRow.compose({
+					id:hostname,
+					mac:db.mac,
+					type:type_html,
+					status:status_html,
+					expire: expire_html,
+					address_label:"<%:MAC%>",
+				    status_label:"<%:AuthStatus%>",
+				    type_label:"<%:TerminalType%>",
+				    expire_label:"<%:AuthExpire%>",
+					opt: opt_html,
+				});
+			});
+
+			$(".address_list").each(function(){		
+				var type_s = $(this).data("terminal");
+				if(type_s == "mobile"){
+					$(this).empty().append(mobile_htm);
+				}
+				else{
+					$(this).empty().append(htm);
+				}
+			});
+		}
+	}
+    var SMS_ERR_BUSY = 4;
+    var SMS_ERR_MAX = 3;
+    function authInfoBox(currentMac) {
+		var time_max = 60;
+		const container = document.createElement('div');
+		container.className = 'auth-container';
+
+		const phoneNumberDiv = document.createElement('div');
+		const phoneInput = document.createElement('input');
+		phoneInput.type = 'tel';
+		phoneInput.id = 'phoneNumber';
+		phoneInput.className = 'input-style';
+		phoneInput.placeholder = '<%:AuthPhone%>';
+
+		const phoneCodeDiv = document.createElement('div');
+		phoneCodeDiv.className = 'flex-container';
+		const codeInput = document.createElement('input');
+		codeInput.type = 'text';
+		codeInput.className = 'input-style input-code-style';
+		codeInput.id = 'phoneCode';
+		codeInput.placeholder = '<%:AuthSMS%>';
+
+		const helpBox = document.createElement('div');
+		helpBox.className = 'input_box';
+		const helpBoxNote = document.createElement('label');
+		helpBoxNote.className = 'cbi-value-title other_help';
+		helpBox.appendChild(helpBoxNote);
+
+
+		const getCodeButton = document.createElement('button');
+		getCodeButton.textContent = '<%:AuthGetSMS%>';
+		getCodeButton.className = 'input-style button-style btn-nradio-cancel';
+
+		phoneInput.addEventListener('input', function() {
+		    this.value = this.value.replace(/\D/g, '').slice(0, 11);
+		    getCodeButton.disabled = this.value.length !== 11;
+		});
+
+		getCodeButton.addEventListener('click', function() {
+		    const phoneNumber = document.getElementById('phoneNumber').value;
+		    time_max=60;
+			$(".other_help").html("");
+		    if (phoneNumber.length == 11) {
+				getCodeButton.disabled = true;
+				getCodeButton.textContent = time_max;
+				var sendmsg_wait_interval = window.setInterval(function(){
+				    time_max--;
+				    if(time_max>0){
+						getCodeButton.textContent = time_max;
+				    }
+				    else{
+						 getCodeButton.textContent ="<%:AuthGetSMS%>";
+						 getCodeButton.disabled = false;
+						window.clearInterval(sendmsg_wait_interval);
+				    }
+				},1000);
+
+				fetch('<%=url("nradioadv/auth/sms")%>', {
+				    method: 'POST',
+				    headers: {
+						'Content-Type': 'application/json'
+				    },
+				    body: JSON.stringify({phone: phoneNumber, mac: currentMac}),
+				})
+				.then(response => response.json())
+				.then(data => {
+				if (data.code != 0) {
+				    var message = '<%:AuthSMSSendHelpOther%>';
+				    if (data.code == SMS_ERR_MAX)
+						message = '<%:AuthSMSSendHelpMax%>';
+				    else if (data.code == SMS_ERR_BUSY)
+						message = '<%:AuthSMSSendHelpBusy%>';
+				    else if (data.detail)
+						message = data.detail;
+				    create_info_box({msg: message,btn_val: "<%:OK%>",onClose: () => location.reload()});
+				}
+				else{
+					$(".other_help").html( '<%:AuthSMSSendHelpOK%>');
+				}
+		    })
+		    .catch(error => {
+				create_info_box({msg: '<%:AuthSMSSendHelpOther%>',btn_val: "<%:OK%>",onClose: () => location.reload()});
+		    });		
+
+		    }
+		   
+		});
+
+		phoneNumberDiv.appendChild(phoneInput);
+		phoneCodeDiv.appendChild(codeInput);
+		phoneCodeDiv.appendChild(getCodeButton);
+		container.appendChild(phoneNumberDiv);
+		container.appendChild(phoneCodeDiv);
+		container.appendChild(helpBox);
+
+		return { container, phoneInput, codeInput };
+    }
+    function show_auth_dial(mac)
+    {
+		var msg = authInfoBox(mac);
+		var result = 0;
+		var targetbox = BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+		    title: '',
+		    message: msg.container,
+		    onhide :function() {
+				if(result)
+				    location.reload();
+		    },
+		    buttons: [{
+				label: '<%:No%>',
+				cssClass: 'btn-nradio-cancel',
+				action: function(dialog) {
+				    dialog.close();
+				}
+		    }, {
+				label: '<%:AuthOperate%>',
+				cssClass: 'btn-nradio-apply',
+				action: function(dialog) {				    
+				    $(".modal-footer").css("display","none");
+				    var codedata = $("#phoneCode").val();
+				    var phonedata = $("#phoneNumber").val();
+				    targetbox.setMessage(loading_htm);
+				    fetch('<%=url("nradioadv/auth/auth")%>', {
+						method: 'POST',
+						headers: {
+						    'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({phone: phonedata, mac: mac, code: codedata}),
+				    })
+				    .then(response => response.json())
+				    .then(data => {
+				    if (data.code != 0) {
+						if(data.detail)
+						    targetbox.setMessage(data.detail);
+						else
+						    targetbox.setMessage('<%:AuthSMSSendHelpOther%>');
+				    }
+				    else {
+						window.setTimeout(() => {
+						    result = 1;
+						    targetbox.setMessage('<%:AuthSuccess%>');
+						}, 3000);
+				    }
+				})
+				.catch(error => {
+				    //console.error('Error during file deletion:', error);
+				    targetbox.setMessage('<%:AuthSMSSendHelpOther%>');
+				});		
+				}
+		    }]
+		});
+    }
+    
+	function disable_ctl(obj){
+		var data = {};
+		var chval = $("#config_disabled").prop("checked");
+		data['token']='<%=token%>';
+		if(chval){
+		    data['enabled']="1";
+		}			
+		else{
+		    $(".list_box ").css("display","none");
+		    data['enabled']="0";
+		}
+			
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: loading_htm,
+			closeByBackdrop: false,
+			onshown: function(dialog) {
+				(new XHR()).post('<%=controller%>nradioadv/auth/enabled', data, function(){
+					location.reload();
+				});
+			}
+		});
+	}
+    
+	$(document).ready(function(){
+		nradio_backend_flash();
+		var first_data=<%=first_data_buffer%>;
+		load_data(first_data);
+
+		refresh_interval = window.setInterval(function(){
+			refresh_data();
+		},5000);
+		
+		$("#mobile_apply").click(function(){
+			add_maddress();
+		});
+	});
+	$(".main-content").resize(function(){
+		vertical_margin($(".modal-dialog"));
+	});
+
+    
+
+    
+</script>
+<%+footer%>

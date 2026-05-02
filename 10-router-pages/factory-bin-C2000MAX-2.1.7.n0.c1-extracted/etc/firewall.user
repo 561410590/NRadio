@@ -1,0 +1,24 @@
+# This file is interpreted as shell script.
+# Put your custom iptables rules here, they will
+# be executed with each firewall (re-)start.
+
+# Internal uci firewall chains are flushed and recreated on reload, so
+# put custom rules into the root chains e.g. INPUT or FORWARD or into the
+# special user chains, e.g. input_wan_rule or postrouting_lan_rule.
+
+ip6tables -t mangle -N tcpmss_rule
+ip6tables -t mangle -F tcpmss_rule
+ip6tables -t mangle -D FORWARD -j tcpmss_rule
+ip6tables -t mangle -I FORWARD -j tcpmss_rule
+ip6tables -I tcpmss_rule -t mangle -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1420
+
+iptables -t raw -N ipsec_rule
+iptables -t raw -F ipsec_rule
+iptables -t raw -D PREROUTING -j ipsec_rule
+iptables -t raw -I PREROUTING -j ipsec_rule
+iptables -t raw -D OUTPUT -j ipsec_rule
+iptables -t raw -I OUTPUT -j ipsec_rule
+iptables -t raw -N ipsec_rule_local
+iptables -t raw -F ipsec_rule_local
+iptables -t raw -D ipsec_rule -j ipsec_rule_local
+iptables -t raw -I ipsec_rule -j ipsec_rule_local

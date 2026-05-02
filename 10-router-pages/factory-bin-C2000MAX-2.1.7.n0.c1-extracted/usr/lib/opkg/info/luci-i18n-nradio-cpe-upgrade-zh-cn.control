@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-cpe-upgrade-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-cpe-upgrade
+Source: package/luci/applications/luci-app-nradio-cpe-upgrade
+SourceName: luci-i18n-nradio-cpe-upgrade-zh-cn
+Section: luci
+SourceDateEpoch: 1775741754
+Architecture: all
+Installed-Size: 1010
+Description:  Translation for luci-app-nradio-cpe-upgrade - 中文 (Chinese)

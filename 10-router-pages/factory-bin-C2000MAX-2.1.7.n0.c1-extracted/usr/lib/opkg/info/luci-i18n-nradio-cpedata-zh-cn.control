@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-cpedata-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-cpedata
+Source: package/luci/applications/luci-app-nradio-cpedata
+SourceName: luci-i18n-nradio-cpedata-zh-cn
+Section: luci
+SourceDateEpoch: 1770200432
+Architecture: all
+Installed-Size: 2309
+Description:  Translation for luci-app-nradio-cpedata - 中文 (Chinese)

@@ -1,0 +1,3 @@
+/etc/init.d/htpdate
+/usr/sbin/htpdate
+/etc/default/htpdate

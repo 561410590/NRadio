@@ -1,0 +1,32 @@
+#!/bin/sh /etc/rc.common
+
+START=28
+STOP=72
+
+USE_PROCD=1
+
+_name="cimd"
+_exec="/usr/sbin/${_name}"
+_hookn="cihook"
+_hookm=$(find /lib -name "$_hookn.ko")
+
+start_service() {
+    _enable=$(uci -q get "$_name.config.enable")
+    _iface=$(uci -q get "$_name.config.iface")
+    _mode=$(uci -q get "$_name.config.mode")
+    _ttl=$(uci -q get "$_name.config.ttl")
+    _ptype=$(uci -q get "oem.board.ptype")
+
+    [ "$_enable" = "0" ] || [ "$_ptype" = "ac" ] && exit 0
+    [ "$_mode" = "0" ] && insmod "$_hookm" iface="${_iface:-br-lan}"
+
+    # start monitor
+    procd_open_instance
+    procd_set_param command "$_exec" -i "${_iface:-br-lan}" -m "${_mode:-0}" -t "${_ttl:-86400}"
+    procd_set_param respawn
+    procd_close_instance
+}
+
+stop_service() {
+    lsmod |grep -Eqsw "^$_hookn" && rmmod "$_hookn"
+}

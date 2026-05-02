@@ -1,0 +1,6 @@
+#!/bin/ash
+
+if [ -f "/oem/default/config/99_terminal" ];then
+    /oem/default/config/99_terminal
+    uci commit terminal_trackd
+fi

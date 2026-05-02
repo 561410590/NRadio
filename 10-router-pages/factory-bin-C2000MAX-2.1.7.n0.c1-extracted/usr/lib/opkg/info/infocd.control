@@ -1,0 +1,10 @@
+Package: infocd
+Version: 1.3-20250411
+Depends: libc, uci, ubus, libubox20210516, libiwinfo20210430, libjson-c5, nradio-utils, libopenssl1.1
+Source: package/nradio/services/infocd
+SourceName: infocd
+Section: nradiowifi
+SourceDateEpoch: 1774513054
+Architecture: aarch64_cortex-a53
+Installed-Size: 90361
+Description:  Information distribution center

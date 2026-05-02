@@ -1,0 +1,10 @@
+Package: luci-app-nradio-mcast
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-mcast
+SourceName: luci-app-nradio-mcast
+Section: luci
+SourceDateEpoch: 1722948739
+Architecture: all
+Installed-Size: 1205
+Description:  LuCI Support for AP Multicast Setting

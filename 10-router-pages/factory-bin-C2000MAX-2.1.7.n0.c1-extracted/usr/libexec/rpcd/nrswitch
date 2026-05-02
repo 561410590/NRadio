@@ -1,0 +1,92 @@
+#!/bin/ash
+
+. /usr/share/libubox/jshn.sh
+
+readonly NRSWITCH_KV_FILE="/var/run/rpcd/nrswitch.json"
+readonly NRSWITCH_SET_LOCK="/var/run/rpcd/nrswitch.json.lock"
+readonly KEYS="
+status
+mode
+speed
+"
+set_value() {
+	local _dest=$1
+	local _msg=$2
+	local _tmp
+	local _name
+	local _json_no_warning=1
+	local _newobj=0
+
+	# Parse input message
+	json_load "$_msg"
+	json_get_var _name name
+	json_get_vars $KEYS
+	json_cleanup
+
+	[ -n "$_name" ] || return
+
+	# Set value by name
+	_tmp=$(cat "$_dest")
+	json_load "${_tmp:-{}}"
+	if ! json_select "$_name"; then
+		json_add_object "$_name"
+		_newobj=1
+	fi
+	[ -n "$control" ] && json_add_string "control" "$control"
+	for _key in $KEYS; do
+		_tmp=$(eval echo \$"$_key")
+		[ -n "$_tmp" ] && json_add_string "$_key" "$_tmp"
+	done
+	if [ "$_newobj" = "1" ]; then
+		json_close_object
+	fi
+	json_dump|tee "$_dest"
+	json_cleanup
+} 9>"$NRSWITCH_SET_LOCK"
+
+dump_status() {
+	local _dest=$1
+	local _msg=$2
+	local _tmp=
+	local _name=
+
+	# Parse input message
+	json_load "$_msg"
+	json_get_var _name name
+	json_cleanup
+
+	# Get value by name
+	_tmp=$(cat "$_dest")
+	json_load "${_tmp:-{}}"
+	json_select "$_name"
+	json_dump
+	json_cleanup
+}
+
+case "$1" in
+	list)
+		json_init
+		json_add_object set
+		json_add_string name ""
+		for _key in $KEYS; do
+			json_add_string "$_key" ""
+		done
+		json_close_object
+		json_add_object status
+		json_add_string name ""
+		json_close_object
+		json_dump
+		json_cleanup
+	;;
+	call)
+		read -r input;
+		case "$2" in
+			set)
+				set_value "$NRSWITCH_KV_FILE" "$input"
+			;;
+			status)
+				dump_status "$NRSWITCH_KV_FILE" "$input"
+			;;
+		esac
+	;;
+esac

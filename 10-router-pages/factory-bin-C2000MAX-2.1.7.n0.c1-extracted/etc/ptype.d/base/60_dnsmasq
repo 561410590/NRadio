@@ -1,0 +1,23 @@
+#!/bin/sh
+_dhcp="dhcp"
+
+_lan=$(uci -q get network.globals.default_lan)
+[ -z "$_lan" ] && _lan="lan"
+
+uci batch <<EOF
+set "${_dhcp}".odhcpd=odhcpd
+set "${_dhcp}".odhcpd.maindhcp=0
+set "${_dhcp}".odhcpd.leasefile=/tmp/hosts/odhcpd
+set "${_dhcp}".odhcpd.leasetrigger=/usr/sbin/odhcpd-update
+set "${_dhcp}".@dnsmasq[0].rebind_protection=0
+set "${_dhcp}".@dnsmasq[0].confdir=/tmp/dnsmasq.d
+set "${_dhcp}"."${_lan}".start="4"
+set "${_dhcp}"."${_lan}".limit="250"
+set "${_dhcp}"."${_lan}".leasetime='86400'
+set "${_dhcp}"."${_lan}".force="1"
+set "${_dhcp}"."${_lan}".ignore="1"
+set "${_dhcp}"."${_lan}".ra="server"
+set "${_dhcp}"."${_lan}".dhcpv6="server"
+set "${_dhcp}"."${_lan}".ra_management="1"
+set "${_dhcp}"."${_lan}".ra_default="1"
+EOF

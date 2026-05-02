@@ -1,0 +1,2 @@
+config rule "root"
+	option syncpath "/mnt/app_data/log/"

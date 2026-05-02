@@ -1,0 +1,18 @@
+local cloudd = require "cloudd.cloudd"
+local c_api = require "cloudd.api"
+local cjson = require "cjson"
+
+function cloudd_main(did, sid, event, payload, proto, reply)
+	local r_topic = "wifiset"
+	local value
+	local data = cjson.decode(payload)
+	if reply == 1 then
+		return
+	end
+	value = c_api.cloudd_set_wifi(data) or {errcode="1"}
+	cloudd.cloudd_send(sid, r_topic, value, proto, 1)
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

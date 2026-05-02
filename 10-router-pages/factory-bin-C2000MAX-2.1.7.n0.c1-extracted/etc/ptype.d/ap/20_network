@@ -1,0 +1,27 @@
+#!/bin/ash
+
+if uci -q get luci.main.first|grep -v "0"; then
+	uci -q set luci.main.first=0
+	uci commit luci
+fi
+
+if uci -q get auto_adapt.mode; then
+	uci -q delete auto_adapt.mode.port
+	uci -q delete auto_adapt.mode.en
+	uci commit auto_adapt
+fi
+_network="network"
+
+_lan=$(uci -q get network.globals.default_lan)
+_wan6=$(uci -q get network.globals.default_wan6)
+
+[ -z "$_lan" ] && _lan="lan"
+[ -z "$_wan6" ] && _wan6="wan6"
+
+uci set "${_network}"."${_lan}".ip6class="local"
+uci set "${_network}".${_wan6}.ipv6="0"
+uci delete dhcp."${_lan}".dhcpv6
+uci delete dhcp."${_lan}".ra
+uci delete dhcp."${_lan}".ra_default
+uci delete dhcp."${_lan}".ra_management
+uci delete network.globals.ipv6

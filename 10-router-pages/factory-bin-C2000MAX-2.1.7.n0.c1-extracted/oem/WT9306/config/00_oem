@@ -1,0 +1,4 @@
+uci set oem.board.led_mode='multiple'
+uci set oem.custom.ssid=TopSpeed5GCPE
+uci set system.basic=rule
+uci set system.basic.speedlimit='0'

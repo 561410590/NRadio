@@ -1,0 +1,66 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=01
+
+USE_PROCD=1
+
+_name="wanswd"
+_exec="/usr/bin/${_name}.sh"
+gWANCount=0
+
+checker_interface() {
+	local rule=$1
+	config_get proto "$rule" proto
+	config_get disabled "$rule" disabled
+	config_get root_ifname "$rule" root_ifname
+	config_get _share_channel $rule share_channel ""
+	if [ "$disabled" != "1" -a -z "$root_ifname" ];then
+		if [ "$proto" == "wwan" -o "$proto" == "tdmi" ];then
+			if [ -z "$_share_channel" -o "$_share_channel" == "$rule" ];then
+				gWANCount=$((gWANCount+1))
+			fi
+		fi
+	fi
+}
+
+start_service() {
+	local _cpe
+	local _ifname
+	local cellular=$(uci -q get network.globals.default_cellular)
+	local wan6=$(uci -q get network.globals.default_wan6)
+	local ipv6=$(uci -q get network.globals.ipv6)
+
+	[ -z "$cellular" ] && cellular="cpe"
+	[ -z "$wan6" ] && wan6="wan6"
+
+	_cpe="$(uci -q get oem.feature.cpe)"
+
+	[ "$_cpe" != "1" ] && return
+	[ -f "/etc/config/mwan3" ] && return
+
+	config_load network
+	config_foreach checker_interface interface
+	local disable_wan="$(uci -q get network.nrswitch.disable_wan)"
+	local vlan_wan="$(uci -q get network.nrswitch.nvlan)"
+	if [ "$disable_wan" != "1" -a -n "$vlan_wan" ];then
+		gWANCount=$((gWANCount+1))
+	fi
+	[ $gWANCount -lt 2 ] && return
+
+	_ifname="$(uci -q get network.$cellular.network_ifname)"
+
+	procd_open_instance
+	procd_set_param command "$_exec" -i "wan" -b "${_ifname:-$cellular}"
+	procd_set_param respawn
+	procd_set_param limits core="unlimited"
+	procd_close_instance
+
+	if [ "$ipv6" == "1" ];then
+		procd_open_instance
+		procd_set_param command "$_exec" -i "$wan6" -b "${_ifname:-$cellular}"
+		procd_set_param respawn
+		procd_set_param limits core="unlimited"
+		procd_close_instance
+	fi
+}

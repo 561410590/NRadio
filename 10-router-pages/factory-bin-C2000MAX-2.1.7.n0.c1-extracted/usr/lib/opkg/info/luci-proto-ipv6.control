@@ -1,0 +1,10 @@
+Package: luci-proto-ipv6
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/protocols/luci-proto-ipv6
+SourceName: luci-proto-ipv6
+Section: luci
+SourceDateEpoch: 1496269549
+Architecture: all
+Installed-Size: 4783
+Description:  Support for DHCPv6/6in4/6to4/6rd/DS-Lite/aiccu

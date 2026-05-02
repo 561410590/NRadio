@@ -1,0 +1,5 @@
+/usr/sbin/msad
+/etc/uci-defaults/40-msad
+/etc/init.d/msad
+/etc/fixup.d/30-msad
+/etc/config/msad

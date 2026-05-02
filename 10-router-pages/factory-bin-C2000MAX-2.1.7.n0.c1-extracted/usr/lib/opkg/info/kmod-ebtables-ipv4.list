@@ -1,0 +1,6 @@
+/lib/modules/5.4.281/ebt_arpreply.ko
+/lib/modules/5.4.281/ebt_arp.ko
+/lib/modules/5.4.281/ebt_ip.ko
+/lib/modules/5.4.281/ebt_snat.ko
+/etc/modules.d/ebtables-ipv4
+/lib/modules/5.4.281/ebt_dnat.ko

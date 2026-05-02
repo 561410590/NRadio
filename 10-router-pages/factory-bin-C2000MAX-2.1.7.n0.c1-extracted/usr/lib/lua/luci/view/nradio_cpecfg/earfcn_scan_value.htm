@@ -1,0 +1,43 @@
+<%
+	local i, key
+	local br = self.orientation == "horizontal" and '&#160;' or '<br />'
+	local cfgvalue = self:cfgvalue(section)
+%>
+
+<%+cbi/valueheader%>
+<% if self.widget == "select" then %>
+	<select class="cbi-input-select" onchange="if($(this).val() == '1'){$('.earfcn_scan<%=self.scan_type%>').css('display','none')}else{$('.earfcn_scan<%=self.scan_type%>').css('display','block')}" data-update="change"<%=
+		attr("id", cbid) ..
+		attr("name", cbid) ..
+		ifattr(self.size, "size")
+	%>>
+		<% for i, key in pairs(self.keylist) do -%>
+			<option<%=
+				attr("id", cbid.."-"..key) ..
+				attr("value", key) ..
+				attr("data-index", i) ..
+				attr("data-depends", self:deplist2json(section, self.deplist[i])) ..
+				ifattr(tostring(cfgvalue or self.default) == key, "selected", "selected")
+			%>><%=pcdata(self.vallist[i])%></option>
+		<%- end %>
+	</select>
+	<input class="cbi-button earfcn_scan earfcn_scan<%=self.scan_type%>"  <%if tostring(cfgvalue or self.default) == "1" then io.write("style='display:none'")  end%>  type="button" name="earfcn_scan" data-force="0" data-model="<%=self.cpe_section%>" data-model_type="<%=self.scan_type%>"  value="<%:StartScan%>" onclick="show_scan_dialog(this)">
+<% elseif self.widget == "radio" then %>
+	<% for i, key in pairs(self.keylist) do %>
+		<label<%=
+			attr("data-index", i) ..
+			attr("data-depends", self:deplist2json(section, self.deplist[i]))
+		%>>
+			<input class="cbi-input-radio" data-update="click change" type="radio"<%=
+				attr("id", cbid.."-"..key) ..
+				attr("name", cbid) ..
+				attr("value", key) ..
+				ifattr((cfgvalue or self.default) == key, "checked", "checked")
+			%> />
+			<label<%= attr("for", cbid.."-"..key)%>></label>
+			<%=pcdata(self.vallist[i])%>
+		</label>
+		<% if i == self.size and  self.direction ~= "horizontal" then write(br) end %>
+	<% end %>
+<% end %>
+<%+cbi/valuefooter%>

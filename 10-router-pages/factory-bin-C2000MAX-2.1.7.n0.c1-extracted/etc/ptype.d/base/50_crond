@@ -1,0 +1,8 @@
+#!/bin/sh
+
+crontabs_file="/etc/crontabs/root"
+
+if [ ! -f "$crontabs_file" ]; then
+	echo "" >> $crontabs_file
+	chmod 600 $crontabs_file
+fi

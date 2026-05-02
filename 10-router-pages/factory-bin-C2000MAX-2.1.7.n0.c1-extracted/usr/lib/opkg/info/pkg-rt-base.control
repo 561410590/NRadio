@@ -1,0 +1,10 @@
+Package: pkg-rt-base
+Version: 1.0-20220923
+Depends: libc, wanchk, luci-app-nradio-wanchk, luci-i18n-nradio-wanchk-zh-cn, luci-i18n-nradio-wanchk-en, luci-i18n-nradio-firewall-zh-cn, luci-app-nradio-firewall, ppp-mod-pppoe, pkg-dmz
+Source: package/nradio/collections/pkg-rt-base
+SourceName: pkg-rt-base
+Section: nradiowifi
+SourceDateEpoch: 1744194887
+Architecture: aarch64_cortex-a53
+Installed-Size: 104
+Description:  Pakcages for router base applications

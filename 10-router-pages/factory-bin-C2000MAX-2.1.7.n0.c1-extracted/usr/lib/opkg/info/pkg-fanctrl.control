@@ -1,0 +1,10 @@
+Package: pkg-fanctrl
+Version: 1.0-20241223
+Depends: libc, luci-app-nradio-fanctrl, luci-i18n-nradio-fanctrl-zh-cn, luci-i18n-nradio-fanctrl-en, fanctrl, kmod-hwmon-pwmfan
+Source: package/nradio/collections/pkg-fanctrl
+SourceName: pkg-fanctrl
+Section: nradiowifi
+SourceDateEpoch: 1735892810
+Architecture: all
+Installed-Size: 104
+Description:  Pakcages for LuCI NRadio addon

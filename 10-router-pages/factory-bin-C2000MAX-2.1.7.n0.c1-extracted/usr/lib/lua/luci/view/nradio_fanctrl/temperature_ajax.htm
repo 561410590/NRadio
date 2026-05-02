@@ -1,0 +1,32 @@
+<%+cbi/valueheader%>
+
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(5, '<%=url('nradioadv/system/fanctrl/temperature')%>', null,
+		function(x, rv)
+		{
+			if(rv && rv.result){
+				if(rv.result.cpe){
+					var s = document.getElementById('tempdesmodel-temperature-status');
+					
+					if (s){
+						var temp = parseInt(rv.result.cpe);
+						if (temp < 70 )
+							s.innerHTML = "<%:TemperatureLow%>"|| '';
+						else if (temp < 85 )
+							s.innerHTML = "<%:TemperatureMedium%>"|| '';
+						else
+							s.innerHTML = "<%:TemperatureHigh%>"|| '';
+					}					
+				}
+				/*if(rv.result.fan){
+					var s = document.getElementById('fandesdevice-temperature-status');
+					if (s)s.innerHTML = rv.result.fan +"%";
+				}*/
+			}			
+		}
+	);
+
+	$("#cbi-fanctrl-fanctrl-tempdes").css("display","none");
+	
+//]]></script>
+<%+cbi/valuefooter%>

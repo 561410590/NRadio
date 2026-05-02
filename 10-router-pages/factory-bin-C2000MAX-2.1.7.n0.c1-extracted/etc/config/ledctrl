@@ -1,0 +1,2 @@
+config service 'ledctrl'
+	option 'disabled' '0'

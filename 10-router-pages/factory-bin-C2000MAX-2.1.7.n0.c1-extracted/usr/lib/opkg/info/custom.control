@@ -1,0 +1,10 @@
+Package: custom
+Version: 3.2-20210603
+Depends: libc, ptype
+Source: package/nradio/services/custom
+SourceName: custom
+Section: nradiowifi
+SourceDateEpoch: 1776140414
+Architecture: aarch64_cortex-a53
+Installed-Size: 11348
+Description:  OEM and Custom Services.

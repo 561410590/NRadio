@@ -1,0 +1,10 @@
+Package: cellular_power
+Version: 1.0-20240715
+Depends: libc
+Source: package/nradio/utils/cellular_power
+SourceName: cellular_power
+Section: nradiowifi
+SourceDateEpoch: 1721024887
+Architecture: all
+Installed-Size: 269
+Description:  Cellular power ctl as for system power on/off

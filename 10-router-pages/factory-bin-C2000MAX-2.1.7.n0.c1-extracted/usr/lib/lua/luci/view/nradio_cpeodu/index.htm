@@ -1,0 +1,206 @@
+<%+header%>
+	<div class="column  second-text-padding">
+		<div class="cbi-map main-box hsetup">
+			<h2 name="content"><%:ODU Switch%></h2>
+			<form method="post" name="cbi" >
+				<fieldset class="cbi-section">	
+				<div class="cbi-section-node">
+					<div class="cbi-value" >
+						<label class="cbi-value-title" ><%:ODU Status%></label>
+						<div class="cbi-value-field">
+							<div class="checkbox">
+								<input type="hidden" value="1" name="cbid.network.cpe.mode">
+								<input class="cbi-input-checkbox" data-update="click change" id="mode" name="cbid.network.cpe.mode" type="checkbox"  value="1" />
+								<label for="mode" class="switch"></label>
+							</div>
+							<label class="content_info" id="mode_help" ></label>
+						</div>
+					</div>
+					<div class="cbi-value" >
+						<label class="cbi-value-title" ><%:SwtichNet%></label>
+						<div class="cbi-value-field">
+							<div class="checkbox">
+								<input type="hidden" value="1" name="cbid.network.cpe.switch_net">
+								<input class="cbi-input-checkbox" data-update="click change" id="switch_net" name="cbid.network.cpe.switch_net" checked="checked" type="checkbox"  value="1" />
+								<label for="switch_net" class="switch"></label>
+							</div>
+							<label class="content_info"><%:SwtichNetHelp%></label>
+							
+						</div>
+					</div>
+					<!--<div class="cbi-value" >
+						<label class="cbi-value-title" ><%:ODU WAN%></label>
+						<div class="cbi-value-field">
+							<div class="checkbox">
+								<input type="hidden" value="1" name="cbid.network.cpe.odu_interface">
+								<input class="cbi-input-checkbox" data-update="click change" id="odu_interface" name="cbid.network.cpe.odu_interface" type="checkbox"  value="1" />
+								<label for="odu_interface" class="switch"></label>
+							</div>
+						</div>
+					</div>-->
+				</div>
+				<div class="cbi-page-actions">
+					<input type="button" class="cbi-button cbi-button-apply" id="btn-save" value="<%:Save & Apply%>" onclick="save_config();" />
+				</div>
+				</fieldset>
+			</form>
+		</div>		
+	</div>
+
+
+<script type="text/javascript">
+	<%
+		local uci = require "luci.model.uci".cursor()
+		local mode = uci:get("network", "cpe", "mode") or "0"
+		local odu_model = uci:get("network", "cpe", "odu_model") or ""
+		local odu_interface = uci:get("network", "cpe", "odu_interface") or ""
+		local desc = uci:get("network", "cpe", "desc") or ""
+		if mode and mode == "odu" then
+			mode="1"
+		end
+	%>
+	var help_info="<%:ODU Help%>";
+	help_info=help_info.replace(/&#60;/g, "<");
+	help_info=help_info.replace(/&#62;/g, ">");
+
+	$("#mode_help").html(help_info);
+	function confirm_odu_submit(code){
+		var msg = {};
+		var html="";
+		
+		if(code == 1){
+			var desc = "<%=desc%>";
+			var odu_model = "<%=odu_model%>";
+			odu_model_array = [{"MT5700M-CN":"MT5700M"},{"RM520N-CN":"RM520N"},{"RM500U-CNV":"RM500U"},{"NU313-M2":"NU313"}];			
+			htm='<div style="padding: 0 20px;">';
+			htm+='<%:model rgmii error%><br><br>';
+			htm+='<div class="cbi-value">';
+			htm+='	<div class="cbi-value-field">';
+			htm+='		<%:ODU Model%><select class="cbi-input-select valid" data-update="click change" id="odu_model" name="odu_model">';
+			for(var i=0;i<odu_model_array.length;i++){
+				var obj = odu_model_array[i];
+				for(var key in obj){
+					var found = 0;
+					if(odu_model.length){
+						if(key.split("-")[0] == odu_model){
+							htm+='			<option value="'+key+'"  selected="selected">'+obj[key]+'</option>';
+							found = 1;
+						}
+					}
+					else if(desc.length){
+						if(key.split("-")[0] == desc.split(" ")[1]){
+							htm+='			<option value="'+key+'"  selected="selected">'+obj[key]+'</option>';
+							found = 1;
+						}
+					}
+						
+					if(found == 0)
+						htm+='			<option value="'+key+'" >'+obj[key]+'</option>';
+				}				
+			}
+			
+			htm+='		</select>';
+			htm+='	</div>';
+			htm+='</div>';
+			htm+='</div>';
+		}
+		if(code == 2){
+			htm="<div style=\"padding: 0 20px;\"><%:model rgmii open error%></div>";
+		}
+		msg.message = htm;
+		msg.confirm = "<%:Confirm%>";
+		msg.cancel = "<%:Cancel%>";
+		msg.onhide = function(){
+		},
+		msg.cancel_callback = function(){
+			refresh_data();
+		},
+		msg.callback = function(){
+			$(".modal-footer").css("display","none");
+			save_config(1);
+
+		}
+		confirm_box(msg);		
+	}
+	function save_config(force){
+		var data={};
+		var mode = $("#mode").prop("checked");
+		
+		data['token']='<%=token%>';
+		data['mode']='0';
+
+		if(force == 1){
+			data['force']='1';
+			if($("#odu_model").length)
+				data['odu_model']=$("#odu_model").val();
+		}
+		if($("#odu_interface").length){
+			if ($("#odu_interface").prop("checked") == true){
+				data['odu_interface']='1';
+			}
+			else{
+				data['odu_interface']='0';
+			}			
+		}
+		if($("#switch_net").length){
+			if ($("#switch_net").prop("checked") == true){
+				data['switch_net']='1';
+			}
+			else{
+				data['switch_net']='0';
+			}			
+		}
+		if(mode == true){
+			data['mode']='1';
+		}
+		(new XHR()).post('<%=controller%>nradioadv/cellular/cpeodu/apply', data, function(xhr){
+			var data_res = null;
+			var code = -1;
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					data_res = eval('(' + xhr.responseText + ')');
+					code = data_res.result.code;
+					if(code == "0"){
+						var sussess_box=BootstrapDialog.show({
+							type: BootstrapDialog.TYPE_DEFAULT,
+							closeByBackdrop: true,
+							title: '',
+							message: "OK",
+						});
+						if(sussess_box)
+							window.setTimeout(function(){sussess_box.close();}, 3000);
+					}
+					else if(code == 1){
+						confirm_odu_submit(1);
+					}
+					else if(code == 2){
+						confirm_odu_submit(2);
+					}
+				}
+				catch(e) {
+					data_res = null;
+				}
+			}
+		});		
+	}
+	function refresh_data(){
+		var mode = "<%=mode%>";
+		var odu_interface = "<%=odu_interface%>";
+		if (mode == "1"){
+			$("#mode").prop("checked",true);
+		}
+		else{
+			$("#mode").prop("checked",false);
+		}
+		if (odu_interface.length && odu_interface != "0"){
+			$("#odu_interface").prop("checked",true);
+		}
+		else{
+			$("#odu_interface").prop("checked",false);
+		}
+	}
+	$(document).ready(function(){
+		refresh_data();
+	});	
+</script>
+<%+footer%>

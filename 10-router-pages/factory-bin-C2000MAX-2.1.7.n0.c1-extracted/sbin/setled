@@ -1,0 +1,7 @@
+#!/bin/sh
+# (C) 2008 openwrt.org
+
+. /lib/functions/leds.sh
+led_fun=led_$1
+
+$led_fun "hc:$2:$3" $4 $5

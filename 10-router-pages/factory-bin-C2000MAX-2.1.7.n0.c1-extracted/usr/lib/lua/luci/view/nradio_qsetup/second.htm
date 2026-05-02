@@ -1,0 +1,187 @@
+<%+header%>
+	<div class="column text-center">
+		<div class="row clearfix">
+			<div class="col-sm-12 column text-center second-text-padding">
+				<div class="col-sm-12 column nradio-netework-detect detect_start"></div>
+				<div class="col-sm-12 column detect_error hide"><i class="far fa-nradio-detect-error fa-7x fa-fw nradio-width fail_color"></i></div>
+				<div class="col-sm-12 column detect_ok hide"><i class="far fa-nradio-detect-ok fa-7x fa-fw nradio-width success_color"></i></div>			
+
+				<div class="col-sm-12 column detect-mode-text">
+					<p class="detect_ok hide" >
+						<%:QSetupDetectProto%><span id="detect_text" ></span>
+					</p>
+					<p class="detect_error hide">
+						<%:QSetupDetectError%>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="row clearfix second-text-padding">
+			<div class="col-sm-12 column detect_start">
+				<p>
+					<%:QSetupDetectNote%>
+				</p>
+			</div>
+			<div class="col-sm-8 col-xs-8 col-xs-offset-2 column detect_error text-center hide" id="lots_msg">	
+				<p >
+					<%if luci.nradio.support_autoadapt() then%>
+						<%:QSetupDetectInfo1%>
+					<%else%>
+						<%:QSetupDetectInfo1-1%>
+					<%end%>					
+				</p>
+				<p >
+					<%:QSetupDetectInfo2%>
+				</p>
+				<p>
+					<%:QSetupDetectInfo3%>
+				</p>
+				<p>
+					<%:QSetupDetectInfo4%>
+				</p>
+			</div>
+		</div>
+
+		<div class="row clearfix second-text-padding">
+			<div class="clearfix second-btn-padding detect_error hide">
+				<div class="double_btn_box">
+					<li class="second-btn second-btn-left recommand-color"  onclick='location.href="/cgi-bin/luci/nradio/qsetup/second";'><%:QSetupDetectRetry%></li>
+					<li class="second-btn second-btn-right btn-color" onclick='location.href="/cgi-bin/luci/nradio/qsetup/other_mode";' ><%:QSetupManually%></li>
+				</div>
+			</div>			
+			<div class="clearfix second-btn-padding detect_ok hide">
+				<div class="double_btn_box">
+					<li class="second-btn second-btn-left recommand-color" onclick='location.href="/cgi-bin/luci/nradio/qsetup/other_mode";' ><%:QSetupManually%></li>
+					<li id="next-btn" class="second-btn second-btn-right btn-color"><%:Next%></li>
+				</div>
+			</div>
+		</div>
+
+		<div class="row clearfix second-text-padding">
+			<div class="col-sm-12 column second-note-text detect_error hide">
+				<p class="text-center " >
+					<%:QSetupDetectTips%>
+				</p>
+			</div>
+			<div class="col-sm-12 column second-note-text detect_ok hide">
+				<p class="text-center " >
+					<%:QSetupDetectTips2%>
+				</p>
+			</div>
+		</div>
+	</div>
+
+<script type="text/javascript">
+	var count = 0;
+	var mode = "detect";
+	function get_detect_stat(){
+		detect_result = 0;
+		console.log("start");
+		$.ajax({
+				type: "get",
+				async:false,
+				url: '<%=controller%>nradio/qsetup/detcet_status',
+				data: {"random":Date.now()},
+				timeout:10000,
+				success: function(data_res){
+					if(data_res && data_res.result && (data_res.result.mode != "error" && data_res.result.mode != "detect") ){
+						mode = data_res.result.mode;	
+						if(mode == "dhcp"){
+							$('#detect_text').text("<%:QSetupInternetDHCP%>");
+							$('.detect_start').removeClass("hide").addClass("hide");
+							$('.detect_ok').removeClass("hide");
+							$('.detect_error').removeClass("hide").addClass("hide");
+						}else if(mode == "pppoe"){
+							$('#detect_text').text("<%:PPPoE%>");
+							$('.detect_start').removeClass("hide").addClass("hide");
+							$('.detect_ok').removeClass("hide");
+							$('.detect_error').removeClass("hide").addClass("hide");
+						}
+						detect_result = 1;
+					}
+					else{
+						count++;
+						if(count>3){
+							$('.detect_start').removeClass("hide").addClass("hide");
+							$('.detect_ok').removeClass("hide").addClass("hide");
+							$('.detect_error').removeClass("hide");
+							adapt_error_layout();
+						}
+						else{
+							window.setTimeout(function(){
+								get_detect_stat();
+							},5000);
+						}
+					}
+				},
+				error: function(xhr, error){
+					count++;
+						if(count>3){
+							$('.detect_start').removeClass("hide").addClass("hide");
+							$('.detect_ok').removeClass("hide").addClass("hide");
+							$('.detect_error').removeClass("hide");
+							adapt_error_layout();
+						}
+						else{
+							window.setTimeout(function(){
+								get_detect_stat();
+							},5000);
+						}
+				}
+		});
+
+
+	}
+	$(document).ready(function(){		
+		(new XHR()).get('<%=controller%>nradio/qsetup/detcet', null, function(){
+			get_detect_stat();
+		});
+	});
+
+	$('#next-btn').click(function(){
+		if(mode == "dhcp"){
+			(new XHR()).get('<%=controller%>nradio/qsetup/dhcpset', null, function(){
+				location.href="/cgi-bin/luci/nradio/qsetup/second_wifi";
+			});
+		}else if(mode == "pppoe"){
+			location.href="/cgi-bin/luci/nradio/qsetup/second_pppoe";
+		}
+	});
+
+	$(window).resize(function(){
+		if($("#lots_msg").css("display") == "block"){
+			adapt_error_layout();
+		}
+	})
+
+	function adapt_error_layout(){
+		var min_length = 0;
+		var index_p = 0;
+		var margin_left_p = 0;
+
+		$("#lots_msg p").each(function(i) {
+			length_error = $(this).html().length;
+			if(!min_length)
+				min_length =  length_error;
+			var $elem = $(this);
+			$placeholder = $("<span>"); 
+			$elem.prepend($placeholder); 	
+			var distance = $placeholder.offset().left - $elem.offset().left; 
+			$placeholder.remove();   // Remove placeholder 
+			if(length_error<=min_length){
+				index_p = i;
+				min_length = length_error;
+				margin_left_p = distance;
+			}			
+		});
+
+		$("#lots_msg p").each(function(i) {
+			if(i != index_p){
+				$(this).css("paddingLeft",margin_left_p);
+				$(this).css("text-align","left");
+			}
+		});
+	}
+</script>
+
+<%+footer%>

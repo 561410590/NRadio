@@ -1,0 +1,4 @@
+/etc/config/factory_check
+/etc/init.d/factory_siminfo
+/lib/upgrade/keep.d/factory_siminfo
+/usr/sbin/factory_siminfo.sh

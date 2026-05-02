@@ -1,0 +1,43 @@
+#!/bin/ash
+
+readonly LED_DEVICE_PATH="/sys/class/leds"
+
+led_set() {
+	local _zones=$1
+	local _ifname=
+	local _zone=
+
+	for _zone in $_zones; do
+		if [ ! -d "${LED_DEVICE_PATH}/hc:${_zone}:link" ]; then
+			continue
+		fi
+
+		_ifname=$(uci get network."$_zone".def_ifname)
+
+		uci set system.led_"$_zone"="led"
+		uci set system.led_"$_zone".name="led_${_zone}"
+		uci set system.led_"$_zone".sysfs="hc:${_zone}:link"
+		uci set system.led_"$_zone".trigger="none"
+		uci set system.led_"$_zone".dev="$_ifname"
+		uci set system.led_"$_zone".mode="link tx rx"
+	done
+}
+
+[ "$1" = "reinit" ] && exit 0
+
+gDomain=$(uci -q get oem.custom.domain)
+gCountry=$(uci -q get oem.board.country)
+
+gCountry=${gCountry:-CN}
+gTimezone=$(jsonfilter -e "$[\"$gCountry\"][\"timezone\"]" < /etc/tz.json)
+gZonename=$(jsonfilter -e "$[\"$gCountry\"][\"zonename\"]" < /etc/tz.json)
+
+uci set system.@system[0].timezone="${gTimezone:-CST-8}"
+uci set system.@system[0].zonename="${gZonename:-Asia/Shanghai}"
+uci set system.@system[0].hostname="${gDomain:-nradio.in}"
+uci set system.ntp.enabled='0'
+
+gPass=$(uci get oem.custom.pass)
+echo -n -e "${gPass:-admin}\n${gPass:-admin}\n" | passwd -a md5 root > /dev/null 2>&1
+
+led_set "lan wan"

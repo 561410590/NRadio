@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=65
+
+SERVICE_DAEMONIZE=1
+SERVICE_WRITE_PID=1
+
+start() {
+	local mac=$(bdinfo -m)
+	local force=$(uci -q get factory_check.factest.force)
+
+	[ -n "$mac" ] && [ "$force" != "1" ] && return
+
+	service_start /usr/sbin/factory_siminfo.sh
+}
+
+stop() {
+	service_stop /usr/sbin/factory_siminfo.sh
+}

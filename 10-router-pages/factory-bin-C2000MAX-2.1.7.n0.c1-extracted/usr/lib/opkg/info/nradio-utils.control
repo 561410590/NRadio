@@ -1,0 +1,10 @@
+Package: nradio-utils
+Version: 1.4-20260130
+Depends: libc, uci, libubox20210516, libjson-c5, libbdinfo, ubus, libopenssl1.1
+Source: package/nradio/lib/nradio_utils
+SourceName: nradio-utils
+Section: nradiowifi
+SourceDateEpoch: 1774513219
+Architecture: aarch64_cortex-a53
+Installed-Size: 17455
+Description:  NRadio Utilities Library

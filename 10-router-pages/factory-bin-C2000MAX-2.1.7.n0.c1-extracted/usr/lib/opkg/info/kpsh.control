@@ -1,0 +1,10 @@
+Package: kpsh
+Version: 1.2-1.2
+Depends: libc, libgnutls, libjson-c5
+Source: package/nradio/services/kpsh
+SourceName: kpsh
+Section: nradiowifi
+SourceDateEpoch: 1562898867
+Architecture: all
+Installed-Size: 7913
+Description:  Provide supporting ATE command read and reply

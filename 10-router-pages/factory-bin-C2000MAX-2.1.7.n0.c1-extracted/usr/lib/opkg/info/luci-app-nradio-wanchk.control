@@ -1,0 +1,10 @@
+Package: luci-app-nradio-wanchk
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-wanchk
+SourceName: luci-app-nradio-wanchk
+Section: luci
+SourceDateEpoch: 1763364725
+Architecture: all
+Installed-Size: 2190
+Description:  LuCI Support for NRadio cpe checker

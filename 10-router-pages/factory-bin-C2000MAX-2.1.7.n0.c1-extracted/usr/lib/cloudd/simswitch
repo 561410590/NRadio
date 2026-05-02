@@ -1,0 +1,88 @@
+local cloudd = require "cloudd.cloudd"
+local c_api = require "cloudd.api"
+local cjson = require "cjson"
+local uci = require "luci.model.uci".cursor()
+local util = require "luci.util"
+local NO_ERR = "0"
+local INDEX_ERR = "1"
+local ICCID_ERR = "2"
+local PARAM_ERR = "3"
+
+function cloudd_main(did, sid, event, payload, proto, reply)
+	local r_topic = "simswitch"
+	local nr = require "luci.nradio"
+	local sim_type
+	local sim_index
+	local iccid
+	local data = cjson.decode(payload)
+	local mode = nil
+	local code = PARAM_ERR
+	if reply == 1 then
+		cloudd.cloudd_send(sid, r_topic, {errcode=code}, proto, 1)
+		return 
+	end
+	if not data.simswitch then
+		cloudd.cloudd_send(sid, r_topic, {errcode=code}, proto, 1)
+		return
+	end
+	if data.simswitch.mode then
+		mode = data.simswitch.mode
+	end
+
+	if data.simswitch.type then
+		sim_type = tonumber(data.simswitch.type)
+	end
+	if sim_type == 0 then
+		if not data.simswitch.index then
+			cloudd.cloudd_send(sid, r_topic, {errcode=code}, proto, 1)
+			return
+		end
+		sim_index = tonumber(data.simswitch.index)
+		code = INDEX_ERR
+		if nr.switch_simcard(sim_index,mode) then
+			code = NO_ERR
+		end
+	elseif sim_type == 1 then
+		if not data.simswitch.iccid or #data.simswitch.iccid == 0 then
+			cloudd.cloudd_send(sid, r_topic, {errcode=code}, proto, 1)
+			return
+		end
+		iccid = data.simswitch.iccid
+		local device_iccid = uci:get("oem","board","iccid") or ""
+		local stype = uci:get("cpesel","sim","stype") or ""
+		local iccid_array = util.split(device_iccid,",")
+		local stype_array = util.split(stype,",")
+		local inner_index = 0
+		for k,v in pairs (iccid_array) do
+			if v == iccid then
+				inner_index = k
+				break
+			end
+		end
+		local inner_num=0
+		code = ICCID_ERR
+		if inner_index > 0 then
+			for k,v in pairs (stype_array) do
+				if v ~= "0" then
+					inner_num=inner_num+1
+					if inner_num == inner_index then
+						if nr.switch_simcard(k,mode) then
+							code = NO_ERR
+						end
+						break
+					end
+				end
+			end
+		end
+	else
+		code = NO_ERR
+		if mode then
+			nr.switch_simcard(nil,mode)
+		end
+	end
+	cloudd.cloudd_send(sid, r_topic, {errcode=code}, proto, 1)
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

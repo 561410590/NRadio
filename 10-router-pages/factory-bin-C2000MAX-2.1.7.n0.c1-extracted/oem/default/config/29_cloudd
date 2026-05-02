@@ -1,0 +1,14 @@
+prefix=$(uci -q get oem.custom.ssid)
+suffix=$(uci -q get oem.board.id|tr -d :|cut -c 9-)
+
+uci set cloudd.t0.diff_2_4_wlan='X1'
+uci set cloudd.t0.ssid_wlan="X@${prefix:-NRadio}-${suffix}"
+uci set cloudd.t0.diff_2_4_ssid_wlan="X@${prefix:-NRadio}-${suffix}-2.4G"
+
+uci set cloudd.g1wlan='interface'
+uci set cloudd.g1wlan.ssid_wlan0="wireless.wlan0.ssid=@${prefix:-NRadio}-${suffix}-2.4G"
+uci set cloudd.g1wlan.ssid_wlan1="wireless.wlan1.ssid=@${prefix:-NRadio}-${suffix}-5G"
+uci set cloudd.g1wlan.ieee80211w_wlan0="wireless.wlan0.ieee80211w=0"
+uci set cloudd.g1wlan.ieee80211w_wlan1="wireless.wlan1.ieee80211w=0"
+uci set cloudd.g1wlan.encryption_wlan0="wireless.wlan0.encryption=psk2"
+uci set cloudd.g1wlan.encryption_wlan1="wireless.wlan1.encryption=sae-mixed"

@@ -1,0 +1,129 @@
+<% local id_str = cbid:gsub('%.', '_'); %>
+<%+cbi/valueheader%>
+<style>
+	.nradio-adv-toggle-wrap{
+		display:flex;
+		justify-content:center;
+		align-items:center;
+		padding:6px 0;
+	}
+	.nradio-adv-toggle{
+		display:flex;
+		justify-content:center;
+		align-items:center;
+		gap:4px;
+		width:100%;
+	}
+	.nradio-adv-toggle.is-open .fa-nradio-arrow{
+		transform:rotate(180deg);
+	}
+
+	@media (min-width: 768px) {
+		fieldset div.cbi-value-field>div.nradio-adv-toggle-wrap{
+			width:350px;
+		}
+	}
+
+	@media screen and (max-width: 767px) {
+		.nradio-adv-toggle-wrap{
+			border-radius: 5px;
+		}
+	}
+</style>
+
+<input data-update="change click"<%=
+	attr("id", cbid) ..
+	attr("name", cbid) ..
+	attr("type", "hidden") ..
+	attr("value", self:formvalue(section) or self:cfgvalue(section) or self.default or "0")
+%> />
+
+<div class="nradio-adv-toggle-wrap">
+	<a href="#" class="nradio-adv-toggle" id="<%=id_str%>-toggle">
+		<span><%: Wi-Fi Advanced %></span>
+		<i class="far fa-nradio-arrow fa-2x"></i>
+	</a>
+</div>
+
+<script>
+(function(){
+	var cbid = "<%=cbid%>";
+	var input = document.getElementById("<%=cbid%>");
+	var btn = document.getElementById("<%=id_str%>-toggle");
+
+	if (!input || !btn) 
+		return;
+
+	function sync() {
+		btn.classList.toggle("is-open", input.value === "1");
+	}
+
+	function clearOldValues() {
+		var Nodes = document.querySelectorAll('input[data-adv-cache="' + cbid + '"]');
+		for (var i = 0; i < Nodes.length; i++) {
+			var node = Nodes[i];
+			if (node && node.parentNode) {
+				node.parentNode.removeChild(node);
+			}
+		}
+	}
+
+	function addHiddenValues() {
+		clearOldValues();
+		var form = input.form;
+
+		if (!form) {
+			return;
+		}
+
+		var depNodes = document.querySelectorAll('.cbi-value[data-depends*="' + cbid + '"]');
+		for (var i = 0; i < depNodes.length; i++) {
+			var fields = depNodes[i].querySelectorAll('input[name], select[name], textarea[name]');
+			for (var j = 0; j < fields.length; j++) {
+				var field = fields[j];
+				if (!field || field === input || field.disabled || !field.name) {
+					continue;
+				}
+
+				var fieldValue = field.value;
+
+				if (field.type === "checkbox") {
+					if (!field.checked) {
+						continue;
+					}
+					fieldValue = field.value || "1";
+				}
+
+				if (fieldValue == null) {
+					continue;
+				}
+
+				var hidden = document.createElement("input");
+				hidden.type = "hidden";
+				hidden.name = field.name;
+				hidden.value = fieldValue;
+				hidden.setAttribute("data-adv-cache", cbid);
+				form.appendChild(hidden);
+			}
+		}
+	}
+
+	btn.addEventListener("click", function(ev){
+		ev.preventDefault();
+		if (input.value === "1") {
+
+			addHiddenValues();
+		} else {
+
+			clearOldValues();
+		}
+		input.value = (input.value === "1") ? "0" : "1";
+		sync();
+		if (typeof cbi_d_update === "function") 
+			cbi_d_update();
+	});
+
+	sync();
+})();
+</script>
+<%+cbi/valuefooter%>

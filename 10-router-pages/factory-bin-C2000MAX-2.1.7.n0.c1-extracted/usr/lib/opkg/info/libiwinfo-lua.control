@@ -1,0 +1,13 @@
+Package: libiwinfo-lua
+Version: 2024-01-04-1
+Depends: libc, libiwinfo20210430, liblua5.1.5
+Source: package/nradio/utils/iwinfo
+SourceName: libiwinfo-lua
+License: GPL-2.0
+Section: lang
+SourceDateEpoch: 1773145878
+Maintainer: Jo-Philipp Wich <jo@mein.io>
+Architecture: aarch64_cortex-a53
+Installed-Size: 8734
+Description:  This is the Lua binding for the iwinfo library. It provides access to all enabled
+ backends.

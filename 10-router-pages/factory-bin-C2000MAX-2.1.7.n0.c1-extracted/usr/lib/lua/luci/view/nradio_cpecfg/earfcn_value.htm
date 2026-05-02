@@ -1,0 +1,39 @@
+		<fieldset class="cbi-section hidden-xs" id="cbi-<%=self.config.."-"..section.."-"..self.option%>" data-index="<%=self.index%>" data-depends="<%=pcdata(self:deplist2json(section))%>" style="margin-bottom: 20px;">
+		<div class="cbi-section-node border-bottom">
+			<div class="cbi-value" style="margin-bottom:0px">
+				<label class="cbi-value-title width_auto unset_float" ><%:FreqLockScanTitle%></label>
+				<div class="cbi-value-field right_btn">					
+				</div>
+			</div>
+			<div class="cbi-value">
+				<label class="cbi-value-title width_auto sub_label_color unset_float" ><%:CellularScanHelp%></label>
+				<div class="cbi-value-field right_btn">					
+				</div>
+			</div>
+		</div>
+		
+		<div class="form-box full-width hidden-xs border-bottom">
+			<table class="line text-center no_paddingLeft scanlist<%=self.cpe_section%><%=self.scan_type%>" data-type="<%=self.scan_type%>" data-model="<%=self.cpe_section%>">
+			</table>
+		</div>
+		<script>
+		if (!is_mobile_device()){
+			if(cache_data){
+				if (cache_data[0]&& cache_data[0][0] && cache_data[0][0].MODE == "LTE"){
+					load_earfcn_data(cache_data,"<%=self.cpe_section%>",4,cellular_earfcn);
+					load_earfcn_data([],"<%=self.cpe_section%>",5,cellular_earfcn);
+				}
+				else if (cache_data[0]&& cache_data[0][0] && cache_data[0][0].MODE.match("NR")){
+					load_earfcn_data([],"<%=self.cpe_section%>",4,cellular_earfcn);
+					load_earfcn_data(cache_data,"<%=self.cpe_section%>",5,cellular_earfcn);
+
+				}
+				else{
+					load_earfcn_data([],"<%=self.cpe_section%>",4,cellular_earfcn);
+					load_earfcn_data([],"<%=self.cpe_section%>",5,cellular_earfcn);
+				}
+			}
+		}
+
+		</script>
+		</fieldset>

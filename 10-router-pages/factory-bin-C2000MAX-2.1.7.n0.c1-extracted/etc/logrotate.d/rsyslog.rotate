@@ -1,0 +1,10 @@
+
+/var/log/messages {
+	size 100k
+	nocompress
+	sharedscripts
+	postrotate
+		pidof rsyslogd|xargs kill -HUP >/dev/null 2>&1 || true
+	endscript
+}
+

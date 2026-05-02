@@ -1,0 +1,262 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%+header%>
+<%
+local util = require "luci.util"
+local nr = require "luci.nradio"
+local fs = require "nixio.fs"
+local status = ""
+local local_support = nr.modem_local_upgrade()
+local uci  = require "luci.model.uci"
+local cur = uci.cursor()
+local count_cpe = nr.count_cpe()
+local hide_flag = false
+local cellular_prefix,cellular_default = nr.get_cellular_prefix()
+
+for i = 0, count_cpe - 1 do
+	local iface = (i == 0 and cellular_default or cellular_prefix..i)
+	local iface_odu_mode = cur:get("network",iface, "mode") or ""
+	local iface_disabled = cur:get("network",iface, "disabled") or ""
+	if iface_odu_mode ~= "odu" and iface_disabled ~= "1" then
+		hide_flag = true
+		break
+	end
+end
+
+if fs.access("/tmp/run/modem_upgrade") then
+	status = util.exec("cat /tmp/run/modem_upgrade")
+else
+	status = "unknown"
+end
+
+if not action then
+	if status == "upgrading" or status == "prepare" then
+		action = 2
+	end
+end
+
+if not ftpurl then
+    ftpurl = ""
+end
+
+if not ftpusr then
+    ftpusr = ""
+end
+
+if not ftppwd then
+    ftppwd = ""
+end
+
+if not ftpdir then
+    ftpdir = ""
+end
+
+%>
+<style>
+.note_info{
+	color:red;
+}
+
+</style>
+<%+nradio_adv/cellular_header%>
+<%+nradio_adv/cellular_submenu%>
+<fieldset class="cbi-section">
+	<form name="upgrade" method="post" action="<%=url('nradio/cellular/upgrade/action')%>" enctype="multipart/form-data">
+		<input type="hidden" name="token" value="<%=token%>" />
+<% if local_support then %>
+		<div class="cbi-section-node" id="cbi-modem-upgrade">
+			<div class="cbi-value">
+				<label class="cbi-value-title" for="cbid.modem.upgrade"><%:Upgrade Mode%></label>
+				<div class="cbi-value-field adapt_label_padding1">				
+					<div class="radio" >
+						<label class="special">
+							<input type="radio" name="upgrade_mode" onclick="show_radio_info(this,change_radio)" value="0"><%:Local Upgrade%>
+						</label>
+						<br>
+					</div>
+					<div class="radio " style="margin-top: 10px;">
+						<label class="special">
+							<input type="radio" name="upgrade_mode" onclick="show_radio_info(this,change_radio)" value="1"><%:FTP Upgrade%>
+						</label>
+					</div>
+				</div>
+			</div>	
+		</div>
+		<div class="cbi-section-node" id="local_upgrade_box">
+			<div class="cbi-value cbi-value-last">
+				<label class="cbi-value-title" for="image"><%:Image%></label>
+					<div class="cbi-value-field">
+					<input type="file" name="image" id="image" onchange="check_upload(this)"/>
+					<input type="submit" class="cbi-button cbi-input-apply" value="<%:Upgrade%>" />
+					<div class="note_info"></div>
+				</div>
+			</div>
+		</div>
+<% end %>
+		<div class="ftp_upgrade_box">
+			<div class="cbi-section-node">
+				<% if not nr.modem_ftp_check() then %>
+				<div class="cbi-section-node">
+					<div class="cbi-value cbi-value-last">
+						<label class="cbi-value-title" for="tool_image"><%:Upgrade Tool%>:</label>
+							<div class="cbi-value-field">
+							<input type="file" name="tool_image" id="tool_image" onchange="check_upload(this)" />
+							<input type="submit" class="cbi-button cbi-input-apply" style="display:none;" value="<%:Upgrade%>" />
+							<div class="note_info"></div>
+						</div>
+					</div>
+				</div>
+				<% end %>
+				<div class="cbi-value">
+					<label class="cbi-value-title"><%:FTP Server%>:</label>
+					<div class="cbi-value-field">
+						<input type="text" class="cbi-input-text" name="ftpurl" id="ftpurl" value="<%=ftpurl%>"/>
+					</div>
+				</div>
+				<div class="cbi-value">
+					<label class="cbi-value-title"><%:Username%>:</label>
+					<div class="cbi-value-field">
+						<input type="text" class="cbi-input-text" name="ftpusr" id="ftpusr" value="<%=ftpusr%>"/>
+					</div>
+				</div>
+				<div class="cbi-value">
+					<label class="cbi-value-title"><%:Password%>:</label>
+					<div class="cbi-value-field">
+						<input type="text" class="cbi-input-text" name="ftppwd" id="ftppwd" value="<%=ftppwd%>"/>
+					</div>
+				</div>
+				<div class="cbi-value cbi-value-last">
+					<label class="cbi-value-title"><%:Image Directory%>:</label>
+					<div class="cbi-value-field">
+						<input type="text" class="cbi-input-text" name="ftpdir" id="ftpdir" value="<%=ftpdir%>"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="cbi-section ftp_upgrade_box">
+			<div class="cbi-page-actions">
+				<input type="submit" class="cbi-button cbi-input-apply btn_save_stand_width" value="<%:Upgrade%>" />
+			</div>
+		</div>
+	</form>
+</fieldset>
+<br />
+<script>
+	var statusDiaglog;
+	var timer;
+	var action = "<%=action%>";
+	var upgrade_mode = "<%=upgrade_mode%>";
+	var restart = 0;
+	var file_size_check=-1;
+	function check_upload(obj){
+		var data = {};
+		if (!obj.files){
+			$("input[type=submit]").prop("disabled",true);
+			return;
+		}
+			
+		data['token']='<%=token%>';
+		data['size']=obj.files[0].size;
+		file_size_check=0;
+		(new XHR()).post('<%=controller%>nradio/cellular/upgrade/check_size', data, function(xhr){
+
+			var filestatus = null;
+			var code = -1;
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					data_res = eval('(' + xhr.responseText + ')');
+					filestatus = data_res.result.filestatus;
+				}
+				catch(e) {
+				}
+			}
+
+			console.log(filestatus);
+			if(filestatus=="1"){
+				file_size_check=1;
+				$(obj).parent().children(".note_info").html("");
+				$("input[type=submit]").prop("disabled",false);
+			}
+			else{
+				$(obj).parent().children(".note_info").html("<%:Upload file size exceeds the available space on the device%>");
+				$('#image').val('');
+				$("input[type=submit]").prop("disabled",true);
+			}
+		});
+	}
+
+	function change_radio(obj){
+		var upgrade_val = $(obj).val();
+		if(upgrade_val == "1" ){
+			$(".ftp_upgrade_box").css("display","block");
+			$("#local_upgrade_box").css("display","none");
+			$("input[type=submit]").prop("disabled",false);
+		}
+		else{
+			$(".ftp_upgrade_box").css("display","none");
+			$("#local_upgrade_box").css("display","block");
+			check_upload($("#local_upgrade_box input[type=file]"));
+		}
+	}
+
+	function wait_check_info(){
+		$.getJSON("<%=controller%>nradio/cellular/upgrade/status", function(data){
+			if(data.result.status=="upgrade finish"){
+				statusDiaglog.close();
+				clearInterval(timer);
+				create_info_box({msg: "<%:Upgrade successfully%>",btn_val:"<%:OK%>"});
+			}
+			else if(data.result.status=="upgrade failure") {
+				statusDiaglog.close();
+				clearInterval(timer);
+				create_info_box({msg: "<%:Upgrade failure, please check if upload image is valid.%>",btn_val:"<%:OK%>"});
+			}
+			else if(data.result.status=="not support") {
+				statusDiaglog.close();
+				clearInterval(timer);
+				create_info_box({msg: "<%:Upgrade failure, current modem doesn't support image upgrade.%>",btn_val:"<%:OK%>"});
+			}
+			else if(data.result.status=="empty params") {
+				statusDiaglog.close();
+				clearInterval(timer);
+				create_info_box({msg: "<%:Upgrade failure, all fields must be provided.%>",btn_val:"<%:OK%>"});
+			}
+			else if(data.result.status=="restart failure") {
+				statusDiaglog.close();
+				clearInterval(timer);
+				create_info_box({msg: "<%:Upgrade failure, modem failed to restart.%>",btn_val:"<%:OK%>"});
+			}
+			else if(data.result.status=="flash failure") {
+				statusDiaglog.close();
+				clearInterval(timer);
+				create_info_box({msg: "<%:Upgrade failure, failed to flash modem.%>",btn_val:"<%:OK%>"});
+			}
+			else if(data.result.status=="wait modem" && restart == 0) {
+				statusDiaglog.close();
+				clearInterval(timer);
+				timer=setInterval(wait_check_info, 3000);
+				statusDiaglog = create_dial_box("<%:Upgrade finish, modem is restarting. Please do not turn off the power.%>"+"<%:Page will automatically refresh after restart.%>", 1);
+				restart = 1;
+			}
+		})
+	}
+
+	$(document).ready(function(){
+		<%if not hide_flag then%>
+			$("input").attr("disabled",true);
+		<%end%>
+		<% if local_support then %>
+		if (upgrade_mode.length == 0 )
+			upgrade_mode = 0;
+		$(":radio[name=upgrade_mode][value=" + upgrade_mode + "]").attr("checked","true");
+		change_radio($(":radio[name=upgrade_mode][value=" + upgrade_mode + "]"));
+		<% end%>
+		if (action == 2) {
+			timer=setInterval(wait_check_info, 3000);
+			statusDiaglog = create_dial_box("<%:Upgrading, please do not turn off the power.%>"+"<%:Page will automatically refresh after upgrade.%>", 1);
+		}
+	});
+</script>
+<%+footer%>

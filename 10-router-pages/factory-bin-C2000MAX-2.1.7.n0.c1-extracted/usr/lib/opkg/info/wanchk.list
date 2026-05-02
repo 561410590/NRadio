@@ -1,0 +1,5 @@
+/usr/bin/wanchk.sh
+/etc/init.d/wanchk
+/etc/fixup.d/90-wanchk
+/etc/config/wanchk
+/usr/libexec/rpcd/wanchk

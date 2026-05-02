@@ -1,0 +1,10 @@
+Package: pkg-ttl
+Version: 1.0-20220721
+Depends: libc, luci-i18n-nradio-ttl-zh-cn, luci-i18n-nradio-ttl-en, luci-app-nradio-ttl
+Source: package/nradio/collections/pkg-ttl
+SourceName: pkg-ttl
+Section: nradiowifi
+SourceDateEpoch: 1658455020
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for ttl

@@ -1,0 +1,10 @@
+Package: switch-mt7987
+Version: 1
+Depends: libc, libnl-tiny1
+Source: package/nradio/apps/switch-mt7987
+SourceName: switch-mt7987
+Section: MTK Properties
+SourceDateEpoch: 1755595749
+Architecture: aarch64_cortex-a53
+Installed-Size: 97647
+Description:  An program to config switch.

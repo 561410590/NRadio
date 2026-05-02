@@ -1,0 +1,645 @@
+<%#
+Copyright 2017-2018 NRadio
+-%>
+<%
+local fs = require "nixio.fs"
+local util = require "luci.util"
+local nr = require "luci.nradio"
+local disp = require "luci.dispatcher"
+local request  = disp.context.requestpath
+local model_str,cpe_section,model_index = nr.get_cellular_last(request[5])
+local data = luci.controller.nradio_adv.cpestatus.action_apn_list(cpe_section)
+local apndata=util.serialize_json({result=data},nil)
+local uci  = require "luci.model.uci".cursor()	
+local sims_alias = nr.get_sim_alias()
+local support_5glan = false
+if fs.access("/usr/lib/lua/luci/controller/nradio_adv/5glan.lua") then
+	support_5glan = true
+end
+	
+local sim_section="sim"..model_str
+
+local max = tonumber(uci:get("cpesel", sim_section, "max") or 1)
+local sim_id = tonumber(uci:get("cpesel", sim_section, "cur") or 1)
+
+apn_cfg = {}
+apn_cfg2 = {}
+for i = 1, max do
+	local simcfg_section=cpe_section.."sim"..i
+	local sim_apn_cfg = uci:get("cpecfg", simcfg_section, "apn_cfg") or ""
+	local sim_apn_cfg2 = uci:get("cpecfg", simcfg_section, "apn_cfg2") or ""
+	apn_cfg[#apn_cfg+1] = sim_apn_cfg
+	apn_cfg2[#apn_cfg2+1] = sim_apn_cfg2
+end
+
+
+if sims_alias then
+	sims_alias=sims_alias[model_index]
+end
+
+local apn_template = nr.get_apn_profile(cpe_section)
+%>
+<%+header%>
+<style>
+table tr td input{
+min-width:0;
+}
+@media (min-width: 10px) and (max-width: 767px){
+.bootstrap-dialog .modal-dialog .modal-content .modal-body .bootstrap-dialog-message .cbi-value{
+	text-align: left;
+}
+}
+</style>
+<%+nradio_adv/cellular_header%>
+<%+nradio_adv/cellular_submenu%>
+<div class="cbi-map">
+	<form method="post" name="cbi" >
+		<fieldset class="cbi-section">
+		<div class="cbi-section-node">
+			<div class="cbi-value" data-index="9">
+				<label class="cbi-value-title width_auto unset_float" ></label>
+				<div class="cbi-value-field right_btn">
+					<input class="cbi-button" style="float:right" onclick="create_rule()" type="button" value="<%:Add%>">
+				</div>
+			</div>
+		</div>
+		</fieldset>
+
+		<div class="form-box full-width hidden-xs updown-border">
+			<table class="line text-center no_paddingLeft">
+				<thead>
+					<tr>
+						<th style="width: 15%"><%:APNProfile%></th>
+						<th style="width: 10%"><%:Status%></th>
+						<th style="width: 15%"><%:APNAuth%></th>
+						<th style="width: 15%"><%:APN%></th>
+						<th style="width: 10%"><%:Username%></th>
+						<th style="width: 10%"><%:Password%></th>
+						<th style="width: 10%"><%:APNIP%></th>
+						<th style="width: 15%"><%:Operation%></th>
+					</tr>
+				</thead>
+				<tbody class="apn_list">
+				</tbody>
+			</table>
+		</div>
+		<div class="apn_list" data-apn_item="mobile"></div>
+		<fieldset class="cbi-section" style="margin-top: 20px;">
+			<div class="cbi-section-node">
+				<%+nradio_cpecfg/cellular_simmenu%>
+				<div  class="cbi-value sim_box sim<%=sim_id%>_box">
+					<label class="cbi-value-title">
+						<i class="far fa-nradio-note fa-fw icon_disable visible-xs-block stand_label_icon" onclick="show_icon_help(this);"></i><%:Custom APN%>
+					</label>
+					<div class="cbi-value-field">
+						<select class="cbi-input-select modify_class" data-update="change" name="apn_cfg<%=cpe_section%><%=sim_id%>"  id="apn_cfg<%=cpe_section%><%=sim_id%>" data-name="apn_cfg"  data-modelname="<%=cpe_section%>" data-simid="<%=sim_id%>">
+							<option value="" ><%:-- Please Select ---%></option>
+							<%for _,item in pairs(apn_template) do%>
+								<option value="<%=item.name%>" <%if apn_cfg[sim_id]==item.name then  print("selected=\"selected\"") end%>><%=item.name%></option>
+							<%end%>
+						</select>
+						<div class="cbi-value-description description_help hidden-xs">
+							<%:*Manually configure the Access Point Name to establish network connectivity with specific carriers or in private network environments.%>
+						</div>
+					</div>
+				</div>
+				<%if nr.support_dualdnn() then%>
+				<div class="cbi-value sim_box sim<%=sim_id%>_box">
+					<label class="cbi-value-title">
+						<i class="far fa-nradio-note fa-fw icon_disable visible-xs-block stand_label_icon" onclick="show_icon_help(this);"></i><%:Custom DNN%>
+					</label>
+					<div class="cbi-value-field">
+						<select class="cbi-input-select modify_class" data-update="change" name="apn_cfg2<%=cpe_section%><%=sim_id%>"  id="apn_cfg2<%=cpe_section%><%=sim_id%>" data-name="apn_cfg2"  data-modelname="<%=cpe_section%>" data-simid="<%=sim_id%>">
+							<option value=""><%:-- Please Select ---%></option>
+							<%for _,item in pairs(apn_template) do%>
+								<option value="<%=item.name%>" <%if apn_cfg2[sim_id]==item.name then print("selected=\"selected\"") end%>><%=item.name%></option>
+							<%end%>
+						</select>
+						<div class="cbi-value-description description_help hidden-xs">
+							<%:*Manually configure the Data Network Name to access specific 5G network slices or carrier-specific data networks.%>
+						</div>
+					</div>
+				</div>
+				<%end%>
+			</div>
+
+		</fieldset>
+		<fieldset class="cbi-section">
+			<div class="cbi-section-node">
+				<div class="cbi-value" data-index="9" >
+					<div class="cbi-value-field cbi-page-actions left_btn click_pointer">
+						<input type="button" class="cbi-button cbi-button-apply" id="btn-save"  value="<%:Save & Apply%>" />
+					</div>
+				</div>
+			</div>
+		</fieldset>
+	</form>
+	<iframe id='background_form' name='background_form' style='display: none'>
+	</iframe>
+</div>
+<style>
+	table>tbody>tr>td:nth-of-type(2), table>thead>tr>th:nth-of-type(2), table>tbody>tr>th:nth-of-type(2){
+		text-align: left;
+	}
+
+    .bootstrap-dialog .bootstrap-dialog-title{
+        text-align: center;
+        width: 100%;
+    }
+
+	@media (min-width: 10px) and (max-width: 768px) {
+		.bootstrap-dialog .modal-dialog {
+			margin:100px auto;
+		}
+		.bootstrap-dialog-message .main{
+			margin-top: 0px;
+		}
+
+		.bootstrap-dialog .modal-dialog{
+            width:80%;
+            margin: 150px 10%;
+		}
+		.input-group{
+			float: left;
+		}
+	}
+</style>
+<script language="javascript">
+	var loading_htm = '<div  id="scan_loading"><img alt="loading" src="<%=media%>/images/loading.gif" ></div>';
+	var APNTableRow = ''+
+	'<tr class="apn_contact_box{{index}}">'+
+	'<td class="apn_contact_box_note" title={{name}}>'+
+	'{{name_cut}}'+
+	'</td>'+
+	'<td >'+
+	'{{enable}}'+
+	'</td>'+
+	'<td >'+
+	'{{auth}}'+
+	'</td>'+
+	'<td  s title={{apn}}>'+
+	'{{apn_cut}}'+
+	'</td>'+
+	'<td   title={{username}}>'+
+	'{{username_cut}}'+
+	'</td>'+
+	'<td  title={{password}}>'+
+	'{{password_cut}}'+
+	'</td>'+
+	'<td  >'+
+	'{{pdptype}}'+
+	'</td>'+
+	'<td >'+
+	'{{opt}}'+
+	'</td>'+
+	'</tr>';
+	var APNTableMobileRow = ''+
+'<div class="panel panel-info visible-xs-block hide apn_contact_box{{index}}">'+
+	'<div class="panel-heading">'+
+	'	<div class="row">'+
+	'		<div class="col-sm-6 col-xs-6 text-left apn_contact_box_contact_mobile" >'+
+	'			{{name}}'+
+	'		</div>'+
+	'		<div class="col-sm-6 col-xs-6 text-right">'+
+	'			{{opt}}'+
+	'		</div>'+
+	'	</div>'+
+	'</div>'+
+	'<div class="panel-body info-box">'+
+	'	<div class="row">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-3 col-xs-3 text-left ">'+
+	'					{{enable_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-9 col-xs-9 text-right">'+
+	'					{{enable}}' +
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-3 col-xs-3 text-left ">'+
+	'					{{auth_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-9 col-xs-9 text-right">'+
+	'					{{auth}}' +
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-3 col-xs-3 text-left ">'+
+	'					{{apn_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-9 col-xs-9 text-right"> '+
+	'					{{apn}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-3 col-xs-3 text-left ">'+
+	'					{{username_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-9 col-xs-9 text-right"> '+
+	'					{{username}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-3 col-xs-3 text-left ">'+
+	'					{{password_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-9 col-xs-9 text-right"> '+
+	'					{{password}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-3 col-xs-3 text-left ">'+
+	'					{{iptype_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-9 col-xs-9 text-right"> '+
+	'					{{pdptype}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'</div>'+
+	'</div>';
+function html_format(str){
+	var temp = "";
+	if(str.length == 0) return "";
+	temp = str.replace(/&amp;/g,"&");
+	temp = temp.replace(/&#60;/g,"<");
+	temp = temp.replace(/&#62;/g,">");
+	temp = temp.replace(/&nbsp;/g," ");
+	temp = temp.replace(/&#39;/g,"\'");
+	temp = temp.replace(/&quot;/g,"\"");
+	return temp;
+
+}
+function show_apn_data(data){
+	var htm="";
+	var mobile_htm="";
+	var msg = {apn_label:'<%:APN%>',enable_label:'<%:Status%>',auth_label:'<%:APNAuth%>',username_label:'<%:Username%>',password_label:'<%:Password%>',iptype_label:'<%:APNIP%>'};
+	$.each(data.result, function(index, db){
+		var optht = '<a class="normol_color only_color click_pointer" onclick="show_apn_detail(\''+db.name+'\',\''+db.auth+'\',\''+db.apn+'\',\''+db.username+'\',\''+db.password+'\',\''+db.pdptype+'\',\''+db.custom_apn+'\')"><%:APNEdit%> </a><a class="error only_color click_pointer" onclick="confirm_del(\''+db.name+'\')"><%:APNDel%></a>';
+		var auth_info = "<%:None%>";
+		var enable_info = "<%:Disable%>";
+		var pdptype_info = "<%:IPv4%>";
+		if (db.auth == "0")
+			auth_info= "<%:None%>";
+		else if (db.auth == "1")
+			auth_info= "<%:PAP%>";
+		else if (db.auth == "2")
+			auth_info= "<%:CHAP%>";
+		else if (db.auth == "3")
+			auth_info= "<%:PAP or CHAP%>";
+
+
+		if (db.pdptype == "ip")
+			pdptype_info= "<%:IPv4%>";
+		else if (db.pdptype == "ipv6")
+			pdptype_info = "<%:IPv6%>";
+		else if (db.pdptype == "ipv4v6")
+			pdptype_info= "<%:IPv4&IPv6%>";
+		<% if support_5glan then%>
+		else if (db.pdptype == "ethernet")
+			pdptype_info= "<%:Ethernet%>";
+		<%end%>
+		if(db.custom_apn == "1")
+			enable_info = "<%:Enable%>";
+		htm+=APNTableRow.compose({
+			name:db.name,
+			name_cut:cut_buf(db.name,15),
+			enable:enable_info,
+			auth: auth_info,
+			apn: db.apn,
+			apn_cut:cut_buf(db.apn,15),
+			username:db.username,
+			username_cut:cut_buf(db.username,10),
+			password:db.password,
+			password_cut:cut_buf(db.password,10),
+			pdptype:pdptype_info,
+			opt:optht,
+			index:index
+		});
+
+		mobile_htm+=APNTableMobileRow.compose({
+			name:db.name,
+			enable:enable_info,
+			auth: auth_info,
+			apn: db.apn,
+			username:db.username,
+			password:db.password,
+			pdptype:pdptype_info,
+			opt:optht,
+			enable_label:msg.enable_label,
+			auth_label:msg.auth_label,
+			apn_label:msg.apn_label,
+			username_label:msg.username_label,
+			password_label:msg.password_label,
+			iptype_label:msg.iptype_label,
+			index:index
+		});
+	});
+
+	$(".apn_list").each(function(){
+		var type_s = $(this).data("apn_item");
+		if(type_s == "mobile"){
+			$(this).empty().append(mobile_htm);
+		}
+		else{
+			$(this).empty().append(htm);
+		}
+	});
+}
+
+function create_rule(){
+	show_apn_detail();
+}
+
+function show_apn_detail(org_name,org_auth,org_apn,org_username,org_password,org_pdptype,custom_apn){
+	var name = "";
+	var auth = "";
+	var apn = "";
+	var username = "";
+	var password = "";
+	var pdptype = "";
+	var name_prop = ""
+	var enable_display = "style=\"display:none\""
+	if (org_name){
+		name = org_name;
+		name_prop = "readonly"
+		enable_display="";
+	}
+
+	if (org_auth)
+		auth = org_auth;
+	if (org_apn)
+		apn = org_apn;
+	if (org_username)
+		username = org_username;
+	if (org_password)
+		password = org_password;
+	if (org_pdptype)
+		pdptype = org_pdptype;
+
+	var htm='<div class="">';
+	htm+='<div class="main-content main-content-sub" >';
+	htm+='<div class="cbi-map">';
+	htm+='<form method="post" name="apn" action="<%=controller%>nradio/cellular/apn/save" target="background_form">';
+	htm+='  <input type="hidden" id="modelname" name="modelname" value="<%=cpe_section%>">';
+	htm+='	<fieldset class="cbi-section">';
+	htm+='		<div class="cbi-section-node">';
+	htm+='		<div class="cbi-value" >';
+	htm+='			<label class="cbi-value-title" for="name"><%:APNProfile%></label>';
+	htm+='			<div class="cbi-value-field">';
+	htm+='				<input type="text" id="name" name="name" class="cbi-input-text" '+name_prop+' value="'+name+'" data-type="maxlength(32)">';
+	htm+='			</div>';
+	htm+='		</div>';
+
+	htm+='		<div class="cbi-value" '+enable_display+'>';
+	htm+='			<label class="cbi-value-title" ><%:Status%></label>';
+	htm+='			<div class="cbi-value-field">';
+	htm+='				<div class="checkbox" style="width: auto;">';
+	htm+='					<input class="cbi-input-checkbox" data-update="click change" id="custom_apn" name="custom_apn" type="checkbox" value="1" />';
+	htm+='					<label for="custom_apn" class="switch"></label>';
+	htm+='				</div>';
+	htm+='			</div>';
+	htm+='		</div>';
+
+	htm+='		<div class="cbi-value" >';
+	htm+='			<label class="cbi-value-title" for="auth"><%:APNAuth%></label>';
+	htm+='			<div class="cbi-value-field">';
+	htm+='				<select class="cbi-input-select valid" id="auth" name="auth" >';
+	htm+='					<option value="0" selected="selected"><%:None%></option>';
+	htm+='					<option value="1" ><%:PAP%></option>';
+	htm+='					<option value="2" ><%:CHAP%></option>';
+	htm+='					<option value="3" ><%:PAP or CHAP%></option>';
+	htm+='				</select>';
+	htm+='			</div>';
+	htm+='		</div>';
+	htm+='		<div class="cbi-value" >';
+	htm+='			<label class="cbi-value-title" for="apn"><%:APN%></label>';
+	htm+='			<div class="cbi-value-field">';
+	htm+='				<input type="text" id="apn"  name="apn" class="cbi-input-text" value="'+apn+'" data-type="maxlength(32)">';
+	htm+='			</div>';
+	htm+='		</div>';
+	htm+='		<div class="cbi-value">';
+	htm+='			<label class="cbi-value-title" for="username"><%:Username%></label>';
+	htm+='			<div class="cbi-value-field">';
+	htm+='				<input type="text" id="username" name="username" class="cbi-input-text" value="'+username+'" data-type="maxlength(32)">';
+	htm+='			</div>';
+	htm+='		</div>';
+	htm+='		<div class="cbi-value">';
+	htm+='			<label class="cbi-value-title" for="password"><%:Password%></label>';
+	htm+='			<div class="cbi-value-field">';
+	htm+='				<div class="input-group">';
+	htm+='				<input data-update="change" id="password" name="password" type="password" class="cbi-input-password" value="'+password+'" data-type="maxlength(32)">';
+	htm+='				<span class="input-group-addon input-group-addon-pwd-toggle" onclick="var e = document.getElementById(\'password\');if(e.type!=\'password\'){$(this).html(\'<i class=\\\'far fa-nradio-eye-close\\\'></i>\')}else{$(this).html(\'<i class=\\\'far fa-nradio-eye-open\\\'></i>\')}e.type = (e.type==\'password\') ? \'text\' : \'password\';"><i class="far fa-nradio-eye-close"></i></span>';
+	htm+='				</div>';
+	htm+='			</div>';
+	htm+='		</div>';
+	htm+='		<div class="cbi-value" >';
+	htm+='			<label class="cbi-value-title" for="pdptype"><%:APNIP%></label>';
+	htm+='			<div class="cbi-value-field">';
+	htm+='				<select class="cbi-input-select valid" id="pdptype" name="pdptype" >';
+	htm+='					<option value="ip"><%:IPv4%></option>';
+	htm+='					<option value="ipv6"><%:IPv6%></option>';
+	htm+='					<option value="ipv4v6" selected="selected"><%:IPv4&IPv6%></option>';
+	<% if support_5glan then%>
+	htm+='					<option value="ethernet"><%:Ethernet%></option>';
+	<%end%>
+	htm+='				</select>';
+	htm+='			</div>';
+	htm+='		</div>';
+	htm+='		</div>';
+	htm+='	</fieldset>';
+	htm+='</form>';
+	htm+='</div>';
+	htm+='</div>';
+	htm+='</div>';
+
+	info_box_obj = BootstrapDialog.show({
+		type: BootstrapDialog.TYPE_DEFAULT,
+		title: '<%:APNSetting%>',
+		message: htm,
+		closeByBackdrop: false,
+		cssClass: 'list-dialog dialog_box',
+		onhide :function() {
+		},
+		onshown:function(){
+			if(auth.length)
+				$("#auth").val(auth);
+			if(pdptype.length)
+				$("#pdptype").val(pdptype);
+			if(custom_apn == "1"){
+				$("#custom_apn").prop("checked",true);
+			}
+			else{
+				$("#custom_apn").prop("checked",false);
+			}
+		},
+		buttons: [{
+			label: "<%:Save%>",
+			cssClass: 'btn-nradio-apply btn_save_stand_width',
+			action: function(dialog) {
+				var name_data = $("#name").val();
+				if (!name_data || !name_data.length){
+					BootstrapDialog.show({
+						type: BootstrapDialog.TYPE_DEFAULT,
+						title: '',
+						closable: true,
+						message: '<p class="cbi-value-title width_auto text-center adapt_label_padding">'+"<%:APNNameNote%>"+'</p>'
+					});
+					return
+				}
+				if(!letter_digit_word(name_data))
+					return;
+				if (!org_name){
+					$("#custom_apn").prop("checked",true);
+				}
+				$("form[name='apn']").submit();
+				window.setTimeout(function(){location.reload();info_box_obj.close()},1000);
+			}
+		}]
+	});
+}
+
+function letter_digit_word(value) {
+	if (value == '')
+		return true;
+
+	var pattern=/^([a-zA-Z0-9_]*)$/;
+	var flag=pattern.test(value);
+	if(!flag)
+	{
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			closable: true,
+			message: '<p class="cbi-value-title width_auto text-center adapt_label_padding">'+"<%:APNNameError%>"+'</p>'
+		});
+		return false;
+	}
+	return true;
+}
+
+function confirm_del(id){
+	var msg = {};
+	var dialogDel = null;
+	msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:CellularDelConfirmNote%>';
+	msg.confirm = "<%:Confirm%>";
+	msg.confirm_keep = true;
+	msg.cancel = "<%:Cancel%>";
+	msg.onhide = function(){},
+	msg.callback = function(){
+		dialogDel.setMessage(loading_htm);
+		$(".modal-footer").css("display","none");
+		var data = {}
+		data['name'] = id;
+		data['modelname'] = "<%=cpe_section%>";
+		(new XHR()).post('<%=controller%>nradio/cellular/apn/del', data, function(xhr){
+			var data_res = null;
+			var code = -1;
+
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					data_res = eval('(' + xhr.responseText + ')');
+					code = data_res.result.code;
+					location.reload();
+					dialogDel.close();
+				}
+				catch(e) {
+				}
+			}
+		});
+	}
+	dialogDel = confirm_box(msg);
+}
+$('#btn-save').click(function(){
+	var data={};
+	var data_item = {};
+
+	data['token']='<%=token%>';
+	$(".modify_class").each(function(){
+		var objname = $(this).data("name");
+		var modelname = $(this).data("modelname");
+		var simid = $(this).data("simid");
+		var objvalue = $(this).val();
+		var key=modelname+"_"+simid+"_"+objname;
+		data[key] = objvalue;
+	});
+	(new XHR()).post('<%=controller%>nradio/cellular/apn/save_sim', data, function(xhr){
+		var data_res = null;
+		var code = -1;
+		if (xhr.getResponseHeader("Content-Type") == "application/json") {
+			try {
+				data_res = eval('(' + xhr.responseText + ')');
+				code = data_res.result.code;
+			}
+			catch(e) {
+				data_res = null;
+			}
+		}
+
+		location.reload();
+	});
+});
+
+function refresh_data(){
+	var data = {"model":"<%=cpe_section%>"};
+	(new XHR()).post('<%=controller%>nradio/cellular/apn/list', data, function(xhr){
+		if (xhr.getResponseHeader("Content-Type") == "application/json") {
+			try {
+				var data_res = eval('(' + xhr.responseText + ')');
+
+				if(data_res && data_res.result){
+					show_apn_data(data_res);
+				}
+			}
+			catch(e) {
+			}
+		}
+	});
+}
+function cut_buf(buf,length)
+{
+	var inner_buf = buf.toString();
+	if (inner_buf.length > length)
+	{
+		return (inner_buf.substring(0,length) + "...");
+	}
+	else
+	{
+		return inner_buf;
+	}
+}
+function change_sim(obj){
+	var val = $(obj).val();
+	$(".sim_box").addClass("hide");
+	$(".sim"+val+"_box").removeClass("hide");
+}
+$(document).ready(function(){
+	var data=<%=apndata%>;
+	if(data && data.result)
+		show_apn_data(data);
+	nradio_backend_flash();
+});
+</script>
+<%+footer%>

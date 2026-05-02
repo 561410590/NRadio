@@ -1,0 +1,621 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%+header%>
+<%
+local utl = require "luci.util"
+local lng  = require "luci.i18n"
+local capi = require "cloudd.api"
+local fs = require "nixio.fs"
+local nr = require "luci.nradio"
+
+local version = capi.cloudd_get_local_sversion() or ""
+local info = utl.ubus("cloudd", "info") or {code=1, ver=version}
+
+local btntxt = lng.translate("Detect new version")
+local fwtxt = nil
+local action = 0
+local uci = require "luci.model.uci".cursor()
+local rst_disabled = uci:get("rst", "config", "rst_disabled") or "0"
+local toggle_timer = 0
+local platform = nr.get_platform()
+local display = uci:get("luci", "main", "display_backup") or "1"
+
+if version == info.ver then
+	if info.state == 1 then
+		fwtxt = lng.translate("Checking latest firmware from server, please wait...")
+		toggle_timer = 1
+	else
+		fwtxt = version..lng.translate("Device's firmware is up to date.")
+	end
+else
+	if info.state == 0 then
+		if info.code == 0 then
+			btntxt = lng.translate("Download")
+			fwtxt = lng.translate("Found latest firmware")..(info.ver and info.ver or "")
+			action = 1
+		end
+	elseif info.state == 1 then
+		btntxt = lng.translate("Detect new version")
+		fwtxt = lng.translate("Checking latest firmware from server, please wait...")
+		toggle_timer = 1
+	elseif info.state == 2 then
+		btntxt = lng.translate("Upgrade")
+		fwtxt = lng.translate("Upgrading, please wait...")
+		toggle_timer = 1
+		action = 2
+	elseif info.state == 3 then
+		btntxt = lng.translate("Download")
+		fwtxt = lng.translate("Downloading latest firmware from server, please wait...")
+		toggle_timer = 1
+		action = 1
+	elseif info.state == 4 then
+		btntxt = lng.translate("Upgrade")
+		fwtxt = lng.translate("Firmware is ready to upgrade.")
+		action = 2
+	end
+end
+
+%>
+
+<style>
+	.dialog-message {
+		text-align: left;
+		padding-left: 20px;
+		padding-right: 20px;
+		font-size: 14px;
+	}
+</style>
+
+<h2 name="content"><%:Backup / Flash Firmware%></h2>
+
+<fieldset class="cbi-section">
+	<legend><%:Local firmware upgrade%></legend>
+	<form name="upgrade" method="post" action="<%=url('admin/system/reset/upgrade')%>" enctype="multipart/form-data">
+		<input type="hidden" name="token" value="<%=token%>" />
+		<div class="cbi-section-node">
+			<% if rst_disabled == "1" or (nr.get_platform() == "quectel" and nr.is_openwrt()) then%>
+			<div class="cbi-value hide">
+			<%else%>
+			<div class="cbi-value">
+			<%end%>
+				<label class="cbi-value-title" for="keep"><%:Keep settings%>:</label>
+				<div class="cbi-value-field">
+					<div class="checkbox">
+						<input type="checkbox" name="keep" id="keep" <% if not (dip ~= nil and dip ~= "") then %>checked<% end %> />
+					</div>
+				</div>
+			</div>
+			<div class="cbi-value cbi-value-last">
+				<label class="cbi-value-title" for="image"><%:Image%>:</label>
+				<div class="cbi-value-field">
+					<input type="file" name="image" id="image" style="display:none" />
+					<input type="hidden" name="import_type" id="import_type" value="upgrade" />
+					<input type="submit" class="cbi-button cbi-input-apply upgrade_common_width" value="<%:Upgrade%>" />
+				</div>
+			</div>
+		</div>
+	</form>
+</fieldset>
+<br />
+<% if nr.support_multi_system() then %>
+<fieldset class="cbi-section">
+	<legend><%:Flash second system%></legend>
+	<form name="upgrade_3rd_party" method="post" action="<%=url('admin/system/reset/upgrade_3rd_party')%>" enctype="multipart/form-data">
+		<input type="hidden" name="token" value="<%=token%>" />
+		<div class="cbi-section-node">
+			<div class="cbi-value cbi-value-last">
+				<label class="cbi-value-title" for="image"><%:Image%>:</label>
+				<div class="cbi-value-field">
+					<input type="file" name="image_3rd_party" style="display:none" id="image_3rd_party" />
+					<input type="hidden" name="import_type_3rd_party" id="import_type_3rd_party" value="upgrade" />
+					<input type="submit" class="cbi-button upgrade_common_width cbi-input-apply" value="<%:Flash%>" />
+					<input type="button" class="cbi-button upgrade_common_width cbi-input-apply upgrade_sys_switch" id="btn-switch" value="<%:Switch system%>" />
+				</div>
+			</div>
+		</div>
+	</form>
+</fieldset>
+<br />
+<% end %>
+<% if platform ~= "quectel-lte" then %>
+<fieldset class="cbi-section">
+	<legend><%:Online firmware upgrade%></legend>
+	<form name="rupgrade" method="post" action="<%=url('admin/system/reset/rupgrade')%>" enctype="multipart/form-data">
+		<div class="cbi-section-node">
+			<div class="cbi-value">
+				<label class="cbi-value-title"></label>
+				<div class="cbi-value-field">
+					<input type="button" class="cbi-button cbi-button-apply upgrade_common_width" id="btn-action" value="<%=btntxt%>" />
+				</div>
+				<div class="cbi-value">
+				<label class="cbi-value-title"></label>
+					<% if remote_image_invalid then %>
+					<div class="cbi-section-error"><%:The uploaded image file does not contain a supported format. Make sure that you choose the generic image format for your platform. %></div>
+					<% else %>
+					<div class="cbi-value-field">
+					<span id="fwtxt"><%=fwtxt%></span>
+					</div>
+					<% end %>
+				</div>
+			</div>
+		</div>
+	</form>
+</fieldset>
+<br />
+<% end %>
+<% if display == "1" then%>
+<fieldset class="cbi-section">
+	<legend><%:Backup / Restore%></legend>
+	<div class="cbi-section-node">
+		<form class="inline" method="post" action="<%=url('admin/system/reset/restore')%>" enctype="multipart/form-data">
+			<div class="cbi-value">
+				<label class="cbi-value-title" for="archive"><%:Restore backup%>:</label>
+				<div class="cbi-value-field">
+					<input type="hidden" name="token" value="<%=token%>" />
+					<input type="file" name="archive" id="archive" style="display:none" />
+					<input type="hidden" name="import_type" id="import_type" value="config" />
+					<input type="submit" class="cbi-button cbi-input-apply upgrade_common_width" name="restore" value="<%:Upload%>" />
+				</div>
+			</div>
+			<br />
+			<div class="cbi-value">
+				<label class="cbi-value-title"></label>
+				<div class="cbi-value-field">
+				<input type="button" class="cbi-button upgrade_common_width" id="btn-backup" value="<%:Download backup%>" />
+				<% if rst_disabled ~= "1" then%>
+				<input type="button" class="cbi-button upgrade_common_width" id="btn-reset" value="<%:Reset device%>" />
+				<%end%>
+				</div>
+			</div>
+		</form>
+	</div>
+</fieldset>
+<% end %>
+<script>
+	var auto = "<%=auto%>";
+	var dip = "<%=dip%>";
+	var base = <%=base or 1%>;
+	var action=<%=action%>;
+	var timer;
+<% if platform == "tdtech" or platform == "quectel-lte" then %>
+	var firmware_upload_done_size=0;
+	var firmware_total_size = 0;
+	var firmware_upload_ongoing = 0;
+	var firmware_upload_size=0;
+	var firmware_send_offset = 0;
+	var firmware_send_size = 0;
+	var firmware_segment_size = 1*1024*1024;
+	var file_data = null;
+	var file_upload_data = null;
+	var upload_process_dialog = null;
+	var upload_process_timer;
+	var upload_done = false;
+<% end %>
+
+	if (dip == ""){
+		dip = location.host;
+	}
+
+	function wait_check_info(){
+		$.getJSON("<%=controller%>admin/system/reset/rinfo", function(data){
+			if(data.result.state==0||data.result.state==4||data.result.state>250){
+				$("#btn-action").prop("disabled", false);
+				window.clearTimeout(timer);
+				if(data.result.state==0){
+					if(data.result.code==0 && data.result.ver!="<%=version%>"){
+						action=1;
+						$("#btn-action").val("<%:Download%>");
+						$("#fwtxt").text("<%:Found latest firmware%>"+(data.result.ver?data.result.ver:""));
+					}
+					else if(data.result.code==1){
+						action=0;
+						$("#btn-action").val("<%:Detect new version%>");
+						$("#fwtxt").text("<%:The current version is the latest.%>");
+					}
+					else{
+						action=0;
+						$("#btn-action").val("<%:Detect new version%>");
+						$("#fwtxt").text("<%:Failed to detect the new version. Please try again.%>");
+					}
+				}
+				else if(data.result.state==4){
+					action=2;
+					$("#btn-action").val("<%:Upgrade%>");
+					$("#fwtxt").text("<%:Firmware is ready to upgrade.%>");
+				}
+				else if(data.result.state>250){
+					action=0;
+					$("#btn-action").val("<%:Detect new version%>");
+					$("#fwtxt").text("<%:Online firmware upgrade error, please detect again.%>");
+				}
+			}
+		})
+	}
+<% if platform == "tdtech" or platform == "quectel-lte" then %>
+	function is_browser(){
+		var Sys={};
+		var ua=navigator.userAgent.toLowerCase();
+		var s;
+		(s=ua.match(/msie ([\d.]+)/))?Sys.ie=s[1]:
+		(s=ua.match(/firefox\/([\d.]+)/))?Sys.firefox=s[1]:
+		(s=ua.match(/chrome\/([\d.]+)/))?Sys.chrome=s[1]:
+		(s=ua.match(/opera.([\d.]+)/))?Sys.opera=s[1]:
+		(s=ua.match(/version\/([\d.]+).*safari/))?Sys.safari=s[1]:0;
+		if(Sys.ie){
+			if(Sys.ie=='9.0'){
+				return 'IE9';
+			}else if(Sys.ie=='8.0'){
+				return 'IE8';
+			}else if(Sys.ie=='7.0'){
+				return 'IE8';
+			}
+			else{
+				return 'IE';
+			}
+		}
+		if(Sys.firefox){
+			return 'Firefox';
+		}
+		if(Sys.chrome){
+			return 'Chrome';
+		}
+		if(Sys.opera){
+			return 'Opera';
+		}
+		if(Sys.safari){
+			return 'Safari';
+		}
+		return 'IE';
+	};
+
+	function nradio_update_process_show() {
+		var msg='<div class="container">'+
+			'<div class="progress">'+
+			'<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div>'+
+			<% if platform == "quectel-lte" then %>
+			'</div><div><p><%:Upgrading, please do not turn off the power%></p>'+
+			<% else %>
+			'</div><div><p><%:Uploading, please do not turn off the power%></p>'+
+			<% end %>
+			'<p class="hint"><%:Page will automatically refresh after reboot%><p></div>'+
+			'</div>';
+		return BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: msg,
+			closable: false,
+			onshown: function(dialogItself){
+				upload_process_timer = setInterval(function(){
+					var done = Math.round(firmware_upload_done_size * 100 / file_data.size);
+					$('.progress-bar').attr('aria-valuenow', done).width(done+'%').html(done+'%');
+				}, 1000);
+			}
+		});
+	}
+
+	function ota_upload_reset() {
+		firmware_upload_done_size=0;
+		firmware_total_size = 0;
+		firmware_upload_ongoing = 0;
+		firmware_upload_size=0;
+		firmware_send_offset = 0;
+		firmware_send_size = 0;
+		firmware_segment_size = 1*1024*1024;
+		file_data = null;
+		file_upload_data = null;
+		upload_done = false;
+
+		if (upload_process_dialog)
+		{
+			upload_process_dialog.close();
+			upload_process_dialog = null;
+			clearInterval(upload_process_timer);
+		}
+	}
+
+	function file_slice_read(file_data) {
+		if (file_data) {
+			firmware_total_size = file_data.size;
+			firmware_send_offset = firmware_send_size;
+			firmware_send_size += firmware_segment_size;
+			if (firmware_send_size > file_data.size) {
+				firmware_send_size = file_data.size;
+			}
+			var reader = new FileReader();
+			var blob;
+			if (file_data.webkitSlice) {
+				blob = file_data.webkitSlice(firmware_send_offset, firmware_send_size);
+			}
+			else if (file_data.mozSlice) {
+				blob = file_data.mozSlice(firmware_send_offset, firmware_send_size);
+			}
+			else {
+				blob = file_data.slice(firmware_send_offset, firmware_send_size);
+			}
+			reader.onabort = function(p)
+			{
+				if (p.loaded)
+				{
+					ota_upload_reset();
+				}
+			}
+			reader.onerror = function(p)
+			{
+				if (p.loaded)
+				{
+					ota_upload_reset();
+				}
+			}
+			reader.onloadend = function(p)
+			{
+				firmware_upload_size = firmware_upload_done_size;
+				firmware_upload_done_size += firmware_segment_size;
+				if (firmware_upload_done_size > file_data.size)
+				{
+					firmware_upload_done_size = file_data.size;
+				}
+				file_upload_data = new Uint8Array(reader.result.split('').map(function(c){return c.charCodeAt(0)}));
+				$("form[name='upgrade']").submit();
+			}
+			if (is_browser() == 'IE')
+			{
+				reader.readAsArrayBuffer(blob);
+			}
+			else
+			{
+				reader.readAsBinaryString(blob);
+			}
+		}
+	}
+<% end %>
+	$(document).ready(function(){
+<% if platform == "tdtech" or platform == "quectel-lte" then %>
+		$("form[name='upgrade']").submit(function(event) {
+			event.preventDefault();
+			var formDataOri = $(this).serializeArray();
+			var formData = new FormData();
+			for (var i = 0; i < formDataOri.length; i++) {
+				formData.append(formDataOri[i].name, formDataOri[i].value);
+			}
+			formData.append("ota", "<%=platform%>");
+
+			if (upload_done)
+			{
+				formData.append("action", "upgrade");
+			}
+			else
+			{
+				if (file_data == null) {
+					file_data = document.querySelector('input[type="file"]').files[0];
+					if(!file_data){
+						create_info_box({msg:"<%:The uploaded image file does not contain a supported format. Make sure that you choose the generic image format for your platform. %>",btn_val:"<%:OK%>"});
+						return;
+					}
+				}
+				if (upload_process_dialog == null)
+				{
+					upload_process_dialog = nradio_update_process_show();
+				}
+
+				<% if platform == "tdtech" then %>
+				if (file_data) {
+					formData.append("fileSize", file_data.size);
+				}
+				<% end %>
+
+				if (file_upload_data)
+				{
+					formData.append("image", new Blob([file_upload_data]), "upgrade_file.tmp");
+					formData.append("sendSize", firmware_send_size - firmware_send_offset);
+					<% if platform == "quectel-lte" then %>
+					if (firmware_send_offset == 0)
+					{
+
+						formData.append("fileSize", file_data.size);
+					}
+					<% end %>
+					if (firmware_upload_done_size == file_data.size)
+					{
+						formData.append("done", 1);
+						upload_done = true;
+					}
+				}
+			}
+
+			$.ajax({
+				url: $(this).attr('action'),
+				type: "post",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(data) {
+					if (data.result.state == "low battery")
+					{
+						ota_upload_reset();
+						create_info_box({msg:"<%:Power capacity is below 50%, please make sure power up to 50% before doing a upgrade. %>",btn_val:"<%:OK%>"});
+					}
+					else if (data.result.state == "low space")
+					{
+						ota_upload_reset();
+						create_info_box({msg:"<%:Device partition for storing uploaded image is low, it will erase the partition. Please try upgrading device again. %>",btn_val:"<%:OK%>"});
+					}
+					else if (data.result.state != "failed")
+					{
+						if (firmware_upload_done_size < file_data.size)
+						{
+							file_slice_read(file_data);
+						}
+
+						if (data.result.state == "success")
+						{
+							ota_upload_reset();
+							nradio_checker_proc(
+								'<%=controller%>admin/system/reboot/call',
+								{token: '<%=token%>'},
+								nradio_checker_init(dip, 60, 1800*base),
+								'<%:Rebooting, please do not turn off the power%>',
+								'<%:Page will automatically refresh after reboot%>',
+							);
+						}
+						else if (data.result.state == "upload done")
+						{
+							$("form[name='upgrade']").submit();
+						}
+						else if (data.result.state == "upgrading")
+						{
+							ota_upload_reset();
+							nradio_checker_proc(
+								null,
+								null,
+								nradio_checker_init(dip, 45, 1800*base),
+								'<%:Upgrading, please do not turn off the power%>',
+								'<%:Page will automatically refresh after reboot%>',
+							);
+						}
+					}
+					else
+					{
+						ota_upload_reset();
+						create_info_box({msg:"<%:The uploaded image file does not contain a supported format. Make sure that you choose the generic image format for your platform. %>",btn_val:"<%:OK%>"});
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+				}
+			});
+		});
+<% end %>
+		$('#btn-backup').click(function(){
+			window.location = '<%=url("admin/system/reset/backup")%>';
+		});
+
+		$('#btn-reset').click(function(){
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: '<%:Whether to reset the device?%>',
+				buttons: [{
+					label: '<%:No%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						dialog.close();
+						window.location = '<%=url("admin/system/reset/call")%>';
+					}
+				}]
+			});
+		});
+
+<% if toggle_timer == 1 then %>
+		timer=setInterval(wait_check_info, 3000);
+	<% if info.state ~= 1 then %>
+		$("#btn-action").prop("disabled", true);
+	<% end %>
+<% end %>
+
+		$('#btn-action').click(function(){
+			if(action==0) {
+				$.post("<%=controller%>admin/system/reset/rcheck", function(data){
+					$("#btn-action").prop("disabled", true);
+					$("#fwtxt").text("<%:Checking latest firmware from server, please wait...%>");
+					timer=setInterval(wait_check_info, 3000);
+				});
+			}
+			else if(action==1) {
+				$.post("<%=controller%>admin/system/reset/rdownload", function(data){
+					$("#btn-action").prop("disabled", true);
+					timer=setInterval(wait_check_info, 3000);
+					$("#fwtxt").text("<%:Downloading latest firmware from server, please wait...%>");
+				});
+			}
+			else {
+				$('form[name="rupgrade"]').submit();
+			}
+		});
+<% if nr.support_multi_system() then %>
+		$('#btn-switch').click(function(){
+			var msg='<div class="dialog-message">'+
+				'<div><p>1、<%:Some official firmwares of NRadio products can be replaced with third-party firmwares such as OpenWRT.%>\
+				<%:NRadio is not obligated to provide any maintenance or support for them, nor does it guarantee the performance and stability of third-party firmwares.%>\
+				<%:Product damage caused by the use of third-party firmwares will invalidate the product warranty. Please use third-party firmwares only after understanding the above situations.%></p></div>'+
+				'<div><p>2、<%:Third-party firmwares are developed by civilian enthusiasts. Using third-party firmwares may cause system failures and result in the loss of the official warranty. Please note this!%></p></div>'+
+				'<div><p>3、<%:OpenWRT is not a system that is friendly to beginners. It has relatively high requirements for users. It is only recommended for users who have a certain understanding of it or have IT knowledge reserves.%><p></div>'+
+				'<div><p>4、<%:Please consult relevant materials on your own before use. The official customer service will not answer (nor is it capable of answering) questions related to the OpenWRT system. Your understanding is greatly appreciated.%><p></div>'
+				'</div>';
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: msg,
+				buttons: [{
+					label: '<%:No%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						dialog.close();
+						BootstrapDialog.show({
+							type: BootstrapDialog.TYPE_DEFAULT,
+							title: '',
+							message: '<%:Whether to switch to the second system?%>',
+							buttons: [{
+								label: '<%:No%>',
+								cssClass: 'btn-nradio-cancel',
+								action: function(dialog) {
+									dialog.close();
+								}
+							}, {
+								label: '<%:Yes%>',
+								cssClass: 'btn-nradio-apply',
+								action: function(dialog) {
+									dialog.close();
+									window.location = '<%=url("admin/system/reset/switch_system")%>';
+								}
+							}]
+						});
+					}
+				}]
+			});
+		});
+<% end %>
+		if (auto == '1') {
+			nradio_checker_proc(
+				null,
+				null,
+				nradio_checker_init(dip),
+				'<%:Rebooting, please do not turn off the power%>',
+				'<%:Page will automatically refresh after reboot%>',
+			);
+		}
+		else if (auto == '2') {
+			nradio_checker_proc(
+				null,
+				null,
+				nradio_checker_init(dip, 45, 1800*base),
+				'<%:Upgrading, please do not turn off the power%>',
+				'<%:Page will automatically refresh after reboot%>',
+			);
+		}
+<% if nr.support_multi_system() then %>
+		else if (auto == '3') {
+			create_info_box({msg:"<%:Flash second system successfully.%>",btn_val:"<%:OK%>"});
+		}
+<% end %>
+		else if (auto == '-1') {
+			create_info_box({msg:"<%:The uploaded image file does not contain a supported format. Make sure that you choose the generic image format for your platform. %>",btn_val:"<%:OK%>"});
+		}
+		else if (auto == '-2') {
+			create_info_box({msg:"<%:Power capacity is below 50%, please make sure power up to 50% before doing a upgrade. %>",btn_val:"<%:OK%>"});
+		}
+	});
+</script>
+<%+footer%>

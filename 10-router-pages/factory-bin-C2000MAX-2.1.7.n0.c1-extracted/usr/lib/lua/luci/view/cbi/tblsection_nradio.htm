@@ -1,0 +1,254 @@
+<%-
+local rowcnt = 1
+function rowstyle()
+	rowcnt = rowcnt + 1
+	return (rowcnt % 2) + 1
+end
+
+function width(o)
+	if o.width then
+		if type(o.width) == 'number' then
+			return ' style="width:%dpx"' % o.width
+		end
+		return ' style="width:%s"' % o.width
+	end
+	return ''
+end
+-%>
+
+<style>
+
+.tblsection_nraido_pc table td select, .tblsection_nraido_pc table td.cbi-value-field select{
+	max-width: 100%;
+	padding-left: 0;
+	padding-right:0;
+}
+.tblsection_nraido_pc table td input[type="text"], .tblsection_nraido_pc table td.cbi-value-field input[type="text"]{
+	max-width: 100%;
+	width: 100%;
+	padding-left: 0;
+	padding-right:0;
+	display: inline-block;
+}
+
+.tblsection_nraido_mobile div.checkbox .switch{
+	top:unset;
+}
+
+.tblsection_nraido_mobile .panel-info select{
+	max-width:unset
+}
+form div.cbi-page-actions-left{
+	margin-left:unset;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+	.tblsection_nraido_pc table td select, .tblsection_nraido_pc table td.cbi-value-field select{
+	max-width: 100px;
+	padding-left: 0;
+	padding-right:0;
+	}
+	.tblsection_nraido_pc table td input[type="text"], .tblsection_nraido_pc table td.cbi-value-field input[type="text"]{
+		max-width: 100px;
+		padding-left: 0;
+		padding-right:0;
+	}
+}
+
+</style>
+
+<!-- tblsection -->
+<fieldset class="cbi-section" id="cbi-<%=self.config%>-<%=self.sectiontype%>">
+	<% if self.title and #self.title > 0 then -%>
+		<legend><%=self.title%></legend>
+	<%- end %>
+	<%- if self.sortable then -%>
+		<input type="hidden" id="cbi.sts.<%=self.config%>.<%=self.sectiontype%>" name="cbi.sts.<%=self.config%>.<%=self.sectiontype%>" value="" />
+	<%- end -%>
+	<div class="cbi-section-descr"><%=self.description%></div>
+		<div class="cbi-value" data-index="9" >
+			<label class="cbi-value-title width_auto"><%:RuleCount%>:</label>
+			<label id="rule_count" class="cbi-value-title width_auto" ><%=#self:cfgsections()%></label>
+			<div class="cbi-value-field right_btn btn_add_box click_pointer">
+				<%- if self.addremove then -%>
+				<% if self.template_addremove then include(self.template_addremove) else -%>
+				
+					<% if self.anonymous then %>
+						<input class="cbi-button cbi-button-add hidden-xs" type="submit" value="<%:Add%>" name="cbi.cts.<%=self.config%>.<%=self.sectiontype%>.<%=section%>" title="<%:Add%>" />
+					<% else %>
+						<% if self.invalid_cts then -%><div class="cbi-section-error"><% end %>
+						<input type="text" class="cbi-section-create-name" id="cbi.cts.<%=self.config%>.<%=self.sectiontype%>.<%=section%>" name="cbi.cts.<%=self.config%>.<%=self.sectiontype%>.<%=section%>" data-type="uciname" data-optional="true" />
+						<input class="cbi-button cbi-button-add hidden-xs" type="submit" onclick="this.form.cbi_state='add-section'; return true" value="<%:Add%>" title="<%:Add%>" />
+						<% if self.invalid_cts then -%>
+							<br /><%:Invalid%></div>
+						<%- end %>
+					<% end %>
+					<i class="visible-xs-block far fa-nradio-add fa-2x icon_color" onclick="$(this).prev().click();"  value="<%:Add%>" alt="<%:Add%>"></i>
+			
+				<%- end %>
+				<%- end -%>
+			</div>
+		</div>
+	<div class="tblsection_nraido_pc cbi-section-node table-box form-box full-width hidden-xs">
+		<%- local count = 1 -%>
+		<table class="cbi-section-table line text-center">
+			<thead>
+			<tr class="cbi-section-table-titles">
+				<th class="cbi-section-table-cell" style="width:55px"><%:Item%></th>
+			<%- if not self.anonymous then -%>
+				<%- if self.sectionhead then -%>
+					<th class="cbi-section-table-cell"><%=self.sectionhead%></th>
+				<%- else -%>
+					<th>&#160;</th>
+				<%- end -%>
+			<%- end -%>
+			<%- for i, k in pairs(self.children) do if not k.optional then -%>
+				<th class="cbi-section-table-cell"<%=width(k)%>>
+				<%- if k.titleref then -%><a title="<%=self.titledesc or translate('Go to relevant configuration page')%>" class="cbi-title-ref" href="<%=k.titleref%>"><%- end -%>
+					<%-=k.title-%>
+				<%- if k.titleref then -%></a><%- end -%>
+				</th>
+			<%- count = count + 1; end; end; if self.sortable then -%>
+				<th class="cbi-section-table-cell"><%:Sort%></th>
+			<%- end; if self.extedit or self.addremove then -%>
+				<th class="cbi-section-table-cell"><%:Operation%></th>
+			<%- count = count + 1; end -%>
+			</tr>
+			</thead>
+			<tbody >
+			<%- local isempty = true
+			    for i, k in ipairs(self:cfgsections()) do
+					section = k
+					isempty = false
+					scope = { valueheader = "cbi/cell_valueheader", valuefooter = "cbi/cell_valuefooter" }
+			-%>
+			<tr class="cbi-section-table-row<% if self.extedit or self.rowcolors then %> cbi-rowstyle-<%=rowstyle()%><% end %>" id="cbi-<%=self.config%>-<%=section%>">
+				<td class="cbi-section-table-cell"><%=i%></td>
+				<% if not self.anonymous then -%>
+					<th><h3><%=(type(self.sectiontitle) == "function") and self:sectiontitle(section) or k%></h3></th>
+				<%- end %>
+
+
+				<%-
+					for k, node in ipairs(self.children) do
+						if not node.optional then
+							node:render(section, scope or {})
+						end
+					end
+				-%>
+
+				<%- if self.sortable then -%>
+					<td class="cbi-section-table-cell">
+						<input class="cbi-button cbi-button-up" type="button" value=""  onclick="return cbi_row_swap(this, true, 'cbi.sts.<%=self.config%>.<%=self.sectiontype%>')" alt="<%:Move up%>" title="<%:Move up%>" />
+						<input class="cbi-button cbi-button-down" type="button" value=""  onclick="return cbi_row_swap(this, false, 'cbi.sts.<%=self.config%>.<%=self.sectiontype%>')" alt="<%:Move down%>" title="<%:Move down%>" />
+					</td>
+				<%- end -%>
+
+				<%- if self.extedit or self.addremove then -%>
+					<td class="cbi-section-table-cell">
+						<%- if self.extedit then -%>
+							<input class="cbi-button cbi-button-edit" type="button" value="<%:Edit%>"
+							<%- if type(self.extedit) == "string" then
+							%> onclick="location.href='<%=self.extedit:format(section)%>'"
+							<%- elseif type(self.extedit) == "function" then
+							%> onclick="location.href='<%=self:extedit(section)%>'"
+							<%- end
+							%> alt="<%:Edit%>" title="<%:Edit%>" />
+						<%- end; if self.addremove then %>
+							<a href="javascript:void(0);" class="normol_color only_color click_pointer" onclick="$(this).next().click();" alt="<%:Delete%>" title="<%:Delete%>">								
+								<i class="far fa-nradio-del fa-fw fa-2x" ></i>
+							</a>
+							<input class="cbi-button cbi-button-remove" type="submit" value="<%:Delete%>"  onclick="this.form.cbi_state='del-section'; return true" name="cbi.rts.<%=self.config%>.<%=k%>" alt="<%:Delete%>" title="<%:Delete%>" style="display: none;"/>
+						<%- end -%>
+					</td>
+				<%- end -%>
+			</tr>
+			<%- end -%>
+
+			<%- if isempty then -%>
+			<tr class="cbi-section-table-row">
+				<td colspan="<%=count%>"><em><br /><%:This section contains no values yet%></em></td>
+			</tr>
+			<%- end -%>
+			</tbody>
+		</table>
+
+		<% if self.error then %>
+			<div class="cbi-section-error">
+				<ul><% for _, c in pairs(self.error) do for _, e in ipairs(c) do -%>
+					<li><%=pcdata(e):gsub("\n","<br />")%></li>
+				<%- end end %></ul>
+			</div>
+		<% end %>
+
+	</div>
+	<div class="tblsection_nraido_mobile" data-terminal="mobile">
+		<%- local isempty = true
+		table.sort(self.children,				
+		function(a,b)
+			if a == nil or b == nil then
+				return false
+			end
+			if (b.option == a.option)  then
+				return false
+			end
+			return (a.option == "enabled" )
+		end
+		)
+
+		for i, k in ipairs(self:cfgsections()) do
+			section = k
+			isempty = false
+			scope = {valueheader = "cbi/mobile_valueheader", valuefooter = "cbi/mobile_valuefooter" }
+		-%>
+		<div class="panel panel-info mesh-panel visible-xs-block hide">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-sm-6 col-xs-6 text-left" data-device-id={{id}}>
+						<span><%=i%></span>
+					</div>
+					<div class="col-sm-6 col-xs-6 text-right">
+						<a href="javascript:void(0);" class="normol_color only_color click_pointer" onclick="$(this).next().click();" alt="<%:Delete%>" title="<%:Delete%>">								
+							<i class="far fa-nradio-del fa-fw fa-2x" ></i>
+						</a>
+						<input class="cbi-button cbi-button-remove" type="submit" value="<%:Delete%>"  onclick="this.form.cbi_state='del-section'; return true" name="cbi.rts.<%=self.config%>.<%=k%>" alt="<%:Delete%>" title="<%:Delete%>" style="display: none;"/>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body info-box">
+				<%-
+				for k, node in ipairs(self.children) do
+					if not node.optional then
+						scope.label_title=node.title
+						scope.loop_index=k
+						node:render(section, scope or {})
+					end
+				end
+			-%>
+			</div>
+		</div>
+		<%- end -%>	
+	</div>
+</fieldset>
+<!-- /tblsection -->
+<script language="javascript">
+var switch_attr = [false,true];
+$(".main-content").resize(function(){
+	var switch_1 = switch_attr[0];
+	var switch_2 = switch_attr[1];
+	var switch_tmp;
+	if(is_mobile_device()){
+		switch_tmp = switch_1;
+		switch_1 = switch_2;
+		switch_2 = switch_tmp;
+	}
+	$(".tblsection_nraido_pc").find("input,select").each(function(){
+		$(this).prop("disabled",switch_1);
+	});
+	$(".tblsection_nraido_mobile").find("input,select").each(function(){
+		$(this).prop("disabled",switch_2);
+	});
+});
+</script>

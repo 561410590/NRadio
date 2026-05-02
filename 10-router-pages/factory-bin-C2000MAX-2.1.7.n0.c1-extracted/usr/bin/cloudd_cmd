@@ -1,0 +1,250 @@
+#!/usr/bin/lua
+
+local capi = require "cloudd.api"
+local util = require "luci.util"
+local cjson = require "cjson.safe"
+local rl = require "readline"
+
+local group
+local devid
+local oid
+local need_reply = false
+local timeout = 2               -- 2 seconds
+local cmd_file
+local command
+local self_id
+local count = 0
+local shell_mode = false
+
+local host = "127.0.0.1"
+
+-- function is copied from https://github.com/attractivechaos/klib/blob/master/lua/klib.lua
+local function getopt(args, ostr)
+  local arg, place = nil, 0;
+  return function ()
+    if place == 0 then -- update scanning pointer
+      place = 1
+      if #args == 0 or args[1]:sub(1, 1) ~= '-' then place = 0; return nil end
+      if #args[1] >= 2 then
+        place = place + 1
+        if args[1]:sub(2, 2) == '-' then -- found "--"
+          place = 0
+          table.remove(args, 1);
+          return nil;
+        end
+      end
+    end
+    local optopt = args[1]:sub(place, place);
+    place = place + 1;
+    local oli = ostr:find(optopt);
+    if optopt == ':' or oli == nil then -- unknown option
+      if optopt == '-' then return nil end
+      if place > #args[1] then
+        table.remove(args, 1);
+        place = 0;
+      end
+      return '?';
+    end
+    oli = oli + 1;
+    if ostr:sub(oli, oli) ~= ':' then -- do not need argument
+      arg = nil;
+      if place > #args[1] then
+        table.remove(args, 1);
+        place = 0;
+      end
+    else -- need an argument
+      if place <= #args[1] then  -- no white space
+        arg = args[1]:sub(place);
+      else
+        table.remove(args, 1);
+        if #args == 0 then -- an option requiring argument is the last one
+          place = 0;
+          if ostr:sub(1, 1) == ':' then return ':' end
+          return '?';
+        else arg = args[1] end
+      end
+      table.remove(args, 1);
+      place = 0;
+    end
+    return optopt, arg;
+  end
+end
+
+local function usage()
+  print("usage: " .. arg[0] .. " OPTION... COMMAND")
+  print("Send command to managed device(s). To all devices in default.\n")
+  print("    -g <group>             group of devices")
+  print("    -d <devid>             device id")
+  print("    -o <oid>               owner id")
+  print("    -t <timeout>           timeout of reply waiting, use " .. timeout .. " seconds as default")
+  print("    -f <file>              file of commands list")
+  print("    -s                     shell mode")
+  print("    -r                     need reply")
+end
+
+local function get_self_id()
+  local c_info = util.ubus("cloudd", "info") or { }
+  return c_info.id
+end
+
+local function wait_reply(cmd)
+  local result = capi.cloudd_wait_reply("+", count, timeout)
+
+  -- result output
+  for topic, payload in pairs(result) do
+    local reply = cjson.decode(payload)
+    if reply then
+      if reply["cmd"] == cmd then
+        if devid and devid:upper() ~= "ALL" then
+          io.write(reply["result"])
+        else
+          local items = util.split(topic, "/")
+          local sid = items[3]
+          for w in string.gmatch(reply["result"], "(%C+)") do
+            print(sid .. ": " .. w)
+          end
+        end
+      end
+    else
+      print("decode reply failed!")
+    end
+  end
+end
+
+local function send_command_oid(cmd)
+  local util = require "luci.util"
+  local cl = require "cloudd.api".cloudd_ubus_cloudd_client(1)
+
+  for i = 1, cl.count do
+    if cl.client[i].oid and string.upper(cl.client[i].oid) == string.upper(oid) then
+      if (not cl.client[i].dir) or cl.client[i].dir ~= "0" then
+        capi.cloudd_send_command(cl.client[i].id, cmd, nil)
+        count = count + 1
+      end
+    end
+  end
+end
+
+local function send_command_all_device(cmd)
+  local util = require "luci.util"
+  local cl = require "cloudd.api".cloudd_ubus_cloudd_client(1)
+
+  for i = 1, cl.count do
+    if (not cl.client[i].dir) or cl.client[i].dir ~= "0" then
+      capi.cloudd_send_command(cl.client[i].id, cmd, nil)
+      count = count + 1
+    end
+  end
+end
+
+local function send_command(cmd)
+  if devid then
+    if devid:upper() == "ALL" then
+      send_command_all_device(cmd)
+    else
+      count = 1
+      capi.cloudd_send_command(devid, cmd, nil)
+    end
+  elseif group then
+    capi.cloudd_send_command_group(group, cmd, nil)
+  elseif oid then
+    send_command_oid(cmd)
+  else
+    capi.cloudd_send_command_all_group(cmd, nil)
+  end
+
+  if need_reply then
+    wait_reply(cmd)
+  end
+end
+
+local function send_file_command()
+  local file = io.open(cmd_file, "r")
+  if file then
+    for c in file:lines(1)
+    do
+      send_command(c)
+    end
+  else
+    print("failed to open " .. cmd_file)
+  end
+end
+
+local function read_stdin()
+  local data = io.read("*a")
+  io.input():close()
+
+  return data
+end
+
+local function make_prompt()
+  local prompt = "> "
+  if not devid then
+    prompt = "all "..prompt
+  else
+    prompt = devid:upper().." "..prompt
+  end
+
+  return prompt
+end
+
+local function run_shell_mode()
+  local prompt = make_prompt()
+
+  while true do
+    command = rl.readline(prompt)
+    if command == "exit" then
+      break
+    elseif command:match("^set devid ") then
+      devid = command:sub(11)
+      prompt = make_prompt()
+    elseif command:len() > 0 then
+      send_command(command)
+    end
+  end
+
+  return true
+end
+
+local function main()
+  for opt, optarg in getopt(arg, 'g:d:o:rst:f:') do
+    if opt == 'g' then
+      group = optarg
+    elseif opt == 'd' then
+      devid = optarg
+    elseif opt == 'o' then
+      oid = optarg
+    elseif opt == 'r' then
+      need_reply = true
+    elseif opt == 't' then
+      timeout = tonumber(optarg)
+    elseif opt == 'f' then
+      cmd_file = optarg
+    elseif opt == 's' then
+      shell_mode = true
+    else
+      usage()
+      os.exit(-1)
+    end
+  end
+
+  command = arg[1]
+  self_id = get_self_id()
+
+  if shell_mode then
+    return run_shell_mode()
+  end
+
+  if cmd_file then
+    send_file_command()
+  elseif command then
+    send_command(command)
+  else
+    command = read_stdin()
+    if command then
+      send_command(command)
+    end
+  end
+end
+
+main()

@@ -1,0 +1,10 @@
+Package: simcom_http
+Version: 1.0-20240717
+Depends: libc, uci, ubus, libubox20210516, libiwinfo20210430, libjson-c5, nradio-utils, libopenssl1.1, libcurl4
+Source: package/nradio/services/simcom_http
+SourceName: simcom_http
+Section: nradiowifi
+SourceDateEpoch: 1721629245
+Architecture: aarch64_cortex-a53
+Installed-Size: 29325
+Description:  SIMCOM communication center

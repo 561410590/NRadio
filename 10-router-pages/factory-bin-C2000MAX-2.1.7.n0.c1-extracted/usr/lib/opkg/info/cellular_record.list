@@ -1,0 +1,3 @@
+/etc/config/cellular_record
+/etc/init.d/cellular_record
+/usr/sbin/cellular_record

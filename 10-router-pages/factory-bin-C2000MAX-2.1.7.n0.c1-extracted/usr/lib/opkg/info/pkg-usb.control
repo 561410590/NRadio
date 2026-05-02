@@ -1,0 +1,10 @@
+Package: pkg-usb
+Version: 1.0-20220609
+Depends: libc, kmod-usb-core, kmod-usb-ohci, kmod-usb2
+Source: package/nradio/collections/pkg-usb
+SourceName: pkg-usb
+Section: nradiowifi
+SourceDateEpoch: 1655358548
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for USB2

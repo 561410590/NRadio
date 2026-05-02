@@ -1,0 +1,75 @@
+<%+header%>
+<%
+	
+	local function update_bytes(chain, field, pattern)
+		local file = io.popen('iptables -v -n -x -t mangle -L ' .. chain .. ' 2>/dev/null', 'r')
+		if not file then
+			return false
+		end
+		
+		file:read('*line')
+		file:read('*line')
+		local line = file:read('*line')
+		while line do 
+			local bytes,mac = line:match(pattern)
+			nixio.syslog("err","bytes:"..bytes)
+			
+			mac=mac:gsub("^MAC", "")
+			nixio.syslog("err","mac:"..mac)
+			line = file:read('*line')
+		end
+		file:close()
+		return true
+	end
+	update_bytes("wifidog_outgoing", 'outgoing', "^%s*%d+%s*(%d+) %S+%s*%S+%s*%S+%s*%S+%s*%S+%s*%S+%s*%S+%s*(%S+)") 
+
+
+%>
+<style>
+	.nradio-bg{
+		background-image:none
+	}
+	.main-content{
+		background-color: white;
+		margin: 10% auto;
+		width:50%;
+		border-radius: 4px;
+	}
+	@media (min-width: 10px) and (max-width: 768px){
+		.main-content{
+			width:80%;
+		}
+	}
+	.authcheck_title{
+		color:#1890ff;
+		font-size: 28px;
+		margin: 20px;
+	}
+	.authcheck_note{
+		color:#7a8997;
+		font-size: 12px;
+		margin: 5px;
+		float: left;
+		width: 100%;
+	}
+	.top_class{
+		margin: 10px 0;
+	}
+</style>
+<form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI"))%>">
+	<div class="row clearfix">
+		<div class="col-sm-12 column top_class">
+			<div class="authcheck_title text-center ">
+				<%:AuthSuccess%>
+				<div class="col-sm-12 column detect_ok"><i class="far fa-nradio-detect-ok fa-2x fa-fw nradio-width success_color"></i></div>
+			</div>
+			<div class="authcheck_note text-left" >
+				<%:AuthSuccessNote1%>				
+			</div>
+			<div class="authcheck_note text-left">
+				<%:AuthSuccessNote2%>				
+			</div>
+		</div>
+	</div>
+</form>
+<%+footer%>

@@ -1,0 +1,37 @@
+#!/bin/sh
+
+gMac="$(uci get oem.board.id|tr -d :)"
+
+if [ "X$1" != "Xfixup" ]; then
+	uci batch <<-EOF
+		set mosquitto.owrt=owrt
+		set mosquitto.owrt.use_uci=1
+		set mosquitto.mosquitto=mosquitto
+		set mosquitto.mosquitto.log_dest=syslog
+		set mosquitto.mosquitto.log_types=warning
+		set mosquitto.mosquitto.allow_anonymous='1'
+		set mosquitto.listener=listener
+		set mosquitto.listener.port=1883
+		set mosquitto.listener.no_remote_access="0"
+		delete mosquitto.bridge
+		set mosquitto.bridge=bridge
+		set mosquitto.bridge.connection="$gMac"
+		set mosquitto.bridge.remote_clientid="$gMac"
+		set mosquitto.bridge.remote_username=router
+		set mosquitto.bridge.keepalive_interval="10"
+		set mosquitto.bridge.address="$gMac.dev.nradio.com.cn"
+		set mosquitto.bridge.notifications=1
+		set mosquitto.bridge.notifications_local_only=1
+		set mosquitto.bridge.restart_timeout=5
+		set mosquitto.bridge.try_private=0
+	EOF
+fi
+
+uci batch <<-EOF
+	delete mosquitto.bridge.topic
+	add_list mosquitto.bridge.topic="sysinfo/# out 1 \"\" $gMac/"
+	add_list mosquitto.bridge.topic="exec/# both 1 rpc/ $gMac/"
+	add_list mosquitto.bridge.topic="kp/mosca/$gMac/# out 1 \"\" \"\""
+	add_list mosquitto.bridge.topic='kp/$gMac/+/# in 1 "" ""'
+	add_list mosquitto.bridge.topic='mosca/# in 1 kp/$gMac/ kp/FFFFFFFFFFFF/'
+EOF

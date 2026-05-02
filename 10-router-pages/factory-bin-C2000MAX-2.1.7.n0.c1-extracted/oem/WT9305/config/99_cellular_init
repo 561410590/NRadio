@@ -1,0 +1,1 @@
+uci set cellular_init.cpe1='cellular'

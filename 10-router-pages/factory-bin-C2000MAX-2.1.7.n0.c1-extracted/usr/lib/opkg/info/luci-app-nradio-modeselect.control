@@ -1,0 +1,10 @@
+Package: luci-app-nradio-modeselect
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-modeselect
+SourceName: luci-app-nradio-modeselect
+Section: luci
+SourceDateEpoch: 1772265212
+Architecture: all
+Installed-Size: 705
+Description:  LuCI Support for MTK HNAT config

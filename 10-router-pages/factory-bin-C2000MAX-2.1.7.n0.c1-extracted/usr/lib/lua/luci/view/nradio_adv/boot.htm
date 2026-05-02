@@ -1,0 +1,86 @@
+
+<%+header%>
+
+<style>
+	.bootstrap-dialog .bootstrap-dialog-title {
+		text-align: center;
+		width: 100%;
+		margin-bottom: 15px
+	}
+</style>
+
+<div class="cbi-map">
+	<h2 name="content"><%: BootTitle %></h2>
+
+	<form>
+		<fieldset class="cbi-section">
+			<div class="cbi-section-node">
+				<div class="cbi-value cbi-value-last">
+					<label class="cbi-value-title">
+						<i class="far fa-nradio-note fa-fw icon_disable visible-xs-block stand_label_icon" onclick="show_icon_help(this)"></i>
+						<%: BootPriority %>
+					</label>
+					<div class="cbi-value-field"> 
+						<select id="boot_mode" class="cbi-input-select valid">
+							<option id="boot_mode_flash" value=0><%: BootPriorityFlash %></option>
+							<option id="boot_mode_sd" value=1><%: BootPrioritySd %></option>
+						</select>
+						<div class="cbi-value-description description_help hidden-xs">
+							<p><%: BootNotePatr1 %></p>
+							<p><%: BootNotePatr2 %></p>
+						</div>
+					</div>
+				</div>
+
+				<div class="cbi-page-actions">
+					<input type="button" class="cbi-button cbi-button-apply" id="boot_mode_save" name="cbi.apply" onclick="setBootMode(this)" value="<%:Save & Apply%>" />
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>
+
+<script>
+	function getBootInfo() {
+		$.ajax({
+			url: '<%=url('nradioadv/system/sd/info')%>',
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) {
+				if (data.mode === 1)
+					$('#boot_mode_sd').attr('selected', true);
+				else
+					$('#boot_mode_flash').attr('selected', true);
+			}
+		})
+	}
+
+	function setBootMode() {
+		$.ajax({
+			url: '<%=url('nradioadv/system/sd/mode')%>',
+			type: 'POST',
+			data: {
+				mode: $('#boot_mode').val()
+			},
+			dataType: 'json',
+			success: function(data) {
+				if (data.status === 0)
+					create_info_box({msg:"<%: BootSdSwitchSucc %>",btn_val:"<%:OK%>"});
+				else
+					create_info_box({msg:"<%: BootSdSwitchFailed %>",btn_val:"<%:OK%>"});
+			}
+		})
+	}
+
+	function initPage(info) {
+		getBootInfo();
+		INTERVAL = setInterval(getBootInfo, 3000);
+	}
+
+	$(document).ready(function() { 
+		initPage();
+	});
+
+</script>
+
+<%+footer%>

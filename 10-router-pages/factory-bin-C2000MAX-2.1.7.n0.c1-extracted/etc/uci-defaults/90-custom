@@ -1,0 +1,41 @@
+#!/bin/ash
+
+# shellcheck source=/dev/null
+. /lib/functions/oem.sh
+
+local board_def=
+local country_def=
+
+board_def="$(get_def_board)"
+country_def="$(get_def_country)"
+
+# Fixup iccid
+custom_iccid_fixup
+
+# Fixup oem
+oem_cfg_fixup
+
+# Check whether inited
+# Board change not support
+if ! oem_chk_init; then
+	# override oem.board if exist
+	oem_override_board
+
+	# Setup board name
+	oem_set_name "$board_def"
+
+	# Setup board country
+	oem_set_country "$country_def"
+
+	# Prepare custom files
+	oem_pre_file "$board_def"
+
+	# Prepare service and config
+	oem_pre_service "$board_def"
+	oem_pre_config "$board_def"
+
+	# Set init flag
+	oem_set_init
+fi
+
+exit 0

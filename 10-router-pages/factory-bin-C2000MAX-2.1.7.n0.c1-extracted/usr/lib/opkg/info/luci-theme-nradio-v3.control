@@ -1,0 +1,10 @@
+Package: luci-theme-nradio-v3
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/themes/luci-theme-nradio-v3
+SourceName: luci-theme-nradio-v3
+Section: luci
+SourceDateEpoch: 1775016442
+Architecture: all
+Installed-Size: 669859
+Description:  NRadio Base Theme V3.0

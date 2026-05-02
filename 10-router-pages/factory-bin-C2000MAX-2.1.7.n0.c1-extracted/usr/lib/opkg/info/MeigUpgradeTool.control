@@ -1,0 +1,10 @@
+Package: MeigUpgradeTool
+Version: 1.0-20240521
+Depends: libc
+Source: package/nradio/meig/MeigUpgradeTool
+SourceName: MeigUpgradeTool
+Section: meig
+SourceDateEpoch: 1752228983
+Architecture: aarch64_cortex-a53
+Installed-Size: 38088
+Description:  Meig Dial tools

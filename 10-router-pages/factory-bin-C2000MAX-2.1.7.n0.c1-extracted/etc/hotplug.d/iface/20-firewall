@@ -1,0 +1,63 @@
+#!/bin/sh
+
+[ "$ACTION" = ifup -o "$ACTION" = ifupdate ] || exit 0
+[ "$ACTION" = ifupdate -a -z "$IFUPDATE_ADDRESSES" -a -z "$IFUPDATE_DATA" ] && exit 0
+
+wait_for_wifi_ready() {
+	local cnt=10
+	local ifaces=
+	local ready=0
+
+	get_ifaces() {
+		local disabled=
+		local ifname=
+
+		config_get ifname "$1" ifname
+		config_get disabled "$1" disabled
+
+		if [ "$disabled" = 1 ]; then
+			return
+		fi
+
+		if echo "$ifname"|grep -q "ra"; then
+			ifaces="$ifname $ifaces"
+		fi
+	}
+
+	config_load wireless
+	config_foreach get_ifaces wifi-iface
+
+	sleep 2
+	while [ "$cnt" -gt 0 ] && [ "$ready" = "0" ]; do
+		sleep 1
+		ready=1
+		for iface in $ifaces; do
+			if ! ifconfig|grep -qw "$iface" > /dev/null; then
+				ready=0
+				break
+			fi
+		done
+		cnt=$((cnt+1))
+	done
+}
+
+/etc/init.d/firewall enabled || exit 0
+
+fw3 -q network "$INTERFACE" >/dev/null || exit 0
+if [ "$INTERFACE" == "lan" ];then
+	logger -t firewall "waiting for WiFi ready"
+	wait_for_wifi_ready
+	logger -t firewall "WiFi is ready"
+fi
+logger -t firewall "Reloading firewall due to $ACTION of $INTERFACE ($DEVICE)"
+fw3 -q reload
+if [ "$INTERFACE" == "lan" ] && grep -qw 1 /tmp/run/firewall_hotplug_called 2>/dev/null;then
+	/usr/bin/access_ctl.sh -r 1
+	if [ -f "/usr/sbin/mwan3" ]; then
+		mwan3 restart >/dev/null 2>&1
+	fi
+	if [ -f "/usr/bin/wifidogx" ]; then
+		/etc/init.d/wifidogx restart >/dev/null 2>&1
+	fi
+fi
+echo 1 > /tmp/run/firewall_hotplug_called

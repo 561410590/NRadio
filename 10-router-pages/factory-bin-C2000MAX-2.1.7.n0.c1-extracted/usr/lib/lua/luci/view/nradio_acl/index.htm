@@ -1,0 +1,83 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%+header%>
+<h2 name="content"><%:Wi-Fi ACL%></h2>
+<div class="table-box form-box full-width">
+	<table>
+		<thead>
+			<tr>
+				<th><input type="checkbox" readonly="readonly" id="select_all"></th>
+				<th><%:No.%></th>
+				<th><%:Alias%></th>
+				<th><%:Reference%></th>
+				<th><%:Size%></th>
+				<th><%:Operation%></th>
+			</tr>
+		</thead>
+		<tbody id="acl_list">
+		</tbody>
+	</table>
+</div>
+<div class="cbi-page-actions">
+	<input id="btn_select" class="cbi-button" type="button" value="<%:Add%>">
+	<input id="btn_delete" class="cbi-button cbi-button-cancel" type="button" value="<%:Delete%>">
+</div>
+<script language="javascript">
+	$(document).ready(function(){
+		$.getJSON("<%=controller%>nradio/acl/list", function(data){
+			var htm="";
+			$.each(data.result.acl, function(i, db){
+				htm+='<tr>'+
+					'<td><input type="checkbox" name="sel_check" data-acl-id="'+db.id+'" '+(db.ref==true?'disabled':'')+'></td>'+
+					'<td>'+(i+1)+'</td>'+
+					'<td>'+db.name+'</td>'+
+					'<td>'+(db.ref==true?'<%:Yes%>':'<%:No%>')+'</td>'+
+					'<td>'+db.count+'</td>'+
+					'<td><a href="'+db.url+'"><%:Edit%></a></td>'+
+					'</tr>';
+			});
+
+			$("#acl_list").append(htm);
+		});
+
+		$('#btn_select').click(function(){
+			window.location.href='<%=controller%>nradio/acl/add';
+		});
+
+		$('#btn_delete').click(function(){
+			var data={};
+
+			data['acls']=nradio_checked_get('data-acl-id', 'sel_check');
+			data['token']='<%=token%>';
+
+			if (data['acls'] == ""){
+				return;
+			}
+
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: '<%:Whether to delete selected list?%>',
+				buttons: [{
+					label: '<%:No%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						(new XHR()).post('<%=controller%>nradio/acl/del', data, function(){
+							location.reload();
+						});
+					}
+				}]
+			});
+		});
+	});
+
+</script>
+<%+footer%>

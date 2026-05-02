@@ -1,0 +1,4038 @@
+Package: kmod-mt_wifi7
+Version: 5.4.281+TEST-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), wifi-profile, nand-utils, blkid, kmod-mt_wifi_osal, kmod-cfg80211, kmod-mt_spectrum, kmod-mediatek_hnat
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: terminfo
+Version: 6.2-3
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-storage
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-scsi-core, kmod-usb-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-passwd
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libuci-lua
+Version: 2021-04-14-4b3db117-5
+Depends: libc, libuci20130104, liblua5.1.5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: cpetools
+Version: 2.13-20240106
+Depends: libc, rpcd
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: iwinfo
+Version: 2024-01-04-1
+Depends: libc, libiwinfo20210430
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: wifi-profile
+Version: 1-2.1.7.n0.c1
+Depends: libc, datconf-lua, lua, libuci-lua
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ip6tables-extra
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ip6tables
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: curlftpfs
+Version: 0.9.2-2
+Depends: libc, libcurl4, libfuse1, glib2
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libc
+Version: 1.2.3-3
+Depends: libgcc
+Status: install hold installed
+Essential: yes
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ebtables
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-l2tp
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-udptunnel4, kmod-udptunnel6
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-apcli
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-v3-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-mod-nradio-v3
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: MeigUpgradeTool
+Version: 1.0-20240521
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: mkf2fs
+Version: 1.14.0-1
+Depends: libc, libf2fs6
+Conflicts: mkf2fs-selinux
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: opkg
+Version: 2021-06-13-1bf042dd-2
+Depends: libc, uclient-fetch, libpthread, libubox20210516
+Status: install user installed
+Essential: yes
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/opkg.conf f38c19f696ea87c0b30eb5bfeb8657237f4625e1a749c58b99f01595edfb6446
+ /etc/opkg/customfeeds.conf 61d1f3aa62fe977614ed0c2f0ad3b2ee2f7b451bfb34812071d86d31a4d43d4a
+Installed-Time: 1747797524
+
+Package: iptables-mod-extra
+Version: 1.8.7-1
+Depends: libc, iptables, kmod-ipt-extra
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: pkg-ipv6
+Version: 1.0-20230619
+Depends: libc, odhcp6c, ip6tables, ip6tables-extra, ip6tables-mod-nat, iptables-mod-u32, kmod-ipt-nat6, odhcpd, luci-i18n-nradio-ipv6-zh-cn, luci-i18n-nradio-ipv6-en, luci-app-nradio-ipv6
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-mt7993
+Version: 5.4.281+TEST-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mt_hwifi
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: iperf
+Version: 2.0.13-2
+Depends: libc, libstdcpp6, libpthread
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-security-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-security
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: wget
+Version: 1.19.2-2
+Depends: libc, libpcre, zlib, libopenssl1.1, librt, libcares
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Alternatives: 300:/usr/bin/wget:/usr/bin/wget-ssl
+
+Package: pkg-usb-modem-quectel
+Version: 1.0-20220922
+Depends: libc, quectel-CM
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-core
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nls-base
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-dhcp-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-dhcp
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libpthread
+Version: 1.2.3-3
+Depends: libgcc1
+Status: install hold installed
+Essential: yes
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: ubus
+Version: 2021-06-30-4fc532c8-2
+Depends: libc, libubus20210630, libblobmsg-json20210516, ubusd
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: iw
+Version: 5.19-1
+Depends: libc, libnl-tiny1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-crypto-manager
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-crypto-aead, kmod-crypto-hash, kmod-crypto-pcompress
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-crypto-pcompress
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-mt798x-2p5g-phy
+Version: 5.4.281+1-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), mt798x-2p5g-phy-firmware-internal
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libuci20130104
+ABIVersion: 20130104
+Version: 2021-04-14-4b3db117-5
+Depends: libc, libubox20210516
+Provides: libuci
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libnetfilter-queue1
+ABIVersion: 1
+Version: 1.0.5-4
+Depends: libc, libmnl0, libnfnetlink0
+Provides: libnetfilter-queue
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: rpcd
+Version: 2022-02-19-8d26a1ba-1
+Depends: libc, libubus20210630, libubox20210516, libuci20130104, libblobmsg-json20210516, libjson-c5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/rpcd 1a40da0ebe45b1afd131dfc4650592913e38445e7fe42f96d3b95ad5151ac0e6
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: lask
+Version: 1.2.0
+Depends: libc, liblua5.1.5, libopenssl1.1, zlib, librt, lua
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: busybox
+Version: 1.33.2-5
+Depends: libc, jsonfilter
+Conflicts: busybox-selinux
+Status: install user installed
+Essential: yes
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: f2fs-tools
+Version: 1.14.0-1
+Depends: libc, libf2fs6, mkf2fs, f2fsck
+Conflicts: f2fs-tools-selinux
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: odhcpd
+Version: 2021-07-18-bc9d317f-3
+Depends: libc, libubox20210516, libuci20130104, libubus20210630, libnl-tiny1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-net-qmi-wwan
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-net, kmod-usb-wdm
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-hwmon-pwmfan
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-hwmon-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-lib-ip
+Version: git-26.103.38496-283ac67-1
+Depends: libc, liblua5.1.5, libnl-tiny1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: dad_recovery
+Version: 1.0-20221226
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: ip-full
+Version: 6.4.0-1
+Depends: libc, libnl-tiny1, libbpf0
+Provides: ip
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+Alternatives: 300:/sbin/ip:/usr/libexec/ip-full
+
+Package: cpesel
+Version: 1.3-20210923
+Depends: libc, cpetools, cpestat, wanchk
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-nfnetlink
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libubus-lua
+Version: 2021-06-30-4fc532c8-2
+Depends: libc, libubus20210630, liblua5.1.5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-ttl
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-vpn
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-ipt-tproxy
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-conntrack, kmod-nf-conntrack6, kmod-ip6tables, kmod-ipt-core
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-mtkhnat
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-crypto-hash
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-hsimlock-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-hsimlock
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-nf-reject6
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-tun
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: glib2
+Version: 2.66.4-1
+Depends: libc, zlib, libpthread, libffi, libattr
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-crypto-aead
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-crypto-null
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libiwinfo-lua
+Version: 2024-01-04-1
+Depends: libc, libiwinfo20210430, liblua5.1.5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kpcpe
+Version: 1.0-20251107
+Depends: libc, libubox20210516, libubus20210630, libcurl4, libuci20130104, nradio-utils, rpcd, libjson-c5, libpthread, libopenssl1.1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-wdm
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-ledctrl
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: bash
+Version: 5.1.16-1
+Depends: libc, libncurses6, libreadline8
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/bash.bashrc 096d8e6a4da75033f12dc764cd45055e922cdba8292f3c22216f7d5c9ed6e454
+ /etc/profile.d/sys_bashrc.sh fc2d605e812275345dbc61b6c5ca7dabbe8f3fa8e21c0856675c8ecd8d28da0a
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: datconf
+Version: 1
+Depends: libc, kvcedit
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ebtables
+Version: 2018-06-27-48cff25d-1
+Depends: libc, kmod-ebtables
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ruby-dbm
+Version: 3.0.6-1
+Depends: libc, ruby, libdb47
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-mtkhnat-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-mtkhnat
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-cpe-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-cpe
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: pkg-io-ata
+Version: 1.0-20220609
+Depends: libc, kmod-ata-core, kmod-ata-ahci
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-wanchk
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-nf-flow
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nf-conntrack
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-ttl-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-ttl
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-vpn-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-vpn
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libnl-tiny1
+ABIVersion: 1
+Version: 2023-12-05-965c4bf4-1
+Depends: libc
+Provides: libnl-tiny
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-mcast-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-mcast
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libustream-wolfssl20201210
+ABIVersion: 20201210
+Version: 2022-01-16-868fd881-2
+Depends: libc, libubox20210516, libwolfssl5.5.3.99a5b54a
+Provides: libustream-wolfssl
+Conflicts: libustream-openssl
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-lib-crc-ccitt
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-mtk_pci
+Version: 5.4.281+TEST-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mt_hwifi, kmod-mt_wifi_osal
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: getrandom
+Version: 2020-10-25-9ef88681-2
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: appcenter
+Version: 1.0-20250207
+Depends: libc, uci, ubus, libubox20210516, libiwinfo20210430, libjson-c5, libcurl4, nradio-utils, libopenssl1.1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ipt-nat-extra
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core, kmod-ipt-nat
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: conn_detect
+Version: 3.2-20250605
+Depends: libc, mosquitto-lua, libubox20210516, libubus20210630, libmosquitto, mosquitto, libuci20130104, libjson-c5
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: mwctl
+Version: 1
+Depends: libc, libnl-tiny1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-sd-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-sd
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-ledctrl-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-ledctrl
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: report_proactively
+Version: 1.1-20231115
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, nradio-utils, libopenssl1.1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-app-tools
+Version: 1.0-20221221
+Depends: libc, luci-app-nradio-app, nradio_crypto, combo, cellular_record, report_proactively, access_ctl, luci-app-nradio-access, luci-i18n-nradio-access-zh-cn, luci-i18n-nradio-access-en, luci-app-nradio-hsimlock, luci-i18n-nradio-hsimlock-en, luci-i18n-nradio-hsimlock-zh-cn, sync_bdinfo, logservice
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libcap-bin
+Version: 2.43-1
+Depends: libc, libcap
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: mosquitto-nossl
+Version: 2.0.17-1
+Depends: libc, librt
+Provides: mosquitto
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/mosquitto 82e7a8efc12adcbe44710a17823ff2430810176fde47ba3576c4039bb8b847cc
+Installed-Time: 1747797524
+
+Package: softapd
+Version: 1.6-20241129
+Depends: libc, libubox20210516, libiwinfo20210430, libubus20210630, libjson-c5, hc-crt
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-cpestat-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-cpestat
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: lua-readline
+Version: 1.1-20181129
+Depends: libc, liblua5.1.5, libubox20210516
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-gre
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-iptunnel
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: spectrumd
+Version: 1
+Depends: libc, libnl-tiny1, libubox20210516, libpthread, librt
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libwolfssl5.5.3.99a5b54a
+ABIVersion: 5.5.3.99a5b54a
+Version: 5.5.3-stable-3
+Depends: libc
+Provides: libcyassl, libwolfssl, libcyassl5.5.3.99a5b54a
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-pppoe
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ppp, kmod-pppox
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libuuid1
+ABIVersion: 1
+Version: 2.36.1-2
+Depends: libc, librt
+Provides: libuuid
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: UpdateWizard_MT5700
+Version: 3.1-20241008
+Depends: libc, libstdcpp6, librt, libpthread
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-appcenter-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-appcenter
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: fanctrl
+Version: 2.5-20241223
+Depends: libc
+Status: install ok installed
+Architecture: all
+Conffiles:
+ /etc/config/fanctrl 5fe960ddeb93eec5660d8200e40cff18b556459f3880255123185c0936d8d93c
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libcap
+Version: 2.43-1
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-theme-nradio-v3
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libcap-ng
+Version: 0.8.1-1
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-pppox
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ppp
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: quectel-CM
+Version: 1.1-20221118
+Depends: libc, kmod-qmi_wwan_q
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: combo
+Version: 1.4-20240112
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, libbdinfo, libpthread, tc, nradio-utils, libopenssl1.1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ipt-conntrack
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core, kmod-nf-conntrack
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-nf-reject
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-lib-crc16
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: base-files
+Version: 1543-2.1.7.n0.c1
+Depends: libc, netifd, jsonfilter, usign, openwrt-keyring, ubi-utils, fstools, fwtool
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/ethers 56bda09b0aa3d1e88107bfa8a1c6e4449d5c1f47245dc1c4037ff9b5db163b7c
+ /etc/group 45e8cab268d4a2254d48ccb1f889630047e81758de54a614cad5449fdbebe19c
+ /etc/hosts c1a978d90673437b35fa9494e0a54294062c152bb653d490b718052ab88447fd
+ /etc/inittab 5de65f32a9408aaefa7ec93612fdcef911fecd502a791db4d12a72710b7588e4
+ /etc/iproute2/rt_protos a0712b1771c8d5f3e0dcf9a6314880e71aa3498ea1ae873535bdfcf70d814061
+ /etc/iproute2/rt_tables f771e2b81741f70e3faf658dc504f0dc048672fc8caaadea15e46c35da3de8f8
+ /etc/passwd 6a451aa33393f47ade89b8bce4d9711818c2630394c3967265ffed276bb25a55
+ /etc/profile 08446fe9619ebeca514fdc0d0ae5f8f5e0834f97cdeb35e06a389e9400e7c1ac
+ /etc/protocols 7d551355d5540b07b9d86e623cbbc4abecbb94d2a662b3afcc917940eb0e3d52
+ /etc/rc.local f253567aa71bf015d7eeca14fd7441b3e096fdac1478b75c708588bdc5a7b825
+ /etc/services 754ccc71ca347bc79ac4c45139d416b7cf1e65a919dad1db15613a216cd6b9cc
+ /etc/shadow ccbbfeee2dd560403fea13f7f431ebd21d9bb4b3d41e48e892013fa451f91cc4
+ /etc/shells 8b35ce73c18161a7d7ed16fa244410993bd031515260e3e0c11749047df48d0a
+ /etc/shinit 7e7648d7bc6eb02fe0b24a87425d7d4ffc6600abd19f0954616662ce924f2446
+ /etc/sysctl.conf ed7b6c5923601c063c19f2ca33c48e22f9962f54459b8861ef4eb1fa3e4df5ce
+ /etc/sysupgrade.conf 8c155891d420aaefe0930f7462bdcd172b0163d1477a8f2c6a802cd72eef8f5b
+Installed-Time: 1747797524
+
+Package: kmod-nf-nat
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nf-conntrack
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: cellular_power
+Version: 1.0-20240715
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kpcpe_icon-C2000-MAX
+Version: 1.0-20260104
+Depends: libc, kpcpe_icon
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libpcre
+Version: 8.44-3
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libubus20210630
+ABIVersion: 20210630
+Version: 2021-06-30-4fc532c8-2
+Depends: libc, libubox20210516
+Provides: libubus
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libjson-script20210516
+ABIVersion: 20210516
+Version: 2021-05-16-b14c4688-2
+Depends: libc, libubox20210516
+Provides: libjson-script
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-cpedata
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-crypto-crc32c
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-crypto-hash
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-dmz-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-dmz
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: atsd
+Version: 1.0-20221010
+Depends: libc, uci, ubus, libubox20210516, libiwinfo20210430, libjson-c5, nradio-utils, libopenssl1.1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: netifd
+Version: 2021-10-30-8f82742c-1
+Depends: libc, libuci20130104, libnl-tiny1, libubus20210630, ubus, ubusd, jshn, libubox20210516
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/udhcpc.user 4dabffbc2110a29e01babc63d9b8db94da49efd3ed784d35b49a559ac8ce7035
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ipt-raw
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libf2fs6
+ABIVersion: 6
+Version: 1.14.0-1
+Depends: libc, libuuid1
+Provides: libf2fs
+Conflicts: libf2fs-selinux
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-mwan
+Version: 1.0-20220721
+Depends: libc, luci-app-nradio-dividing, luci-i18n-nradio-dividing-zh-cn, mwan3
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-cpestat
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-mtqos
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-nradio-v3
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-mod-nradio-v3, luci-theme-nradio-v3, luci-proto-ppp, libiwinfo-lua, luci-proto-ipv6
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-usb-ohci
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: cellular_record
+Version: 1.0-20260126
+Depends: libc, libubox20210516, libubus20210630, libcurl4, libuci20130104, nradio-utils, rpcd, libjson-c5, libpthread, libopenssl1.1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libestr
+Version: 0.1.11-3
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: dnsmasq
+Version: 2.85-2
+Depends: libc, libubus20210630
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/dhcp ddd520eb24451a892c9c666d83c10c9ea4fc944efbc34a149bc962c56bd8812f
+ /etc/dnsmasq.conf 1e6ab19c1ae5e70d609ac7b6246541d52042e4dee1892f825266507ef52d7dfd
+Installed-Time: 1747797524
+
+Package: kmod-mii
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: procd
+Version: 2021-03-08-2cfc26f8-2
+Depends: libc, ubusd, ubus, libjson-script20210516, ubox, libubox20210516, libubus20210630, libblobmsg-json20210516, libjson-c5, jshn
+Conflicts: procd-selinux
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: resolveip
+Version: 2
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: wanchk
+Version: 1.5-20210923
+Depends: libc, rpcd, cpetools
+Status: install ok installed
+Architecture: all
+Conffiles:
+ /etc/config/wanchk 839b2e9174d4929cd8e41e0c1a0b1cf35527f395160fb950657a39ef162ce406
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-simpleroutes
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libbpf0
+ABIVersion: 0
+Version: 5.10.10-2
+Depends: libc, libelf1
+Provides: libbpf
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: nand-utils
+Version: 2.1.2-1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-upnp-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-upnp
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: iptables-mod-nat-extra
+Version: 1.8.7-1
+Depends: libc, iptables, kmod-ipt-nat-extra
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ubusd
+Version: 2021-06-30-4fc532c8-2
+Depends: libc, libubox20210516, libblobmsg-json20210516
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libnetfilter-conntrack3
+ABIVersion: 3
+Version: 1.0.8-1
+Depends: libc, libnfnetlink0, kmod-nf-conntrack-netlink, libmnl0
+Provides: libnetfilter-conntrack
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-fs
+Version: 1.0-20220609
+Depends: libc, kmod-fs-ext4, e2fsprogs, ntfs-3g, kmod-fs-vfat
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ruby-pstore
+Version: 3.0.6-1
+Depends: libc, ruby, ruby-digest, ruby-enc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-wifiauth
+Version: 1.0-20250829
+Depends: libc, terminal_trackd, wifidogx, luci-app-nradio-wifidogx, luci-i18n-nradio-wifidogx-zh-cn, luci-i18n-nradio-wifidogx-en
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: hostapd-utils
+Version: 2022-07-29-b704dc72-3.1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-nf-nat6
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nf-conntrack6, kmod-nf-nat
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-modeselect
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libkvcutil
+Version: 1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: nradio-utils
+Version: 1.4-20260130
+Depends: libc, uci, libubox20210516, libjson-c5, libbdinfo, ubus, libopenssl1.1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libelf1
+ABIVersion: 1
+Version: 0.180-1
+Depends: libc, zlib
+Provides: libelf, libelf11
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-modeselect-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-modeselect
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-iptunnel
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-ehci
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: guest
+Version: 1.0-20200811
+Depends: libc, kmod-ebtables, kmod-ebtables-ipv4, ebtables
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: lua-cjson
+Version: 2.1.0-2
+Depends: libc, lua
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: qtt_daemon
+Version: 1.0
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: fixup
+Version: 1.0-20180130
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libxtables12
+ABIVersion: 12
+Version: 1.8.7-1
+Depends: libc
+Provides: libxtables
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: ruby-digest
+Version: 3.0.6-1
+Depends: libc, ruby
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-pptp
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ppp, kmod-gre, kmod-pppox
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-net-cdc-mbim
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-net, kmod-usb-wdm, kmod-usb-net-cdc-ncm
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: hc-crt
+Version: 1.0-1.1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-usb-net-rndis
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-net, kmod-usb-net-cdc-ether
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-guest-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-guest
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: cellular_init
+Version: 1.0-20240613
+Depends: libc, nradio-utils, libopenssl1.1, libbdinfo, ubus, libubox20210516, libjson-c5
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-firewall
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-authmodule
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: block-mount
+Version: 2021-01-04-c53b1882-1
+Depends: libc, ubox, libubox20210516, libuci20130104, libblobmsg-json20210516, libjson-c5, libfstools-bootparam
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-ipt-nathelper-rtsp
+Version: 5.4.281+3.21-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core, kmod-ipt-conntrack-extra, kmod-ipt-nat
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luasocket
+Version: 2019-04-21-733af884-1
+Depends: libc, lua
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-hnat-modeselect
+Version: 1.0-20260227
+Depends: libc, luci-i18n-nradio-modeselect-zh-cn, luci-i18n-nradio-modeselect-en, luci-app-nradio-modeselect
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-fs-vfat
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nls-base, kmod-nls-cp437, kmod-nls-iso8859-1, kmod-nls-utf8
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: telnetd
+Version: 1.0-20221129
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-usb2
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-ehci, kmod-usb-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-serial-option
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-serial, kmod-usb-serial-wwan
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: firewall
+Version: 2021-03-23-61db17ed-1.1
+Depends: libc, libubox20210516, libubus20210630, libuci20130104, libip4tc2, libip6tc2, libxtables12, kmod-ipt-core, kmod-ipt-conntrack, kmod-nf-conntrack6, kmod-ipt-nat
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/firewall 2686459727bf7e11a090d78d6e42a5ee8ca6cf5ed40a54252bafcd4fb9fde1b6
+ /etc/firewall.user a29bca712aae656eadc627c9a6b6e3e4eb55bcb07752f6846a78fbfb8baf3b2b
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ruby-forwardable
+Version: 3.0.6-1
+Depends: libc, ruby
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ruby-stringio
+Version: 3.0.6-1
+Depends: libc, ruby
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ruby
+Version: 3.0.6-1
+Depends: libc, libruby3.0
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ruby-yaml
+Version: 3.0.6-1
+Depends: libc, ruby, ruby-dbm, ruby-pstore, ruby-psych
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-access
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ipt-conntrack-extra
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core, kmod-ipt-conntrack
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-nf-ipt
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libblkid1
+ABIVersion: 1
+Version: 2.36.1-2
+Depends: libc, libuuid1
+Provides: libblkid
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libmnl0
+ABIVersion: 0
+Version: 1.0.4-2
+Depends: libc
+Provides: libmnl
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libgnutls
+Version: 3.7.1-2
+Depends: libc, libnettle8, libgmp10, libatomic1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-usb-modem
+Version: 1.0-20220609
+Depends: libc, fota_upgrade, umbim, uqmi, proto-wwan, atsd, simcom_http, kmod-usb-serial, kmod-usb-serial-option, kmod-usb-serial-wwan, kmod-usb-net-cdc-ether, kmod-usb-net-rndis, cpetools, cpesel, wanswd, QDloader, QFirehose, cellular_init, cellular_power
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-usb-storage
+Version: 1.0-20220609
+Depends: libc, pkg-usb, kmod-scsi-core, kmod-nls-base, kmod-nls-cp437, kmod-nls-iso8859-1, kmod-nls-utf8, kmod-usb-storage, blkid
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: cJSON
+Version: 1.7.15-3
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: wpad-openssl
+Version: 2022-07-29-b704dc72-r3.1
+Depends: hostapd-common (= 2022-07-29-b704dc72-r3.1), libc, libnl-tiny1, hostapd-common, libubus20210630, libopenssl1.1
+Provides: hostapd, wpa-supplicant
+Conflicts: hostapd, hostapd-basic, hostapd-basic-openssl, hostapd-basic-wolfssl, hostapd-mini, hostapd-openssl, hostapd-wolfssl, wpad, wpad-mesh-openssl, wpad-mesh-wolfssl, wpad-basic, wpad-basic-openssl, wpad-basic-wolfssl, wpad-mini, wpad, wpad-mesh-openssl, wpad-mesh-wolfssl, wpad-basic, wpad-basic-openssl, wpad-basic-wolfssl, wpad-mini
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: ubi-utils
+Version: 2.1.2-1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ip6tables
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nf-reject6, kmod-nf-ipt6, kmod-ipt-core
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: fwdd
+Version: 1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: odhcp6c
+Version: 2021-01-09-53f07e90-16
+Depends: libc, libubox20210516
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: fstools
+Version: 2021-01-04-c53b1882-1
+Depends: libc, ubox, ubi-utils, libfstools-bootparam
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-mcast
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-security
+Version: git-26.103.38496-283ac67-1
+Depends: libc, dropbear, firewall
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-udptunnel4
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: uclient-fetch
+Version: 2023-04-13-007d9454-1
+Depends: libc, libuclient20201210
+Provides: wget
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Alternatives: 200:/usr/bin/wget:/bin/uclient-fetch
+
+Package: kmod-udptunnel6
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-ptype-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-ptype
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: unzip
+Version: 6.0-8
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-ipt-extra
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-terminal-limit
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-mod-nradio-v3
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-mod-admin-full, libubus-lua
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: iptables-mod-ipopt
+Version: 1.8.7-1
+Depends: libc, iptables, kmod-ipt-ipopt
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-fanctrl-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-fanctrl
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: custom
+Version: 3.2-20210603
+Depends: libc, ptype
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/oem e53bd0d890d71a8a780b4a49df0b8828d829171946f02b91b0c44d29db3dba95
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-cpe-upgrade
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: ethtool
+Version: 5.10-1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: uci
+Version: 2021-04-14-4b3db117-5
+Depends: libc, libuci20130104
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-sms
+Version: 1.0-20231202
+Depends: libc, luci-app-nradio-sms, smsd, luci-i18n-nradio-sms-zh-cn, luci-i18n-nradio-sms-en
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: lua
+Version: 5.1.5-9
+Depends: libc, liblua5.1.5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-fs-ext4
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-lib-crc16, kmod-crypto-hash, kmod-crypto-crc32c
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: sigma_daemon
+Version: 1
+Depends: libc, libpthread, librt
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-forwarding
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-mediatek_hnat
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nf-conntrack
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-mapfilter-mt7987
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-ebtables-ipv4
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ebtables
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: ppp-mod-pppol2tp
+Version: 2.4.9.git-2021-01-04-3
+Depends: libc, kmod-pppol2tp
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libip4tc2
+ABIVersion: 2
+Version: 1.8.7-1
+Depends: libc, libxtables12
+Provides: libip4tc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: dropbear
+Version: 2020.81-2
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/dropbear/dropbear_ed25519_host_key e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+ /etc/dropbear/dropbear_rsa_host_key e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+ /etc/config/dropbear 0198dbc97b5a9aac76a5c6233684571ccdcc91fcb735e91c36d2b06a98158589
+Installed-Time: 1747797524
+Alternatives: 100:/usr/bin/scp:/usr/sbin/dropbear, 100:/usr/bin/ssh:/usr/sbin/dropbear
+
+Package: flock
+Version: 2.36.1-2
+Depends: libc, librt
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Alternatives: 200:/usr/bin/flock:/usr/bin/util-linux-flock
+
+Package: logrotate
+Version: 3.10.0-2
+Depends: libc, libpopt0
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/logrotate.conf b8fe9135715ff67cb3f53f0ef546f1d63d6827d0db1395ddb72a115fa4a66bef
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-mt_wifi_osal
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-cfg80211
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-upnp
+Version: git-26.103.38496-283ac67-1
+Depends: libc, miniupnpd
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: curl
+Version: 7.83.1-4.1
+Depends: libc, libcurl
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-hwmon-core
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-serial-wwan
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-serial
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-nls-utf8
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nls-base
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-nbcpe
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libgmp10
+ABIVersion: 10
+Version: 6.2.1-1
+Depends: libc
+Provides: libgmp
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: xl2tpd
+Version: 1.3.16-2
+Depends: libc, ppp-mod-pppol2tp, resolveip
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/xl2tpd/xl2tpd.conf 9c0a4b092e54774ea6aeae990fe68c4fd2fe15efb72740908147a17125bf1a6e
+ /etc/xl2tpd/xl2tp-secrets a1cfae4314863abf017d942678504b0fbd34107f7de2fa4710dd5465ef159274
+ /etc/ppp/options.xl2tpd 1b71717c00057b9b60a22c509d5d2b2655ecf4c1e326e39af86def67ede909ca
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: proto-wwan
+Version: 2022-11-14-1
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libfastjson
+Version: 0.99.8-1
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-nls-cp437
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nls-base
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: mtd
+Version: 26
+Depends: libc, libubox20210516
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: odhcpd-ipv6only
+Version: 2021-07-18-bc9d317f-3
+Depends: libc, libubox20210516, libuci20130104, libubus20210630, libnl-tiny1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luafilesystem
+Version: 1.8.0-1
+Depends: libc, liblua5.1.5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-qmi_wwan_m
+Version: 5.4.281-1.0.2
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-wdm, kmod-usb-core, kmod-usb-net
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ip6tables-mod-nat
+Version: 1.8.7-1
+Depends: libc, ip6tables, kmod-ipt-nat6
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-qmi_wwan_q
+Version: 5.4.281-20221118
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-wdm, kmod-usb-core, kmod-usb-net
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: factory_siminfo
+Version: 1.0-20251231
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: system_power
+Version: 1.0-20250422
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libblobmsg-json20210516
+ABIVersion: 20210516
+Version: 2021-05-16-b14c4688-2
+Depends: libc, libjson-c5, libubox20210516
+Provides: libblobmsg-json
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: smsd
+Version: 1.0-20231126
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, libbdinfo, nradio-utils, libopenssl1.1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libnetfilter-cthelper0
+ABIVersion: 0
+Version: 1.0.0-2
+Depends: libc, libmnl0
+Provides: libnetfilter-cthelper
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-dmz
+Version: 1.0-20250205
+Depends: libc, luci-i18n-nradio-dmz-zh-cn, luci-i18n-nradio-dmz-en, luci-app-nradio-dmz
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-usb-all
+Version: 1.0-20220609
+Depends: libc, pkg-usb-modem, pkg-usb-modem-quectel, pkg-usb-modem-meig, pkg-io-ata, pkg-fs, pkg-usb-storage, pkg-usb, pkg-usb3
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: wm
+Version: 4.8-20200921
+Depends: libc, libubox20210516, libubus20210630, libiwinfo20210430, libuci20130104, libjson-c5, libmosquitto, mosquitto
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/wm dcf717e66d9a89d87c9457ce6a0f76e1f70b1cac8852aad5f44bdeee5ac7b8ac
+Installed-Time: 1747797524
+
+Package: QFirehose
+Version: 1.0-20230827
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libiwinfo-data
+Version: 2024-01-04-1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ptype
+Version: 1.3-20240513
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: bdinfo
+Version: 3.3-20231229
+Depends: libc, libbdinfo
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: access_ctl
+Version: 1.1-20230626
+Depends: libc, conntrack, ipset
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/access_ctl 6910b4ca005cf5261d1fb21cbe964b212fd495b1acc9f33d323b4229646f28ba
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-ipv6
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: cimd
+Version: 1.2-20200803
+Depends: libc, libpthread, libubus20210630, libubox20210516, libnl-tiny1, libpcap1, kmod-cihook
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: urandom-seed
+Version: 3
+Depends: libc, getrandom
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: ipset
+Version: 7.6-1
+Depends: libc, kmod-ipt-ipset, libmnl0, libipset13
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-proto-ppp
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libffi
+Version: 3.3-2
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libcomerr0
+ABIVersion: 0
+Version: 1.45.6-2
+Depends: libc, libuuid1
+Provides: libcomerr
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-mod-admin-full
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-base
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ppp
+Version: 2.4.9.git-2021-01-04-3
+Depends: libc, kmod-ppp
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/ppp/chap-secrets 6981fa176a79f8c12be5826c421b16253a616747018ba7e76752a9d36d1d51d4
+ /etc/ppp/filter 579583b318e0cff706ffc134620b42d3fbce8fc31aeb0ad7eea1cc859868e902
+ /etc/ppp/options 01f7358a5528be037dde329a2ecfb7a63382aababf21d4f5bc085f5acef95133
+Installed-Time: 1747797524
+
+Package: infocd
+Version: 1.3-20250411
+Depends: libc, uci, ubus, libubox20210516, libiwinfo20210430, libjson-c5, nradio-utils, libopenssl1.1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-base
+Version: git-26.103.38496-283ac67-1
+Depends: libc, lua, libuci-lua, luci-lib-nixio, luci-lib-ip, rpcd, libubus-lua, luci-lib-jsonc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/luci-uploads/.placeholder e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+ /etc/config/luci 7e04b593f6a54853b284c1dadfa0df9a90d16661977382978a56443152348329
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-modeselect-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-modeselect
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-restart
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libnettle8
+ABIVersion: 8
+Version: 3.6-1
+Depends: libc, libgmp10
+Provides: libnettle
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-leds-gpio
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: nradio_crypto
+Version: 1.0-20221219
+Depends: libc, nradio-utils, libopenssl1.1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-gpio-button-hotplug
+Version: 5.4.281-3
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: ruby-enc
+Version: 3.0.6-1
+Depends: libc, ruby
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-boot-sd
+Version: 1.0-20251222
+Depends: libc, luci-i18n-nradio-sd-zh-cn, luci-i18n-nradio-sd-en, luci-app-nradio-sd
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-shortcut-fe-cm
+Version: 5.4.281-9
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-conntrack, kmod-shortcut-fe
+Conflicts: kmod-shortcut-fe-drv
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-dividing-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-dividing
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ppp-mod-pptp
+Version: 2.4.9.git-2021-01-04-3
+Depends: libc, kmod-pptp, kmod-mppe, resolveip
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-mt_hwifi
+Version: 5.4.281+TEST-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mt_wifi7, kmod-mt_wifi_osal
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-ata-ahci
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ata-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-wifidogx-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-wifidogx
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: rsyslog
+Version: 8.39.0-2
+Depends: libc, libestr, libfastjson, libuuid1, zlib
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/rsyslog.conf 328457d5ea01097ec4ffed2a56de34dc946173b8201fbbc0075f6d039aca5b3f
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libreadline8
+ABIVersion: 8
+Version: 8.1-1
+Depends: libc, libncursesw6
+Provides: libreadline
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ip-bridge
+Version: 6.4.0-1
+Depends: libc, libnl-tiny1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: terminal_trackd
+Version: 1.0-20250312
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, libcurl4, tc, nradio-utils, libbdinfo, libopenssl1.1, libpthread
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-mtkhnat-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-mtkhnat
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-usb-net
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mii, kmod-usb-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-wanchk-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-wanchk
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: librt
+Version: 1.2.3-3
+Depends: libpthread
+Status: install hold installed
+Essential: yes
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: sigma_dut
+Version: 1
+Depends: libc, libpthread, librt
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: mt798x-2p5g-phy-firmware-internal
+Version: 1-1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-sms-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-sms
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: iptables-mod-tproxy
+Version: 1.8.7-1
+Depends: libc, iptables, kmod-ipt-tproxy
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: special-dial
+Version: 1.0-20150201
+Depends: libc, librt
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libopenssl1.1
+ABIVersion: 1.1
+Version: 1.1.1v-1
+Depends: libc
+Provides: libopenssl
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: ruby-date
+Version: 3.0.6-1
+Depends: libc, ruby
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: datconf-lua
+Version: 1
+Depends: libc, datconf, liblua5.1.5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-serial
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-firewall-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-firewall
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-sd-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-sd
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-net-cdc-ncm
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-net
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-guest
+Version: git-26.103.38496-283ac67-1
+Depends: libc, guest
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: ated_ext-mt7987
+Version: 2
+Depends: libc, libblkid1, libnl-tiny1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: cloudd
+Version: 1.7.1-20250611
+Depends: libc, libubox20210516, libubus20210630, libubus-lua, nradio-utils, libjson-c5, lua, lua-cjson, lua-md5, luasec, luasocket, luafilesystem, lua-readline
+Status: install user installed
+Architecture: all
+Conffiles:
+ /etc/config/cloudd e7ae01e38170a320a0b364e509d232c9625813bb5a9b324d1953796b584c8cc8
+ /etc/config/cloudd_acl 4777a9166a72981be8d556cae66c5b666d04a712b753f65d5e53eb629d038b4b
+ /etc/config/cloudd_cli e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-fanctrl
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libipset13
+ABIVersion: 13
+Version: 7.6-1
+Depends: libc, kmod-ipt-ipset, libmnl0
+Provides: libipset
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-proto-ipv6
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: eip197-mini-firmware
+Version: 20211216-1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-ui-new
+Version: 2.0-20251103
+Depends: libc, luci-app-nradio-cpedata, luci-i18n-nradio-cpedata-zh-cn, luci-app-nradio-terminal-limit, luci-i18n-nradio-terminal-limit-zh-cn, luci-nradio-v3, luci-i18n-nradio-v3-zh-cn, luci-i18n-nradio-v3-en, luci-app-nradio-authmodule, luci-i18n-nradio-authmodule-zh-cn, luci-app-nradio-simpleroutes
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libbdinfo
+Version: 3.3-20231229
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libruby3.0
+ABIVersion: 3.0
+Version: 3.0.6-1
+Depends: libc, libpthread, librt, libgmp10, zlib
+Provides: libruby
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libip6tc2
+ABIVersion: 2
+Version: 1.8.7-1
+Depends: libc, libxtables12
+Provides: libip6tc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-crypto-ecb
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-crypto-manager
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-wifidogx
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: iptables
+Version: 1.8.7-1
+Depends: libc, kmod-ipt-core, libip4tc2, libip6tc2, libxtables12
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: openwrt-keyring
+Version: 2021-02-20-49283916-2
+Depends: libc
+Provides: lede-keyring
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ptype-cpe
+Version: 1.3-20240513
+Depends: libc, pkg-app-tools, pkg-full, system_power, rsyslog, pkg-ttl, pkg-ipv6, pkg-ui-new, pkg-usb-all, uhttpd, ptype
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: pkg-rt-base
+Version: 1.0-20220923
+Depends: libc, wanchk, luci-app-nradio-wanchk, luci-i18n-nradio-wanchk-zh-cn, luci-i18n-nradio-wanchk-en, luci-i18n-nradio-firewall-zh-cn, luci-app-nradio-firewall, ppp-mod-pppoe, pkg-dmz
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-nf-conntrack-netlink
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nfnetlink, kmod-ipt-conntrack
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: wifidogx
+Version: 1.0.0
+Depends: libc, iptables-mod-extra, iptables-mod-ipopt, kmod-ipt-nat, iptables-mod-nat-extra, lask, lua
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ntfs-3g
+Version: 2017.3.23-6-fuseint
+Depends: libc, kmod-fuse, libpthread
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-mtk_wed
+Version: 5.4.281+TEST-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mt_hwifi, kmod-warp, kmod-mtk_pci
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-restart-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-restart
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libext2fs2
+ABIVersion: 2
+Version: 1.45.6-2
+Depends: libc, libuuid1, libblkid1, libss2, libcomerr0
+Provides: libext2fs
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libubox20210516
+ABIVersion: 20210516
+Version: 2021-05-16-b14c4688-2
+Depends: libc
+Provides: libubox
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-cpecfg-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-cpecfg
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-fanctrl-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-fanctrl
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-fuse
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-wanchk-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-wanchk
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-logread-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-logread
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-sms-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-sms
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: jshn
+Version: 2021-05-16-b14c4688-2
+Depends: libc, libjson-c5, libubox20210516, libblobmsg-json20210516
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-cpe-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-cpe
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-connac_if
+Version: 5.4.281+TEST-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mt_hwifi
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-ipt-core
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nf-reject, kmod-nf-ipt
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: e2fsprogs
+Version: 1.45.6-2
+Depends: libc, libuuid1, libext2fs2
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/e2fsck.conf dece11e2b15f487d7d2bf9f96abe2eaaf9cd33f02d7b9725b9116023d7786cac
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ata-core
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-scsi-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-crypto-eip196
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), eip197-mini-firmware
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libcares
+Version: 1.17.2-1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-sd
+Version: 1.0-20260122
+Depends: libc, luci-app-nradio-sd, luci-i18n-nradio-sd-zh-cn, luci-i18n-nradio-sd-en, kmod-fs-ext4, kmod-fs-f2fs, block-mount, f2fs-tools
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: ca-certificates
+Version: 20211016-1
+Depends: libc
+Provides: ca-certs
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ppp
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-lib-crc-ccitt, kmod-slhc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: ledctrl
+Version: 2.5-20240813
+Depends: libc, rpcd, nrswitch
+Status: install user installed
+Architecture: all
+Conffiles:
+ /etc/config/ledctrl 895fb23129f55b0d229497df14403c6480b2029eb863619cd7cbae88fa96c2a0
+Installed-Time: 1747797524
+
+Package: kmod-mt_spectrum
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), spectrumd
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ruby-strscan
+Version: 3.0.6-1
+Depends: libc, ruby
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-fs-f2fs
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-crypto-hash, kmod-crypto-crc32, kmod-nls-base
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libncurses6
+ABIVersion: 6
+Version: 6.2-3
+Depends: libc, terminfo
+Provides: libncursesw, libncurses, libncursesw6
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-appcenter-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-appcenter
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-appcenter
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-upnp-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-upnp
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ipt-ipset
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core, kmod-nfnetlink
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-crypto-null
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-crypto-hash
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-reset-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-reset
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: pkg-ttl
+Version: 1.0-20220721
+Depends: libc, luci-i18n-nradio-ttl-zh-cn, luci-i18n-nradio-ttl-en, luci-app-nradio-ttl
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-ipv6-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-ipv6
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: msad
+Version: 2.8-20250624
+Depends: libc, libuci20130104, nrswitch
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/msad db8f6907eefd93a8a951fe3e38926d0417d080c838ae1a7784284342077a9a78
+Installed-Time: 1747797524
+
+Package: ip-tiny
+Version: 6.4.0-1
+Depends: libc, libnl-tiny1
+Provides: ip
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Alternatives: 200:/sbin/ip:/usr/libexec/ip-tiny
+
+Package: pkg-usb3
+Version: 1.0-20220609
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libpcap1
+ABIVersion: 1
+Version: 1.9.1-3.1
+Depends: libc
+Provides: libpcap
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: wpa-cli
+Version: 2022-07-29-b704dc72-3.1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: igmpproxy
+Version: 0.2.1-4
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/igmpproxy 0378809b92f1d537d51ee71a6835b49947cd7350884023eb88692e0a56b313a6
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libiwinfo20210430
+ABIVersion: 20210430
+Version: 2024-01-04-1
+Depends: libc, libnl-tiny1, libuci20130104, libubus20210630, libiwinfo-data
+Provides: libiwinfo
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libss2
+ABIVersion: 2
+Version: 1.45.6-2
+Depends: libc, libcomerr0
+Provides: libss
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libfstools-bootparam
+Version: 2021-01-04-c53b1882-1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libjson-c5
+ABIVersion: 5
+Version: 0.15-2
+Depends: libc
+Provides: libjson-c
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ruby-psych
+Version: 3.0.6-1
+Depends: libc, ruby, ruby-bigdecimal, ruby-date, ruby-enc, ruby-forwardable, ruby-stringio, ruby-strscan, libyaml
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: uhttpd
+Version: 2021-03-21-15346de8-2
+Depends: libc, libubox20210516, libblobmsg-json20210516, libjson-script20210516, libjson-c5
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/uhttpd 34b88c64a0434b70a0b9308a2049571cb2f1a72c9e11f1b588db619a84f8d8bd
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-usb
+Version: 1.0-20220609
+Depends: libc, kmod-usb-core, kmod-usb-ohci, kmod-usb2
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kpcpe_icon
+Version: 1.0-20260104
+Depends: libc, kpcpe
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: uqmi
+Version: 2020-11-22-0a19b5b7-3
+Depends: libc, libubox20210516, libblobmsg-json20210516, kmod-usb-net, kmod-usb-net-qmi-wwan, wwan
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-nf-conntrack
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luasec
+Version: 0.9-1
+Depends: libc, lua, libopenssl1.1, luasocket
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libcurl4
+ABIVersion: 4
+Version: 7.83.1-4.1
+Depends: libc, libopenssl1.1, libnghttp2-14, ca-bundle
+Provides: libcurl
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: iptables-mod-conntrack-extra
+Version: 1.8.7-1
+Depends: libc, iptables, kmod-ipt-conntrack-extra, kmod-ipt-raw
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: usign
+Version: 2020-05-23-f1f65026-1
+Depends: libc, libubox20210516
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libmosquitto-nossl
+Version: 2.0.17-1
+Depends: libc, libpthread, librt, libcares
+Provides: libmosquitto
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: iptables-mod-u32
+Version: 1.8.7-1
+Depends: libc, iptables, kmod-ipt-u32
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: tc-tiny
+Version: 6.4.0-1
+Depends: libc, kmod-sched-core
+Provides: tc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+Alternatives: 200:/sbin/tc:/usr/libexec/tc-tiny
+
+Package: ip6tables
+Version: 1.8.7-1
+Depends: libc, kmod-ip6tables, iptables
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: htpdate
+Version: 1.1.1-6-20160216
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: sync_bdinfo
+Version: 1.0-20240618
+Depends: libc, nradio-utils, libopenssl1.1, libbdinfo
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: image-check
+Version: 2.3-2025.03.31
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: liblua5.1.5
+ABIVersion: 5.1.5
+Version: 5.1.5-9
+Depends: libc
+Provides: liblua
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-cpedata-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-cpedata
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-appcenter
+Version: 1.0-20250221
+Depends: libc, appcenter, luci-i18n-nradio-appcenter-zh-cn, luci-i18n-nradio-appcenter-en, luci-app-nradio-appcenter
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: zlib
+Version: 1.2.11-6
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-app
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: wanswd
+Version: 1.2-20240807
+Depends: libc, rpcd
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: lua-md5
+Version: 1.3-1
+Depends: libc, lua
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: wificonf
+Version: 1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-nf-ipt6
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nf-ipt
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-logread-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-logread
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: mosquitto-client-nossl
+Version: 2.0.17-1
+Depends: libc, librt, libcares, cJSON, libmosquitto-nossl
+Provides: mosquitto-client
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: f2fsck
+Version: 1.14.0-1
+Depends: libc, libf2fs6
+Conflicts: f2fsck-selinux
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: conntrack
+Version: 1.4.6-3
+Depends: libc, libnetfilter-conntrack3, libnetfilter-cttimeout1, libnetfilter-cthelper0, libnetfilter-queue1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libubox-lua
+Version: 2021-05-16-b14c4688-2
+Depends: libc, libubox20210516, liblua5.1.5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-lib-nixio
+Version: git-26.103.38496-283ac67-1
+Depends: libc, liblua5.1.5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: mwan3
+Version: 2.0.2-1
+Depends: libc, ip, ipset, iptables, ip6tables, iptables-mod-conntrack-extra, iptables-mod-ipopt, conntrack
+Status: install ok installed
+Architecture: all
+Conffiles:
+ /etc/config/mwan3 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libyaml
+Version: 0.2.5-1
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ca-bundle
+Version: 20211016-1
+Depends: libc
+Provides: ca-certs
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-i18n-base-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-base
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libuclient20201210
+ABIVersion: 20201210
+Version: 2023-04-13-007d9454-1
+Depends: libc, libubox20210516
+Provides: libuclient
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-nls-iso8859-1
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nls-base
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: umbim
+Version: 2019-09-11-184b707d-1
+Depends: libc, libubox20210516, kmod-usb-net, kmod-usb-net-cdc-mbim, wwan
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-mtfwd
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-lib-jsonc
+Version: git-26.103.38496-283ac67-1
+Depends: libc, liblua5.1.5, libjson-c5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ipt-ipopt
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: switch-mt7987
+Version: 1
+Depends: libc, libnl-tiny1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-dividing
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-full
+Version: 1.0-20220922
+Depends: libc, pkg-rt-base, kmod-ipt-nathelper-rtsp, blkid, xl2tpd, ppp-mod-pppoe, ppp-mod-pppol2tp, ppp-mod-pptp, igmpproxy, wm, iperf, logrotate, ca-bundle, odhcp6c, dnsmasq-full, pkg-upnp
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-ptype
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-sms
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-usb-modem-meig
+Version: 1.0-20230327
+Depends: libc, meig-cm
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-shortcut-fe
+Version: 5.4.281-9
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nf-conntrack
+Provides: shortcut-fe
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-hsimlock
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ruby-bigdecimal
+Version: 3.0.6-1
+Depends: libc, ruby
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: pkg-openclash-dep
+Version: 1.0-20260108
+Depends: libc, dnsmasq-full, bash, curl, ca-certificates, ipset, ip-full, libcap, libcap-bin, ruby, ruby-yaml, kmod-tun, unzip
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-nf-conntrack6
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-nf-conntrack
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: nrswitch
+Version: 1.2-20240807
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: logservice
+Version: 1.1-20240401
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, libcurl4, tc, nradio-utils, libbdinfo, libopenssl1.1
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: cpestat
+Version: 1.0-20190614
+Depends: libc, rpcd
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: mtk-base-files
+Version: 1-2.1.7.n0.c1
+Depends: libc, base-files, lua
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libgcc1
+ABIVersion: 1
+Version: 8.4.0-3
+Provides: libgcc
+Status: install hold installed
+Essential: yes
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: miniupnpd-iptables
+Version: 2.3.9-2
+Depends: libc, libcap-ng, libmnl0, libuuid1, ip6tables, libip6tc2, iptables, libip4tc2, libnetfilter-conntrack3
+Provides: miniupnpd
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/upnpd 4f5ec950a6defe2cb6c83c013b5ad20f8d50df316cb3769b058211705805701e
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-hsimlock-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-hsimlock
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libstdcpp6
+ABIVersion: 6
+Version: 8.4.0-3
+Provides: libstdcpp
+Status: install hold installed
+Essential: yes
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: simcom_http
+Version: 1.0-20240717
+Depends: libc, uci, ubus, libubox20210516, libiwinfo20210430, libjson-c5, nradio-utils, libopenssl1.1, libcurl4
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ipt-nat6
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core, kmod-nf-nat6, kmod-ipt-core, kmod-ipt-conntrack, kmod-ipt-core, kmod-ipt-nat, kmod-ipt-core, kmod-ip6tables
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: mii_mgr-mt7987
+Version: 1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: pkg-fanctrl
+Version: 1.0-20241223
+Depends: libc, luci-app-nradio-fanctrl, luci-i18n-nradio-fanctrl-zh-cn, luci-i18n-nradio-fanctrl-en, fanctrl, kmod-hwmon-pwmfan
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: ip6tables-extra
+Version: 1.8.7-1
+Depends: libc, ip6tables, kmod-ip6tables-extra
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-dmz
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ubox
+Version: 2020-10-25-9ef88681-2
+Depends: libc, libubox20210516, ubusd, ubus, libubus20210630, libuci20130104
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+Alternatives: 100:/sbin/rmmod:/sbin/kmodloader, 100:/sbin/insmod:/sbin/kmodloader, 100:/sbin/lsmod:/sbin/kmodloader, 100:/sbin/modinfo:/sbin/kmodloader, 100:/sbin/modprobe:/sbin/kmodloader
+
+Package: uboot-env
+Version: 1.1-2024.11.21
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kernel
+Version: 5.4.281-1-62030240c86acc07b71c0b1522950526
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-crypto-crc32
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-crypto-hash
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: blkid
+Version: 2.36.1-2
+Depends: libc, libblkid1, libuuid1
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-terminal-limit-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-terminal-limit
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-cpe
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-ipt-u32
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-restart-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-restart
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-v3-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-mod-nradio-v3
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-dmz-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-dmz
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: meig-cm
+Version: 1.0-20230327
+Depends: libc, kmod-qmi_wwan_m
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-mt7993_dbg
+Version: 5.4.281+TEST-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mt7993, kmod-mtk_pci
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-base-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-base
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libatomic1
+ABIVersion: 1
+Version: 8.4.0-3
+Depends: libgcc1
+Provides: libatomic
+Status: install hold installed
+Essential: yes
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-mppe
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ppp, kmod-crypto-arc4, kmod-crypto-sha1, kmod-crypto-ecb
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-cpe-upgrade-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-cpe-upgrade
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: kmod-nls-base
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libnfnetlink0
+ABIVersion: 0
+Version: 1.0.1-4
+Depends: libc
+Provides: libnfnetlink
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-reset
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-authmodule-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-authmodule
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kpsh
+Version: 1.2-1.2
+Depends: libc, libgnutls, libjson-c5
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: fwtool
+Version: 2019-11-12-8f7fe925-1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-ledctrl-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-ledctrl
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: wwan
+Version: 2019-04-29-5
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: jsonfilter
+Version: 2018-02-04-c7e938d6-1
+Depends: libc, libubox20210516, libjson-c5
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libnetfilter-cttimeout1
+ABIVersion: 1
+Version: 1.0.0-2
+Depends: libc, libmnl0
+Provides: libnetfilter-cttimeout
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-apcli-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-apcli
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: hostapd-common
+Version: 2022-07-29-b704dc72-r3.1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kvcedit
+Version: 1
+Depends: libc, libkvcutil
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libpopt0
+ABIVersion: 0
+Version: 1.16-2
+Depends: libc
+Provides: libpopt
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: mtk_factory_rw
+Version: 1-2.1.7.n0.c1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: wireless-tools
+Version: 29-6
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-ipt-offload
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core, kmod-nf-flow
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-crypto-arc4
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-access-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-access
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: fota_upgrade
+Version: 2025-11-26-1
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-usb-net-cdc-ether
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-net
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: libattr
+Version: 2.4.48-2
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-crypto-sha1
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-crypto-hash
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: mtkhnat_util
+Version: 1-2.1.7.n0.c1
+Depends: libc
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/mtkhnat 869c1ae2283f47be6d7ce70d0dd646ca621c9ba4c77ceb8a2d52aa687578ad76
+Installed-Time: 1747797524
+
+Package: kmod-cihook
+Version: 5.4.281-20200803
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-ipv6-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-ipv6
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-pppol2tp
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ppp, kmod-pppox, kmod-l2tp
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-cpecfg
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libfuse1
+ABIVersion: 1
+Version: 2.9.9-1
+Depends: libc, kmod-fuse, libpthread
+Provides: libfuse
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-i18n-nradio-wifidogx-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-wifidogx
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: wireless-regdb
+Version: 2025.02.20-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-scsi-core
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: urngd
+Version: 2023-07-25-7aefb47b-1
+Depends: libc, libubox20210516
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-slhc
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-lib-crc-ccitt
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-access-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-access
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: mosquitto-lua
+Version: 0.1-1
+Depends: libc, libmosquitto, lua
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-cfg80211
+Version: 5.4.281+6.5-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), iw, iwinfo, wireless-regdb
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-i18n-nradio-ttl-en
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-ttl
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: atserver-sniffer
+Version: 1.0-20240607
+Depends: libc, uci, nradio-utils, libopenssl1.1, libjson-c5, libpthread, libubox20210516, libubus20210630
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-diag
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: libdb47
+Version: 4.7.25.4.NC-6
+Depends: libc
+Provides: libdb47-full
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-sd
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install ok installed
+Architecture: all
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: QDloader
+Version: Aaron-20230216
+Depends: libc
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: ppp-mod-pppoe
+Version: 2.4.9.git-2021-01-04-3
+Depends: libc, kmod-pppoe
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: libnghttp2-14
+ABIVersion: -14
+Version: 1.43.0-1
+Depends: libc
+Provides: libnghttp2
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: luci-app-nradio-logread
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: luci-app-nradio-dhcp
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: pkg-upnp
+Version: 1.0-20250205
+Depends: libc, luci-i18n-nradio-upnp-zh-cn, luci-i18n-nradio-upnp-en, luci-app-nradio-upnp
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-warp
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-mediatek_hnat
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: kmod-ipt-nat
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core, kmod-nf-nat
+Status: install user installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+
+Package: kmod-sched-core
+Version: 5.4.281-1
+Depends: kernel (= 5.4.281-1-62030240c86acc07b71c0b1522950526)
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Installed-Time: 1747797524
+Auto-Installed: yes
+
+Package: mqttagent
+Version: 1.2.10-20240112
+Depends: libc, libmosquitto, libubox20210516, libubus20210630, libbdinfo, mosquitto, libjson-c5, nradio-utils
+Status: install user installed
+Architecture: all
+Installed-Time: 1747797524
+
+Package: dnsmasq-full
+Version: 2.85-2
+Depends: libc, libubus20210630, kmod-ipt-ipset, libnetfilter-conntrack3
+Provides: dnsmasq
+Status: install ok installed
+Architecture: aarch64_cortex-a53
+Conffiles:
+ /etc/config/dhcp ddd520eb24451a892c9c666d83c10c9ea4fc944efbc34a149bc962c56bd8812f
+ /etc/dnsmasq.conf 1e6ab19c1ae5e70d609ac7b6246541d52042e4dee1892f825266507ef52d7dfd
+Installed-Time: 1747797524
+Auto-Installed: yes
+

@@ -1,0 +1,36 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<%+nradio_adv/cellular_section%>
+<%
+local hide = ''
+local cellular_data = nr.get_cellular_data(cpe_section)
+for _,item in pairs(cellular_data.celluar) do
+%>
+	<form method="post" name="cbi" class="<%=hide%> cell_info_table" id="cell_info_table_<%=item.name%>">
+
+		<fieldset class="cbi-section">
+		<div class="cbi-section-node border-bottom">
+			<div class="cbi-value" data-index="9" >
+				<label class="cbi-value-title width_auto"></label>
+
+				<div class="cbi-value-field right_btn btn_scan click_pointer" data-model="<%=item.name%>">
+					<input class="cbi-button cbi-button-apply hidden-xs" type="button" value="<%:Scan Neighbourcell%>">
+					<i class="visible-xs-block far fa-nradio-add fa-2x icon_color" ></i>
+				</div>
+			</div>
+		</div>
+		</fieldset>
+
+		<div class="form-box full-width hidden-xs">
+			<table class="line text-center no_paddingLeft address_list" data-model="<%=item.name%>">
+			</table>
+		</div>
+		<div class="address_list" data-terminal="mobile" data-model="<%=item.name%>"></div>
+	</form>
+<%
+	hide = "hide"
+end
+%>

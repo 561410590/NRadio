@@ -1,0 +1,2 @@
+/etc/modules.d/usb-wdm
+/lib/modules/5.4.281/cdc-wdm.ko

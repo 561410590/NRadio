@@ -1,0 +1,10 @@
+Package: pkg-usb-modem-quectel
+Version: 1.0-20220922
+Depends: libc, quectel-CM
+Source: package/nradio/collections/pkg-usb-modem-quectel
+SourceName: pkg-usb-modem-quectel
+Section: nradiowifi
+SourceDateEpoch: 1664192984
+Architecture: aarch64_cortex-a53
+Installed-Size: 102
+Description:  Pakcages for USB Modem Quectel

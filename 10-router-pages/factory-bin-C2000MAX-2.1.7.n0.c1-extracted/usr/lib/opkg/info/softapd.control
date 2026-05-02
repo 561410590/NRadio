@@ -1,0 +1,10 @@
+Package: softapd
+Version: 1.6-20241129
+Depends: libc, libubox20210516, libiwinfo20210430, libubus20210630, libjson-c5, hc-crt
+Source: package/nradio/services/softapd
+SourceName: softapd
+Section: nradiowifi
+SourceDateEpoch: 1733141081
+Architecture: aarch64_cortex-a53
+Installed-Size: 93210
+Description:  Wi-Fi Manager.

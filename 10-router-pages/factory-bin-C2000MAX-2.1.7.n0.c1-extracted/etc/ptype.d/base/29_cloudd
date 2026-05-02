@@ -1,0 +1,49 @@
+#!/bin/ash
+
+[ "$1" = "reinit" ] && exit 0
+
+# Set default ssid
+prefix=$(uci -q get oem.custom.ssid)
+suffix=$(uci -q get oem.board.id|tr -d :|cut -c 9-)
+if grep -q 1.9 "/etc/openwrt_version";then
+    uci set cloudd.t0.diff_2_4_wlan="X0"
+    uci set cloudd.t0.ssid_wlan="X@${prefix:-NRadio}-${suffix}"
+else
+    uci set cloudd.t0.ssid_wlan="X@${prefix:-NRadio}-${suffix}"
+    uci set cloudd.t0.diff_2_4_ssid_wlan="X@${prefix:-NRadio}-${suffix}-2.4G"
+fi
+
+# Set default bandwidth
+country=$(uci -q get oem.board.country)
+country=${country:-CN}
+phyname=$(uci -q get wireless.radio1.phyname)
+if ! uci -q get cloudd.g1radio; then
+	uci set cloudd.g1radio=radio
+	uci set cloudd.g1radio.htmode_radio0=wireless.radio0.htmode=HT40
+	if [ "$phyname" = "mt7981" ]; then
+		uci set cloudd.g1radio.htmode_radio1=wireless.radio1.htmode=VHT160
+	elif [ "$phyname" = "mt7993" ]; then
+		uci set cloudd.g1radio.channel_radio0=wireless.radio0.channel=auto
+		uci set cloudd.g1radio.channel_radio1=wireless.radio1.channel=auto
+		uci set cloudd.g1radio.htmode_radio0=wireless.radio0.htmode=EHT40
+		uci set cloudd.g1radio.htmode_radio1=wireless.radio1.htmode=EHT160
+	else
+		uci set cloudd.g1radio.htmode_radio1=wireless.radio1.htmode=VHT80
+	fi
+	uci set cloudd.g1radio.country_radio0=wireless.radio0.country=${country}
+	uci set cloudd.g1radio.country_radio1=wireless.radio1.country=${country}
+fi
+
+_cpesoc=0
+if [ -f "/usr/bin/qlnet" ] || [ -f "/bin/serial_atcmd" ]; then
+	_cpesoc=1
+elif [ -f "/usr/sbin/atcmd" ]; then
+	_cpesoc=1
+fi
+
+if [ "${_cpesoc}" = "0" ]; then
+	cpe_cnt=$(find /sys/class/gpio/ -maxdepth 1 -type l -name "cpe*-pwr"|wc -l)
+	if [ "$cpe_cnt" -gt 0 ]; then
+		uci set cloudd.g1radio.skip_channels_radio0=wireless.radio0.skip_channels='1,2,3,4'
+	fi
+fi

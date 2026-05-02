@@ -1,0 +1,71 @@
+#!/bin/ash
+
+. /usr/share/libubox/jshn.sh
+
+readonly CPESEL_STATUS_FILE="/var/run/rpcd/cpesel1.json"
+readonly CPESEL_STATUS_LOCK="/var/run/rpcd/cpesel1.json.lock"
+
+set_status() {
+	local _dest=$1
+	local _msg=$2
+	local _tmp=
+	local _simno=
+	local _iccid=
+
+	flock 9
+
+	# Parse input message
+	json_load "$_msg"
+	json_get_var _simno simno
+	json_get_var _iccid iccid
+	json_cleanup
+
+	# Set iccid by simno
+	_tmp=$(cat "$_dest")
+	json_load "${_tmp:-{}}"
+	json_add_string "$_simno" "${_iccid:-none}"
+	json_dump|tee "$_dest"
+	json_cleanup
+} 9>"$CPESEL_STATUS_LOCK"
+
+get_status() {
+	local _dest=$1
+	local _msg=$2
+	local _tmp=
+	local _simno=
+	local _iccid=
+
+	# Parse input message
+	json_load "$_msg"
+	json_get_var _simno simno
+	json_cleanup
+
+	# Get iccid by simno
+	_tmp=$(cat "$_dest")
+	json_load "${_tmp:-{}}"
+	json_get_var _iccid "$_simno"
+	json_cleanup
+
+	# Gen output message
+	json_init
+	json_add_string "$_simno" "${_iccid:-none}"
+	json_dump
+	json_cleanup
+}
+
+case "$1" in
+	list)
+		echo '{ "set": { "simno": "", "iccid": "" }, "get": { "simno": "" } }'
+	;;
+	call)
+		read -r input;
+		case "$2" in
+			set)
+				set_status "$CPESEL_STATUS_FILE" "$input"
+			;;
+			get)
+				get_status "$CPESEL_STATUS_FILE" "$input"
+			;;
+		esac
+	;;
+esac

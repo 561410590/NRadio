@@ -1,0 +1,11 @@
+Package: libkvcutil
+Version: 1
+Depends: libc
+Source: package/nradio/apps/datconf
+SourceName: libkvcutil
+Section: libs
+SourceDateEpoch: 1649857235
+Maintainer: Weijie Gao <weijie.gao@mediatek.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 6518
+Description:  C library for Key-value based config files

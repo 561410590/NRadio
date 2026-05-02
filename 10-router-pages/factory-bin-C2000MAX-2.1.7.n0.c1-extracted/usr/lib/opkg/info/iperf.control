@@ -1,0 +1,14 @@
+Package: iperf
+Version: 2.0.13-2
+Depends: libc, libstdcpp6, libpthread
+Source: feeds/packages/net/iperf
+SourceName: iperf
+License: BSD-3-Clause
+Section: net
+SourceDateEpoch: 1611329215
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: aarch64_cortex-a53
+Installed-Size: 44772
+Description:  Iperf is a modern alternative for measuring TCP and UDP bandwidth
+ performance, allowing the tuning of various parameters and
+ characteristics.

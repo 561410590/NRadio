@@ -1,0 +1,1579 @@
+<%#
+Copyright 2017-2018 NRadio
+-%>
+<%
+local util = require "luci.util"
+local nr = require "luci.nradio"
+local uci = require "luci.model.uci".cursor()
+local cpe_cnt = nr.count_cpe()
+local model_str,cpe_section,model_index = nr.get_cellular_last(model)
+local cellular_data = nr.get_cellular_data(cpe_section)
+local data = luci.controller.nradio_adv.sms.action_sms_list(cpe_section)
+local smsdata=util.serialize_json({result=data},nil)
+local sims_alias = nr.get_sim_alias()
+local plat = nr.get_platform()
+local sim_section="sim"..model_str
+local max = tonumber(uci:get("cpesel", sim_section, "max") or 1)
+local sim_id = tonumber(uci:get("cpesel", sim_section, "cur") or 1)
+_stype = uci:get("cpesel", sim_section, "stype")
+stype = util.split(_stype or "0", ",")
+
+local force_ims = {}
+local support_force_ims = {}
+local sim_count = 0
+for i = 1, max do
+	local _cur_stype="0"
+	if i <= #stype then
+		_cur_stype=stype[i]
+	end
+	if _cur_stype == "0" then
+		support_force_ims[#support_force_ims+1] = true
+		sim_count=sim_count+1
+	else
+		support_force_ims[#support_force_ims+1] = false
+	end
+	local simcfg_section=cpe_section.."sim"..i
+	local force_ims_cfg = uci:get("cpecfg", simcfg_section, "force_ims") or ""
+	force_ims[#force_ims+1] = force_ims_cfg
+end
+
+if sims_alias then
+	sims_alias=sims_alias[model_index]
+end
+
+%>
+<%+header%>
+<style>
+table tr td input{
+min-width:0;
+}
+.bootstrap-dialog .bootstrap-dialog-title{
+	text-align: center;
+	display: block;
+}
+
+</style>
+<%+nradio_adv/cellular_header%>
+<%+nradio_adv/cellular_submenu%>
+<div class="cbi-map">
+<%+nradio_adv/cellular_section_redirect%>
+
+
+	<form method="post" name="cbi" id="sms_main_box" >
+		<fieldset class="cbi-section" style="margin-top: 20px;">
+			<div class="cbi-section-node">
+				<%+nradio_cpecfg/cellular_simmenu%>				
+				<div  class="cbi-value sim_box sim<%=sim_id%>_box">
+					<label class="cbi-value-title">
+						<i class="far fa-nradio-note fa-fw icon_disable visible-xs-block stand_label_icon" onclick="show_icon_help(this);"></i><%:IMS%>
+					</label>
+					<div class="cbi-value-field">
+						<div class="checkbox">
+						<input class="cbi-input-checkbox modify_class" onclick="check_support(this)" <% if not support_force_ims[sim_id] then io.write('data-support="0"') end%> <%if force_ims[sim_id]=="1" then  print("checked=\"checked\"") end%> type="checkbox" value="1" data-update="click change" name="force_ims<%=cpe_section%><%=sim_id%>"  id="force_ims<%=cpe_section%><%=sim_id%>" data-name="force_ims"  data-modelname="<%=cpe_section%>" data-simid="<%=sim_id%>">
+						<label for="force_ims<%=cpe_section%><%=sim_id%>"  class="switch"></label>
+						</div>
+
+						<div class="cbi-value-description description_help hidden-xs">
+							<%:*Enabling SMS on unsupported SIM cards may result in failure to auto-register on the 5G network. Exercise caution.%>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</fieldset>
+		<fieldset class="cbi-section">
+			<div class="cbi-section-node">
+				<div class="cbi-value" data-index="9" >
+					<div class="cbi-value-field cbi-page-actions left_btn click_pointer">
+						<input type="button" class="cbi-button cbi-button-apply" id="btn-save"  value="<%:Save & Apply%>" />
+					</div>
+				</div>
+			</div>
+		</fieldset>
+
+	</form>
+</div>
+<style>
+	.sms_box{
+		margin: 0 20px;
+	}
+	.sms_info_send{
+		margin: 10px 20px;
+	}
+	.sms_box_header{
+		text-align: left;
+		padding:0 20px;
+		font-size: medium;
+	}
+	.sms_box_content{
+		text-align: left;
+		min-height: 300px;
+	}
+	table>tbody>tr>td:nth-of-type(2), table>thead>tr>th:nth-of-type(2), table>tbody>tr>th:nth-of-type(2){
+		text-align: left;
+	}
+	.sms_info{
+		width: 70%;
+		padding-bottom: 10px;
+	}
+	.smsbox_top{
+		margin-top: 20px;
+		border-radius: 10px;
+	}
+	.sms_contact_box_content{
+		word-break: break-all;
+	}
+	.left_box{
+		float:left;
+	}
+	.right_box{
+		float:right;
+		width: 100%;
+	}
+	.sms_info_date{
+		text-align: right;
+		height: 50px;
+    	line-height: 50px;
+	}
+	.storage_info{
+		cursor: pointer;
+		display: block;
+	}
+	.right_box .sms_info_inner_content{
+		text-align: left;
+	}
+	.left_box .sms_info_inner_content{
+		width: auto;
+		float: left;
+    	margin-left: 20%;
+	}
+	.left_box .sms_info_date{
+		text-align: left;
+		width: 80%;
+		float: right;
+    	padding: 10px 20px;
+	}
+	.sms_info_content{
+		display: inline-block;
+		float: right;
+		width: 100%;
+	}
+	.sms_info_inner_content{
+		width: 80%;
+		padding: 10px 20px;
+		text-align: left;
+		border-radius: 10px;
+		word-break: break-all;		
+    	float: right;
+	}
+	.right_box 	.sms_info_inner_content{
+		max-width: 70%;
+		width: auto;
+	}
+
+	.sms_info_inner_check{
+		float: left;
+		position: relative;
+		left: 60px;
+	}
+	.undeal_note{
+		border-radius: 50%;
+		background: unset;
+		width: 10px;
+		height: 10px;
+		background-color: #0088cc;
+		display: inline-block;
+	}
+	.sms_xs_left_note{		
+		border-radius: 10px;
+		padding: 10px;
+		word-break: break-all;
+	}
+	.sms_xs_right_note{
+		border-radius: 10px;
+		padding: 10px;
+		word-break: break-all;
+	}
+	input.cbi-input-text.sms_recieve_input{
+		width: 60%;
+		float: left;
+	}
+	#sms_msg_note{
+		text-align: right;
+    	display: block;
+	}
+
+	@media (min-width: 10px) and (max-width: 768px) {
+		.bootstrap-dialog .modal-dialog {
+			margin:100px auto;
+		}
+		input.cbi-input-text.sms_recieve_input{
+			width: 45%;
+			float: left;
+		}
+		.bootstrap-dialog-message .main{
+			margin-top: 0px;
+		}
+		.smsbox_dialog h2{
+			display: none;
+		}
+		.smsbox_dialog .modal-dialog .main-content{
+			padding:5px;
+		}
+		.smsbox_dialog .modal-header{
+			display: none;
+		}
+		.sms_info_inner_check{
+			left: 30px;
+		}
+
+		.left_box .sms_info_date{
+			width: 100%;
+			margin-right: -20%;
+			padding: unset;
+		}
+	}
+
+</style>
+<script language="javascript">
+	var sms_box_dailg = null;
+	var del_sms_id = [];
+	var gData = [];
+	var gReceive_num="";
+	var sendms_max_length=0;
+	var first_data_interval = null;
+	var noneed_interval = 0;
+	var second_refresh_interval = null;
+	var loading_htm = '<div  id="scan_loading"><img alt="loading" src="<%=media%>/images/loading.gif" ></div>';
+	var gModel = "<%=model%>";
+	var SMSTableRow = ''+
+	'<tr class="sms_contact_box{{index}}">'+
+	'<td class="sms_contact_box_note" >'+
+	'{{undeal}}'+
+	'</td>'+
+	'<td  class="sms_contact_box_contact" style="width: 20%;cursor: pointer;" {{detail_click}}>'+
+	'{{contact}}'+
+	'</td>'+
+	'<td class="sms_contact_box_content" style="width: 50%;cursor: pointer;" {{detail_click}}>'+
+	'{{content}}'+
+	'</td>'+
+	'<td class="sms_contact_box_date" style="width: 50%;cursor: pointer;" {{detail_click}}>'+
+	'{{date}}'+
+	'</td>'+
+	'<td style="width: 20%">'+
+	'{{opt}}'+
+	'</td>'+
+	'</tr>';
+	var SMSTableMobileRow = ''+
+'<div class="panel panel-info visible-xs-block hide sms_contact_box{{index}}">'+
+	'<div class="panel-heading">'+
+	'	<div class="row">'+
+	'		<div class="col-sm-6 col-xs-6 text-left sms_contact_box_contact_mobile"  {{detail_click}} >{{undeal}}'+
+	'			{{contact}}'+
+	'		</div>'+
+	'		<div class="col-sm-6 col-xs-6 text-right">'+
+	'			{{opt}}'+
+	'		</div>'+
+	'	</div>'+
+	'</div>'+
+	'<div class="panel-body info-box">'+
+	'	<div class="row">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{content_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right sms_contact_box_content" {{detail_click}}>'+
+	'					{{content}}' +
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{date_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right sms_contact_box_date" {{detail_click}}>'+
+	'					{{date}}'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'	</div>'+
+	'	<div class="row top-border">'+
+	'		<div class="col-xs-12 text-left">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					{{detail_label}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right terminal">'+
+	'					<a data-toggle="collapse" class="icon_color" onclick="show_sms_xs(this,\'client_box{{index}}\',{{index}})"><span class="client_box_count{{index}}">{{count}}</span><span class="nav-next "></span></a>'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>'+
+	'		<div id="client_box{{index}}" class="panel-collapse collapse">'+
+	'		</div>'+
+	'	</div>'+
+	'</div>'+
+	'</div>';
+	var smsTableMobileLeftClient = ''+
+	'		<div class="col-xs-12 text-left {{border}}">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left sms_xs_left_note">'+
+	'					{{date}}<br><br>{{content}}'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right">'+
+	'					'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>';
+	var smsTableMobileRightClient = ''+
+	'		<div class="col-xs-12 text-left {{border}}">'+
+	'			<div class="row">'+
+	'				<div class="col-sm-6 col-xs-6 text-left ">'+
+	'					'+
+	'				</div>'+
+	'				<div class="col-sm-6 col-xs-6 text-right sms_xs_right_note">'+
+	'					<div class="sms_info_err{{index}}" onclick="resend_sms(\'{{index}}\')">{{stat}}</div>{{date}}<br><div class="text-left">{{content}}</div>'+
+	'				</div>'+
+	'			</div>'+
+	'		</div>';
+	var smsTableClient = ''+
+	'			<div class="sms_info {{box}} sms_info_box{{index}}">'+
+	'				<div class="sms_info_date">'+
+	'				{{date}}'+
+	'				</div>'+
+	'				<div class="sms_info_content">'+
+	'					<div class="sms_info_inner_check hide">'+
+	'						<div class="checkbox">'+
+	'							<input name="sms_del" type="checkbox" onclick="note_del_sms(this);" value="{{index}}" />'+
+	'						</div>'+
+	'					</div>'+
+	'					<div class="sms_info_inner_content">'+
+	'						<div class="sms_info_err{{index}}" onclick="resend_sms(\'{{index}}\')">{{stat}}</div>{{content}}'+
+	'					</div>'+
+	'				</div>'+
+	'			</div>';
+
+
+
+function escapeHtml(str) {
+  return str.replace(/[<>&"']/g, function(match) {
+    switch (match) {
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&#039;';
+    }
+  });
+}
+
+function show_sms_xs(obj,boxid,index){
+	var display_info = $("#"+boxid).css("display");
+
+	if(display_info == "none"){
+		$(obj).find(".nav-next").addClass("active");
+		$("#"+boxid).css("display","block");
+		console.log("boxid:"+index);
+		console.log(gData[index].newsms);
+		report_sms_readed(gData[index].newsms);
+	}
+	else{
+		$(obj).find(".nav-next").removeClass("active");
+		$("#"+boxid).css("display","none");
+	}
+}
+function getData(n) {
+  let now = new Date(n),
+    y = now.getFullYear(),
+    m = now.getMonth() + 1,
+    d = now.getDate();
+  return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
+}
+
+function append_new_contact(item){
+	//console.log(item);
+	var htm="";
+	var mobile_htm="";
+	var msg = {date:'<%:SMSDate%>',content:'<%:SMSContent%>',detail:'<%:SMSDetailNote%>'};
+	sms_used++;
+	console.log("append_new_contact sms_used++ "+ sms_used);
+	if (sms_total){
+		$(".storage_info").html("<%:SMSStorageUsed%>:"+sms_used+"/"+sms_total+ "<i class=\"far fa-nradio-note fa-fw icon_disable\" ></i>");		
+	}
+	var index = gData.length - 1;
+	var detail_click = 'onclick="show_sms_detail(\''+index+'\')"';
+	var undeal = '';
+	var optht = '<a class="normol_color only_color click_pointer" onclick="del_contact(\''+index+'\')"><i class="far fa-nradio-del fa-fw fa-2x" ></i> </a>';
+	var date_buffer = item.list[item.list.length-1].timestamp;
+	if (date_buffer){
+		date_buffer = getData(parseInt(date_buffer)*1000);
+	}
+	if (item.undeal)
+		undeal = '<div class="undeal_note"></div>';
+	htm+=SMSTableRow.compose({
+		undeal:undeal,
+		contact: item.contact,
+		content: item.list[item.list.length-1].content,
+		date:date_buffer,
+		opt:optht,
+		date_label:msg.date,
+		content_label:msg.content,
+		detail_click:detail_click,
+		index:index
+	});
+
+	mobile_htm+=SMSTableMobileRow.compose({
+		undeal:undeal,
+		contact: item.contact,
+		content: item.list[item.list.length-1].content,
+		date:date_buffer,
+		count:item.list.length,
+		detail_click:detail_click,
+		opt:optht,
+		date_label:msg.date,
+		content_label:msg.content,
+		detail_label:msg.detail,
+		index:index
+	});
+
+	$(".sms_list").each(function(){
+
+		var type_s = $(this).data("sms_item");
+		if(type_s == "mobile"){
+			$(this).append(mobile_htm);
+
+			var border_str = "";
+			var mobile_sub_htm="";
+			for(i=0;i<item.list.length;i++){
+
+				var content = item.list[i].content;
+				content = escapeHtml(content);
+				var date_buffer = item.list[i].timestamp;
+				if (date_buffer ){
+					date_buffer = getData(parseInt(date_buffer)*1000);
+				}
+				var date = date_buffer;
+				if(item.list[i].multi_sms_index)
+					content +="<br>("+item.list[i].multi_sms_index+")";
+				var stat = parseInt(item.list[i].stat);
+				var role = parseInt(item.list[i].role);
+				var index = item.list[i].index;
+				var stat_htm='<i class="far fa-nradio-note fa-fw fail_color" ></i>';
+				if(stat == 1)
+					stat_htm="";
+				if(role == 0){
+					mobile_sub_htm+=smsTableMobileLeftClient.compose({
+						index:index,
+						date:date,
+						content:content,
+						border:border_str
+					});
+				}
+				else{
+					mobile_sub_htm+=smsTableMobileRightClient.compose({
+						index:index,
+						date:date,
+						content:content,
+						border:border_str,
+						stat:stat_htm
+					});
+				}
+
+				$("#client_box"+index).html(mobile_sub_htm);
+			}
+		}
+		else{
+			$(this).append(htm);
+		}
+
+	});
+}
+
+function append_new_sms(box_index,item,contact,count,new_sms){
+
+	var htm ='';
+	var mobile_sub_htm ='';
+	current_box_open=0
+	if(item){
+		var content = item.content?item.content:"";
+		var new_one = 0;
+		content = escapeHtml(content);
+		var date_buffer = item.timestamp;
+		if (date_buffer){
+			date_buffer = getData(parseInt(date_buffer)*1000);
+		}
+		if(item.multi_sms_index)
+			content +="<br>("+item.multi_sms_index+")";
+		var date = date_buffer;
+		var stat = parseInt(item.stat);
+		var role = parseInt(item.role);
+		var index = item.index;
+		var box="left_box";
+
+		if($(".sms_info_box"+index).length  == 0){
+			new_one = 1;
+			if (sms_total && new_sms){
+				sms_used++;
+				console.log("append_new_sms sms_used++ "+ sms_used);
+				$(".storage_info").html("<%:SMSStorageUsed%>:"+sms_used+"/"+sms_total+ "<i class=\"far fa-nradio-note fa-fw icon_disable\" ></i>");
+			}
+			htm+=smsTableClient.compose({
+				index:index,
+				date:date,
+				box:box,
+				stat:"",
+				content:content
+			});
+			mobile_sub_htm+=smsTableMobileLeftClient.compose({
+				index:index,
+				date:date,
+				content:content,
+				border:""
+			});
+			$("#client_box"+box_index).append(mobile_sub_htm);
+		}
+		
+		var display_info = $("#client_box"+box_index).css("display");
+		console.log(display_info);
+		if(display_info != "none"){
+			current_box_open=1;
+		}
+		
+		$(".client_box_count"+box_index).html(count);
+		$(".sms_contact_box"+box_index+" .sms_contact_box_contact").html(contact);
+		if(new_one){
+			$(".sms_contact_box"+box_index+" .sms_contact_box_contact_mobile").html('<div class="undeal_note"></div>'+contact);
+			$(".sms_contact_box"+box_index+" .sms_contact_box_note").html('<div class="undeal_note"></div>');
+		}
+		else{
+			$(".sms_contact_box"+box_index+" .sms_contact_box_contact_mobile").html(contact);
+			$(".sms_contact_box"+box_index+" .sms_contact_box_note").html('');
+		}
+
+		$(".sms_contact_box"+box_index+" .sms_contact_box_content").html(content);
+		$(".sms_contact_box"+box_index+" .sms_contact_box_date").html(date);
+		if((contact == $(".sms_item_class").data("contact"))){
+			current_box_open=1;
+			if(htm.length)
+				$(".sms_item_class").append(htm);
+			scroll_botton();
+		}
+	}
+	return current_box_open;
+}
+function report_sms_readed(newsms){
+	var data = {};
+	if (newsms && newsms.length)
+	{
+		console.log(newsms);
+		data['ids'] = newsms.join(",");
+		data['type'] = "new";
+		data['channel'] = gModel;
+
+		(new XHR()).post('<%=controller%>nradio/cellular/sms/del', data, function(xhr){
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					var data_res = eval('(' + xhr.responseText + ')');
+					delete newsms;
+
+				}
+				catch(e) {
+				}
+			}
+		});
+	}
+}
+
+function show_new_data(new_data){
+	var contact_match = 0;
+	var index_match = 0;
+	var i = 0;
+	var j = 0;
+	var z = 0;
+	var contact_group_id=-1;
+	if (!new_data || !new_data.length){
+		return;
+	}
+
+	for(i=0;i<new_data.length;i++){
+		var new_item = new_data[i];
+		contact_match = 0;
+		index_match = 0;
+
+		for(j=0;j<gData.length;j++){
+			var old_item = gData[j];
+			if (old_item.contact == new_item.contact){
+				contact_match = 1;
+				for(z=0;z<old_item.list.length;z++){
+					if(new_item.index == old_item.list[z].index){
+						index_match = 1;
+						break;
+					}
+				}
+
+				var new_itemx = {"role":"0","index":new_item.index.toString(),"timestamp":new_item.timestamp,"content":new_item.content,"stat": "1","multi_sms_index":new_item.multi_sms_index};
+
+				if(!gData[j].newsms || ($.inArray(new_item.index, gData[j].newsms) == -1)){
+					if(!gData[j].newsms)
+						gData[j].newsms=[];
+					gData[j].newsms.push(new_item.index);
+				}
+				if (index_match){
+					if(append_new_sms(j,new_itemx,new_item.contact,gData[j].list.length,0)){
+						contact_group_id=j;
+					}
+					break;
+				}
+
+				gData[j].list.push(new_itemx);
+				if(append_new_sms(j,new_itemx,new_item.contact,gData[j].list.length,1)){
+					contact_group_id=j;
+				}
+			}
+		}
+
+		if((contact_group_id>=0) && gData[contact_group_id])
+			report_sms_readed(gData[contact_group_id].newsms);
+
+		if(!contact_match){
+			var contact_item = {"contact":new_item.contact,"undeal":1,"list":[],"newsms":[]};
+			var new_itemx = {"role":"0","index":new_item.index.toString(),"timestamp":new_item.timestamp,"content":new_item.content,"stat": "1" };
+			contact_item.list.push(new_itemx);
+			contact_item.newsms.push(new_item.index);
+			gData.push(contact_item);
+			append_new_contact(contact_item);
+		}
+	}
+}
+var sms_used = 0 ;
+var sms_total = 0 ;
+var init_show_dialog = null;
+
+function html_format(str){
+	var temp = "";
+	if(str.length == 0) return "";
+	temp = str.replace(/&amp;/g,"&");
+	temp = temp.replace(/&#60;/g,"<");
+	temp = temp.replace(/&#62;/g,">");
+	temp = temp.replace(/&nbsp;/g," ");
+	temp = temp.replace(/&#39;/g,"\'");
+	temp = temp.replace(/&quot;/g,"\"");
+	return temp;
+
+}
+
+function show_sms_data(data,box_class){
+	var htm="";
+	var mobile_htm="";
+	var msg = {date:'<%:SMSDate%>',content:'<%:SMSContent%>',detail:'<%:SMSDetailNote%>'};
+	if (data.result && data.result.ready){
+		if(init_show_dialog){
+			init_show_dialog.close();
+		}
+		noneed_interval = 1;
+		if(second_refresh_interval){
+			window.clearInterval(second_refresh_interval);
+		}
+
+		second_refresh_interval = window.setInterval(function(){
+			refresh_data("new");
+		},3000);
+	}
+	else{
+		/*var info_msg = "<%:SMSInitNote%>";
+		if (data.result.on == "0"){
+			info_msg = "<%:SMSInitClose%>";
+		}
+
+		tmp_div = html_format("<i class=\"far fa-nradio-note fa-fw icon_disable\" ></i>"+info_msg);
+		if(!init_show_dialog){
+			init_show_dialog = BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				closeByBackdrop: true,
+				title: '',
+				message: tmp_div,
+				onhide:function(){
+					init_show_dialog=null;
+				}
+			});
+		}
+		else{
+			init_show_dialog.setMessage(tmp_div);
+		}*/
+		return ;
+	}
+
+	if (data.result.total ){
+		$(".storage_info").html("<%:SMSStorageUsed%>:"+data.result.used+"/"+data.result.total + "<i class=\"far fa-nradio-note fa-fw icon_disable\" ></i>");
+		sms_used = data.result.used;
+		sms_total = data.result.total;
+		console.log("show_sms_data sms_used "+ sms_used);
+	}
+
+	gData = data.result.smslist;
+	if(gData && gData.length){
+		gData.sort(function(a, b) {
+			var prev_data_lastsms_item = 0;
+			var last_data_lastsms_item = 0;
+			if(a.list && a.list.length)
+				prev_data_lastsms_item = a.list[a.list.length-1];
+			if(b.list && b.list.length)
+				last_data_lastsms_item = b.list[b.list.length-1];
+			prev_data = prev_data_lastsms_item.timestamp;
+			last_data = last_data_lastsms_item.timestamp;
+			return ( last_data - prev_data );
+		});	
+	}
+
+	$.each(data.result.smslist, function(index, db){
+		var detail_click = 'onclick="show_sms_detail(\''+index+'\')"';
+		var undeal = '';
+		var content = db.list[db.list.length-1].content;
+		var optht = '<a class="normol_color only_color click_pointer" onclick="del_contact(\''+index+'\')"><i class="far fa-nradio-del fa-fw fa-2x" ></i> </a>';
+		var date_buffer = db.list[db.list.length-1].timestamp;
+		if (date_buffer){
+			date_buffer = getData(parseInt(date_buffer)*1000);
+		}
+		if (db.undeal)
+			undeal = '<div class="undeal_note"></div>';
+		if(db.list[db.list.length-1].multi_sms_index)
+			content +="("+db.list[db.list.length-1].multi_sms_index+")";
+		content = escapeHtml(content);
+		htm+=SMSTableRow.compose({
+			undeal:undeal,
+			contact: db.contact,
+			content: content,
+			date:date_buffer,
+			opt:optht,
+			date_label:msg.date,
+			content_label:msg.content,
+			detail_click:detail_click,
+			index:index
+		});
+
+		mobile_htm+=SMSTableMobileRow.compose({
+			undeal:undeal,
+			contact: db.contact,
+			detail_click:detail_click,
+			content: content,
+			date:date_buffer,
+			count:db.list.length,
+			opt:optht,
+			date_label:msg.date,
+			content_label:msg.content,
+			detail_label:msg.detail,
+			index:index
+		});
+	});
+
+	$("."+box_class).each(function(){
+		var type_s = $(this).data("sms_item");
+		if(type_s == "mobile"){
+			$(this).empty().append(mobile_htm);
+			var border_str = "";
+			$.each(data.result.smslist, function(indexs, db){
+				var mobile_sub_htm="";
+				var sms_group = new Object();
+				for(i=0;i<db.list.length;i++){
+					var content_group = "";
+
+					if(db.list[i].multi_sms_id == 0){
+						content_group = "group"+(db.list[i].multi_sms_id).toString()+"index"+(db.list[i].index).toString();
+					}
+					else{
+						content_group = "group"+(db.list[i].multi_sms_id).toString();
+					}
+					if(!sms_group[content_group])
+						sms_group[content_group] = new Array;
+					sms_group[content_group].push(db.list[i]);
+				}
+
+				for (group_id in sms_group) {
+					var content = "";
+					var date = "";
+					var box = "";
+					var stat_htm = "";
+					var index = "";
+
+					for (i = 0; i < sms_group[group_id].length; i++) {
+						var content_tmp = sms_group[group_id][i].content;
+						content_tmp = escapeHtml(content_tmp);
+						content +=content_tmp;
+						var date_buffer = sms_group[group_id][i].timestamp;
+						if (date_buffer ){
+							date_buffer = getData(parseInt(date_buffer)*1000);
+						}
+						date = date_buffer;
+						var stat_tmp = parseInt(sms_group[group_id][i].stat);
+						var role = parseInt(sms_group[group_id][i].role);
+						var index_tmp = sms_group[group_id][i].index;
+						var stat_htm_tmp='<i class="far fa-nradio-note fa-fw fail_color" ></i>';
+						if(stat_tmp == 1)
+							stat_htm_tmp="";
+						else
+							stat_htm = stat_htm_tmp;
+
+						if(index.length)
+							index = index +"-"+ index_tmp.toString();
+						else
+							index = index_tmp.toString();
+
+					}
+
+					if(role == 0){
+						mobile_sub_htm+=smsTableMobileLeftClient.compose({
+							index:index,
+							date:date,
+							content:content,
+							border:border_str
+						});
+					}
+					else{
+						mobile_sub_htm+=smsTableMobileRightClient.compose({
+							index:index,
+							date:date,
+							content:content,
+							border:border_str,
+							stat:stat_htm
+						});
+					}
+
+					$("#client_box"+indexs).html(mobile_sub_htm);
+				}
+			});
+
+		}
+		else{
+			$(this).empty().append(htm);
+		}
+	});
+}
+
+function create_sms(){
+	show_sms_detail();
+}
+function clean_sms(){
+	var msg = {};
+	var dialogDel = null;
+	var data = {};
+	data['type'] = "all";
+	data['channel'] = gModel;
+	msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:SMSCleanConfirmNote%>';
+	msg.confirm = "<%:SMSCleanSure%>";
+	msg.confirm_keep = true;
+	msg.cancel = "<%:Cancel%>";
+	msg.onhide = function(){},
+	msg.onshown = function(){
+		dialogDel.setTitle("<%:SMSCleanConfirmTitle%>");
+	},
+	msg.callback = function(){
+		$(".modal-footer").css("display","none");
+		dialogDel.setTitle("");	
+		dialogDel.setMessage(loading_htm);
+		(new XHR()).post('<%=controller%>nradio/cellular/sms/del', data, function(xhr){
+			var data_res = null;
+			var code = -1;
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					data_res = eval('(' + xhr.responseText + ')');
+					code = data_res.result.code;
+
+					if(code == 0){
+						location.reload();
+					}
+					else{
+						var error_info = "<%:SMSOPError%>";
+						if (code == -2)
+							error_info = "<%:SMSModelError%>";
+						BootstrapDialog.show({
+							type: BootstrapDialog.TYPE_DEFAULT,
+							closeByBackdrop: true,
+							title: '',
+							message: '<i class="far fa-nradio-note fa-fw icon_disable" ></i>'+error_info,
+						});
+					}
+				}
+				catch(e) {
+					data_res = null;
+				}
+				if(dialogDel)
+					dialogDel.close();
+			}
+		});
+	}
+	dialogDel = confirm_box(msg);
+}
+
+function show_sms_detail(id){
+	var data=null;
+	var btn_mesh_htm = "";
+	var contact="";
+	var receive_htm='<input type="text" class="cbi-input-text sms_recieve_input" style="margin-top:-5px" id="phone_num" value="" >';
+	gReceive_num="";
+	var sms_group = {};
+	var exsit = 0;
+	if(id && gData[id]){
+		data = gData[id];
+		contact = data["contact"];
+		receive_htm='				<label class="width_auto">'+contact+'</label>';
+		gReceive_num = contact;
+	}
+	console.log(id);
+	var htm='<div class="main ">';
+	htm+='<div class="main-content main-content-sub" >';
+	htm+='<div class="cbi-map">';
+	htm+='<h2 name="content"  class="content-sub"><span><%:SMSTile%></span></h2>';
+	htm+='<div class="smsbox_top">';
+		htm+='	<fieldset class="cbi-section">';
+	htm+='		<div class="cbi-section-node sms_box_header">';
+	htm+='				<label class="width_auto left_box"><%:SMSReceive%>:</label>';
+	htm+=receive_htm;
+	htm+='				<div class="cbi-value-field right_btn" >';
+	htm+='					<a class="normol_color only_color click_pointer content_del_box hide" onclick="show_del()"><i class="far fa-nradio-del fa-fw" ></i> </a>';
+	htm+='					<a class="normol_color only_color click_pointer" onclick="box_close()"><i class="far fa-nradio-close fa-fw " ></i> </a>';
+	htm+='				</div>';
+	htm+='		</div>';
+	htm+='	</fieldset>';
+	htm+='	<div class="form-box full-width sms_box" id="sms_box">';
+
+	htm+='	<fieldset class="cbi-section sms_box_content sms_item_class" data-contact="'+contact+'" >';
+	if(data){
+		for(i=0;i<data.list.length;i++){
+			var content_group = "";
+			if(!data.list[i].multi_sms_id)
+				data.list[i].multi_sms_id = 0;
+
+			if(data.list[i].multi_sms_id == 0){
+				content_group = "group"+(data.list[i].multi_sms_id).toString()+"index"+(data.list[i].index).toString();
+			}
+			else{
+				content_group = "group"+(data.list[i].multi_sms_id).toString();
+			}
+			if(!sms_group[content_group])
+				sms_group[content_group] = new Array;
+			sms_group[content_group].push(data.list[i]);
+		}
+
+		for(group_id in sms_group){
+			var content = "";
+			var date = "";
+			var box = "";
+			var stat_htm = "";
+			var index = "";
+			for(i=0;i<sms_group[group_id].length;i++){
+				var content_tmp = sms_group[group_id][i].content;
+				content_tmp = escapeHtml(content_tmp);
+				content += content_tmp;
+				var date_buffer = sms_group[group_id][i].timestamp;
+				if (date_buffer){
+					date_buffer = getData(parseInt(date_buffer)*1000);
+				}
+
+				date = date_buffer;
+				var stat_tmp = parseInt(sms_group[group_id][i].stat);
+				var role_tmp = parseInt(sms_group[group_id][i].role);
+				var index_tmp = sms_group[group_id][i].index;
+				var box_tmp="right_box";
+				var stat_htm_tmp='<i class="far fa-nradio-note fa-fw fail_color"></i>';
+				if(role_tmp == 0){
+					box_tmp="left_box";
+				}
+				box = box_tmp;
+				if(role_tmp == 0 || stat_tmp == 1)
+					stat_htm_tmp="";
+				else{
+					stat_htm = stat_htm_tmp;
+				}
+
+				if(index.length)
+					index = index +"-"+ index_tmp.toString();
+				else
+					index = index_tmp.toString();
+			}
+			exsit = 1;
+			htm+=smsTableClient.compose({
+				index:index,
+				date:date,
+				box:box,
+				stat:stat_htm,
+				content:content
+			});
+		}
+	}
+
+	htm+='	</fieldset>';
+	htm+='	</div>';
+	htm+='	<fieldset class="cbi-section sms_info_send">	';
+	htm+='				<div class="cbi-section-node">';
+	htm+='					<div class="cbi-value" style="margin:0px">';
+	htm+='						<div class="" style="width:70%;float:left">';
+	htm+='						<textarea class="cbi-input-textarea" id="sms_msg" onkeyup="check_msg_valid(this)" onchange="check_msg_valid(this)" rows="3"></textarea>';
+	htm+='						<span id="sms_msg_note"></span>';
+	htm+='						</div>';
+	htm+='						<input class="cbi-button" style="float:right;" onclick="send_sms()" type="button" value="<%:SMSSend%>">';
+	htm+='					</div>';
+	htm+='				</div>';
+	htm+='	</fieldset>';
+	htm+='	<fieldset class="cbi-section sms_info_del hide">	';
+	htm+='				<div class="cbi-section-node">';
+	htm+='					<div class="cbi-value" style="margin:0px">';
+	htm+='						<input class="cbi-button clean_btn" onclick="del_sms()" type="button" value="<%:SMSDel%>">';
+	htm+='					</div>';
+	htm+='				</div>';
+	htm+='	</fieldset>';
+	htm+='</div>';
+	htm+='</div>';
+	htm+='</div>';
+	htm+='</div>';
+
+	sms_box_dailg = BootstrapDialog.show({
+	type: BootstrapDialog.TYPE_DEFAULT,
+	cssClass: 'list-dialog smsbox_dialog dialog_box',
+	closeByBackdrop: false,
+	closable:false,
+	title: '',
+	message: htm,
+	onshown:function(){
+		console.log("detail:"+id);
+		if (gData[id]){
+			console.log(gData[id].newsms);
+			report_sms_readed(gData[id].newsms);
+		}
+		if(exsit)
+		$(".content_del_box").removeClass("hide");
+		scroll_botton();
+	},
+	onhide:function(){
+		sms_box_dailg = null;
+		delete del_sms_id;
+		del_sms_id = [];
+		refresh_data();
+	}
+	});
+}
+function box_close(){
+	if(sms_box_dailg){
+		sms_box_dailg.close();
+
+	}
+}
+
+function show_del(){
+	if(sms_box_dailg){
+		$(".sms_info_inner_check").toggleClass("hide");
+		$(".sms_info_del").toggleClass("hide");
+		$(".sms_info_send").toggleClass("hide");
+	}
+}
+
+function note_del_sms(obj){
+	if(sms_box_dailg){
+		var chval = $(obj).prop("checked");
+		var sms_data = $(obj).val();
+		if(chval == true){
+			del_sms_id.push(sms_data);
+		}
+		else{
+			del_sms_id.pop(sms_data);
+		}
+	}
+
+}
+
+function del_contact(index){
+	var msg = {};
+	var dialogDel = null;
+	var ids = [];
+	var contact_item = gData[index];
+	for(i=0;i<contact_item.list.length;i++){
+		ids.push(contact_item.list[i].index);
+	}
+
+	msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:SMSDelContactConfirmNote%>';
+	msg.confirm = "<%:Confirm%>";
+	msg.confirm_keep = true;
+	msg.cancel = "<%:Cancel%>";
+	msg.onhide = function(){},
+	msg.callback = function(){
+		$(".modal-footer").css("display","none");
+		dialogDel.setMessage(loading_htm);
+		process_del(ids,dialogDel,"sms_contact_box"+index);
+
+	}
+	console.log(ids);
+	dialogDel = confirm_box(msg);
+}
+
+function process_del(id_array,dialogDel,boxclass){
+	var data={};
+	var sms_del_array = [];
+	for(i=0;i<id_array.length;i++){
+		var sms_group = [];
+		if (id_array[i].toString().indexOf("-") != -1)
+			sms_group = id_array[i].split("-");
+		if (sms_group.length){
+			for(j=0;j<sms_group.length;j++)
+				sms_del_array.push(sms_group[j]);
+		}
+		else{
+			sms_del_array.push(id_array[i]);
+		}
+	}
+	data['channel'] = gModel;
+	data['ids'] = sms_del_array.join(",");
+	if (data['ids'] == ""){
+		if(dialogDel)
+			dialogDel.close();
+		return;
+	}
+
+	(new XHR()).post('<%=controller%>nradio/cellular/sms/del', data, function(xhr){
+		var data_res = null;
+		var code = -1;
+
+		if (xhr.getResponseHeader("Content-Type") == "application/json") {
+			try {
+				data_res = eval('(' + xhr.responseText + ')');
+				code = data_res.result.code;
+
+				if(code == 0 || code == 2){
+					delete del_sms_id;
+					del_sms_id = [];
+					if(boxclass){
+						$("."+boxclass).remove();
+						refresh_data();
+					}
+					else{
+						for(i=0;i<id_array.length;i++)
+							$(".sms_info_box"+id_array[i]).remove();
+					}
+				}
+				else{
+					var error_info = "<%:SMSOPError%>";
+					if (code == -2)
+						error_info = "<%:SMSModelError%>";
+					BootstrapDialog.show({
+						type: BootstrapDialog.TYPE_DEFAULT,
+						closeByBackdrop: true,
+						title: '',
+						message: '<i class="far fa-nradio-note fa-fw icon_disable" ></i>'+error_info,
+					});
+				}
+			}
+			catch(e) {
+				data_res = null;
+			}
+			if(dialogDel)
+				dialogDel.close();
+		}
+	});
+}
+function force_ims_f(obj){
+	var data = {};
+	var chval = $("#force_ims").prop("checked");
+	data['force_ims']='0';
+	data['channel'] = gModel;
+	if(chval == true){
+		data['force_ims']='1';
+	}
+
+	var msg = {};
+	var dialogDel = null;
+	msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:SMSForceIMSNote2%>';
+	msg.confirm = "<%:Confirm%>";
+	msg.confirm_keep = true;
+	msg.cancel = "<%:Cancel%>";
+	msg.onhide = function(){},
+	msg.callback = function(){
+		dialogDel.setMessage("OK");
+		$(".modal-footer").css("display","none");
+		(new XHR()).post('<%=controller%>nradio/cellular/sms/force_ims', data, function(xhr){
+			var code = -1;
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					var data_res = eval('(' + xhr.responseText + ')');
+					code = data_res.result.code;
+					dialogDel.close();
+
+				}
+				catch(e) {
+				}
+			}
+		});
+
+	}
+	msg.cancel_callback = function(){
+		$("#force_ims").prop("checked",!chval);
+	};
+	dialogDel = confirm_box(msg);
+}
+
+function confirm_del(id_array){
+	var msg = {};
+	var dialogDel = null;
+	msg.message = '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:SMSDelConfirmNote%>';
+	msg.confirm = "<%:Confirm%>";
+	msg.confirm_keep = true;
+	msg.cancel = "<%:Cancel%>";
+	msg.onhide = function(){},
+	msg.callback = function(){
+		dialogDel.setMessage(loading_htm);
+		$(".modal-footer").css("display","none");
+		process_del(id_array,dialogDel);
+	}
+	console.log(id_array);
+	dialogDel = confirm_box(msg);
+}
+function del_sms(){
+	if(sms_box_dailg){
+		if (!del_sms_id || !del_sms_id.length){
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				closeByBackdrop: false,
+				title: '',
+				message: '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:SMSDelEmptyNote%>',
+			});
+
+			return;
+		}
+		confirm_del(del_sms_id);
+	}
+}
+
+function formatDate(objDate,fmt)
+{
+	var o = {
+    "M+" : objDate.getMonth()+1, //月份
+    "d+" : objDate.getDate(), //日
+    "h+" : objDate.getHours()%12 == 0 ? 12 : objDate.getHours()%12, //小时
+    "H+" : objDate.getHours(), //小时
+    "m+" : objDate.getMinutes(), //分
+    "s+" : objDate.getSeconds(), //秒
+    "q+" : Math.floor((objDate.getMonth()+3)/3), //季度
+    "S" : objDate.getMilliseconds() //毫秒
+  };
+  if(/(y+)/.test(fmt))
+    fmt=fmt.replace(RegExp.$1, (objDate.getFullYear()+"").substr(4 - RegExp.$1.length));
+  for(var k in o)
+    if(new RegExp("("+ k +")").test(fmt))
+  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+  return fmt;
+}
+
+function resend_sms(id){
+	var data={}
+
+	data['id'] = id;
+	data['channel'] = gModel;
+	if(!id.length || (id.indexOf("-") != -1)){
+		return;
+	}
+
+	(new XHR()).post('<%=controller%>nradio/cellular/sms/resend', data, function(xhr){
+		var code = -1;
+		if (xhr.getResponseHeader("Content-Type") == "application/json") {
+			try {
+				var data_res = eval('(' + xhr.responseText + ')');
+				code = data_res.result.code;
+				if (code == 0)
+					$(".sms_info_err"+id).html("");
+				else{
+					BootstrapDialog.show({
+						type: BootstrapDialog.TYPE_DEFAULT,
+						closeByBackdrop: true,
+						title: '',
+						message: '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:SMSOPError%>',
+					});
+				}
+			}
+			catch(e) {
+			}
+		}
+	});
+}
+
+function send_sms(){
+	var data={}
+	var sms_msg = $("#sms_msg").val();
+	var phone_num = $("#phone_num").val();
+	if(gReceive_num && gReceive_num.length)
+		phone_num=gReceive_num;
+
+	data['msg'] = sms_msg;
+	data['phone_num'] = phone_num;
+	data['channel'] = gModel;
+	if(!sms_msg.length || !phone_num.length){
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			closeByBackdrop: false,
+			title: '',
+			message: '<i class="far fa-nradio-note fa-fw icon_disable" ></i><%:SMSSendEmptyNote%>',
+		});
+		return;
+	}
+
+	(new XHR()).post('<%=controller%>nradio/cellular/sms/send', data, function(xhr){
+		var data_res = null;
+		var code = -1;
+		if (xhr.getResponseHeader("Content-Type") == "application/json") {
+			try {
+				data_res = eval('(' + xhr.responseText + ')');
+				code = data_res.result.code;
+				echo_item = data_res.result.item;
+
+				if($(".sms_recieve_input").length){
+					$(".sms_recieve_input").attr("readonly","readonly");
+					$("#sms_box .sms_item_class").data("contact",phone_num);
+					var contact_item = {"contact":phone_num,"undeal":0,"list":[],"newsms":[]};
+					gData.push(contact_item);
+				}
+				var index = "";
+				var exsit_error = 0;
+				for(i=0;i<echo_item.length;i++){
+					var index_tmp = echo_item[i].index;
+					var item_code = echo_item[i].code;
+					var one_sms_msg = "";
+
+					if(index.length)
+						index = index+"-"+index_tmp;
+					else
+						index=index_tmp;
+
+					if((item_code != 0 ) && index_tmp && index_tmp.length)
+						exsit_error = 1;
+
+				}
+
+				if(index && index.length){
+					var htm=smsTableClient.compose({
+						index:index,
+						date:formatDate(new Date(),"yyyy/MM/dd HH:mm:ss"),
+						box:"right_box",
+						content:sms_msg.replace(new RegExp("\n", "gm"), '<br/>')
+					});
+					$(".sms_box_content").append(htm);
+					$(".content_del_box").removeClass("hide");
+					scroll_botton();
+				}
+				if(exsit_error)
+					$(".sms_info_err"+index).html('<i class="far fa-nradio-note fa-fw fail_color" ></i>');
+				if (code != 0){
+					var error_info = "<%:SMSOPError%>";
+					if (code == -2)
+						error_info = "<%:SMSModelError%>";
+					if (code == -4)
+						error_info = "<%:SMSFullError%>";
+					BootstrapDialog.show({
+						type: BootstrapDialog.TYPE_DEFAULT,
+						closeByBackdrop: true,
+						title: '',
+						message: '<i class="far fa-nradio-note fa-fw icon_disable" ></i>'+error_info,
+					});
+				}
+				$("#sms_msg").val("");
+			}
+			catch(e) {
+				data_res = null;
+			}
+		}
+	});
+}
+
+function scroll_botton(){
+	var div = document.getElementById('sms_box');
+	div.scrollTop = div.scrollHeight;
+}
+function refresh_data(type){
+	var data = {};
+	data['channel'] = gModel;
+	if (type && type == "new"){
+		data['type'] = "new";
+
+		(new XHR()).post('<%=controller%>nradio/cellular/sms/list', data, function(xhr){
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					var data_res = eval('(' + xhr.responseText + ')');
+
+					if(data_res && data_res.result && data_res.result.smslist){
+						show_new_data(data_res.result.smslist);
+					}
+				}
+				catch(e) {
+				}
+			}
+		});
+	}
+	else{
+		(new XHR()).post('<%=controller%>nradio/cellular/sms/list', data, function(xhr){
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					var data_res = eval('(' + xhr.responseText + ')');
+
+					if(data_res && data_res.result){
+						show_sms_data(data_res,"sms_list");
+					}
+				}
+				catch(e) {
+				}
+			}
+		});
+	}
+}
+
+function check_msg_valid(obj){
+	var sms_data=$(obj).val();
+	var max_len = 160;
+	var msg_count = 1;
+	var msg_count_int = 1;
+	var multi = 0;
+	var diff=7;
+	if (escape(sms_data).indexOf("%u") > -1)
+	{
+		max_len=70;
+		diff=3;
+	}
+
+	if(sms_data.length > max_len){
+		sendms_max_length=max_len-diff;
+		msg_count_y = sms_data.length%(max_len-diff);
+		msg_count_int = parseInt(sms_data.length/(max_len-diff));
+		if (msg_count_y)
+			msg_count_int++;
+	}
+	else{
+		sendms_max_length=max_len;
+	}
+
+	$("#sms_msg_note").html("<%:SMSSendNote1%>:"+(sms_data.length)+"/"+(sendms_max_length)+" <%:SMSSendNote2%>: ("+msg_count_int+")");
+}
+function change_sim(obj){
+	var val = $(obj).val();
+	$(".sim_box").addClass("hide");
+	$(".sim"+val+"_box").removeClass("hide");
+}
+function check_support(obj){
+	var support = $(obj).data("support");
+	if(support == "0"){
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			closable: true,
+			message: '<p class="cbi-value-title width_auto text-center adapt_label_padding"><%:SMSSupportHelp%></p>'
+		});
+		$(obj).prop("checked","");
+	}
+}
+$('#btn-save').click(function(){
+	var data={};
+	var data_item = {};
+
+	data['token']='<%=token%>';
+	$(".modify_class").each(function(){
+		var objname = $(this).data("name");
+		var modelname = $(this).data("modelname");
+		var simid = $(this).data("simid");
+		var support = $(this).data("support");
+		var objvalue = $(this).val();
+
+		if(objname == "force_ims"){
+			objvalue=0;
+			if($(this).prop("checked")){
+				objvalue=1;
+			}
+		}
+		if(support == "0"){
+			objvalue="0";
+		}
+		var key=modelname+"_"+simid+"_"+objname;
+		data[key] = objvalue;
+	});
+	(new XHR()).post('<%=controller%>nradio/cellular/switch/save_sms', data, function(xhr){
+		var data_res = null;
+		var code = -1;
+		if (xhr.getResponseHeader("Content-Type") == "application/json") {
+			try {
+				data_res = eval('(' + xhr.responseText + ')');
+				code = data_res.result.code;
+			}
+			catch(e) {
+				data_res = null;
+			}
+		}
+
+		location.reload();
+	});
+});
+function format_list_position(){
+	var htm = '\
+		<fieldset class="cbi-section">\
+		<div class="cbi-section-node border-bottom">\
+			<div class="cbi-value" data-index="9">\
+				<div class="row">\
+					<div class="col-sm-5 col-xs-5 text-left ">\
+						<span class="cbi-value-title width_auto unset_float storage_info" > </span>\
+					</div>\
+					<div class="col-sm-7 col-xs-7 text-right">\
+						<div class="cbi-value-field right_btn" style="padding-right: 0px;">\
+							<input class="cbi-button error" style="float:right;background:none;margin-right: 0px;" onclick="clean_sms()" type="button" value="<%:SMSClean%>">\
+							<input class="cbi-button" style="float:right;margin-right: 10px;" onclick="create_sms()" type="button" value="<%:SMSCreate%>">\
+						</div>\
+					</div>\
+				</div>\
+			</div>\
+		</div>\
+		</fieldset>\
+		<div class="form-box full-width hidden-xs">\
+			<table class="line text-center no_paddingLeft">\
+				<thead>\
+					<tr>\
+						<th style="width: 10px"></th>\
+						<th style="width: 15%"><%:SMSContact%></th>\
+						<th style="width: 50%"><%:SMSContent%></th>\
+						<th style="width: 20%"><%:SMSDate%></th>\
+						<th style="width: 10%"><%:SMSOP%></th>\
+					</tr>\
+				</thead>\
+				<tbody class="sms_list">\
+				</tbody>\
+			</table>\
+		</div>\
+		<div class="sms_list" data-sms_item="mobile"></div>';
+		$("#sms_main_box").append(htm);
+		//$("#sms_main_box").prepend(htm);
+}
+format_list_position();
+$(document).ready(function(){
+	var data=<%=smsdata%>;
+	if(data && data.result)
+		show_sms_data(data,"sms_list");
+
+	first_data_interval =  setInterval(function(){
+		if (!noneed_interval)
+			refresh_data();
+		else{
+			if(first_data_interval){
+				window.clearInterval(first_data_interval);
+				first_data_interval = null;
+			}
+		}
+	}, 10000);
+	$(".storage_info").click(function(){
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			closeByBackdrop: true,
+			title: '',
+			message: "<div class='text-left' style='line-height: 22px;'>"+html_format('<%:SMSUsedHelp%>')+"</div>",
+		});
+	});
+	nradio_backend_flash();
+});
+</script>
+<%+footer%>

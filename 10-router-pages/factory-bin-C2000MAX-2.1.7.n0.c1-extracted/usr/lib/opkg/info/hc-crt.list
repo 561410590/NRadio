@@ -1,0 +1,7 @@
+/etc/crts/client.key
+/etc/crts/ta.key
+/etc/crts/server.crt
+/etc/crts/server.key
+/etc/crts/ca.crt
+/etc/crts/dh1024.pem
+/etc/crts/client.crt

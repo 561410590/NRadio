@@ -1,0 +1,10 @@
+Package: kmod-mt_wifi7
+Version: 5.4.281+TEST-1
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), wifi-profile, nand-utils, blkid, kmod-mt_wifi_osal, kmod-cfg80211, kmod-mt_spectrum, kmod-mediatek_hnat
+Source: package/nradio/wifi/mt_wifi7
+SourceName: kmod-mt_wifi7
+Section: kernel
+SourceDateEpoch: 1773146090
+Architecture: aarch64_cortex-a53
+Installed-Size: 4592178
+Description:  MTK wifi7 AP driver

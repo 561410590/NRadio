@@ -1,0 +1,8 @@
+
+config config 'config'
+	option disabled '1'
+	option mode '0'
+
+config address 'blacklist'
+
+config address 'whitelist'

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+uci -q set oem.board.pos="$(get_cboard_pos.sh)"
+
+mac=$(uci -q get oem.board.id)
+
+if [ "$mac" = "00:66:88:00:00:00" ]; then
+	uci -q set oem.board.id="00:66:88:00:00:02"
+fi

@@ -1,0 +1,14 @@
+Package: dnsmasq
+Version: 2.85-2
+Depends: libc, libubus20210630
+Source: package/network/services/dnsmasq
+SourceName: dnsmasq
+License: GPL-2.0
+LicenseFiles: COPYING
+Section: net
+Require-User: dnsmasq=453:dnsmasq=453
+SourceDateEpoch: 1775741777
+CPE-ID: cpe:/a:thekelleys:dnsmasq
+Architecture: aarch64_cortex-a53
+Installed-Size: 139836
+Description:  It is intended to provide coupled DNS and DHCP service to a LAN.

@@ -1,0 +1,10 @@
+Package: report_proactively
+Version: 1.1-20231115
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, nradio-utils, libopenssl1.1
+Source: package/nradio/services/report_proactively
+SourceName: report_proactively
+Section: nradiowifi
+SourceDateEpoch: 1749041869
+Architecture: aarch64_cortex-a53
+Installed-Size: 11695
+Description:  report_proactively operation center

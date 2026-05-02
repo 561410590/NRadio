@@ -1,0 +1,11 @@
+Package: kmod-ipt-raw
+Version: 5.4.281-1
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-ipt-core
+Source: package/kernel/linux
+SourceName: kmod-ipt-raw
+License: GPL-2.0
+Section: kernel
+SourceDateEpoch: 1755595010
+Architecture: aarch64_cortex-a53
+Installed-Size: 1917
+Description:  Netfilter IPv4 raw table support

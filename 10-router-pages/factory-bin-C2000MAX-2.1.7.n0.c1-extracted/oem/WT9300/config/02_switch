@@ -1,0 +1,9 @@
+#!/bin/ash
+
+uci batch <<EOF
+set network.nrswitch='nrswitch'
+set network.nrswitch.nvlan='LLmNNNCM'
+set network.nrswitch.ovlan='LLmNNNCM'
+set network.nrswitch.disable_wan='1'
+set network.nrswitch.dsa='1'
+EOF

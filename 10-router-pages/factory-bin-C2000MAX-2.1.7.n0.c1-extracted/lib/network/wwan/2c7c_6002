@@ -1,0 +1,6 @@
+{
+	"desc":"Quectel EG800A",
+	"vendor":"quectel",
+	"type":"cdc_ether",
+	"control": "2"
+}

@@ -1,0 +1,10 @@
+Package: sync_bdinfo
+Version: 1.0-20240618
+Depends: libc, nradio-utils, libopenssl1.1, libbdinfo
+Source: package/nradio/utils/sync_bdinfo
+SourceName: sync_bdinfo
+Section: nradiowifi
+SourceDateEpoch: 1718710667
+Architecture: aarch64_cortex-a53
+Installed-Size: 2236
+Description:  bdinfo sync tool

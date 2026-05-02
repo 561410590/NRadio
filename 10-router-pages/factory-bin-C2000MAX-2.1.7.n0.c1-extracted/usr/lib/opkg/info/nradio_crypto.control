@@ -1,0 +1,10 @@
+Package: nradio_crypto
+Version: 1.0-20221219
+Depends: libc, nradio-utils, libopenssl1.1
+Source: package/nradio/utils/nradio_crypto
+SourceName: nradio_crypto
+Section: nradiowifi
+SourceDateEpoch: 1770340831
+Architecture: aarch64_cortex-a53
+Installed-Size: 2062
+Description:  string crypto tool

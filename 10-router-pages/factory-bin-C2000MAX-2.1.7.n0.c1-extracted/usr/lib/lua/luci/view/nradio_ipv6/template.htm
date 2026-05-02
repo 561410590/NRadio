@@ -1,0 +1,31 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<ul class="cbi-tabmenu">
+<%
+local nr = require "luci.nradio"
+local cur_tab_class="cbi-tab"
+local other_tab_class="cbi-tab-disabled"
+local cur_tab_s 
+local other_tab_s
+
+if model and "basic" == model then
+	cur_tab_s = cur_tab_class
+	other_tab_s = other_tab_class
+else
+	cur_tab_s = other_tab_class
+	other_tab_s = cur_tab_class
+end
+
+if nr.support_wan_ipv6() or nr.has_cpe() then
+	print('<li class="'..cur_tab_s..'"><a href="'..url("nradioadv/network/ipv6")..'">'..translate("IPv6BasicTitle")..'</a></li>')
+end
+
+if nr.support_ipv6() then
+	print('<li class="'..other_tab_s..'"><a href="'..url("nradioadv/network/ipv6/lan")..'">'..translate("IPv6LANTitle")..'</a></li>')
+end
+%>	
+
+</ul>

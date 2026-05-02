@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-dividing-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-dividing
+Source: package/luci/applications/luci-app-nradio-dividing
+SourceName: luci-i18n-nradio-dividing-zh-cn
+Section: luci
+SourceDateEpoch: 1774591661
+Architecture: all
+Installed-Size: 690
+Description:  Translation for luci-app-nradio-dividing - 中文 (Chinese)

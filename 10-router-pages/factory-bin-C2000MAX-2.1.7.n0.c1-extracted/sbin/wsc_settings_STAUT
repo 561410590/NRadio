@@ -1,0 +1,7 @@
+device_name:Wireless station:2,
+device_type:6-0050F204-1:2,
+manufacturer:MediaTek Inc.:2,
+model_name:be3600:2,
+model_number:MT7987:2,
+serial_number:12345678:2,
+config_methods:keypad push_button virtual_push_button virtual_display:2

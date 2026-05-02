@@ -1,0 +1,13 @@
+#!/bin/ash
+
+[ "$1" = "reinit" ] && exit 0
+
+defip='192.168.88.1'
+_network="network"
+_lan=$(uci -q get network.globals.default_lan)
+[ -z "$_lan" ] && _lan="lan"
+
+uci set "${_network}"."${_lan}".proto="static"
+uci set "${_network}"."${_lan}".ipaddr="$defip"
+uci set "${_network}"."${_lan}".def_ipaddr="$defip"
+uci set "${_network}"."${_lan}".netmask="255.255.255.0"

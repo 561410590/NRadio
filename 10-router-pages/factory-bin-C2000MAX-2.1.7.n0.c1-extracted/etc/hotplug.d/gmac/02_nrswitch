@@ -1,0 +1,37 @@
+#!/bin/ash
+. /lib/network/switch.sh
+PHY_STAT_PATH="/var/run/phy"
+WAN_STAT_PATH="/var/run/wan"
+phy_ports=$(get_ports "E")
+wan_ports=$(get_ports "W")
+
+nrswitch_update() {
+	local _status _mode _speed _port
+
+	nrswitch -g | while read -r _line; do
+		_port="$(echo "$_line"|cut -d, -f1)"
+		_status="$(echo "$_line"|cut -d, -f2)"
+		_mode="$(echo "$_line"|cut -d, -f3)"
+		_speed="$(echo "$_line"|cut -d, -f4)"
+
+		if [ -f /usr/sbin/atsd ]; then
+			for port_item in $phy_ports
+			do
+				if [ "$port_item" = "$_port" ];then
+					ubus send atsd.phy "{'port':'$_port','status':'$_status','speed':'$_speed'}"
+					mkdir  -p $PHY_STAT_PATH
+					echo "$_port,$_status"	> $PHY_STAT_PATH"/portinfo"
+				fi
+			done
+		fi
+
+		ubus call nrswitch set "{\"name\": \"port$_port\", \"mode\": \"$_mode\", \"status\": \"$_status\", \"speed\": \"$_speed\"}"
+	done
+}
+
+nrswitch_update
+
+if [ "$IFNAME" = "gpy211" ]; then
+	# Temporiry modification
+	ifup wan
+fi

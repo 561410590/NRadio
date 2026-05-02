@@ -1,0 +1,194 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%+themes/nradio/header_simple%>
+<style>	
+	.container{
+		width: 100%;
+		padding: 0;
+	}
+	.label_name{
+		 vertical-align: middle;
+		 line-height: 40px;;
+	}  
+	.modal-backdrop.fade {
+		opacity: 0;
+	}
+	.hover_on{float: left;}
+	.terminal_info{
+		display: inline-block;
+		vertical-align: middle;
+		height: 40px;
+		line-height: 40px;
+		padding-left: 10px;
+	}
+	.mobile_bg_color div.checkbox .switch {
+		top: 0px;
+	}
+	.radio, .checkbox {
+		height: 20px;
+	}
+	.panel-title-right{
+		font-size: 14px;
+		font-weight: bold;
+		padding-right: 30px;
+	}
+
+	.normol_color{
+		background: linear-gradient(to right, #00D5FF, #00aeff);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		color: transparent;
+		width: 38px;
+	}
+	
+	@keyframes pathColorChange {
+		0%   { fill: #00D5FF; }
+		100%  { fill: #00aeff; }
+	}
+</style>
+	<div class="mobile_bg_color">
+		<div class="panel-heading sub_label_color">
+			<div class="row">
+			<div class="panel-title col-sm-6 col-xs-6 text-left" id="terminal_count"><%:ClientName%></div>
+			<div class="panel-title-right col-sm-6 col-xs-6 text-right"><%:AllowInternetAccess%></div>
+			</div>
+		</div>	
+	</div>
+
+	<div class="mobile_bg_color panel panel-info device-panel wan_box">
+		<div class="panel-body info-box no_padding terminal_list">
+
+
+		</div>
+	</div>
+
+<script language="javascript">
+var interval = 4;
+var loading_save_htm =circling_htm;
+var ClientMobileRow = ''+
+'<div class="row {{topclass}}">'+
+'<div class="col-sm-12 col-xs-12 text-left">'+
+'	<div class="row">'+
+'		<div class="col-sm-6 col-xs-8 text-left label_name" >'+
+'			{{link}}<div class="terminal_info">{{name}}</div>'+
+'		</div>'+
+'		<div class="col-sm-6 col-xs-4 text-right label_value sub_label_color">'+
+'			{{access}}'+
+'		</div>'+
+'	</div>' +
+'	</div>' +
+'</div>';
+
+function terminal_ctl(obj,type,mac){
+	var data = {};
+	var chval = $(obj).prop("checked");
+	var url = '<%=controller%>nradio/client/access_set';
+	data['token']='<%=token%>';
+	if(chval)
+		data['enabled']="1";
+	else
+		data['enabled']="0";
+	data['mac'] = mac;
+	if (type == "qos")
+		url = '<%=controller%>nradio/client/qos_set';
+	BootstrapDialog.show({
+		type: BootstrapDialog.TYPE_DEFAULT,
+		title: '',
+		message: loading_save_htm,
+		closeByBackdrop: false,
+		cssClass:'mobile_note',
+		onshown: function(dialog) {
+			(new XHR()).post(url, data, function(){
+				dialog.close();
+			});
+		}
+	});
+}
+
+function show_terminal_info(data,box_class){
+	var mobile_htm = "";
+	var terminal_count = 0;
+
+	$.each(data.result.client, function(index, db){
+		var wired_hide = "hide";
+		var link_data = { type: db.type };
+		var name_target = "";
+		if (db.exsit != 1)
+			return;
+		terminal_count++;
+		if(db.type && db.type == "wired"){
+			link_data.symbol = "<%:Wired%>";
+		}
+		else{
+			link_data.signal=db.rssi;
+			link_data.alias=db.ssid;
+			link_data.type = "wireless";
+			wired_hide = "";
+			if (db.frequency.indexOf("2.4") != -1)
+				link_data.symbol = "2.4GHz";
+			if (db.frequency.indexOf("5.") != -1)
+				link_data.symbol = "5GHz";
+		}
+		var linkht = link_type_show(link_data);
+
+		access_html = "";
+		access_check = "";
+
+		if(db.switch_off != "1"){
+			access_check = "checked";
+		}
+
+
+		access_html = '<div class="checkbox">' +
+		'<input type="hidden" value="0" name="1access_enable' + index + '">' +
+		'<input class="cbi-input-checkbox" data-update="click change" id="access_enable' + index + '" ' + access_check + ' name="access_enable' + index + '" type="checkbox" onclick="terminal_ctl(this,\'access\',\'' + db.mac + '\');" value="1" />' +
+		'<label for="access_enable' + index + '" class="switch"></label>' +
+		'</div>';
+		
+		if (db.hostname && db.hostname.length > 0){
+			name_target = db.hostname;
+		}
+		else{
+			name_target = db.mac;
+		}
+		
+		if(terminal_count!=1)
+			topclass="line_top_class";
+		else
+			topclass="";
+		mobile_htm+=ClientMobileRow.compose({
+			topclass: topclass,
+			id: db.mac,
+			mac:db.mac,
+			access:access_html,
+			name: name_target,
+			link: linkht,
+			index:index,
+		});		
+	});
+
+	$("."+box_class).each(function(){
+		$(this).empty().append(mobile_htm);		
+	});
+	$("path.icon_color").css("animation",'pathColorChange 2s infinite');
+	$(".icon_color path").css("animation",'pathColorChange 2s infinite');
+	return terminal_count;
+}
+function renew_stat(){
+	$.getJSON("/cgi-bin/luci/nradio/client/all_list", function(data){
+		if(data.result){
+			terminal_count = show_terminal_info(data,"terminal_list");
+			$("#terminal_count").text("<%:ClientName%>("+terminal_count+")");
+		}
+	})
+}
+$(document).ready(function(){
+	goto_page('<%=controller%>nradio/system/overview',"<%:ManageClients%>");
+	renew_stat();
+	setInterval(renew_stat, interval*1000);
+});
+</script>
+<%+themes/nradio/footer_simple%>

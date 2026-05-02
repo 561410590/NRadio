@@ -1,0 +1,10 @@
+Package: atserver-sniffer
+Version: 1.0-20240607
+Depends: libc, uci, nradio-utils, libopenssl1.1, libjson-c5, libpthread, libubox20210516, libubus20210630
+Source: package/nradio/services/atserver-sniffer
+SourceName: atserver-sniffer
+Section: nradiowifi
+SourceDateEpoch: 1768179994
+Architecture: aarch64_cortex-a53
+Installed-Size: 21511
+Description:  atserver sniffer

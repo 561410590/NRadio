@@ -1,0 +1,10 @@
+Package: luci-app-nradio-cpedata
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-cpedata
+SourceName: luci-app-nradio-cpedata
+Section: luci
+SourceDateEpoch: 1770200432
+Architecture: all
+Installed-Size: 8679
+Description:  LuCI Support for NRadio CPE Statistics Display

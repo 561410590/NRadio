@@ -1,0 +1,12 @@
+Package: fota_upgrade
+Version: 2025-11-26-1
+Depends: libc
+Source: package/nradio/utils/fota_upgrade
+SourceName: fota_upgrade
+License: GPL-2.0
+Section: nradiowifi
+SourceDateEpoch: 1764234747
+Maintainer: John Crispin <john@phrozen.org>
+Architecture: aarch64_cortex-a53
+Installed-Size: 2294
+Description:  Generic Nradio cellular fota upgrade

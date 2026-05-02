@@ -1,0 +1,10 @@
+Package: luci-app-nradio-ptype
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-ptype
+SourceName: luci-app-nradio-ptype
+Section: luci
+SourceDateEpoch: 1750065877
+Architecture: all
+Installed-Size: 1486
+Description:  LuCI Support for NRadio ptype change

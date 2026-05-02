@@ -1,0 +1,22 @@
+local os, io, string, debug = os, io, string, debug
+local cloudd = require "cloudd.cloudd"
+local c_api = require "cloudd.api"
+local cjson = require "cjson"
+local uci = require "luci.model.uci".cursor()
+local util = require "luci.util"
+function cloudd_main(did, sid, event, payload, proto, reply)
+	local nr = require "luci.nradio"
+	local data = cjson.decode(payload)
+	local r_topic = "wifiauth"
+	local value = {wifiauth=-1}
+	if reply == 1 then
+		return
+	end
+	nr.set_wifiauth(data.wifiauth)
+	value.wifiauth = nr.support_wifiauth()
+	cloudd.cloudd_send(sid, r_topic, value, proto, 1)
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

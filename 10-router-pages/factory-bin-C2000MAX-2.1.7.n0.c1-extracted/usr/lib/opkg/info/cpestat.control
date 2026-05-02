@@ -1,0 +1,10 @@
+Package: cpestat
+Version: 1.0-20190614
+Depends: libc, rpcd
+Source: package/nradio/utils/cpestat
+SourceName: cpestat
+Section: nradiowifi
+SourceDateEpoch: 1560493272
+Architecture: all
+Installed-Size: 591
+Description:  CPE status cache tool

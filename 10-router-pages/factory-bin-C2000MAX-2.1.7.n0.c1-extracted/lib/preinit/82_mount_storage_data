@@ -1,0 +1,93 @@
+# Copyright (C) 2006 OpenWrt.org
+# Copyright (C) 2010 Vertical Communications
+
+. /lib/functions.sh
+. /lib/upgrade/nand.sh
+
+init_fileserver() {
+	if [ -f "/etc/config/filestore" ]; then
+		local operation=$(uci -q get filestore.basic.operate)
+		if [ -z "$operation" ] ;then
+			"$operation"="nros_operating_steps"
+		fi
+		mkdir -p /mnt/storage/data/NROS
+		if [ ! -f "/mnt/storage/data/NROS/$operation" ] ;then
+			touch "/mnt/storage/data/NROS/$operation"
+			uci -c /mnt/storage/data/NROS/ add $operation symbol
+			uci -c /mnt/storage/data/NROS/ rename $operation.@symbol[-1]='basic'
+			uci -c /mnt/storage/data/NROS/ set $operation.'basic'.flag='1'
+			uci -c /mnt/storage/data/NROS/ commit $operation
+		else
+			if ! uci -q -c /mnt/storage/data/NROS/ get $operation.basic.flag; then
+				rm -f "/mnt/storage/data/NROS/$operation"
+				init_fileserver
+			fi
+		fi
+		rm -f "/mnt/storage/data/NROS/.${operation}.uci-*"
+	else
+		return
+	fi
+}
+
+do_mount_storage_data() {
+	local blkdev=$(blkid -t PARTLABEL=rootfs_2nd -o device)
+	local mountdev=
+	local bdinfodev=
+	local fstype=
+	local mkfs_arg=
+	local use_2nd_partition=$(uci -q get system.@system[0].use_2nd_partition)
+
+	if [ ! "$blkdev" ]; then
+		echo "cannot find rootfs_2nd partition"
+		return
+	fi
+
+	if [ -f /usr/bin/sysupgrade-opensource ] && [ "$use_2nd_partition" != "1" ]; then
+		if [ -f /etc/config/filestore ] && [ -f /mnt/app_data/bdinfo ]; then
+			mkdir -p /mnt/app_data/filestore
+			mkdir -p /mnt/storage/data
+			mount --bind /mnt/app_data/filestore /mnt/storage/data
+			init_fileserver
+		fi
+
+		echo "Device supports second system."
+		return
+	fi
+
+	local appdata_size=$(blockdev --getsize64 $blkdev)
+	mountdev=$(losetup -f)
+	losetup -o 0 $mountdev $blkdev || {
+		echo "Failed to mount looped app_data."
+		return
+	}
+	fstype=ext4
+	mkfs_arg="-q -L storage_data"
+	[ "$appdata_size" -gt "$((100*1024*1024))" ] && {
+		fstype=f2fs
+		mkfs_arg="-q -l storage_data"
+	}
+	bdinfodev=$(blkid -t PARTLABEL=bdinfo -o device)
+
+	mkdir -p /mnt/storage/data
+	mount -t $fstype $mountdev /mnt/storage/data || {
+		echo "Failed to mount storage data"
+		if [ -z "$mtdnum" ]; then
+			echo "Format new storage data"
+			mkfs.${fstype} ${mkfs_arg} ${mountdev} || {
+				echo "Failed format storage data partition"
+				return
+			}
+			mount -t $fstype $mountdev /mnt/storage/data || {
+				echo "Failed to mount storage data after formatting"
+				return
+			}
+			sync
+		else
+			return
+		fi
+	}
+
+	init_fileserver
+}
+
+[ "$INITRAMFS" = "1" ] || boot_hook_add preinit_main do_mount_storage_data

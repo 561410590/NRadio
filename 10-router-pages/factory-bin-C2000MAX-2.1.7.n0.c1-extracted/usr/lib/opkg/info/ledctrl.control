@@ -1,0 +1,10 @@
+Package: ledctrl
+Version: 2.5-20240813
+Depends: libc, rpcd, nrswitch
+Source: package/nradio/services/ledctrl
+SourceName: ledctrl
+Section: nradiowifi
+SourceDateEpoch: 1773994075
+Architecture: all
+Installed-Size: 6918
+Description:  Control some leds(status/error/cloud)

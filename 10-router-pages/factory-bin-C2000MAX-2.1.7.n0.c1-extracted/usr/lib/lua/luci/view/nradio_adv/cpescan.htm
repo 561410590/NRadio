@@ -1,0 +1,222 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+<%
+	nr = require "luci.nradio"
+	model_str,cpe_section = nr.get_cellular_last(model)
+	local client_ip = luci.http.getenv("REMOTE_ADDR") or ""
+	nixio.syslog("err","WEB["..client_ip.."] cellular scanning info")
+%>
+<%+header%>
+<style>
+.info-box .row {
+    padding: 2px 0;
+    margin: 0;
+}
+
+</style>
+<div class="cbi-map main-box">
+	<%+nradio_adv/cellular_header%>
+	<ul class="cbi-tabmenu">
+		<li class="cbi-tab-disabled"><a href="<%=url("nradio/cellular/cpestatus/model/"..cpe_section)%>"><%:Cellular Info%></a></li>
+		<li class="cbi-tab"><a href="#"><%:Scan Info%></a></li>
+	</ul>
+	<%+nradio_adv/cellular_scan_content%>
+</div>
+
+<div class="cbi-map add-box visible-xs-block hide">
+</div>
+
+<script language="javascript">
+var intervalCount=null;
+var loading_save_htm =circling_htm;
+	loading_save_htm +='<p class="cbi-value-title width_auto text-center adapt_label_padding"><%:Waiting...%></p>';
+	var lable_array = {"MODE":"<%:Cellular Mode%>","EARFCN":"<%:EARFCN%>","PCI":"<%:PCI%>","BAND":"<%:CelluarBand%>","CELL":"<%:Cell ID%>","LAC":"<%:LAC%>","ISP":"<%:ISP%>","RXLEV":"<%:RXLEV%>(dBm)","SINR":"<%:SINR%>(dBm)","RSRP":"<%:RSRP%>(dBm)","RSRQ":"<%:RSRQ%>(dB)","RSSI":"<%:RSSI%>(dB)"};
+
+	function load_data(data,model_item){
+		var htm ='';
+		var htm_mobile = '';
+
+		$.each(data, function(i, db){
+			if(!db || !db.length)
+				return;
+
+			htm+='<thead>'
+			htm+='			<tr>';
+			var thead_th_htm="";
+			var thbody_tr_htm="";
+			var htm_mobile_extra="";
+			var index=0;
+
+			db.sort(function(a, b) {
+				prev_data = (a.RSRP && a.RSRP.length) ? parseInt(a.RSRP):-999;
+				last_data = (b.RSRP && b.RSRP.length) ? parseInt(b.RSRP):-999;
+				return ( last_data - prev_data );
+			});
+			$.each(db, function(j, neighbour){
+				thbody_tr_htm+='<tr>';
+				htm_mobile_extra="";
+				if(!index)thead_th_htm='<th><%:Item%></th>';
+				thbody_tr_htm+='<td>'+ (j+1)+'</td>';
+				htm_mobile += ''+
+				'<div class="panel panel-info visible-xs-block hide">'+
+					'<div class="panel-heading">'+
+					'	<div class="row">'+
+					'		<div class="col-sm-6 col-xs-6 text-left">'+
+					'			<span>'+(j+1)+'</span>'+
+					'		</div>'+
+					'		<div class="col-sm-6 col-xs-6 text-right">'+
+					'		</div>'+
+					'	</div>'+
+					'</div>'+
+					'<div class="panel-body info-box">';
+				for (let key in neighbour) {
+					if (key.charAt(0) >= 'a' && key.charAt(0) <='z' )
+						continue;
+					var key_buffer=lable_array[key]?lable_array[key]:'';
+					if(!index)thead_th_htm+='<th>'+key_buffer+'</th>';
+					thbody_tr_htm+='<td>'+ neighbour[key]+'</td>';
+					htm_mobile_extra+=''+
+					'	<div class="row" >'+
+					'		<div class="col-xs-12 text-left">'+
+					'			<div class="row">'+
+					'				<div class="col-sm-6 col-xs-6 text-left ">'+
+						key_buffer+
+					'				</div>'+
+					'				<div class="col-sm-6 col-xs-6 text-right">'+
+					'					<span class="note_info">'+neighbour[key]+'</span>'+
+					'				</div>'+
+					'			</div>'+
+					'		</div>'+
+					'	</div>';
+				}
+				index++;
+				htm_mobile+=htm_mobile_extra;
+				htm_mobile+=''+
+					'</div>'+
+				'</div>';
+				thbody_tr_htm+='</tr>'
+			});
+			htm+=thead_th_htm;
+			htm+='			</tr>';
+			htm+='		</thead>';
+			htm+='		<tbody>';
+			htm+=	thbody_tr_htm;
+			htm+='		</tbody>';
+
+		});
+
+		$(".address_list").each(function(){
+			if($(this).data("model") == model_item){
+				var type_s = $(this).data("terminal");
+				if(type_s == "mobile"){
+					$(this).empty().append(htm_mobile);
+				}
+				else{
+					$(this).empty().append(htm);
+				}
+			}
+		});
+	}
+
+	function scan_result_check(dialog,model_item){
+		var try_time = 1;
+		var try_max = 80;
+		checkInterval=setInterval(function(){
+			if (try_time > try_max){
+				dialog.close();
+				clearInterval(checkInterval);
+				return;
+			}
+			$.ajax({
+				url  : "/cgi-bin/luci/nradio/cellular/cpescan/scan_check",
+				type : 'POST',
+				data : {"model":model_item},
+				timeout: 2000,
+				success: function(data){
+					var code = data.result.code;
+					if( code == 0){
+						dialog.close();
+						clearInterval(checkInterval);
+						load_data(data.result.neighbour,model_item);
+					}
+					else{
+						try_time++;
+					}
+				},
+				error: function(xhr, error){
+					try_time++;
+				}
+			});
+		},2000);
+	}
+
+	$('.btn_scan').click(function(){
+		var model_item=$(this).data("model");
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: loading_save_htm,
+			closeByBackdrop: false,
+			onshown: function(dialog) {
+				$.ajax({
+					url  : "/cgi-bin/luci/nradio/cellular/cpescan/scaninfo",
+					type : 'POST',
+					data : {"model":model_item},
+					timeout: 60000,
+					success: function(data){
+						var code = data.result.code;
+						if( code != 0){
+							var waittime = data.result.waittime;
+							dialog.setMessage("<%:Please retry,%>"+waittime+"<%:s second later%>");
+							if(intervalCount)
+								clearInterval(intervalCount);
+							intervalCount=setInterval(function(){
+								if (waittime>0){
+									waittime--;
+									dialog.setMessage("<%:Please retry,%>"+waittime+"<%:s second later%>");
+								}
+								else{
+									clearInterval(intervalCount);
+									dialog.close();
+								}
+
+							},1000);
+						}
+						else{
+							dialog.close();
+							load_data(data.result.neighbour,model_item);
+						}
+
+					},
+					error: function(xhr, error){
+						scan_result_check(dialog,model_item);
+					}
+				});
+			}
+
+		});
+	});
+
+
+	$(document).ready(function(){
+		<%
+		local cache_data=""
+		cellular_data = nr.get_cellular_data(cpe_section)
+		for _,item in pairs(cellular_data.celluar) do
+			cache_data = nr.get_cellular_neighbour_cache(item.name)
+			if not cache_data or #cache_data == 0 then
+				cache_data="[]"
+			end			
+			print("load_data("..cache_data..",\""..item.name.."\");")
+		end
+		%>
+
+		nradio_backend_flash();
+	});
+	$(".main-content").resize(function(){
+		vertical_margin($(".modal-dialog"));
+	});
+	<%+nradio_adv/cellular_section_js%>
+</script>
+<%+footer%>

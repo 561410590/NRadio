@@ -1,0 +1,58 @@
+
+<%+cbi/valueheader%>
+<style>
+	@media screen and (max-width: 767px) {
+		.action-reboot-button{
+			position: absolute;
+			top: -25px;
+			right: 0;
+		}
+	}
+</style>
+
+
+<div>
+	<input type="button" style="margin-right: 0px" class="cbi-button action-reboot-button" id="cbi-button-reboot" value="<%:Reboot Now%>" />
+</div>
+
+<script>
+	function restart(){
+		nradio_checker_proc(
+			'<%=controller%>admin/system/reboot/call',
+			{token: '<%=token%>'},
+			nradio_checker_init(location.host),
+			'<%:Rebooting, please do not turn off the power%>',
+			'<%:Page will automatically refresh after reboot%>',
+		);
+	}
+
+	if (getUrlParameter('auto') === "1"){
+		restart();
+	}
+
+	$(document).ready(function(){
+		$('#cbi-button-reboot').click(function(){
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: '<%:Whether to reboot the device?%>',
+				buttons: [{
+					label: '<%:No%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						dialog.close();
+						restart();
+					}
+				}]
+			});
+		});
+	});
+</script>
+
+<%+cbi/valuefooter%>

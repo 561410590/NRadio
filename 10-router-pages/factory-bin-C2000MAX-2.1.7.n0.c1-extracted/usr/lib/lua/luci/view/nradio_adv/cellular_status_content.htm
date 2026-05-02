@@ -1,0 +1,24 @@
+<%#
+ Copyright 2019 Allen Wu <allen@nradiowifi.com>
+ Licensed to the public under the Apache License 2.0.
+-%>
+
+<%+nradio_adv/cellular_section%>
+<%
+local hide = ''
+local cellular_data = nr.get_cellular_data(cpe_section)
+for _,item in pairs(cellular_data.celluar) do
+%>
+		<div class="cbi-value">
+		<table class="<%=hide%> form-key-value-table cell_info_table" id="cell_info_table_<%=item.name%>">
+			<tbody>
+				<tr class="cbi-section-table-row">
+					<td><em><%:Collecting data...%></em></td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+<%
+	hide = "hide"
+end
+%>

@@ -1,0 +1,10 @@
+Package: UpdateWizard_MT5700
+Version: 3.1-20241008
+Depends: libc, libstdcpp6, librt, libpthread
+Source: package/nradio/tdtech/UpdateWizard_MT5700
+SourceName: UpdateWizard_MT5700
+Section: tdtech
+SourceDateEpoch: 1731574462
+Architecture: aarch64_cortex-a53
+Installed-Size: 559000
+Description:  TD Tech UpdateWizard

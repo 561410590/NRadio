@@ -1,0 +1,2 @@
+config mqttagent 'config'
+        option sub_mosca '0'

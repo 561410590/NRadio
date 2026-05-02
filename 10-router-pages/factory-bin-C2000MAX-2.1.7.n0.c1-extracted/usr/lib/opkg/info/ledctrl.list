@@ -1,0 +1,4 @@
+/usr/libexec/rpcd/ledctrl
+/etc/init.d/ledctrl
+/etc/config/ledctrl
+/usr/bin/ledctrl.sh

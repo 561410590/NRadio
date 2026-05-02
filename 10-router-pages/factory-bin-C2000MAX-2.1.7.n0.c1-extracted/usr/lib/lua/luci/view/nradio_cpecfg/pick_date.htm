@@ -1,0 +1,52 @@
+<%
+	local i, key
+	local util = require "luci.util"
+	local uci = require "luci.model.uci".cursor()
+	local id_str=cbid:gsub('%.', '_');
+%>
+
+
+
+<%+cbi/valueheader%>
+		<script src="/luci-static/nradio/js/calendar.min.js"></script>
+		<input data-update="change"<%=
+			attr("id", cbid) ..
+			attr("name", cbid) ..
+			attr("type", "hidden") ..
+			attr("class", self.password and "cbi-input-password" or "cbi-input-text") ..
+			attr("value", self:cfgvalue(section) or self.default) ..
+			ifattr(self.size, "size") ..
+			ifattr(self.placeholder, "placeholder") ..
+			ifattr(self.readonly, "readonly") ..
+			ifattr(self.maxlength, "maxlength") ..
+			ifattr(self.datatype, "data-type", self.datatype) ..
+			ifattr(self.datatype, "data-optional", self.optional or self.rmempty) ..
+			ifattr(self.combobox_manual, "data-manual", self.combobox_manual) ..
+			ifattr(#self.keylist > 0, "data-choices", { self.keylist, self.vallist })
+		%> />
+
+		<div class="select-win" id="<%=cbid%>-timebox">
+			<input type="text" placeholder="YYYY-MM-DD hh:mm" id="<%=cbid%>-timeobj" value="" class="input-text cbi-input-text valid">
+		</div>
+		<script>
+			var gdate_trans = {'comfirm':'<%:Comfirm%>','clear':'<%:Clear%>','clock':'<%:clock%>','today':'<%:Today%>','year':'<%:Year%>','time':'<%:time%>','month':'<%:Month%>','Mon':'<%:Mon%>','Tues':'<%:Tues%>','Wed':'<%:Wed%>','Thur':'<%:Thur%>','Fri':'<%:Fri%>','Sat':'<%:Sat%>','Sun':'<%:Sun%>'};
+			var opts = {
+				'trans':gdate_trans,
+				'targetId':'<%=cbid%>-timeobj',//时间写入对象的id
+				'alignId':'<%=cbid%>-timebox',//日历对齐对象
+				'format':'-',//时间格式 默认'YYYY-MM-DD HH:MM:SS'
+				'min':'2025-09-26 00:00',//最大时间
+				'max':'2099-10-30 10:00',//最小时间
+				'callback':set_pick_datetime
+			};
+			xvDate(opts);
+			var data_<%=id_str%>=document.getElementById("<%=cbid%>").value;
+			if(data_<%=id_str%>){
+				document.getElementById("<%=cbid.."-timeobj"%>").value=(data_<%=id_str%>);
+			}
+			function set_pick_datetime(obj){
+				var id_var = $(obj).attr("id").split("-")[0];			
+				document.getElementById(id_var).value=$(obj).val();
+			}
+		</script>
+<%+cbi/valuefooter%>

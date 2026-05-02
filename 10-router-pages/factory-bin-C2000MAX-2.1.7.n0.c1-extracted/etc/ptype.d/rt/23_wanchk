@@ -1,0 +1,107 @@
+#!/bin/ash
+_cpe=$(uci -q get network.globals.default_cellular)
+[ -z "$_cpe" ] && _cpe="cpe"
+
+country=$(uci -q get oem.board.country)
+cellular2=$(uci get wanchk.cpe1)
+cellular3=$(uci get wanchk.cpe2)
+cellular4=$(uci get wanchk.cpe3)
+if [ -n "$country" -a "$country" != "CN" ];then
+    uci set wanchk.wan.ipaddr='8.8.4.4 1.0.0.1'
+    uci set wanchk.wan.dns='8.8.4.4'
+    uci set wanchk.wan.dns6='2001:4860:4860::8888'
+    uci set wanchk."${_cpe}".ipaddr='8.8.8.8 1.1.1.1'
+    uci set wanchk."${_cpe}".dns='8.8.8.8'
+    uci set wanchk."${_cpe}".dns6='2001:4860:4860::8844'
+
+    if [ "$cellular2" == "checker" ];then
+        uci set wanchk.cpe1.ipaddr='208.67.222.222 208.67.220.220'
+        uci set wanchk.cpe1.dns='208.67.222.222'
+        uci set wanchk.cpe1.dns6='2606:4700:4700::1111'
+    fi
+    if [ "$cellular3" == "checker" ];then
+        uci set wanchk.cpe2.ipaddr='9.9.9.9 1.0.0.1'
+        uci set wanchk.cpe2.dns='9.9.9.9'
+        uci set wanchk.cpe2.dns6='2001:1608:10:25::1c04:b12f'
+    fi
+    if [ "$cellular4" == "checker" ];then
+        uci set wanchk.cpe3.ipaddr='80.80.80.80 80.80.81.81'
+        uci set wanchk.cpe3.dns='80.80.80.80'
+        uci set wanchk.cpe3.dns6='2a00:1508:0:4::9'
+    fi
+else
+    uci set wanchk.wan.ipaddr='210.2.4.8 www.qq.com'
+    uci set wanchk.wan.ip6addr='240e:1f:1::1 www.qq.com'
+    uci set wanchk.wan.dns='210.2.4.8'
+    uci set wanchk.wan.dns6='240e:1f:1::1'
+    uci set wanchk."${_cpe}".ipaddr='1.2.4.8 www.baidu.com'
+    uci set wanchk."${_cpe}".ip6addr='2400:3200::1 www.baidu.com'
+    uci set wanchk."${_cpe}".dns='1.2.4.8'
+    uci set wanchk."${_cpe}".dns6='2400:3200::1'
+
+    if [ "$cellular2" == "checker" ];then
+        uci set wanchk.cpe1.ipaddr='180.76.76.76 www.douyin.com'
+        uci set wanchk.cpe1.ip6addr='2400:3200:baba::1 www.douyin.com'
+        uci set wanchk.cpe1.dns='180.76.76.76'
+        uci set wanchk.cpe1.dns6='2400:3200:baba::1'
+    fi
+    if [ "$cellular3" == "checker" ];then
+        uci set wanchk.cpe2.ipaddr='223.5.5.5 www.sina.com.cn'
+        uci set wanchk.cpe2.ip6addr='2400:da00::6666 www.sina.com.cn'
+        uci set wanchk.cpe2.dns='223.5.5.5'
+        uci set wanchk.cpe2.dns6='2400:da00::6666'
+    fi
+    if [ "$cellular4" == "checker" ];then
+        uci set wanchk.cpe3.ipaddr='101.6.6.6 www.people.com.cn'
+        uci set wanchk.cpe3.ip6addr='240c::6666 www.people.com.cn'
+        uci set wanchk.cpe3.dns='101.6.6.6'
+        uci set wanchk.cpe3.dns6='240c::6666'
+    fi
+fi
+
+uci set wanchk.wan.timeout='5'
+uci set wanchk.wan.try='3'
+uci set wanchk.wan.max='3'
+uci set wanchk.wan.period='10'
+uci set wanchk.wan.dnsopen='1'
+uci set wanchk.wan.pingopen='1'
+uci set wanchk.wan.flowlimit='204800'
+
+uci set wanchk."${_cpe}".timeout='12'
+uci set wanchk."${_cpe}".try='3'
+uci set wanchk."${_cpe}".max='3'
+uci set wanchk."${_cpe}".powermax='4'
+uci set wanchk."${_cpe}".period='10'
+uci set wanchk."${_cpe}".dnsopen='1'
+uci set wanchk."${_cpe}".pingopen='1'
+uci set wanchk."${_cpe}".flowlimit='10240'
+if [ "$cellular2" == "checker" ];then
+    uci set wanchk.cpe1.timeout='12'
+    uci set wanchk.cpe1.try='3'
+    uci set wanchk.cpe1.max='3'
+    uci set wanchk.cpe1.powermax='4'
+    uci set wanchk.cpe1.period='10'
+    uci set wanchk.cpe1.dnsopen='1'
+    uci set wanchk.cpe1.pingopen='1'
+    uci set wanchk.cpe1.flowlimit='10240'
+fi
+if [ "$cellular3" == "checker" ];then
+    uci set wanchk.cpe2.timeout='12'
+    uci set wanchk.cpe2.try='3'
+    uci set wanchk.cpe2.max='3'
+    uci set wanchk.cpe2.powermax='4'
+    uci set wanchk.cpe2.period='10'
+    uci set wanchk.cpe2.dnsopen='1'
+    uci set wanchk.cpe2.pingopen='1'
+    uci set wanchk.cpe2.flowlimit='10240'
+fi
+if [ "$cellular4" == "checker" ];then
+    uci set wanchk.cpe3.timeout='12'
+    uci set wanchk.cpe3.try='3'
+    uci set wanchk.cpe3.max='3'
+    uci set wanchk.cpe3.powermax='4'
+    uci set wanchk.cpe3.period='10'
+    uci set wanchk.cpe3.dnsopen='1'
+    uci set wanchk.cpe3.pingopen='1'
+    uci set wanchk.cpe3.flowlimit='10240'
+fi

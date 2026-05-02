@@ -1,0 +1,3 @@
+/usr/bin/fota_upgrade.sh
+/etc/init.d/fota_upgrade
+/etc/config/fota_upgrade

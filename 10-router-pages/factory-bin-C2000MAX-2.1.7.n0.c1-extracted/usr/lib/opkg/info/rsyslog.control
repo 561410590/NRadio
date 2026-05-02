@@ -1,0 +1,13 @@
+Package: rsyslog
+Version: 8.39.0-2
+Depends: libc, libestr, libfastjson, libuuid1, zlib
+Source: package/nradio/feeds/rsyslog
+SourceName: rsyslog
+License: GPL-3.0
+LicenseFiles: COPYING
+Section: net
+SourceDateEpoch: 1745396418
+CPE-ID: cpe:/a:rsyslog:rsyslog
+Architecture: aarch64_cortex-a53
+Installed-Size: 346783
+Description:  Enhanced system logging and kernel message trapping daemons

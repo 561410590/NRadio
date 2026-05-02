@@ -1,0 +1,10 @@
+Package: pkg-io-ata
+Version: 1.0-20220609
+Depends: libc, kmod-ata-core, kmod-ata-ahci
+Source: package/nradio/collections/pkg-io-ata
+SourceName: pkg-io-ata
+Section: nradiowifi
+SourceDateEpoch: 1655358548
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for IO ATA

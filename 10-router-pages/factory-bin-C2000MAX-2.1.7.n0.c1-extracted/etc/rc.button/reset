@@ -1,0 +1,35 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+OVERLAY="$( grep ' /overlay ' /proc/mounts )"
+
+case "$ACTION" in
+pressed)
+	[ -z "$OVERLAY" ] && return 0
+
+	return 5
+;;
+timeout)
+	. /etc/diag.sh
+	#set_state failsafe
+;;
+released)
+	touch /tmp/reset_button
+	if [ "$SEEN" -gt 3 ] && [ -n "$OVERLAY" ]; then
+		if uci -q get rst.config.rst_disabled | grep -qsx '1' ;then
+			return
+		fi
+		echo "FACTORY RESET" > /dev/console
+
+		/etc/init.d/ledctrl stop
+
+		. /etc/diag.sh
+		set_state preinit
+
+		echo y | firstboot && reboot &
+	fi
+;;
+esac
+
+return 0

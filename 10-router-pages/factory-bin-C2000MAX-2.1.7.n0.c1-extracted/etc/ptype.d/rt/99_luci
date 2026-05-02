@@ -1,0 +1,16 @@
+#!/bin/ash
+
+if [ -f "/etc/config/filestore" ]; then
+	uci set luci.module=internal
+	uci set luci.module.fileserver='1'
+fi
+
+[ "$1" = "reinit" ] && exit 0
+
+_cpecnt=$(uci -q get oem.feature.cpe)
+_cpecnt=${_cpecnt:-0}
+if [ $_cpecnt -gt 0 ]; then
+	uci set luci.main.first='0'
+	uci set luci.module=internal
+	uci set luci.module.cpestat='0'
+fi

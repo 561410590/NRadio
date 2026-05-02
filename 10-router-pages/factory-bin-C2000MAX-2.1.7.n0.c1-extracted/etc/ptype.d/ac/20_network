@@ -1,0 +1,10 @@
+#!/bin/ash
+
+[ "$1" = "reinit" ] && exit 0
+
+defip='192.168.168.1'
+
+uci set network.lan.ipaddr="$defip"
+uci set network.lan.def_ipaddr="$defip"
+uci set network.lan.ip6assign=''
+uci set network.lan.ip6addr='fd66:8888:8888::1111:1111:1111/64'

@@ -1,0 +1,21 @@
+<% export("cbi_apply_xhr", function(id, configs, redirect) -%>
+<script>
+var msgobj = {};
+var keyobj = {};
+msgobj.loading = '<%:Loading%>';	
+msgobj.title = '<%:Applying changes%>';
+msgobj.msg = '<%:Waiting for changes to be applied...%>';
+msgobj.msg_ok = '<%:Configuration applied.%>';
+<%- if firstmap and messages then local msg; for _, msg in ipairs(messages) do -%>
+msgobj.msg_error ='<%=pcdata(msg)%>';
+msgobj.title ='<%:Error%>';
+<%- end end -%>
+keyobj.resource = '<%=resource%>';
+keyobj.id = '<%=id%>';
+keyobj.token = '<%=token%>';
+keyobj.url = '<%=url('servicectl/restart', table.concat(configs, ","))%>';
+keyobj.url_status = '<%=url('servicectl/status')%>';
+keyobj.redirect = '<%=redirect%>';
+nradio_apply_callback(msgobj,keyobj);
+</script>
+<%-	end) %>

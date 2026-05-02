@@ -1,0 +1,271 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. ../netifd-proto.sh
+init_proto "$@"
+
+proto_dhcpv6_init_config() {
+	renew_handler=1
+
+	proto_config_add_string 'reqaddress:or("try","force","none")'
+	proto_config_add_string 'reqprefix:or("auto","no",range(0, 64))'
+	proto_config_add_string clientid
+	proto_config_add_string 'reqopts:list(uinteger)'
+	proto_config_add_string 'defaultreqopts:bool'
+	proto_config_add_string 'noslaaconly:bool'
+	proto_config_add_string 'forceprefix:bool'
+	proto_config_add_string 'extendprefix:bool'
+	proto_config_add_string 'norelease:bool'
+	proto_config_add_string 'noserverunicast:bool'
+	proto_config_add_string 'noclientfqdn:bool'
+	proto_config_add_string 'noacceptreconfig:bool'
+	proto_config_add_array 'ip6prefix:list(ip6addr)'
+	proto_config_add_string iface_dslite
+	proto_config_add_string zone_dslite
+	proto_config_add_string encaplimit_dslite
+	proto_config_add_string iface_map
+	proto_config_add_string zone_map
+	proto_config_add_string encaplimit_map
+	proto_config_add_string iface_464xlat
+	proto_config_add_string zone_464xlat
+	proto_config_add_string zone
+	proto_config_add_string 'ifaceid:ip6addr'
+	proto_config_add_string "userclass"
+	proto_config_add_string "vendorclass"
+	proto_config_add_array "sendopts:list(string)"
+	proto_config_add_boolean delegate
+	proto_config_add_int "soltimeout"
+	proto_config_add_boolean fakeroutes
+	proto_config_add_boolean sourcefilter
+	proto_config_add_boolean keep_ra_dnslifetime
+	proto_config_add_int "ra_holdoff"
+}
+
+proto_dhcpv6_add_prefix() {
+	append "$3" "$1"
+}
+
+proto_dhcpv6_add_sendopts() {
+	[ -n "$1" ] && append "$3" "-x$1"
+}
+generate_random_bytes() {
+    # 使用/dev/urandom生成随机字节数据
+    dd if=/dev/urandom bs=8 count=1 2>/dev/null | hexdump -C | awk '{for(i=2;i<=9;i++) printf "%s", $i; exit}'
+}
+generate_fallback_random() {
+    # 备用随机数生成方法
+    date +%s%N | md5sum | cut -d' ' -f1
+}
+
+convert_hex_to_decimal() {
+    # 将十六进制字符转换为十进制
+    case "$1" in
+        0) echo 0 ;;
+        1) echo 1 ;;
+        2) echo 2 ;;
+        3) echo 3 ;;
+        4) echo 4 ;;
+        5) echo 5 ;;
+        6) echo 6 ;;
+        7) echo 7 ;;
+        8) echo 8 ;;
+        9) echo 9 ;;
+        a|A) echo 10 ;;
+        b|B) echo 11 ;;
+        c|C) echo 12 ;;
+        d|D) echo 13 ;;
+        e|E) echo 14 ;;
+        f|F) echo 15 ;;
+        *) echo 0 ;;
+    esac
+}
+
+convert_decimal_to_hex() {
+    # 将十进制数字转换为两位十六进制
+    printf "%02x" "$1"
+}
+
+generate_random_ifaceid() {
+    # 尝试生成随机数据
+    local random_data=$(generate_random_bytes)
+    
+    # 如果失败，使用备用方法
+    if [ -z "$random_data" ] || [ ${#random_data} -lt 16 ]; then
+        random_data=$(generate_fallback_random)
+    fi
+    
+    # 确保数据长度为16个字符(8字节)
+    random_data=$(echo "$random_data" | cut -c1-16)
+    
+    # 如果仍然不足，生成伪随机数据
+    if [ ${#random_data} -lt 16 ]; then
+        random_data=""
+        i=0
+        while [ $i -lt 16 ]; do
+            char_num=$((RANDOM % 16))
+            case $char_num in
+                10) random_data="${random_data}a" ;;
+                11) random_data="${random_data}b" ;;
+                12) random_data="${random_data}c" ;;
+                13) random_data="${random_data}d" ;;
+                14) random_data="${random_data}e" ;;
+                15) random_data="${random_data}f" ;;
+                *) random_data="${random_data}${char_num}" ;;
+            esac
+            i=$((i + 1))
+        done
+    fi
+    
+    # 格式化为8组2字符的十六进制数
+    local formatted=""
+    i=1
+    while [ $i -le 15 ]; do
+        byte1=$(echo "$random_data" | cut -c${i})
+        byte2=$(echo "$random_data" | cut -c$((i+1)))
+        if [ -z "$formatted" ]; then
+            formatted="${byte1}${byte2}"
+        else
+            formatted="${formatted}:${byte1}${byte2}"
+        fi
+        i=$((i + 2))
+    done
+    
+    # 修改第一个字节确保U/L位为0
+    first_byte=$(echo "$formatted" | cut -d':' -f1)
+    
+    # 手动将十六进制转换为十进制
+    first_char1=$(echo "$first_byte" | cut -c1)
+    first_char2=$(echo "$first_byte" | cut -c2)
+    
+    dec1=$(convert_hex_to_decimal "$first_char1")
+    dec2=$(convert_hex_to_decimal "$first_char2")
+    
+    first_byte_dec=$((dec1 * 16 + dec2))
+    
+    # 清除第2位(U/L位)
+    modified_first_byte_dec=$((first_byte_dec & 0xFD))
+    
+    # 转换回十六进制
+    modified_first_byte_hex=$(convert_decimal_to_hex $modified_first_byte_dec)
+    
+    # 重构最终的接口标识符
+    result="$modified_first_byte_hex"
+    i=2
+    while [ $i -le 8 ]; do
+        byte=$(echo "$formatted" | cut -d':' -f$i)
+        result="${result}:${byte}"
+        i=$((i + 1))
+    done
+    
+    echo "$result"
+}
+
+proto_dhcpv6_setup() {
+	local config="$1"
+	local iface="$2"
+
+	local reqaddress reqprefix clientid reqopts defaultreqopts noslaaconly forceprefix extendprefix norelease noserverunicast noclientfqdn noacceptreconfig ip6prefix ip6prefixes iface_dslite iface_map iface_464xlat ifaceid userclass vendorclass sendopts delegate zone_dslite zone_map zone_464xlat zone encaplimit_dslite encaplimit_map soltimeout fakeroutes sourcefilter keep_ra_dnslifetime ra_holdoff
+	json_get_vars reqaddress reqprefix clientid reqopts defaultreqopts noslaaconly forceprefix extendprefix norelease noserverunicast noclientfqdn noacceptreconfig iface_dslite iface_map iface_464xlat ifaceid userclass vendorclass delegate zone_dslite zone_map zone_464xlat zone encaplimit_dslite encaplimit_map soltimeout fakeroutes sourcefilter keep_ra_dnslifetime ra_holdoff
+	json_for_each_item proto_dhcpv6_add_prefix ip6prefix ip6prefixes
+	if [ -z "$ifaceid" ];then
+		ifaceid=$(generate_random_ifaceid)
+		echo "ifaceid $ifaceid"
+	fi
+	# Configure
+	local opts=""
+	[ -n "$reqaddress" ] && append opts "-N$reqaddress"
+
+	[ -z "$reqprefix" -o "$reqprefix" = "auto" ] && reqprefix=0
+	[ "$reqprefix" != "no" ] && append opts "-P$reqprefix"
+
+	[ -n "$clientid" ] && append opts "-c$clientid"
+
+	[ "$defaultreqopts" = "0" ] && append opts "-R"
+
+	[ "$noslaaconly" = "1" ] && append opts "-S"
+
+	[ "$forceprefix" = "1" ] && append opts "-F"
+
+	[ "$norelease" = "1" ] && append opts "-k"
+
+	[ "$noserverunicast" = "1" ] && append opts "-U"
+
+	[ "$noclientfqdn" = "1" ] && append opts "-f"
+
+	[ "$noacceptreconfig" = "1" ] && append opts "-a"
+
+	[ -n "$ifaceid" ] && append opts "-i$ifaceid"
+
+	[ -n "$vendorclass" ] && append opts "-V$vendorclass"
+
+	[ -n "$userclass" ] && append opts "-u$userclass"
+
+	[ "$keep_ra_dnslifetime" = "1" ] && append opts "-L"
+
+	[ -n "$ra_holdoff" ] && append opts "-m$ra_holdoff"
+
+	local opt
+	for opt in $reqopts; do
+		append opts "-r$opt"
+	done
+
+	json_for_each_item proto_dhcpv6_add_sendopts sendopts opts
+
+	append opts "-t${soltimeout:-120}"
+
+	[ -n "$ip6prefixes" ] && proto_export "USERPREFIX=$ip6prefixes"
+	[ -n "$iface_dslite" ] && proto_export "IFACE_DSLITE=$iface_dslite"
+	[ -n "$iface_map" ] && proto_export "IFACE_MAP=$iface_map"
+	[ -n "$iface_464xlat" ] && proto_export "IFACE_464XLAT=$iface_464xlat"
+	[ "$delegate" = "0" ] && proto_export "IFACE_DSLITE_DELEGATE=0"
+	[ "$delegate" = "0" ] && proto_export "IFACE_MAP_DELEGATE=0"
+	[ -n "$zone_dslite" ] && proto_export "ZONE_DSLITE=$zone_dslite"
+	[ -n "$zone_map" ] && proto_export "ZONE_MAP=$zone_map"
+	[ -n "$zone_464xlat" ] && proto_export "ZONE_464XLAT=$zone_464xlat"
+	[ -n "$zone" ] && proto_export "ZONE=$zone"
+	[ -n "$encaplimit_dslite" ] && proto_export "ENCAPLIMIT_DSLITE=$encaplimit_dslite"
+	[ -n "$encaplimit_map" ] && proto_export "ENCAPLIMIT_MAP=$encaplimit_map"
+	[ "$fakeroutes" != "0" ] && proto_export "FAKE_ROUTES=1"
+	[ "$sourcefilter" = "0" ] && proto_export "NOSOURCEFILTER=1"
+	[ "$extendprefix" = "1" ] && proto_export "EXTENDPREFIX=1"
+
+	proto_export "INTERFACE=$config"
+	proto_run_command "$config" odhcp6c \
+		-s /lib/netifd/dhcpv6.script \
+		$opts $iface
+}
+
+proto_dhcpv6_renew() {
+	local interface="$1"
+	# SIGUSR1 forces odhcp6c to renew its lease
+	local sigusr1="$(kill -l SIGUSR1)"
+	[ -n "$sigusr1" ] && proto_kill_command "$interface" $sigusr1
+}
+
+restart_dhcpv6_process(){
+	local interface="$1"
+	local INTERFACE_PREFIX="${interface%%_*}"
+	sleep 6
+	json_init
+	json_add_string name "$interface"
+	json_add_string ifname "@$INTERFACE_PREFIX"
+	json_add_string proto "dhcpv6"
+	json_add_string extendprefix 1
+	proto_add_dynamic_defaults
+	json_close_object
+	echo "force $interface dhcpv6 restart"
+	ubus call network add_dynamic "$(json_dump)"
+}
+
+proto_dhcpv6_teardown() {
+	local interface="$1"
+	local INTERFACE_PREFIX="${interface%%_*}"
+	status=$(ubus call network.interface.$INTERFACE_PREFIX status|jsonfilter -e '$["up"]')
+	proto_kill_command "$interface"
+	if  echo  "$INTERFACE_PREFIX"|grep "cpe" && [ "$interface" == "${INTERFACE_PREFIX}_6" -a "$status" == "true" ];then
+		$(restart_dhcpv6_process "$interface")
+	fi
+}
+
+add_protocol dhcpv6
+

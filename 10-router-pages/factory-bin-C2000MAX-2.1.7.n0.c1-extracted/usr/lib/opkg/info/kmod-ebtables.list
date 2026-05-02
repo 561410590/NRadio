@@ -1,0 +1,14 @@
+/etc/modules.d/ebtables
+/lib/modules/5.4.281/ebtables.ko
+/lib/modules/5.4.281/ebt_pkttype.ko
+/lib/modules/5.4.281/ebtable_broute.ko
+/lib/modules/5.4.281/ebt_redirect.ko
+/lib/modules/5.4.281/ebt_vlan.ko
+/lib/modules/5.4.281/ebt_mark_m.ko
+/lib/modules/5.4.281/ebt_stp.ko
+/lib/modules/5.4.281/ebtable_nat.ko
+/lib/modules/5.4.281/ebtable_filter.ko
+/lib/modules/5.4.281/ebt_limit.ko
+/lib/modules/5.4.281/ebt_among.ko
+/lib/modules/5.4.281/ebt_mark.ko
+/lib/modules/5.4.281/ebt_802_3.ko

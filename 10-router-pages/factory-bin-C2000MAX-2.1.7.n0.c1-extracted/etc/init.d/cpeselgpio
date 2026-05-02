@@ -1,0 +1,60 @@
+#!/bin/sh /etc/rc.common
+
+START=05
+boot_sim_change=0
+
+loop_sim() {
+	local rule=$1
+	local _cur=
+	local _gval=
+	local cellular_rule=""
+
+	config_get _cur $rule cur
+	config_get _default $rule default
+	config_get _adv_sim $rule adv_sim
+	config_get _mode $rule mode
+	config_get _gval $rule gval
+	gIndex=${rule##*[A-Za-z]}
+	
+	cellular=$(uci -q get network.globals.default_cellular)
+	[ -z "$cellular" ] && cellular="cpe"
+	cellularIndex=${cellular##*[A-Za-z]}
+	if [ "$cellularIndex" == "0" -a -n "$gIndex" ];then
+		cellular_rule="${cellular%%[0-9]*}$gIndex"
+	else
+		cellular_rule="${cellular}$gIndex"
+	fi
+
+	local cellular_disabled=$(uci -q get network.$cellular_rule.disabled)
+	local odu_model=$(uci -q get network.$cellular_rule.odu_model)
+
+	if [ "$BOOT" == "1" -a "$_mode" == "0" -a "$odu_model" != "NRFAMILY" ];then
+		if [ -n "$_default" -a "$_adv_sim" == "1" ];then
+			if [ "$_cur" != "$_default" ];then
+				_cur="$_default"
+				uci set cpesel.$rule.cur=$_cur
+				boot_sim_change=1
+			fi
+		fi
+	fi
+	if [ "$cellular_disabled" == "1" -o "$odu_model" == "NRFAMILY"  ];then
+		return 0
+	fi
+	
+	scansim=$(uci -q get cellular_init.$cellular_rule.scansim)
+	[ "$scansim" == "1"  ] && return 0
+	[ -n "$_gval" ] && cpetools.sh -s "${_cur:-1}" -i "$cellular_rule" -S &
+}
+
+start() {
+	config_load cpesel
+	config_foreach loop_sim cpesel
+	if [ $boot_sim_change -eq 1 ];then
+		uci commit cpesel
+	fi
+}
+
+boot() {
+	BOOT=1
+	start "$@"
+}

@@ -1,0 +1,10 @@
+Package: luci-i18n-nradio-firewall-zh-cn
+Version: git-26.103.38496-283ac67-1
+Depends: libc, luci-app-nradio-firewall
+Source: package/luci/applications/luci-app-nradio-firewall
+SourceName: luci-i18n-nradio-firewall-zh-cn
+Section: luci
+SourceDateEpoch: 1774591661
+Architecture: all
+Installed-Size: 485
+Description:  Translation for luci-app-nradio-firewall - 中文 (Chinese)

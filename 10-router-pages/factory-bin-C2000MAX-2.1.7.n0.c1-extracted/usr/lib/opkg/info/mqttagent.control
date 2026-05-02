@@ -1,0 +1,10 @@
+Package: mqttagent
+Version: 1.2.10-20240112
+Depends: libc, libmosquitto, libubox20210516, libubus20210630, libbdinfo, mosquitto, libjson-c5, nradio-utils
+Source: package/nradio/services/mqttagent
+SourceName: mqttagent
+Section: nradiowifi
+SourceDateEpoch: 1749094846
+Architecture: all
+Installed-Size: 16278
+Description:  Provide supporting nradiowifi mqtt agent.

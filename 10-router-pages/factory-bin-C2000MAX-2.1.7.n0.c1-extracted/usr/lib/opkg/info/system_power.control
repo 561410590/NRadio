@@ -1,0 +1,10 @@
+Package: system_power
+Version: 1.0-20250422
+Depends: libc
+Source: package/nradio/utils/system_power
+SourceName: system_power
+Section: nradiowifi
+SourceDateEpoch: 1745396418
+Architecture: all
+Installed-Size: 314
+Description:  System power on/off

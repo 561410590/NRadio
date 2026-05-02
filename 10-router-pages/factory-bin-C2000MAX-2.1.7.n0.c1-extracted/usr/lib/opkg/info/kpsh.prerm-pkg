@@ -1,0 +1,7 @@
+#!/bin/sh
+s=firewall.ate
+uci -q get "$s" >/dev/null || exit 0
+uci batch <<-EOF
+	delete $s
+	commit firewall
+EOF

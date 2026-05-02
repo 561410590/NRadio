@@ -1,0 +1,10 @@
+Package: image-check
+Version: 2.3-2025.03.31
+Depends: libc
+Source: package/nradio/utils/image-check
+SourceName: image-check
+Section: nradiowifi
+SourceDateEpoch: 1743411233
+Architecture: aarch64_cortex-a53
+Installed-Size: 11138
+Description:  Provide supporting nradiowifi image check.

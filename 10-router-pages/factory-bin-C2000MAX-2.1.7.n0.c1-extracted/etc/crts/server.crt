@@ -1,0 +1,70 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1 (0x1)
+    Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=CN, ST=GD, L=SZ, O=MtkWiFi, CN=MtkWiFi CA
+        Validity
+            Not Before: Apr  3 01:48:11 2015 GMT
+            Not After : Mar 31 01:48:11 2025 GMT
+        Subject: C=CN, ST=GD, L=SZ, O=MtkWiFi, CN=server
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:a7:14:2b:c7:80:4a:7b:00:b0:02:36:dd:5a:63:
+                    d2:0a:0a:df:51:4c:a5:cf:c6:22:4f:98:22:a3:fd:
+                    44:26:a0:f5:e5:63:3d:03:f4:ae:bd:19:5f:59:a2:
+                    ce:3d:96:74:d7:5c:cb:53:61:0c:9b:f3:ad:73:ee:
+                    b3:1f:f1:3d:e6:a9:72:5a:e8:ec:b3:19:27:66:6d:
+                    ea:41:00:f6:9a:fb:9e:6c:5b:2c:30:7a:d3:00:55:
+                    2f:07:38:9b:89:1a:ea:0a:8a:d5:4d:98:da:7d:af:
+                    cb:81:58:f4:e5:ba:55:e3:24:50:5c:93:28:90:ed:
+                    05:25:72:ee:8b:b8:d3:bb:bd
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Cert Type: 
+                SSL Server
+            Netscape Comment: 
+                Easy-RSA Generated Server Certificate
+            X509v3 Subject Key Identifier: 
+                23:89:79:29:16:6F:DD:2F:B6:EA:CA:8E:0F:B6:44:CF:22:42:54:55
+            X509v3 Authority Key Identifier: 
+                keyid:26:CD:CB:01:76:1B:BA:A5:2F:A5:90:55:92:37:4C:63:39:98:4C:AA
+                DirName:/C=CN/ST=GD/L=SZ/O=MtkWiFi/CN=MtkWiFi CA
+                serial:F9:2F:FF:CE:0C:EB:A3:49
+
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Key Usage: 
+                Digital Signature, Key Encipherment
+    Signature Algorithm: sha1WithRSAEncryption
+         24:39:4e:0c:0b:ec:bb:b3:a3:e3:6b:57:bd:18:b6:07:9e:22:
+         68:b5:4a:65:e2:f4:ba:4d:4f:24:10:a2:b2:7f:ee:ed:77:7a:
+         17:e5:86:2a:b7:5e:85:c3:9f:73:2d:5f:49:4c:ce:78:b6:4b:
+         be:fe:96:82:8f:68:4e:ca:26:e3:c8:6a:28:f3:63:d7:28:39:
+         55:c9:db:e2:09:c0:49:11:ec:f3:b6:0a:b0:6a:06:15:ad:3d:
+         f1:31:d2:e6:76:92:8d:ed:1b:dd:0c:1c:ee:64:b4:35:3a:a1:
+         ae:97:0e:ff:d5:a3:86:64:86:e7:56:f6:b2:cb:77:da:dc:c2:
+         7b:e6
+-----BEGIN CERTIFICATE-----
+MIIDKTCCApKgAwIBAgIBATANBgkqhkiG9w0BAQUFADBOMQswCQYDVQQGEwJDTjEL
+MAkGA1UECBMCR0QxCzAJBgNVBAcTAlNaMRAwDgYDVQQKEwdNdGtXaUZpMRMwEQYD
+VQQDEwpNdGtXaUZpIENBMB4XDTE1MDQwMzAxNDgxMVoXDTI1MDMzMTAxNDgxMVow
+SjELMAkGA1UEBhMCQ04xCzAJBgNVBAgTAkdEMQswCQYDVQQHEwJTWjEQMA4GA1UE
+ChMHTXRrV2lGaTEPMA0GA1UEAxMGc2VydmVyMIGfMA0GCSqGSIb3DQEBAQUAA4GN
+ADCBiQKBgQCnFCvHgEp7ALACNt1aY9IKCt9RTKXPxiJPmCKj/UQmoPXlYz0D9K69
+GV9Zos49lnTXXMtTYQyb861z7rMf8T3mqXJa6OyzGSdmbepBAPaa+55sWywwetMA
+VS8HOJuJGuoKitVNmNp9r8uBWPTlulXjJFBckyiQ7QUlcu6LuNO7vQIDAQABo4IB
+GTCCARUwCQYDVR0TBAIwADARBglghkgBhvhCAQEEBAMCBkAwNAYJYIZIAYb4QgEN
+BCcWJUVhc3ktUlNBIEdlbmVyYXRlZCBTZXJ2ZXIgQ2VydGlmaWNhdGUwHQYDVR0O
+BBYEFCOJeSkWb90vturKjg+2RM8iQlRVMH4GA1UdIwR3MHWAFCbNywF2G7qlL6WQ
+VZI3TGM5mEyqoVKkUDBOMQswCQYDVQQGEwJDTjELMAkGA1UECBMCR0QxCzAJBgNV
+BAcTAlNaMRAwDgYDVQQKEwdNdGtXaUZpMRMwEQYDVQQDEwpNdGtXaUZpIENBggkA
++S//zgzro0kwEwYDVR0lBAwwCgYIKwYBBQUHAwEwCwYDVR0PBAQDAgWgMA0GCSqG
+SIb3DQEBBQUAA4GBACQ5TgwL7Luzo+NrV70YtgeeImi1SmXi9LpNTyQQorJ/7u13
+ehflhiq3XoXDn3MtX0lMzni2S77+loKPaE7KJuPIaijzY9coOVXJ2+IJwEkR7PO2
+CrBqBhWtPfEx0uZ2ko3tG90MHO5ktDU6oa6XDv/Vo4ZkhudW9rLLd9rcwnvm
+-----END CERTIFICATE-----

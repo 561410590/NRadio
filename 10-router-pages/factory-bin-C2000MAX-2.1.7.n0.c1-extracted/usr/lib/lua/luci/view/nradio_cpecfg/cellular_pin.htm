@@ -1,0 +1,55 @@
+
+<script type="text/javascript">//<![CDATA[
+	
+	let model = "<%=model%>";
+	let section = "<%=section%>";
+	let simid = "<%=simid%>";
+	globalRequestSIM = 1;
+	$("#cbi-cpecfg-" + section + "-status>.cbi-value-field").html('&nbsp;');
+
+	function get_sim_status(){
+		if(data_res){
+			if(data_res.status){
+				if(data_res.register){
+					if(data_res.net){
+						$("#cbi-cpecfg-" + section + "-status>.cbi-value-field")
+							.removeClass("sim_detail_err")
+							.addClass("sim_detail_info")
+							.html("<%:SIMStatusNetOK%>");
+					}
+					else{
+
+						$("#cbi-cpecfg-" + section + "-status>.cbi-value-field")
+							.removeClass("sim_detail_err")
+							.addClass("sim_detail_info")
+							.html("<%:SIMStatusOK%>");
+					}							
+				}
+				else{
+
+					$("#cbi-cpecfg-" + section + "-status>.cbi-value-field")
+						.removeClass("sim_detail_info")
+						.addClass("sim_detail_err")
+						.html("<%:SIMStatusFail%>");
+				}
+			}
+			else{
+				if (data_res.pin == 1){
+					$("#cbi-cpecfg-" + section + "-status>.cbi-value-field")
+						.removeClass("sim_detail_info")
+						.addClass("sim_detail_err")
+						.html("<%:SIMStatusPinStatus%>");
+				}
+				else{
+
+					$("#cbi-cpecfg-" + section + "-status>.cbi-value-field")
+						.removeClass("sim_detail_info")
+						.addClass("sim_detail_err")
+						.html("<%:SIMStatusError%>");
+				}
+			}
+		}
+
+	}
+
+//]]></script>

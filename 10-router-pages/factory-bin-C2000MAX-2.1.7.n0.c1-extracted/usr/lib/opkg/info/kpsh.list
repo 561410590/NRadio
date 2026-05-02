@@ -1,0 +1,3 @@
+/usr/sbin/kpshd
+/etc/uci-defaults/02-kpsh
+/etc/init.d/kpsh

@@ -1,0 +1,61 @@
+<style>
+.mobile_bg_color .container{
+	padding-left: 0px;
+	padding-right: 0px;
+}
+</style>
+<script>
+$("#cbi-cloudd").append("<div class='' style='font-size: 14px;padding-left:30px;padding-right:30px;color:#0088cc'><%:WifiNote%></div>");
+$(document).ready(function(){
+	goto_page('<%=controller%>nradio/system/overview',"<%:WifiSetting%>");
+	
+	function change_style(){
+		var wifi_array = [];
+		$(".cbi-section-node .cbi-value").each(function(){
+			var id_array = $(this).attr("id").split("_");
+			var key = id_array[id_array.length - 1];
+			var pre_key = id_array[id_array.length - 2];
+			var target_key = key;
+			if(pre_key.indexOf("g")!=-1)
+				target_key = pre_key+"_"+target_key;
+			if(wifi_array.indexOf(target_key) == -1 ){
+				wifi_array[wifi_array.length] = target_key;
+				$(this).css("padding-bottom","0px");
+				$(this).css("margin-bottom","0px");
+			}
+			else{
+				$(this).css("padding-top","10px");
+				$(this).css("padding-bottom","10px");
+				$(this).css("margin","0px");
+			}
+		});
+	}
+	$("#cbi-cloudd-d0-diff_2_4_wlan").click(function(){
+		change_style();
+	});
+	change_style();
+	$(".un_help").parent().prop("for","");
+	$(".un_help").parent().click(function(e){
+		var warning_htm = ''+
+		'<div class="note_box">'+
+		'<div class="note_body"><p><%:WifiHelp%></p><p><%:WifiHelp2%></p></div>'+
+		'</div>';
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '<%:Unique SSID%>',
+			message: warning_htm,
+			closeByBackdrop: false,
+			closable:false,
+			cssClass:'mobile_note',
+			buttons: [{
+				label: "<%:SetOK%>",
+				cssClass: 'mobile_note_btn',
+				action: function(dialog) {						
+						dialog.close();
+					}
+				}],
+		});
+	});
+});
+
+</script>

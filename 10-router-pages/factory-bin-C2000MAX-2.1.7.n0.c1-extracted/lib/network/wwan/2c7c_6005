@@ -1,0 +1,7 @@
+{
+	"desc":"Quectel EC200A",
+	"vendor":"quectel",
+	"type":"cdc_ether",
+	"control":1,
+	"data": 0
+}

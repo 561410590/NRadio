@@ -1,0 +1,10 @@
+Package: luci-app-nradio-dhcp
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-dhcp
+SourceName: luci-app-nradio-dhcp
+Section: luci
+SourceDateEpoch: 1774605325
+Architecture: all
+Installed-Size: 4248
+Description:  LuCI Support for DHCP

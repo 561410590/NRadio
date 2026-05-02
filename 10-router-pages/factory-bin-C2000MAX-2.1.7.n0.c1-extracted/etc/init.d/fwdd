@@ -1,0 +1,96 @@
+#!/bin/sh /etc/rc.common
+
+START=80
+STOP=10
+PROG=/usr/bin/fwdd
+USE_PROCD=1
+
+check_band_exist_in_wifi_device() {
+	local target_band="$1"
+
+	local idx=0
+	while uci -q get wireless.@wifi-device[$idx] >/dev/null 2>&1; do
+		local band="$(uci -q get wireless.@wifi-device[$idx].band)"
+		[ "$band" = "$target_band" ] && return 1
+		idx=$((idx+1))
+	done
+
+	return 0
+}
+
+check_sta_iface_in_mld() {
+	local target_band="$1"
+
+	check_band_exist_in_wifi_device $target_band
+	ret=$?
+	[ $ret -eq 1 ] || return 1
+
+	local idx=0
+	while uci -q get wireless.@wifi-mld[$idx] >/dev/null 2>&1; do
+		local mode ifaces iface device band
+
+		mode="$(uci -q get wireless.@wifi-mld[$idx].mode)"
+		[ "$mode" != "sta" ] && { idx=$((idx+1)); continue; }
+
+		ifaces="$(uci -q get wireless.@wifi-mld[$idx].iface)"
+		for iface in $ifaces; do
+			device="$(uci -q get wireless.$iface.device)"
+			[ -z "$device" ] && continue
+
+			band="$(uci -q get wireless.$device.band)"
+			[ "$band" = "$target_band" ] && return 1
+		done
+
+		idx=$((idx+1))
+	done
+
+	return 0
+}
+
+fwdd_start() {
+	local cfg="$1"
+	local PARAMS=""
+
+	config_get_bool enabled "$cfg" 'enabled' 1
+	[ $enabled -gt 0 ] || return
+
+	config_get target_band $cfg target_band '5G'
+
+	check_sta_iface_in_mld $target_band
+	ret=$?
+	[ $ret -eq 0 ] || return
+
+	procd_open_instance $cfg
+	procd_set_param command $PROG
+
+	config_get dbg_level $cfg dbg_level 1
+	procd_append_param command -d"$dbg_level"
+
+	config_get interface $cfg interface
+	[ -n "$interface" ] && {
+		network_get_device ifname $interface
+		[ -n "$ifname" ] && procd_append_param command -b"$ifname"
+	}
+
+	config_get source_ifaces "$cfg" source_iface
+	for iface in $source_ifaces; do
+		 procd_append_param command -e "$iface" "$target_band"
+	done
+
+	procd_set_param respawn
+	procd_close_instance
+}
+
+start_service() {
+	config_load fwdd
+
+	config_foreach fwdd_start fwdd
+}
+
+start() {
+	start_service $@
+}
+
+stop() {
+	stop_service $@
+}

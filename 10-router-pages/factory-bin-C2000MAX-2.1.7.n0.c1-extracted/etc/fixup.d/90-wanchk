@@ -1,0 +1,3 @@
+#!/bin/ash
+
+sed -i '/period/{s/20/10/}' /etc/config/wanchk

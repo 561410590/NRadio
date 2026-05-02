@@ -1,0 +1,10 @@
+Package: pkg-full
+Version: 1.0-20220922
+Depends: libc, pkg-rt-base, kmod-ipt-nathelper-rtsp, blkid, xl2tpd, ppp-mod-pppoe, ppp-mod-pppol2tp, ppp-mod-pptp, igmpproxy, wm, iperf, logrotate, ca-bundle, odhcp6c, dnsmasq-full, pkg-upnp
+Source: package/nradio/collections/pkg-full
+SourceName: pkg-full
+Section: nradiowifi
+SourceDateEpoch: 1756466900
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for full function

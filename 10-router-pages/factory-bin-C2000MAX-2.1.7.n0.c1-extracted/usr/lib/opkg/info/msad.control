@@ -1,0 +1,10 @@
+Package: msad
+Version: 2.8-20250624
+Depends: libc, libuci20130104, nrswitch
+Source: package/nradio/services/msad
+SourceName: msad
+Section: nradiowifi
+SourceDateEpoch: 1750842829
+Architecture: aarch64_cortex-a53
+Installed-Size: 10327
+Description:  MQTT Server Address Detect

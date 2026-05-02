@@ -1,0 +1,10 @@
+Package: wanchk
+Version: 1.5-20210923
+Depends: libc, rpcd, cpetools
+Source: package/nradio/services/wanchk
+SourceName: wanchk
+Section: nradiowifi
+SourceDateEpoch: 1772612144
+Architecture: all
+Installed-Size: 7418
+Description:  Auto Restart wan after check failed

@@ -1,0 +1,5 @@
+/etc/init.d/mtk_dut
+/sbin/mtk_dut
+/sbin/mtk_dut_start.sh
+/sbin/mtk_dut_hostapd_start.sh
+/sbin/mtk_dut_jedi_hostapd_start.sh

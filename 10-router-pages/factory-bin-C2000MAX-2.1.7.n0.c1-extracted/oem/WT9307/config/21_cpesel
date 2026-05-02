@@ -1,0 +1,12 @@
+uci set cpesel.sim.max=4
+uci set cpesel.sim.gval='11-1,10-1,01-2,11-2'
+uci set cpesel.sim.stype='0,0,4,4'
+uci set cpesel.sim.mode='1'
+uci set cpesel.sim.cur='1'
+
+uci set cpesel.sim1=cpesel
+uci set cpesel.sim1.max=2
+uci set cpesel.sim1.gval='1-1,1-2'
+uci set cpesel.sim1.stype='0,0'
+uci set cpesel.sim1.mode='1'
+uci set cpesel.sim1.cur='1'

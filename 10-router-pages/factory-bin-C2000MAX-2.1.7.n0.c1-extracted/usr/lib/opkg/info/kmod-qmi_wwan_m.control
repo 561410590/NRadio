@@ -1,0 +1,10 @@
+Package: kmod-qmi_wwan_m
+Version: 5.4.281-1.0.2
+Depends: kernel (=5.4.281-1-62030240c86acc07b71c0b1522950526), kmod-usb-wdm, kmod-usb-core, kmod-usb-net
+Source: package/nradio/kernel/qmi_wwan_m
+SourceName: kmod-qmi_wwan_m
+Section: meig
+SourceDateEpoch: 1715851896
+Architecture: aarch64_cortex-a53
+Installed-Size: 15282
+Description:  Meig QMI WWAN Driver

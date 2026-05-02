@@ -1,0 +1,2 @@
+/etc/modules.d/90-crypto-eip196
+/lib/modules/5.4.281/crypto_safexcel.ko

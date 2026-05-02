@@ -1,0 +1,4 @@
+config restart 'reboot'
+	option enabled '0'
+	option mode '0'
+	option time '1,1,3,30'

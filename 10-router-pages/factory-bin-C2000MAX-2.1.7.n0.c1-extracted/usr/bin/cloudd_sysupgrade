@@ -1,0 +1,67 @@
+#!/usr/bin/lua
+
+local uci = require "uci".cursor()
+local lfs = require "lfs"
+local capi = require "cloudd.api"
+local boardnames = {}
+local firmware_rootpath = "/opt/firmware"
+local groupnames = {}
+
+local function usage()
+	print(arg[0], "group_id")
+end
+
+local function getdirs(rootpath, pathes)
+	pathes = pathes or {}
+
+	ret, files, iter = pcall(lfs.dir, rootpath)
+	if ret == false then
+		return pathes
+	end
+
+	for entry in files, iter do
+		if entry ~= '.' and entry ~= '..' then
+			local path = rootpath .. '/' .. entry
+			local attr = lfs.attributes(path)
+			if attr ~= nil then
+				if attr.mode == 'directory' then
+					table.insert(pathes, entry)
+				end
+			end
+		end
+	end
+
+	return pathes
+end
+
+local function sysupgrade_group(g_id)
+	getdirs(firmware_rootpath,boardnames)
+
+	group_dversion = capi.cloudd_get_dest_version_group(g_id)
+
+	if group_dversion ~= nil then
+		for k, v in pairs(boardnames)
+		do
+			print("sysupgrade", g_id, group_dversion)
+			capi.cloudd_firmware_upgrade_group(g_id, v, group_dversion, nil)
+		end
+	end
+end
+
+if arg[1] == nil then
+	usage()
+	return 0
+end
+
+group_id = arg[1]
+
+if group_id == "all" then
+	capi.cloudd_get_all_group(groupnames)
+	for k, v in pairs(groupnames)
+	do
+		sysupgrade_group(v)
+	end
+else
+	sysupgrade_group(group_id)
+end
+

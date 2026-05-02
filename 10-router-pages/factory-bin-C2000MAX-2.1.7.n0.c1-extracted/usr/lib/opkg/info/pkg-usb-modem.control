@@ -1,0 +1,10 @@
+Package: pkg-usb-modem
+Version: 1.0-20220609
+Depends: libc, fota_upgrade, umbim, uqmi, proto-wwan, atsd, simcom_http, kmod-usb-serial, kmod-usb-serial-option, kmod-usb-serial-wwan, kmod-usb-net-cdc-ether, kmod-usb-net-rndis, cpetools, cpesel, wanswd, QDloader, QFirehose, cellular_init, cellular_power
+Source: package/nradio/collections/pkg-usb-modem
+SourceName: pkg-usb-modem
+Section: nradiowifi
+SourceDateEpoch: 1764234747
+Architecture: aarch64_cortex-a53
+Installed-Size: 104
+Description:  Pakcages for USB Modem

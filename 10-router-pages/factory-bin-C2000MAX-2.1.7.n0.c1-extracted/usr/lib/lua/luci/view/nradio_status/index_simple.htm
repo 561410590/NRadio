@@ -1,0 +1,720 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local util = require "luci.util"
+	local nr = require "luci.nradio"
+	local fs = require "nixio.fs"
+	local uci = require "luci.model.uci".cursor()
+	local info = nr.system_info()
+	local info_api_result_buffer = util.serialize_json({result=nr.get_runtime_info()},nil)
+	local cellular_prefix,cellular_default = nr.get_cellular_prefix()
+	local cpe_key = cellular_default
+	local net_type = nr.get_network_type()
+	local net_type_buffer = util.serialize_json(net_type,nil)
+	local wans_data = util.serialize_json(nr.get_wans_data(),nil)
+	local country = (uci:get("oem", "board", "country") or "CN")
+	local cpe_optimizes = fs.access("/etc/config/cpeoptimizes")
+	local is_low_cpu = nr.is_low_cpu()
+%>
+<%+themes/nradio/header_simple%>
+<script>
+	$(".menu_mobile").addClass("hide");
+</script>
+<style>
+.numicon{
+	right: -10px;
+    top: -10px;
+}
+#cpe_sim_mode{
+    position: absolute;
+    right: 25px;
+}
+#cpe_sim{
+	display: inline-block;
+}
+#cpe_sim_next.next-button::before{
+	top:8px;
+	right: 0px;
+}
+.next-button::before{
+	right: 10px;
+}
+.simple_index{
+	padding:0px 10px;
+}
+.mobile_bg_color .panel-info>.panel-heading{
+	color: #fff;
+}
+
+	.speedflow_combine_box{
+		display: block;
+		width: 100%;
+		margin-bottom: 20px;
+		height:338px;
+	}
+	.pc_box{
+		width: 30%;
+		float: left;
+		margin-left:1.5%;
+		margin-right:1.5%;
+		height:338px;
+	}
+	.pc_box.pc_box1,.pc_box.pc_box2{
+		height:159px;
+		margin-left: 0px;
+		margin-right: 0px;
+		margin-bottom: 10px;
+	}
+	.pc_box.pc_box3,.pc_box.pc_box4{
+		height:159px;		
+		margin-left: 0px;
+		margin-right: 0px;
+		margin-top: 10px;
+	}
+	.pc_box.pc_box2,.pc_box.pc_box4{
+		float:right;
+	}
+
+	.panel-heading{
+		border: none;
+	}
+	.speedflow_box{
+		line-height: 30px;
+		height: 30px;
+	}
+</style>
+		<div class="simple_index ">
+			<div class="mobile_bg_color ">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-sm-6 col-xs-6 text-left" style="padding-left: 0px;"><%:StatusDeviceModule%>:<%=info.model%></div>
+						<div class="col-sm-6 col-xs-6 text-right" style="padding-right: 0px;" id="online_info"></div>
+					</div>	
+				</div>	
+			</div>
+
+			<div class="mobile_bg_color text-center" style="height: 260px;">
+				<div id="progress-container" class="text-center" data-size="300">
+				</div>
+				<div class="progress-bg" style="display: none;" class="text-center">
+				</div>
+				<script type="text/javascript" src="<%=media%>/js/arc-progress.min.js?v=git-26.103.38496-283ac67"></script>
+			</div>		
+
+
+			<div class="mobile_bg_color">
+				<div id="single-box">
+					<div class="speedflow_combine_box" ></div>
+				</div>				
+			</div>
+			<div class="mobile_bg_color panel panel-info device-panel cpe_box" style="    padding: 15px 0;">
+				<div class="panel-heading">
+					<h3 class="panel-title"></h3>
+				</div>
+				<div class="panel-body info-box">
+					<div class="row">
+						<div class="col-sm-12 col-xs-12 text-left">
+							<div class="row">
+								<div class="col-sm-6 col-xs-6 text-left no_padding" id="cpe_register">
+									<div id="cpe_register_main"></div>
+									<div id="cpe_sim_name" class="sub_label_color" ></div>									
+								</div>
+								<div class="col-sm-6 col-xs-6 text-right no_padding" id="sim_switch" onclick="goto_func_page('sim',this)">
+									<div id="cpe_sim"></div>&nbsp;&nbsp;&nbsp;
+									<div class="next-button" id="cpe_sim_next" style="display: none;">
+										&nbsp;
+									</div>
+									<div id="cpe_sim_mode" class="sub_label_color" >
+										
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+			<div class="mobile_bg_color">
+				<div class="row">
+					<div class="col-sm-3 col-xs-3 box_right_padding" id="device_switch" onclick="goto_func_page('device',this)">
+						<div class="row mobile_bg_color panel panel-info device-panel">
+							<div class="col-sm-12 col-xs-12 text-center box_inner_top_padding">
+								<i class="far fa-nradio-router2 fa-2x" ></i>
+
+							</div>
+							<div class="col-sm-12 col-xs-12 text-center box_inner_bottom_padding">
+								<%:DeviceDetail%>
+								<div class="next-button">
+									&nbsp;
+								</div>
+							</div>
+						</div>
+					</div>
+					<%if nr.has_own_wlan() then%>
+					<div class="col-sm-3 col-xs-3 box_right_padding" onclick="goto_func_page('wifi')">
+						<div class="row mobile_bg_color panel panel-info device-panel ">
+							<div class="col-sm-12 col-xs-12 text-center box_inner_top_padding">
+								<i class="far fa-nradio-wifi2 fa-2x" ></i>
+							</div>
+							<div class="col-sm-12 col-xs-12 text-center box_inner_bottom_padding" >
+								<%:WifiSetting%>
+								<div class="next-button">
+									&nbsp;
+								</div>
+							</div>
+						</div>
+					</div>
+					<%end%>
+					<div class="col-sm-3 col-xs-3 box_right_padding" onclick="goto_func_page('terminal')">
+						<div class="row mobile_bg_color panel panel-info device-panel ">
+							<div class="col-sm-12 col-xs-12 text-center box_inner_top_padding">								
+								<div class="numicon"><span id="terminal-client">0</span></div>								
+								<i class="far fa-nradio-terminal2 fa-2x" ></i>
+							</div>
+							<div class="col-sm-12 col-xs-12 text-center box_inner_bottom_padding">
+								<%:ManageClients%>
+								<div class="next-button">
+									&nbsp;
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-3 col-xs-3 no_padding" onclick="goto_func_page('upgrade')">
+						<div class="row mobile_bg_color panel panel-info device-panel ">
+							<div class="col-sm-12 col-xs-12 text-center box_inner_top_padding">
+								<i class="far fa-nradio-upgrade fa-2x" ></i>
+
+							</div>
+							<div class="col-sm-12 col-xs-12 text-center box_inner_bottom_padding">
+								<%:DeviceUpgrade%>
+								<div class="next-button">
+									&nbsp;
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<%if country  ~= 'CN' then%>
+				<%if cpe_optimizes then%>
+					<div class="mobile_bg_color cpe_box">
+						<div class="row">
+							<div class="col-sm-6 col-xs-6 box_right_padding" id="apn_switch" onclick="goto_func_page('apn_simple',this)">
+								<div class="row mobile_bg_color panel panel-info device-panel">
+									<div class="col-sm-12 col-xs-12 text-center box_inner_top_padding">
+										<i class="far fa-nradio-apn fa-2x" ></i>
+									</div>
+									<div class="col-sm-12 col-xs-12 text-center box_inner_bottom_padding">
+										<%: APN %>
+										<div class="next-button">
+											&nbsp;
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6 col-xs-6 no_padding" id="cpeoptimizes_switch" onclick="goto_func_page('cpeoptimizes')">
+								<div class="row mobile_bg_color panel panel-info device-panel ">
+									<div class="col-sm-12 col-xs-12 text-center box_inner_top_padding">
+										<i class="far fa-nradio-connect fa-2x" ></i>
+									</div>
+									<div class="col-sm-12 col-xs-12 text-center box_inner_bottom_padding">
+										<%: Connect Assist %>
+										<div class="next-button">
+											&nbsp;
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<% else %>
+					<div class="mobile_bg_color cpe_box">
+						<div class="row">
+							<div class="col-sm-12 col-xs-12 no_padding" id="apn_switch" onclick="goto_func_page('apn_simple',this)">
+								<div class="row mobile_bg_color panel panel-info device-panel ">
+									<div class="col-sm-12 col-xs-12 text-center box_inner_top_padding">
+										<i class="far fa-nradio-apn fa-2x" ></i>
+									</div>
+									<div class="col-sm-12 col-xs-12 text-center box_inner_bottom_padding">
+										<%: APN %>
+										<div class="next-button">
+											&nbsp;
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<% end %>
+			<% end %>
+
+			<div class="mobile_bg_color panel panel-info device-panel" onclick="location.href='/cgi-bin/luci/nradio/professional'">
+				<div class="panel-heading">
+					<h3 class="panel-title"></h3>
+				</div>
+				<div class="panel-body info-box">
+					<div class="row">
+						<div class="col-sm-12 col-xs-12 text-left ">
+							<div class="row">
+								<div class="col-sm-12 col-xs-12 text-center sub_label_color">
+									<%:SwitchProfessionalEdition%>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+<script language="javascript">
+var empty_val = "<%:N/A%>";
+var client_box_id = null;
+var client_id = null;
+var client_box_keep = 0;
+var old_data = null;
+var cpe_stand_key = "<%=cpe_key%>";
+var wan_stand_key = "wan";
+var has_cpe = false;
+var cpe_up = false;
+var wan_up = false;
+var wans_data = <%=wans_data%>;
+var cpe_count = <%=nr.count_cpe()%>;
+var interval = 4;
+var arcProgress = null;
+var speed_interval = 2;
+var net_type_list = <%=net_type_buffer%>;
+var cpu_nbcpe = 0;
+var low_cpu = false;
+<%if nr.has_cpe() then%>
+has_cpe = true;
+<%end%>
+
+
+
+<% if is_low_cpu then%>
+	low_cpu = true;
+<%end%>
+function net_show(data,cpe_data,isWanLinked){
+	var net = null;
+	var pos_db = null;
+	var target_db = null;
+	$(".stand_net_box").each(function(){
+		$(this).data('disabled',"1");
+		//$(this).find(".wan_uptime").data("uptime","");
+	});
+	reset_wans_item(wans_data);
+	if (data) {
+		wan_up = false;
+		cpe_up = false;
+		var wan_active = 0;
+		var cellular_active = 0;
+		var net_status = {};
+		$.each(data, function(i, db){
+			if(db.name != cpe_stand_key && db.name.indexOf(wan_stand_key) != -1){
+				wan_active = 1;
+				db.name=wan_stand_key;
+				pos_db = db;
+				if(!target_db)
+					target_db = db;
+			}
+			if(((cpe_num=db.name.indexOf(cpe_stand_key)) != -1) && cpe_count){
+				cellular_active = 1;
+				pos_db = db;
+				target_db = db;
+			}
+
+			if(db.name.indexOf("_") != -1)
+				db.name=db.name.split("_")[0];
+			$('.box_wans_'+db.name).data('disabled',"0");
+			var	wan_item = get_wans_item(db.name,wans_data);
+			if(wan_item)
+				wan_item.disabled="0";
+			if(db.status == 0 ){
+				if(db.name != cpe_stand_key &&  db.name.indexOf(wan_stand_key) != -1){
+					net = db;
+					wan_up = true;
+
+				}
+				if(((cpe_num=db.name.indexOf(cpe_stand_key)) != -1) && cpe_count){
+					cpe_up = true;
+
+					if ((cpe_count == 1) || (db.gateway_if && db.gateway_if == 1)){
+						if(!wan_up)
+							net = db;
+					}
+
+				}
+			}
+			else if(!wan_up && !cpe_up){
+
+			}
+			if(typeof(net_status[db.name]) == "undefined" || net_status[db.name] == 1){
+				net_status[db.name] = db.status;
+			}	
+			var cpe_info = get_cpe_data(db.name ,cpe_data);
+			var cellular_as_wan = 0;
+			if (cpe_info && cpe_info.net_prefer>-1){
+				var net_info = get_priority(cpe_info.net_prefer);
+				if (net_info == "WiredOnly"){
+					cellular_as_wan = 1;
+				}
+				else if ((net_info.indexOf("Cellular") != -1) && (net_info.indexOf("Priority") != -1)){
+					if((net_status[db.name] == 0) && !cpe_info.gateway_if){
+						cellular_as_wan = 1;
+					}
+				}
+				if(cellular_as_wan && (net_status[db.name] == 0))
+					wan_up = 1;
+			}
+			if(cpe_info)
+				cpe_info.cellular_as_wan = cellular_as_wan;
+			$('.box_wans_'+db.name).data('cellular_as_wan',"0");
+			if(db.name == "wan" || cellular_as_wan){		
+				if(low_cpu)		
+					speed_show(wan_item,db.upload,db.download,interval);
+				if(cellular_as_wan)
+					$('.box_wans_'+db.name).data('cellular_as_wan',"1");
+	
+				flow_show(wan_item,db.upload,db.download);
+			}
+		});
+	}
+
+	if(net){	
+		reset_can_item(net.name);	
+		//$('#uptime').html(uptime2dhms(net.uptime, 3));		
+		$("#online_info").html('<div class="online_note"></div> <%:Online%>');
+		if(wan_up){
+			//$('#traffic').html(nradio_byte_format(parseInt(net.upload)+parseInt(net.download)));
+			arcProgress = wan_show(arcProgress,"progress-container",1,1);
+			$("#online_flow").html("<%:DeviceFlow%>");
+			$('.cpe_box').css("display","none");
+			$('.wan_box').css("display","block");			
+		}		
+		else{
+			$("#online_flow").html("<%:CelluarFlow%>");
+			$('.cpe_box').css("display","block");
+			$('.wan_box').css("display","none");
+		}
+		
+	}
+	else{		
+		reset_can_item(target_db?target_db.name:null);
+		$("#online_info").html('<div class="offline_note"></div> <%:Offline%>');
+		if (has_cpe && cellular_active){
+			$('.cpe_box').css("display","block");
+			$('.wan_box').css("display","none");
+			$("#online_flow").html("<%:CelluarFlow%>");
+		}
+		else{
+			//if(pos_db)$('#traffic').html(nradio_byte_format(parseInt(pos_db.upload)+parseInt(pos_db.download)));
+			arcProgress = wan_show(arcProgress,"progress-container",isWanLinked,0);
+			$('.cpe_box').css("display","none");
+			$('.wan_box').css("display","block");
+			$("#online_flow").html("<%:DeviceFlow%>");
+		}		
+	}
+	
+	return net;
+}
+function reset_can_item(name){
+	var	item = get_wans_item(name,wans_data);
+	var cur_module = $("#single-box").data("module");
+	if(cur_module != item.name){
+		arcProgress = null;
+		$("#progress-container").empty();
+		$("#single-box").data("module",item.name);
+		$("#single-box .speedflow_combine_box").removeClass("hide").html(item.singlespeedflow);
+		item.arcProgressMEMSingle = null;
+		item.arcProgressTempSingle = null;
+		item.arcProgressCPUSingle = null;
+	}
+}
+
+function cpe_show(cpe,net_data){
+	var mode = '<%:Unknown%>';
+	var ipslist={};
+	var sigper='<%:Unknown%>';
+	var isp='';
+	var status = {};
+	var iccid='<%:Unknown%>';
+
+	var match_flag = 0;
+	var sims_alias = <%=util.serialize_json(nr.get_sim_alias(),nil)%>;
+
+	$.each(cpe, function(i, db){
+		status = db;
+		var siminfo='';
+		var simmode_info='';
+		var isp_ori = "";
+		sigper='';
+		if (!net_data || (net_data.name == status.name)){
+			if(status.disabled == "1")
+				return;
+			if(status.odu == "1"){
+				cpu_nbcpe=1;
+				$('.box_wans_'+status.name+' .cpu_data').html(status.cpu_percent?(status.cpu_percent+"%"):"-");
+				$('.box_wans_'+status.name+' .mem_data').html(status.mem_percent?(status.mem_percent+"%"):"-");
+			}
+			if(status.cellular_as_wan)
+				return;
+			var wan_item = get_wans_item(status.name,wans_data);
+			if(wan_item){
+				if(status.disabled == "1"){
+					wan_item.disabled="1";
+				}
+			}
+			if(low_cpu)
+				speed_show(wan_item,status.upload,status.download,interval);
+			
+			flow_show(wan_item,db.sim_flow,db.sim_mon);
+			var nocard = 1;
+			var isSlot = 1;
+			//$('#traffic').html(nradio_byte_format(parseInt(status.sim_flow)));
+			sim_alias = sims_alias?sims_alias[i]:[];
+			if(sim_alias.length > 1)
+				$("#cpe_sim_next").css("display","block");
+			else
+				$("#cpe_sim_next").css("display","none");
+			if (status.iccid && status.iccid != "none") {
+				isp = format_isp_info(status.sim_isp,status.isp);
+				isp_ori = status.isp?status.isp:"";
+				
+				
+				if (status.mode == "LTE")
+				{
+					mode='4G';
+					if (status.rsrp){
+						sigper=status.rsrp;
+					}
+				}
+				else if (status.mode.match("NR") != null)
+				{
+					mode='5G';
+					if (status.rsrp){
+						sigper=status.rsrp;
+					}
+				}
+				else if (status.mode == "WCDMA" || status.mode == "TD-SCDMA")
+				{
+					mode='3G';
+					if (status.rssi){
+						sigper=status.rssi;
+					}
+				}
+				else if (status.mode == "GSM" || status.mode == "CDMA")
+				{
+					mode='2G';
+					if (status.rssi){
+						sigper=status.rssi;
+					}
+				}
+				nocard=0;
+			}
+			if (!isp_ori.length || isp_ori == "none"){
+				sigper="";
+			}
+			if (status.switchmode && status.switchmode.length){
+				if (status.switchmode == "1")
+					simmode_info='<%:StatusManual%>';
+				else
+					simmode_info='<%:Auto%>';
+			}
+			if (status.simno && status.simno.length){
+				siminfo=sim_alias[status.simno - 1];
+				if((sim_alias[status.simno - 1].indexOf("Embedded") != -1) || (sim_alias[status.simno - 1].indexOf("内置") != -1))
+					isSlot = 0;
+			}
+			var bandcombine = 0;
+			if (status.band && status.band != "none") {
+				var data_str = "";
+				var band_max = status.band_count;
+				for (var i=0;i<band_max;i++){
+					if(i){
+						cur_dlbw = status["DLBW"+i];
+					}
+					else{						
+						cur_dlbw = status["DLBW"];
+					}
+					if(cur_dlbw && cur_dlbw.length)
+						bandcombine += parseInt(cur_dlbw)/1000;
+				}
+			}
+
+			arcProgress = signal_show(arcProgress,"progress-container",mode,sigper,nocard,isSlot);
+			$('#cpe_sim').html(siminfo);
+			$('#cpe_sim_mode').html(simmode_info);
+			if(check_5ga(status.sim_isp,mode,status.band_count,bandcombine)){
+				mode="5G-A";
+			}
+			// $('#cpe_register').html(isp+' '+mode);
+			$('#cpe_register_main').html(isp+' '+mode);
+			$('#sim_switch').data("model",status.name);
+			$('#device_switch').data("model",status.name);
+			$('#apn_switch').data("model",status.name);
+			// $('#cpeoptimizes_switch').data("model",status.name);
+			if (status.sim_name && status.sim_name != "unknown")
+				$('#cpe_sim_name').html(status.sim_name);
+			else 
+				$('#cpe_sim_name').html("&nbsp;");
+			
+			if(status.nrcap == "0" || status.nrcap == "")
+				$('.box_wans_'+status.name+' .rtemp_label').html("<%:LTETemp%>");
+			else
+				$('.box_wans_'+status.name+' .rtemp_label').html("<%:NRTemp%>");
+					
+			$('.box_wans_'+status.name+' .model_temp').html(format_temp_val(status.model_temp));
+			$('.box_wans_'+status.name+' .temp_des').html(format_temp_des(status.model_temp));
+			if(wan_item){
+				if($("#tempprogress-container-"+status.name+"single").length){
+					wan_item.arcProgressTempSingle = canvas_val_show(wan_item.arcProgressTempSingle,"tempprogress-container-"+status.name+"single",status.model_temp,125,temp_range,temp_lang,"℃");
+				}
+			}
+		}		
+	});
+}
+function stats_info(data){
+	if(!data || !data.result)
+		return;
+	var net_data = null;
+	var terminal_count = 0;
+	var nbcpe_work = match_priority(data.result.global.net_prefer,"NBCPE");
+	var wan_linked = get_wank_link(data.result.link,nbcpe_work);
+	cpu_nbcpe = 0;
+	if(data.result.wans){
+		net_data = net_show(data.result.wans,data.result.cpe,wan_linked);
+	}
+	if(has_cpe && data.result.cpe)cpe_show(data.result.cpe,net_data);
+	reset_box_item(wans_data);
+	if(data.result.terminal_all && data.result.terminal_all.client){
+		$.each(data.result.terminal_all.client, function(index, db){
+			if (db.exsit != 1)
+				return;
+			terminal_count++;
+		});
+	}
+	terminal_show(terminal_count);
+	for(var i=0;i<wans_data.length;i++){
+		if($("#cpuprogress-container-"+wans_data[i].name+"single").length){
+			wans_data[i].arcProgressCPUSingle = canvas_val_show(wans_data[i].arcProgressCPUSingle,"cpuprogress-container-"+wans_data[i].name+"single",data.result.global.cpu_percent,100,cpu_range,cpu_lang,"%");
+		}
+
+		if($("#memprogress-container-"+wans_data[i].name+"single").length){
+			wans_data[i].arcProgressMEMSingle = canvas_val_show(wans_data[i].arcProgressMEMSingle,"memprogress-container-"+wans_data[i].name+"single",data.result.global.mem_percent,100,mem_range,mem_lang,"%");
+		}
+	}
+	console.log(cpu_nbcpe);
+	if(!cpu_nbcpe){
+		if(data.result.global.cpu_percent){
+			$("#single-box").find(".cpu_data").html(data.result.global.cpu_percent+"%");
+		}
+
+		if(data.result.global.mem_percent){
+			$("#single-box").find(".mem_data").html(data.result.global.mem_percent+"%");
+		}
+	}
+
+}
+function format_wans_box(wans_data,cpe_count){
+	var html="";
+	var canvas_html="";
+	var speedflow_html="";
+	var cpe_index = 0;
+	var count = 1;
+	var active_index = -1;
+	for(var i=0;i<wans_data.length;i++){
+		var data = wans_data[i].name;
+		var index="";
+		var cpe_num="";
+		var class_name = "";		
+		var cpe_data = "";
+		var label_info = "";
+		var label_detail_info = "";
+		var pre_label_info = "<%:Line%>"+count+"-";
+
+		if(wans_data[i].disabled != "1"){
+			count++;
+		}
+
+		if(data == "wan"){
+			class_name="wan_box";
+			label_info = "<%:StatusWiredTitle%>";
+			label_detail_info = "<%:StatusWiredDetailTitle%>";
+		}
+		else if((cpe_num = data.indexOf(cpe_stand_key)) != -1){
+			if(cpe_count>1){
+				index = data.substr(cpe_num+cpe_stand_key.length);
+				if (index == "")
+					index=0;
+				else
+					index = parseInt(index);
+				index++;
+			}
+			cpe_index++;	
+			cpe_data='data-cpeindex="'+cpe_index+'"';			
+			class_name="cpe_box"
+			label_info = "<%:StatusCellularSignal%>";
+			label_detail_info = "<%:StatusCellularDetail%>";
+		}
+		wans_data[i].singlespeedflow=format_wans_speedflow_box(data,class_name,cpe_data,pre_label_info,"single",1);
+		if(wans_data[i].disabled != "1"){
+			if(active_index == -1){
+				active_index = i;
+				$("#single-box").data("module",wans_data[i].name);
+				$("#single-box .speedflow_combine_box").removeClass("hide").html(wans_data[i].singlespeedflow);			
+			}
+		}
+	};
+	reset_box_item(wans_data);
+	reset_box_speed(wans_data);
+}
+
+function reset_box_item(wans_data){
+	$("#single-box").find(".pre_info").html("");
+	$("#single-box").find(".last_info").html("");
+	$("#single-box .box_wans_wan").find(".rtemp_label").html("<%:CPUusage%>");
+}
+
+function renew_stat(){
+	$.getJSON('<%=url('nradio/status/runtime', 'wan,cpe_4')%>', function(data) {
+        stats_info(data);
+	});
+}
+function terminal_show(count){
+	var count_num =(count == undefined)? 0:count;
+	$("#terminal-client").html(count_num);
+}
+function goto_func_page(page,obj){
+	var model = null;
+	if(obj){
+		if($(obj).data("model"))
+			model = $(obj).data("model");
+	}
+	if(model)
+		window.location = "<%=controller%>nradio/system/"+page+"/model/"+model;
+	else
+		window.location = "<%=controller%>nradio/system/"+page;
+}
+$(document).ready(function(){	
+	history.replaceState(null, "", "<%=controller%>nradio/system/overview");
+	format_wans_box(wans_data,cpe_count);
+	stats_info(<%=info_api_result_buffer%>);
+
+	<%
+		if nr.support_ac() then
+	%>
+
+	nradio_backend_flash();
+	<%
+		end
+	%>
+	setInterval(renew_stat, interval*1000);
+	if(!low_cpu)
+		setInterval(get_speed_data, speed_interval*1000);
+});
+</script>
+<%+themes/nradio/footer_simple%>

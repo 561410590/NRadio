@@ -1,0 +1,41 @@
+local cloudd = require "cloudd.cloudd"
+local c_api = require "cloudd.api"
+local cjson = require "cjson"
+local util = require "luci.util"
+local nr = require "luci.nradio"
+
+function cloudd_main(did, sid, event, payload, proto, reply)
+	local r_topic = "terminal"
+	local value = {}
+	local data = cjson.decode(payload)   
+	if reply == 1 then
+		return
+	end
+	if data.client and (data.switch or data.hostname) then
+		value.result={}
+		value.result.client={}
+		value.result.client.client = data.client
+		if data.switch then
+			local switch = nr.get_client_switch(data.client)
+			if tonumber(data.switch) ~= switch then
+				nr.set_client_switch(data.client,data.switch)
+			end
+			switch = nr.get_client_switch(data.client)
+			value.result.client.switch = tonumber(switch)	
+		end
+
+		if data.hostname then
+			nr.set_client_name(data.client,data.hostname)
+			value.result.client.hostname = data.hostname
+		end
+		
+		value.code = 0
+	else
+		value.client = nr.get_terminal_list() 
+	end
+	cloudd.cloudd_send(sid, r_topic, value, proto, 1)
+end
+
+c_did, c_sid, c_event, c_payload, c_proto, c_reply = cloudd.cloudd_parse_data()
+
+cloudd_main(c_did, c_sid, c_event, c_payload, c_proto, c_reply)

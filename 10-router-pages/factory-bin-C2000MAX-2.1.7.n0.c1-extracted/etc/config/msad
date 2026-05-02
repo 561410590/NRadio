@@ -1,0 +1,2 @@
+config config 'msad'
+	option mode '1'

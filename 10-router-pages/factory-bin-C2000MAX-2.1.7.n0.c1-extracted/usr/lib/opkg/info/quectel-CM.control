@@ -1,0 +1,10 @@
+Package: quectel-CM
+Version: 1.1-20221118
+Depends: libc, kmod-qmi_wwan_q
+Source: package/nradio/quectel/quectel-CM
+SourceName: quectel-CM
+Section: quectel
+SourceDateEpoch: 1772007460
+Architecture: aarch64_cortex-a53
+Installed-Size: 68226
+Description:  Quectel QLog

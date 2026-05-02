@@ -1,0 +1,10 @@
+Package: mii_mgr-mt7987
+Version: 1
+Depends: libc
+Source: package/nradio/apps/mii_mgr-mt7987
+SourceName: mii_mgr-mt7987
+Section: MTK Properties
+SourceDateEpoch: 1755595749
+Architecture: aarch64_cortex-a53
+Installed-Size: 2646
+Description:  An mdio r/w phy regs program.

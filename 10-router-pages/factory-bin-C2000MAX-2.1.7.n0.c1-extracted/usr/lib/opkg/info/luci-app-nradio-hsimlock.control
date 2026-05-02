@@ -1,0 +1,10 @@
+Package: luci-app-nradio-hsimlock
+Version: git-26.103.38496-283ac67-1
+Depends: libc
+Source: package/luci/applications/luci-app-nradio-hsimlock
+SourceName: luci-app-nradio-hsimlock
+Section: luci
+SourceDateEpoch: 1758531555
+Architecture: all
+Installed-Size: 3700
+Description:  LuCI Support for NRadio simlock setting

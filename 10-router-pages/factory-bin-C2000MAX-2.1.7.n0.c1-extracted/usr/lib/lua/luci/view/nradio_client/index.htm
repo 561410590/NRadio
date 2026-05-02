@@ -1,0 +1,175 @@
+<%#
+Copyright 2017-2018 NRadio
+-%>
+
+<%
+local uci = require "luci.model.uci".cursor()
+local nr = require "luci.nradio"
+local acmode = luci.nradio.support_ac() or false
+local ac_hide = "hide"
+local flow_hide = ""
+local width_percent = "15%"
+local local_mac = uci:get("oem", "board", "id") or ""
+local lan_section = uci:get("network", "globals", "default_lan") or "lan"
+local local_ipaddr = uci:get("network", lan_section, "ipaddr") or ""
+local plat = nr.get_platform()
+if acmode then
+	ac_hide = ""
+	width_percent = "12%"
+end
+if plat == "tdtech" or plat == "quectel" then
+	flow_hide="hide"
+end
+%>
+
+<%+header%>
+<style>
+table tr td input{
+min-width:0;
+}
+
+@media (min-width: 10px) and (max-width: 768px){
+	div.checkbox .switch {
+		top: 0;
+	}
+}
+</style>
+
+</style>
+
+
+<div class="cbi-map">
+	<h2 name="content"><%:ManageClients%></h2>
+	<form method="post" name="cbi" >
+		<fieldset class="cbi-section">
+		<div class="cbi-section-node border-bottom">
+			<div class="cbi-value" data-index="9" >
+				<label class="cbi-value-title width_auto"><%:ClientCount%>:</label>
+				<label id="terminal_count" class="cbi-value-title width_auto" ></label>
+				<%if luci.nradio.has_own_wlan() then%>
+				<div class="cbi-value-field right_btn">
+
+				</div>
+				<%end%>
+			</div>
+		</div>
+		</fieldset>
+
+		<div class="form-box full-width hidden-xs">
+			<table class="line text-center no_paddingLeft">
+				<thead>
+					<tr>
+						<th style="width: 30%"><%:ConnectedClient%></th>
+						<th style="width: 15%"><%:AllowInternetAccess%></th>
+						<th style="width: 10%"><%:ExcludeClientQoS%></th>
+						<th style="width: 10%"><%:CurrentSpeed%></th>
+						<th style="width: 10%" class="<%=flow_hide%>"><%:Traffic%></th>
+						<th style="width: 30%" class="<%=ac_hide%>"><%:From%></th>
+					</tr>
+				</thead>
+				<tbody class="terminal_list">
+				</tbody>
+			</table>
+		</div>
+		<div class="terminal_list" data-terminal="mobile"></div>
+	</form>
+</div>
+
+<script language="javascript">
+	var gmsg = {uptime:'<%:ConnectedDuration%>',wired:'<%:Wired%>',disable:'<%:StatusDisable%>',enable:'<%:StatusEnable%>',native:'<%:Native%>',access:'<%:AllowInternetAccess%>',qos:'<%:ExcludeClientQoS%>',speed:'<%:CurrentSpeed%>',flow:'<%:Traffic%>',from:'<%:From%>',acmode:'<%=acmode%>',local:'<%:Local Device%>',local_ipaddr:'<%=local_ipaddr%>',local_mac:'<%=local_mac%>',flow_hide:'<%=flow_hide%>'};
+	var loading_save_htm =circling_htm;
+	loading_save_htm +='<p class="cbi-value-title width_auto text-center adapt_label_padding"><%:Waiting for changes to be applied...%></p>';
+
+	function terminal_ctl(obj,type,mac){
+		var data = {};
+		var chval = $(obj).prop("checked");
+		var url = '<%=controller%>nradio/client/access_set';
+		data['token']='<%=token%>';
+		if(chval)
+			data['enabled']="1";
+		else
+			data['enabled']="0";
+		data['mac'] = mac;
+		if (type == "qos")
+			url = '<%=controller%>nradio/client/qos_set';
+		BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: '',
+			message: loading_save_htm,
+			closeByBackdrop: false,
+			onshown: function(dialog) {
+				(new XHR()).post(url, data, function(){
+					dialog.close();
+				});
+			}
+		});
+	}
+	function renew_stat(){
+		$.getJSON("/cgi-bin/luci/nradio/client/all_list", function(data){
+			if(data.result){
+				terminal_count = show_terminal_data(data,"terminal_list",false,gmsg);
+				$("#terminal_count").text(terminal_count);
+			}
+		})
+	}
+
+	$(document).ready(function(){
+		renew_stat();
+		nradio_backend_flash();
+		var timer=setInterval(renew_stat, 3000);
+
+		$('.table-box').mouseenter(function(){
+			window.clearTimeout(timer);
+		}).mouseleave(function(){
+			timer=setInterval(renew_stat, 3000);
+		});
+		
+		$('body').on('click', '.key-name-edit', function(){
+			var data={};
+			var row='<tr><td class="cbi-value-title">{{lb}}</td><td>'+
+				'<input class="cbi-input-text" id="{{id}}" value="{{val}}">'+
+				'</td></tr>';
+
+			var sel=$(this);
+			data['mac']=$(this).closest('td').attr('data-device-id') || $(this).closest('div').attr('data-device-id');
+			data['name']=$(this).prev().text();
+			data['type']='name';
+			data['token']='<%=token%>';
+
+			var htm='<div class="form-box temp-select"><table>';
+			htm+=row.compose({
+				'lb': '<%:Hostname%>',
+				'id': 'cli-new-host',
+				'val': data['name'],
+			});
+			htm+='</table></div>';
+
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: htm,
+				onshown: function(dialog) {
+					$('#cli-new-host').select();
+				},
+				buttons: [{
+					label: '<%:No%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						dialog.close();
+						data['name']=$('#cli-new-host').val();
+						(new XHR()).post('<%=controller%>nradio/client/set', data, function(){
+							renew_stat();
+						});
+					}
+				}]
+			});
+		});
+	});
+</script>
+<%+footer%>

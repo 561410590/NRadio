@@ -1,0 +1,7 @@
+{
+	"desc":"Spreadtrum TM22G",
+	"vendor":"spreadtrum",
+	"type":"cdc_ether",
+	"cloud":"1",
+	"control": 0
+}

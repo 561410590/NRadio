@@ -1,0 +1,10 @@
+Package: pkg-usb-storage
+Version: 1.0-20220609
+Depends: libc, pkg-usb, kmod-scsi-core, kmod-nls-base, kmod-nls-cp437, kmod-nls-iso8859-1, kmod-nls-utf8, kmod-usb-storage, blkid
+Source: package/nradio/collections/pkg-usb-storage
+SourceName: pkg-usb-storage
+Section: nradiowifi
+SourceDateEpoch: 1676944313
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for USB Storage

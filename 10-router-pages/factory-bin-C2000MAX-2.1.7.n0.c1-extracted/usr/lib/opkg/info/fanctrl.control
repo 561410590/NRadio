@@ -1,0 +1,10 @@
+Package: fanctrl
+Version: 2.5-20241223
+Depends: libc
+Source: package/nradio/services/fanctrl
+SourceName: fanctrl
+Section: nradiowifi
+SourceDateEpoch: 1765030730
+Architecture: all
+Installed-Size: 2133
+Description:  Control fan

@@ -1,0 +1,9 @@
+/usr/sbin/nandwrite
+/usr/sbin/nandtest
+/usr/sbin/mtd_debug
+/usr/sbin/flash_speed
+/usr/sbin/flash_stress
+/usr/sbin/nanddump
+/usr/sbin/nandbiterrs
+/usr/sbin/mtdinfo
+/usr/sbin/flash_erase

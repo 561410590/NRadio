@@ -1,0 +1,55 @@
+
+<%
+	local cur = self:cfgvalue(section)
+%>
+
+<%+cbi/valueheader%>
+
+<style>
+	.action_mode_lable {
+		display: flex;
+		align-items: center;
+		gap: 1.5em;
+	}
+	.radio+.radio, .checkbox+.checkbox{
+		margin-top: 2px;
+	}
+</style>
+
+<input data-update="change"<%=
+	attr("id", cbid) ..
+	attr("name", cbid) ..
+	attr("type", "hidden") ..
+	attr("value", cur or "")
+%> />
+
+<div class="action_mode_lable">
+	<div class="radio">
+		<label class="special">
+			<input type="radio" name="upgrade_mode" value="0" <%= (cur == "0" or value == nil) and 'checked="checked"' or '' %> >
+			<%=translate("every day")%>
+		</label>
+	</div>
+	<div class="radio">
+		<label class="special">
+			<input type="radio" name="upgrade_mode" value="1" <%= (cur == "1") and 'checked="checked"' or '' %> >
+			<%=translate("weekly")%>
+		</label>
+	</div>
+	<div class="radio">
+		<label class="special">
+			<input type="radio" name="upgrade_mode" value="2" <%= (cur == "2") and 'checked="checked"' or '' %> >
+			<%=translate("monthly")%>
+		</label>
+	</div>
+</div>
+
+<script type="text/javascript">
+	var modeHidden = document.getElementById("<%=cbid%>");
+	$('input[name="upgrade_mode"]').on('change', function() {
+		modeHidden.value = this.value;
+		console.log(modeHidden.value);
+	});
+</script>
+
+<%+cbi/valuefooter%>

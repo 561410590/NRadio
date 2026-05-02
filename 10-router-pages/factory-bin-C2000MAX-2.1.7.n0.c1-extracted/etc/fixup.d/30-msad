@@ -1,0 +1,11 @@
+#!/bin/sh
+
+ptype=$(uci -q get oem.board.ptype)
+
+[ "$ptype" = "cb" ] && uci -q set msad.msad.mode=0
+
+[ "$ptype" = "ap" ] && uci -q set msad.msad.mode=129
+
+[ "$ptype" = "ac" ] && uci -q set msad.msad.mode=145
+
+uci -q commit msad

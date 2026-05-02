@@ -1,0 +1,10 @@
+Package: lua-readline
+Version: 1.1-20181129
+Depends: libc, liblua5.1.5, libubox20210516
+Source: package/nradio/lib/lua-readline
+SourceName: lua-readline
+Section: nradiowifi
+SourceDateEpoch: 1715852034
+Architecture: aarch64_cortex-a53
+Installed-Size: 3507
+Description:  Lua Readline Library

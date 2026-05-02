@@ -1,0 +1,25 @@
+#!/bin/sh /etc/rc.common
+
+START=90
+STOP=92
+
+USE_PROCD=1
+
+start_service() {
+	local cellular_cpe=$(uci -q get cloudd.config.cellular_cpe)
+	local cellular_sn=$(uci -q get cloudd.config.cellular_sn)
+	[ -z "$cellular_cpe" ] && cellular_cpe="cpe"
+	local cellular_disabled=$(uci -q get network."$cellular_cpe".disabled)
+	local cellular_mode=$(uci -q get network.$cellular_cpe.mode)
+
+	mac_addr=$(uci get oem.board.id|sed 's/://g'|grep -ioE [a-f0-9]{12})
+	if [ "$cellular_sn" == "1" -a "$cellular_disabled" != "1" -a "$cellular_mode" == "odu" ];then
+		sn=$(uci -q get cellular_init."$cellular_cpe".sn)
+		[ -n "$sn" ] && mac_addr="$sn"
+	fi
+
+	procd_open_instance
+	procd_set_param command /usr/sbin/report_proactively -m "${mac_addr:-006688000000}"
+	procd_set_param respawn 5 5 -1
+	procd_close_instance
+}

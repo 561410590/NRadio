@@ -1,0 +1,15 @@
+Package: libcap-bin
+Version: 2.43-1
+Depends: libc, libcap
+Source: feeds/packages/libs/libcap
+SourceName: libcap-bin
+License: GPL-2.0-only
+LicenseFiles: License
+Section: libs
+SourceDateEpoch: 1614187565
+Maintainer: Paul Wassi <p.wassi@gmx.at>
+Architecture: aarch64_cortex-a53
+Installed-Size: 12751
+Description:  Linux capabilities
+ .
+ This package contains the libcap utilities.

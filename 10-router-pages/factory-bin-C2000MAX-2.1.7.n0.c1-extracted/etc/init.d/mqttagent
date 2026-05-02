@@ -1,0 +1,37 @@
+#!/bin/sh /etc/rc.common
+
+START=32
+STOP=68
+
+USE_PROCD=1
+
+start_service() {
+	local _sub_mosca=
+	local _id=
+	local cellular_cpe=$(uci -q get cloudd.config.cellular_cpe)
+	local cellular_sn=$(uci -q get cloudd.config.cellular_sn)
+	[ -z "$cellular_cpe" ] && cellular_cpe="cpe"
+	local cellular_disabled=$(uci -q get network."$cellular_cpe".disabled)
+	local cellular_mode=$(uci -q get network.$cellular_cpe.mode)
+	local _dual_br=
+
+	uci -q get mqttagent.config.sub_mosca|grep -qsx 1 && _sub_mosca="-f"
+	uci -q get mosquitto.bridge_ac 2>&1 >/dev/null && _dual_br="-D"
+
+	if [ -f /usr/bin/bdinfo ]; then
+		_id=$(uci get oem.board.id|sed 's/://g'|grep -ioE [a-f0-9]{12})
+	else
+		_id=$(cat /online/vendor/macaddr)
+	fi
+
+	if [ "$cellular_sn" == "1" -a "$cellular_disabled" != "1" -a "$cellular_mode" == "odu" ];then
+		sn=$(uci -q get cellular_init.$cellular_cpe.sn)
+		[ -n "$sn" ] && _id="$sn"
+	fi
+
+	procd_open_instance
+	procd_set_param command /usr/bin/mqttagent $_sub_mosca -i "$_id" $_dual_br
+	procd_set_param respawn
+	procd_set_param limits core="unlimited"
+	procd_close_instance
+}

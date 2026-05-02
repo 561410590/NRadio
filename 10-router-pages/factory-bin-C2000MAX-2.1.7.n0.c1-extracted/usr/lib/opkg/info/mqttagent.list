@@ -1,0 +1,3 @@
+/etc/config/mqttagent
+/etc/init.d/mqttagent
+/usr/bin/mqttagent

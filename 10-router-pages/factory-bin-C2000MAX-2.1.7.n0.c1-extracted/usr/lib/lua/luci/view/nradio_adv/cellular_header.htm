@@ -1,0 +1,131 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local lng  = require "luci.i18n"
+	local disp = require "luci.dispatcher"
+	local nr = require "luci.nradio"
+	local request  = disp.context.requestpath
+	local top_menu = request[3]
+	local model_str,cpe_section = nr.get_cellular_last(request[5])
+	local sub_menu = nr.get_cellular_menu(cpe_section)
+	local title_nbcpe_device_language = lng.translate("NBCPE Device")
+	local title_nbcpe_language = lng.translate("Cellular Status")
+	local title_nbcpe_set = lng.translate("Cellular Setting")
+	local iface_odu_mode = uci.cursor():get("network",cpe_section, "mode") or ""
+	local has_nbcpe_only = nr.has_nbcpe_only()
+	local top_menu_info = nil
+	if iface_odu_mode == "odu" then
+		title_nbcpe_language = lng.translate("NBCPE Status")
+		title_nbcpe_set = lng.translate("NBCPESetTitle")
+		if has_nbcpe_only then
+			title_nbcpe_language = lng.translate("NBCPE Status1")
+			title_nbcpe_set = lng.translate("NBCPESetTitle1")
+			title_nbcpe_device_language = lng.translate("NBCPE Device1")
+		end
+		top_menu_info = {
+			{
+				language = title_nbcpe_device_language,
+				children = {"cpedevice"},
+				first = "cpedevice",
+				key = "cpedevice",
+				match = false
+			},
+			{
+				language = title_nbcpe_language,
+				children = {"cpestatus","cpescan"},
+				first = "cpestatus",
+				key = "cpestatus",
+				match = false
+			},
+			{
+				language = title_nbcpe_set,
+				children = {"switch","cpelock","apn","cpecfg","sms","upgrade","cpepin"},
+				first = "switch",
+				key = "switch",
+				match = false
+			}
+		}
+	else
+		top_menu_info = {
+			{
+				language = title_nbcpe_language,
+				children = {"cpestatus","cpescan"},
+				first = "cpestatus",
+				key = "cpestatus",
+				match = false
+			},
+			{
+				language = title_nbcpe_set,
+				children = {"switch","cpelock","apn","cpecfg","sms","upgrade","cpepin"},
+				first = "switch",
+				key = "switch",
+				match = false
+			}
+		}
+	end
+
+	if cpedevice then
+		table.insert(top_menu_info,cpedevice)
+	end
+	local sub_menu_info = {}
+	local index = 1
+	for key,item in pairs(sub_menu) do
+		if item.support then
+			sub_menu_info[index] = item
+			index=index+1
+		end
+	end
+	if #sub_menu_info > 0 then
+		table.sort(sub_menu_info, function(a, b) return a.index < b.index end)
+	end
+
+	local first_note = false
+	for key,item in pairs(top_menu_info) do
+		if item.first == "switch" then
+			if #sub_menu_info == 0 then
+				item.first = nil
+			else
+				item.first = sub_menu_info[1].name
+			end
+		end
+		if not top_menu then
+			if not first_note then
+				item.match = true
+				first_note = true
+			end
+		else
+			if item.key == top_menu then
+				item.match = true
+			elseif item.children then
+				for i = 1, #item.children do
+					if item.children[i] == top_menu then
+						item.match = true
+					end
+				end
+			end
+		end
+	end
+%>
+
+<style>
+
+h2 span {
+    border-bottom: none;
+}
+</style>
+<script>
+function goto_cellular_submenu(menu){
+	window.location="<%=url("nradio/cellular")%>"+"/"+menu+"/model/<%=cpe_section%>";
+}
+</script>
+<h2>
+	<%for key,item in pairs(top_menu_info) do%>
+		<%if item.match then%>
+			<span class="cellular_top_menu cellular_top_menu_active"><%=item.language%></span>
+		<%elseif item.first then%>
+			<span class="cellular_top_menu"><a href="<%=url("nradio/cellular/"..item.first.."/model/"..cpe_section)%>"><%=item.language%></a></span>
+		<%end%>
+	<%end%>
+</h2>

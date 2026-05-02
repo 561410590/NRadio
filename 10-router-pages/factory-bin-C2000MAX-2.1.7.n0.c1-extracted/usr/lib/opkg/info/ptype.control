@@ -1,0 +1,10 @@
+Package: ptype
+Version: 1.3-20240513
+Depends: libc
+Source: package/nradio/base/ptype
+SourceName: ptype
+Section: nradiowifi
+SourceDateEpoch: 1776074034
+Architecture: aarch64_cortex-a53
+Installed-Size: 7942
+Description:  nradiowifi product type config

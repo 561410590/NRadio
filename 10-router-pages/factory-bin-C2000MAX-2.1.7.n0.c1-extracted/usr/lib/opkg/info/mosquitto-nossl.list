@@ -1,0 +1,6 @@
+/etc/init.d/mosquitto
+/lib/upgrade/keep.d/mosquitto-nossl
+/usr/sbin/mosquitto
+/etc/config/mosquitto
+/usr/local/bin/mosquitto_collect_sysinfo
+/etc/mosquitto/mosquitto_acl.conf

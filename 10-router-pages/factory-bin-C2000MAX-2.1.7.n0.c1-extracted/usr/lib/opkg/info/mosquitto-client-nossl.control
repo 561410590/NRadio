@@ -1,0 +1,19 @@
+Package: mosquitto-client-nossl
+Version: 2.0.17-1
+Depends: libc, librt, libcares, cJSON, libmosquitto-nossl
+Provides: mosquitto-client
+Source: package/nradio/feeds/mosquitto
+SourceName: mosquitto-client-nossl
+License: EPL-2.0
+LicenseFiles: LICENSE.txt
+Section: net
+Require-User: mosquitto=200:mosquitto=200
+SourceDateEpoch: 1751524401
+CPE-ID: cpe:/a:eclipse:mosquitto
+Maintainer: Karl Palsson <karlp@etactica.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 18118
+Description:  Command line client tools for working with mosquitto.
+ This includes mosquitto_sub, mosquitto_pub, mosquitto_rr
+ and the mosquitto_ctrl tool.
+ This package is built without SSL support

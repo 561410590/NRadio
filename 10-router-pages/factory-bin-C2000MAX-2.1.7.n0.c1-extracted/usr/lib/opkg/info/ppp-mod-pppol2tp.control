@@ -1,0 +1,13 @@
+Package: ppp-mod-pppol2tp
+Version: 2.4.9.git-2021-01-04-3
+Depends: libc, kmod-pppol2tp
+Source: package/network/services/ppp
+SourceName: ppp-mod-pppol2tp
+License: BSD-4-Clause
+Section: net
+SourceDateEpoch: 1768997726
+CPE-ID: cpe:/a:samba:ppp
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: aarch64_cortex-a53
+Installed-Size: 4800
+Description:  This package contains a PPPoL2TP (PPP over L2TP) plugin for ppp.

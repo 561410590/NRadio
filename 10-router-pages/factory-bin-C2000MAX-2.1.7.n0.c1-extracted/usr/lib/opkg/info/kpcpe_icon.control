@@ -1,0 +1,10 @@
+Package: kpcpe_icon
+Version: 1.0-20260104
+Depends: libc, kpcpe
+Source: package/nradio/base/kpcpe_icon
+SourceName: kpcpe_icon
+Section: nradiowifi
+SourceDateEpoch: 1768179994
+Architecture: aarch64_cortex-a53
+Installed-Size: 230
+Description:  nbcpe local icon

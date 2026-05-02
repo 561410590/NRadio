@@ -1,0 +1,57 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+
+. /lib/functions.sh
+
+update_uboot_env() {
+	local model=$(model_name|cut -d '-' -f2)
+	local soft_ver=$(softver)
+	local old_model=$(ubenv -s kp_model -o 1)
+	local old_soft_ver=$(ubenv -s kp_soft_ver -o 1)
+
+	if [ "$model" != "$old_model" ]; then
+		ubenv -s kp_model -v $model
+	fi
+
+	if [ "$soft_ver" != "$old_soft_ver" ]; then
+		ubenv -s kp_soft_ver -v $soft_ver
+	fi
+}
+
+modify_smp() {
+	# adjust usb
+	irq=$(cat /proc/interrupts | grep xhci-hcd | awk '{print $1}')
+
+	irq_real=${irq%:}
+
+	echo 2 >/proc/irq/$irq_real/smp_affinity
+
+	for dev in /sys/class/net/*; do
+		[ -d "$dev" ] || continue
+
+		for q in ${dev}/queues/rx-*; do
+			echo 3 >$q/rps_cpus
+		done
+	done
+
+	echo 2000 > /proc/sys/net/core/netdev_max_backlog
+}
+
+START=95
+boot() {
+	mount_root done
+	rm -f /sysupgrade.tgz && sync
+
+	# process user commands
+	[ -f /etc/rc.local ] && {
+		sh /etc/rc.local
+	}
+
+	# set leds to normal state
+	. /etc/diag.sh
+	set_state done
+
+	# add by NRadio to update uboot environment parameters and modify SMP for USB netdevice
+	update_uboot_env
+	modify_smp
+}

@@ -1,0 +1,10 @@
+Package: conn_detect
+Version: 3.2-20250605
+Depends: libc, mosquitto-lua, libubox20210516, libubus20210630, libmosquitto, mosquitto, libuci20130104, libjson-c5
+Source: package/nradio/services/conn_detect
+SourceName: conn_detect
+Section: nradiowifi
+SourceDateEpoch: 1749131399
+Architecture: all
+Installed-Size: 17806
+Description:  Detect device connection state

@@ -1,0 +1,60 @@
+<%#
+ Copyright 2017-2025 NRadio
+-%>
+<%
+local uci = require "luci.model.uci".cursor()
+local nr = require "luci.nradio"
+local platform = nr.get_platform()
+local syslog_msg = ""
+local local_syslog_enable = tonumber(uci:get("system", "@system[0]", "local_syslog_enable") or "0")
+
+if not nixio.fs.access("/var/log/messages") then
+	local uci  = require "luci.model.uci"
+	local cur = uci.cursor()
+	loglevel=cur:get("system", "@system[0]", "conloglevel") or "7"
+	if tonumber(loglevel) < 7 then
+		syslog = luci.util.execi("logread")
+		for line in syslog do
+			local week,month,day,date,year,level,bus,msgs = line:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(.*)")
+			if level and (level:find("emerg") or level:find("alert") or level:find("crit") or level:find("err")) then
+				--[[nixio.syslog("err","line:"..line)
+				nixio.syslog("err","week:"..week)
+				nixio.syslog("err","month:"..month)
+				nixio.syslog("err","day:"..day)
+				nixio.syslog("err","date:"..date)
+
+				nixio.syslog("err","year:"..year)
+				nixio.syslog("err","level:"..level)
+				nixio.syslog("err","bus:"..bus)
+				nixio.syslog("err","msgs:"..msgs)--]]
+
+				syslog_msg=syslog_msg.."\n"..line
+			end
+		end
+	else
+		syslog_msg = luci.sys.syslog()
+	end
+else
+	syslog_msg = luci.util.exec("cat /var/log/messages")
+end
+local client_ip = luci.http.getenv("REMOTE_ADDR") or ""
+nixio.syslog("err","WEB["..client_ip.."] log read")
+%>
+<% if local_support then %>
+<fieldset class="cbi-section">
+	<div class="cbi-page-actions">
+		<input type="submit" class="cbi-button cbi-button-apply" name="cbi.apply" id="btn-save" value="<%:Save & Apply%>" />
+	</div>
+</fieldset>
+<% end %>
+<a href="#" class="G-btn-b-b" id="export-link"><%:Export%></a>
+<div id="content_syslog">
+	<textarea readonly="readonly" wrap="off" rows="<%=syslog_msg:cmatch("\n")+2%>" id="syslog"><%=syslog_msg:pcdata()%></textarea>
+</div>
+<script>
+$(document).ready(function(){
+	$('#export-link').click(function(){
+		window.location = '<%=url("nradioadv/system/logread/download")%>';
+	});
+});
+</script>

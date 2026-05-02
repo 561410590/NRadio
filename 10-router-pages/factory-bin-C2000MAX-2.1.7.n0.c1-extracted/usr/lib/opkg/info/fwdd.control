@@ -1,0 +1,10 @@
+Package: fwdd
+Version: 1
+Depends: libc
+Source: package/mtk/applications/fwdd
+SourceName: fwdd
+Section: MTK Properties
+SourceDateEpoch: 1768997726
+Architecture: aarch64_cortex-a53
+Installed-Size: 14463
+Description:  forward daemon

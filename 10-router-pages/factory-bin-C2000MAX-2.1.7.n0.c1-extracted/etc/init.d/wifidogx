@@ -1,0 +1,44 @@
+#!/bin/sh /etc/rc.common
+
+START=93
+
+USE_PROCD=1
+
+
+
+start_service() {
+
+	local _first
+	_portal="$(uci -q get luci.main.portal)"
+	_first="$(uci -q get luci.main.first)"
+	_first=${_first:-1}
+	if [ $_first -eq 0 -a "$_portal" != "1" ] ;then
+			return
+	fi 
+	
+	procd_open_instance
+	procd_set_param command /usr/bin/wifidogx -f
+	procd_set_param respawn 5 5 -1
+	procd_close_instance
+	echo "start wifidogx" 
+}
+
+stop_service() {
+	echo "exec stop"
+	wifidogx -D
+	if [ -r /tmp/wifidogx.pid ]; then
+		rm  /tmp/wifidogx.pid
+	fi
+}
+
+validate_main_section()
+{                                       
+        uci_validate_section luci core main 'first:string:1'
+}
+
+service_triggers()                          
+{                              
+    procd_add_reload_trigger luci
+	procd_add_validation validate_main_section  
+}
+

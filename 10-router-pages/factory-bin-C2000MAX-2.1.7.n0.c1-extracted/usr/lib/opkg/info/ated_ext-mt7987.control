@@ -1,0 +1,10 @@
+Package: ated_ext-mt7987
+Version: 2
+Depends: libc, libblkid1, libnl-tiny1
+Source: package/nradio/apps/ated_ext-mt7987
+SourceName: ated_ext-mt7987
+Section: MTK Properties
+SourceDateEpoch: 1768997832
+Architecture: aarch64_cortex-a53
+Installed-Size: 18726
+Description:  ated_ext Daemon

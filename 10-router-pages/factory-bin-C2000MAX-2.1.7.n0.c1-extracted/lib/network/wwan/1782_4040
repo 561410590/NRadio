@@ -1,0 +1,17 @@
+{
+	"desc": "TD Tech MH5000-32",
+	"type": "cdc_ether",
+	"vendor": "tdtech",
+	"control": "0",
+	"data": "0",
+	"nrcap": 1,
+	"MEIG":{
+		"desc":"CHINAUNICOM",
+		"type": "cdc_ether",
+		"vendor": "meig",
+		"control": "0",
+		"data": "0",
+		"nrcap": 1,
+		"cmdset":2		
+	}
+}

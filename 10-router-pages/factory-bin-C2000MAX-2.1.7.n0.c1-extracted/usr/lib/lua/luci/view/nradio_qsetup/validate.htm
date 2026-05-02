@@ -1,0 +1,29 @@
+<script>
+function stress_needed_data() {
+	$('label').each(function() {
+		if ($(this).attr('for').match(/\.(gateway|dns|peerdns|sameprof|pw\d)$/)) {
+			// nothing todo for specified keys
+		} else {
+			// other keys always need value
+			if (false == $(this).hasClass('needed')) {
+				$(this).prepend('<strong style="color:red">*</strong>&nbsp;').addClass('needed');
+				$(this).next('div').find('input').addClass('dataneeded');
+				$(this).next('div').children('select').addClass('dataneeded');
+			}
+		}
+	});
+}
+
+$(document).ready(function() {
+	$('div.cbi-page-wizard > .cbi-button-back').click(function() {
+		$('ul.cbi-tabmenu > li.cbi-tab').prevAll('li').first().children('a').click();
+	});
+
+	$('.cbi-map-descr').append('&nbsp;<%:(*Required Field)%>');
+
+	stress_needed_data();
+	$('.cbi-input-select').change(stress_needed_data);
+	$('.cbi-input-checkbox').change(stress_needed_data);
+});
+
+</script>

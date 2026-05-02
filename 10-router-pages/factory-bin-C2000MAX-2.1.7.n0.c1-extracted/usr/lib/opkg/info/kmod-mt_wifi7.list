@@ -1,0 +1,13 @@
+/etc/wireless/mediatek/get_consys_log.sh
+/lib/modules/5.4.281/mt_wifi.ko
+/etc/wireless/mediatek/mt7993.eeprom.bin
+/etc/init.d/wifi_msp
+/etc/init.d/wifi_fw_path
+/etc/modules.d/61-mt_wifi7
+/sbin/launch_testmode.sh
+/lib/firmware/MT7993_MT7976_EEPROM_BE3600_ePAeLNA.bin
+/etc/init.d/wifi_e2p
+/lib/firmware/MT7993_EEPROM.bin
+/lib/firmware/MT7993_MT7976_EEPROM_BE3600_iPAiLNA.bin
+/etc/init.d/wifi_testmode
+/sbin/testmode.sh

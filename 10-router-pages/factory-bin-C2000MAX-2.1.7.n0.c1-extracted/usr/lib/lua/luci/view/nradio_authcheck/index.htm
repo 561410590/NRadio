@@ -1,0 +1,620 @@
+
+<%
+local util = require "luci.util"
+local uci  = require "luci.model.uci"
+local uci = uci.cursor()
+local lan_section = uci:get("network", "globals", "default_lan") or "lan"
+local ipaddr = uci:get("network",lan_section,"ipaddr")
+local rv = util.ubus("terminal", "token") or {}
+local out_auth_url = nil
+local out_request_err = 0
+local iccid = nil 
+local device_mac =  uci:get('oem', 'board', 'id')
+device_mac = string.gsub(device_mac, ':', '-')
+if rv.code == 0 then
+    if rv.out_auth_url then
+        out_auth_url = rv.out_auth_url
+    end
+    if rv.iccid then
+        iccid = rv.iccid
+    end
+end
+
+if out_auth_url and #out_auth_url > 0 then
+	if not iccid or #iccid == 0 then
+		out_request_err=1
+	elseif not device_mac or #device_mac == 0 then
+		out_request_err=2
+	else
+		util.ubus("terminal", "keep")
+	end
+end
+%>
+
+
+<%if (out_auth_url and #out_auth_url > 0)  and (out_request_err == 0 ) then%>
+<script type="text/javascript">
+function getQueryString(name) {
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+	var r = window.location.search.substr(1).match(reg);
+	if (r != null) return unescape(r[2]);
+	return null;
+}
+function get_url_info(){
+	var terminalMac = getQueryString("mac");
+	var iccid = "<%=iccid%>";
+	var out_auth_url = "<%=out_auth_url%>";
+	var mac = "<%=device_mac%>";
+	return out_auth_url+"?iccid="+iccid+"&terminalMac="+terminalMac+"&mac="+mac;
+}
+
+var url = get_url_info();
+location.href= url;
+</script>
+<%else%>
+<%+header%>
+<style>
+	.nradio-bg{
+		background-image:none
+	}
+	.main-content{
+		background-color: white;
+		margin: 10% auto;
+		width:60%;
+	}
+	.authcheck_title{
+		color:#1890ff;
+		font-size: 28px;
+	}
+	.input_box{
+		display: flow-root;
+	}
+	.sms_top{
+		background: #ffffff;
+		border-width: 1px;
+		border-style: solid;
+		border-color: #d9d9d9;
+		display: block;
+		width: 100%;
+		height: 40px !important;
+		padding: 0 10px 0 10px;
+		margin: auto;
+		-moz-border-radius: 8px;
+		-webkit-border-radius: 8px;
+		border-radius: 8px;
+		-moz-background-clip: padding;
+		-webkit-background-clip: padding-box;
+		background-clip: padding-box;
+		background-color: #e2f6ff;
+		color: #333;
+		background-color: aliceblue;
+		font-size: 18px;
+		cursor: pointer;
+	}
+	.sms_top:focus,.sms_top:hover{
+		border-color: #1890ff;
+	}
+	.sms_input{
+		width: 55%;
+		float: left;
+	}
+	.sms_get{
+		width: 40%;
+		float: right;
+		color: rgba(0, 0, 0, 0.88);
+		font-size: 16px;
+		line-height: 1.5;
+	}
+	.login_btn{
+		background: #1677ff;
+		color: #fff;
+		margin: 10px 0px 30px 0px;
+	}
+	ul {
+		padding: 10px 0 0 0;
+	}
+	li {
+		padding: 0px 0;
+		position: relative;
+	}
+	.error_note{
+		color:#ff4d4f;
+		font-size: 14px;
+		height: 22px;		
+	}
+	.ok_note{
+		color:#069956;
+		font-size: 14px;
+		height: 22px;		
+	}
+	.input_box{
+		max-width: 340px;
+		width: auto;
+	}
+	.mobile_head{
+		top: 15px;
+		left: 0px;
+		position: absolute;
+		width: 100%;
+		height: 45px;
+		border-bottom: 1px solid #272727;
+	}
+	.mobile_footer{
+		bottom: 0px;
+		left: 0px;
+		position: absolute;
+		width: 100%;
+		height: 45px;
+		z-index: -1;
+	}	
+	.mobile_log {
+		width: 118px;
+		height: 30px;
+		background: url(/luci-static/nradio/images/mobile_logo.png) no-repeat center center;		
+		background-size: contain;
+		float: left;
+	}
+	.mobile_titile{
+		float: left;
+		width: auto;
+		line-height: 30px;
+		padding-left: 20px;
+	}
+	.checkbox-label{
+		color:rgba(0, 0, 0, 0.88);
+		line-height: 30px;
+		font-size: 14px;
+		font-weight: normal;
+		overflow: hidden;
+    	display: block;
+	}
+	.checkbox-label>a{
+		color:#1677ff;
+	}
+	.no_bg_color.body-total-first-stand,.body-total-first-stand{
+		background: url(/luci-static/nradio/images/mobile_bg.jpg) no-repeat center center;
+		background-size: cover;
+	}
+	.bootstrap-dialog .modal-dialog {
+			margin:100px auto;
+			color:black
+	}
+	#check_agreement{
+		display: block;
+		float: left;
+		margin: 8px 5px 0 0;		
+	}
+	@media (min-width: 10px) and (max-width: 768px){
+		.no_bg_color.body-total-first-stand,.body-total-first-stand{
+			background-image: unset;
+		}
+		.mobile_bg_color, .mobile_bg_color.body-total-first-stand, .mobile_bg_color>.mobile {
+			background: #fff;
+		}
+		.main-content {
+			background-color: white;
+			margin: 3% auto;
+			width: 90%;
+		}
+		.bootstrap-dialog .modal-dialog {
+			width: 250px;
+		}
+		#check_agreement{
+			margin: 15px 5px 0 0;		
+		}
+		.agreement_dialog .modal-dialog{
+			width: 99%;
+			height:60vh;
+			max-width: 98%;
+			overflow-y: scroll;
+		}
+		.bootstrap-dialog-message .main{
+			margin-top: 0px;
+		}
+		.first-stand{
+			padding:0px;
+			padding-top: 15vh;
+		}
+		.agreement_dialog .modal-dialog .main-content{
+			padding:20px;
+		}
+	}
+	.mobile_footer{
+		color:rgb(174, 174, 174);
+		text-align: center;
+	}
+	.mobile_footer_content{
+		width: 60%;
+    	display: inline-block;
+	}
+	.agreement_dialog .modal-dialog .main-content-sub{
+		padding:0 20px;
+		font-size: 16px;
+	}
+	.agreement_top{
+		line-height: 30px;
+	}
+
+	.agreement_dialog h2{
+		text-align: center;
+		color: black;
+		font-size: 24px;
+		margin: 0;
+		height:auto;
+		border-bottom:unset;
+		line-height: 35px;
+	}
+
+	.agreement_dialog h2 span{
+		position:unset;
+		border-bottom:unset
+	}
+</style>
+<div class="col-sm-12 column mobile_head hidden-xs">
+	<div class="mobile_log"></div>
+	<div class="mobile_titile"><%:MobileHead%></div>
+</div>
+<form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI"))%>">
+	<div class="row clearfix">
+		<div class="col-sm-12 column">
+			<% if out_request_err == 0 then%>
+			<div class="authcheck_title status-icon-padding text-center ">
+				<%:AuthTitle%>
+			</div>
+			<div class="sms-page">				
+				<ul>
+					<li>
+						
+						<div class="input_box">							
+							<input type="text" id='phone_num' name='phone_num' class="sms_top"" placeholder="<%:AuthPhone%>" onblur="check_phone_data(this.value)"/>
+							<div class="cbi-value">
+								<label class="cbi-value-title error_note phone_help"></label>
+							</div>			
+						</div>
+						<div class="input_box">
+								<input type='text' id='phone_msg' name='phone_msg' placeholder="<%:AuthSMS%>" value='' class='hd-input sms_input sms_top'>
+								<input type="button" class="button sms_get sms_top" id="sendmsg_btn" value="<%:AuthGetSMS%>">	
+						</div>
+
+						<div class="input_box">
+							<label class="cbi-value-title error_note other_help"></label>
+						</div>
+						<div class="input_box">
+							<input id="check_agreement" class="ant-checkbox-input" type="checkbox">
+							<label class="cbi-value-title">
+								<span class="checkbox-label"><%:MobileLoginAgreementLabel1%><a id="mobile_agreement"><%:MobileLoginAgreementLabel2%></a><%:MobileLoginAgreementLabel4%><a id="mobile_privacy"><%:MobileLoginAgreementLabel3%></a></span>
+							</label>
+						</div>
+					</li>
+
+					<li><div class="input_box"><input type="button" class="sms_top login_btn"  onclick="checkLogin()" value="<%:LoginNote%>" /></div></li>
+				</ul>
+			</div>
+			<% elseif out_request_err == 1 then%>
+			<div class="authcheck_title text-center error_note">
+				<%:Mobile_ERR_ICCID%>
+			</div>	
+			<% elseif out_request_err == 2 then%>
+			<div class="authcheck_title text-center error_note">
+				<%:Mobile_ERR_MAC%>
+			</div>
+			<% end %>
+		</div>
+	</div>
+</form>
+<div class="col-sm-12 column mobile_footer">
+	<div class="text-center mobile_footer_content" id="copyright_info"></div>
+</div>
+<script type="text/javascript">//<![CDATA[
+	var agreementDialog = null;
+	$("#sendmsg_btn").on("click",sendMsg);
+	var phone_error = "<%:AuthPhoneHelp%>";
+    var SMS_SUCCESS = 0;
+    var SMS_ERR_PARAM = 1;
+    var SMS_ERR_NET = 2;
+	var SMS_ERR_BUSY = 3;
+    var SMS_ERR_OTHER = 4;
+    var AUTH_SUCCESS = 0;
+    var AUTH_ERR_PARAM = 1;
+    var AUTH_ERR_NET = 2;
+    var AUTH_ERR_OTHER = 3;
+	var AUTH_ERR_INNER = 4;
+	var loading_htm = '<div  id="scan_loading"><img alt="loading" src="<%=media%>/images/loading.gif" ></div>';
+	function show_mobile_footer(){
+		var date = new Date();
+		$("#copyright_info").html("Copyright© 2014-"+date.getFullYear()+" <%:MobileCopyright%>");
+	}
+	show_mobile_footer();
+	function checkPhone(phone){ 
+		if(!(/^1[0-9]{10}$/.test(phone))){ 			
+			return false; 
+		} 
+		return true;
+	}
+	function check_phone_data(data){
+		if(!checkPhone(data)){
+			$(".phone_help").html(phone_error);
+			return;
+		}
+		else{
+			$(".phone_help").html("");
+		}
+	}
+	function err_show(info){
+		var dail = BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			closeByBackdrop: true,
+			title: '',
+			message: info,
+		});
+	}
+
+	function sendMsg(){
+		var time_max = 60;
+		var phone_num = $.trim($('#phone_num').val());
+		var phone_msg = "";
+		$(".other_help").removeClass("ok_note");
+		if(!$("#check_agreement").prop('checked')){
+			$(".other_help").html("<%:AuthAgreementHelp%>");
+			return;
+		}
+
+		if( phone_num == ''){
+			$(".phone_help").html(phone_error);
+			return;
+		}
+		if(!checkPhone(phone_num)){
+			$(".phone_help").html(phone_error);
+			return;
+		}
+		$("#phone_help").html("");
+
+
+		var gw_port = getQueryString("gw_port");
+		var mac = getQueryString("mac");
+
+		if(!mac || mac.length == 0){
+			window.location.href = "http://<%=ipaddr%>:2060";
+			return;
+		}
+		
+		var data={};
+		data['mac']=mac;
+		data['token']='<%=token%>';
+		data['phone_num']=phone_num;
+
+		(new XHR()).post('<%=controller%>authcheck/getmsg', data, function(xhr){
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					var data_res = eval('(' + xhr.responseText + ')');
+					if(data_res && data_res.result){
+						var res = data_res.result;
+						if(res.code==SMS_SUCCESS){
+							$(".other_help").addClass("ok_note");
+							$(".other_help").html("<%:AuthSMSSendHelpOK%>");
+						}
+						else if(res.code==SMS_ERR_PARAM){
+							$(".other_help").html("<%:AuthSMSSendHelpOther%>");
+						}				
+						else if(res.code==SMS_ERR_NET){
+							$(".other_help").html("<%:AuthSMSSendHelpNet%>");
+						}
+						else if(res.code==SMS_ERR_BUSY){
+							$(".other_help").html("<%:AuthSMSSendHelpMax%>");
+						}						
+						else{
+							if(res.detail)
+								err_show(res.detail);
+							else
+								$(".other_help").html("<%:AuthSMSSendHelpOther%>");
+						}
+					}
+				}
+				catch(e) {
+					$(".other_help").html("<%:AuthReqError%>");
+				}
+			}
+		});  
+
+		$("#sendmsg_btn").off("click");
+		$("#sendmsg_btn").val(time_max);
+		var sendmsg_wait_interval = window.setInterval(function(){
+			time_max--;
+			if(time_max>0){
+				$("#sendmsg_btn").val(time_max);
+			}
+			else{
+				$("#sendmsg_btn").on("click",sendMsg);
+				$("#sendmsg_btn").val("<%:AuthGetSMS%>");
+				window.clearInterval(sendmsg_wait_interval);
+			}
+		},1000);
+	}
+
+	function getQueryString(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null) return unescape(r[2]);
+		return null;
+	}
+
+	function checkLogin(){
+		var phone_num = $.trim($('#phone_num').val());
+		var phone_msg = $.trim($('#phone_msg').val());
+		$(".other_help").removeClass("ok_note");
+		if( phone_num == ''){
+			$(".other_help").html(phone_error);
+			return;
+		}
+
+		if( phone_msg == ''){
+			$(".other_help").html("<%:AuthMsgHelp%>");
+			return;
+		}
+
+		if(!checkPhone(phone_num)){
+			$(".other_help").html("<%:AuthPhoneHelp%>");
+			return;
+		}
+		if(!$("#check_agreement").prop('checked')){
+			$(".other_help").html("<%:AuthAgreementHelp%>");
+			return;
+		}
+		$(".other_help").html("");
+
+		var dail = BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			closeByBackdrop: true,
+			title: '',
+			message: loading_htm,
+		});
+
+		var gw_port = getQueryString("gw_port");
+		var gw_address = getQueryString("gw_address");
+		var mac = getQueryString("mac");
+		if (!gw_port || gw_port.length==0)
+			gw_port=80;
+		if(!mac || mac.length == 0){
+			window.location.href = "http://<%=ipaddr%>:2060";
+			return;
+		}
+		var redirect_url = "http://"+gw_address+":"+gw_port+"/wifidog/auth?token=";
+		
+		var data={};
+		data['token']='<%=token%>';
+		data['phone_num']=phone_num;
+		data['phone_msg']=phone_msg;
+		data['mac']=mac;
+		(new XHR()).post('<%=controller%>authcheck/checkmsg', data, function(xhr){
+			if (xhr.getResponseHeader("Content-Type") == "application/json") {
+				try {
+					
+					var data_res = eval('(' + xhr.responseText + ')');
+					if(data_res && data_res.result){
+						var res = data_res.result;
+						if(res.code==AUTH_SUCCESS){
+							$(".other_help").html("");
+							window.setTimeout(function(){
+								window.location.href = redirect_url+res.session;
+							},200);
+						}	
+						else if(res.code==AUTH_ERR_PARAM){
+							dail.close();
+							$(".other_help").html("<%:AuthSMSHelpParam%>");
+						}
+						else if(res.code==AUTH_ERR_NET){
+							dail.close();
+							$(".other_help").html("<%:AuthSMSHelpNet%>");
+						}
+						else if(res.code==AUTH_ERR_INNER){
+							dail.close();
+							$(".other_help").html("<%:AuthSMSHelpInner%>");
+						}
+						else{
+							dail.close();
+							if(res.detail)
+								err_show(res.detail);
+							else
+								$(".other_help").html("<%:AuthSMSHelpOther%>");
+						}
+					}
+				}
+				catch(e) {
+					dail.close();
+					$(".other_help").html("<%:AuthSMSHelpOther%>");
+				}
+			}
+		});  
+
+	  }
+	function get_agreement_info(){
+		var htm='<div class="main ">';
+		htm+='<div class="main-content-sub" >';
+		htm+='<div class="cbi-map">';
+		htm+='<h2 name="content"  class="content-sub"><span><%:MobileLoginAgreementTitle%></span></h2>';
+		htm+='<div class="agreement_top">';
+		htm+='	<fieldset class="cbi-section">';
+		htm+='		<div class="cbi-section-node text-left">';
+		htm+='			<span><%:MobileLoginAgreementContent1%></span>';
+		htm+='		</div>';
+		htm+='		<div class="cbi-section-node text-left">';
+		htm+='			<span><%:MobileLoginAgreementContent2%></span>';
+		htm+='			<span><%:MobileLoginAgreementContent3%></span>';
+		htm+='			<span><%:MobileLoginAgreementContent4%></span>';
+		htm+='		</div>';
+		htm+='	</fieldset>';
+		htm+='	</div>';
+		htm+='	</div>';
+		htm+='	</div>';
+		htm+='	</div>';
+		htm=htm.replace(/&#60;/g, "<");
+		htm=htm.replace(/&#62;/g, ">");	
+		return htm;
+	}
+	function get_privacy_info(){
+		var htm='<div class="main ">';
+		htm+='<div class="main-content-sub" >';
+		htm+='<div class="cbi-map">';
+		htm+='<h2 name="content"  class="content-sub"><span><%:MobileLoginPrivacyTitle%></span></h2>';
+		htm+='<div class="agreement_top">';
+		htm+='	<fieldset class="cbi-section">';
+		htm+='		<div class="cbi-section-node text-left">';
+		htm+='			<span><%:MobileLoginPrivacyContent1%></span>';
+		htm+='		</div>';
+		htm+='		<div class="cbi-section-node text-left">';
+		htm+='			<span><%:MobileLoginPrivacyContent2%><%:MobileLoginPrivacyContent2e%><%:MobileLoginPrivacyContent2e2%></span>';
+		htm+='			<span><%:MobileLoginPrivacyContent3%></span>';
+		htm+='			<span><%:MobileLoginPrivacyContent4%><%:MobileLoginPrivacyContent4e%></span>';
+		htm+='			<span><%:MobileLoginPrivacyContent5%></span>';
+		htm+='			<span><%:MobileLoginPrivacyContent6%></span>';
+		htm+='			<span><%:MobileLoginPrivacyContent7%></span>';
+		htm+='			<span><%:MobileLoginPrivacyContent8%></span>';
+		htm+='			<span><%:MobileLoginPrivacyContent9%></span>';
+		htm+='		</div>';
+		htm+='	</fieldset>';
+		htm+='	</div>';
+		htm+='	</div>';
+		htm+='	</div>';
+		htm+='	</div>';
+		htm=htm.replace(/&#60;/g, "<");
+		htm=htm.replace(/&#62;/g, ">");	
+		return htm;
+	}
+	$('#mobile_agreement').click(function () {
+		if(!agreementDialog){
+			agreementDialog = BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				cssClass: 'list-dialog agreement_dialog',
+				closeByBackdrop: true,
+				title: '',
+				message: get_agreement_info(),
+				onhide:function(){
+					agreementDialog = null;
+				}
+			});
+		}
+	});
+	$('#mobile_privacy').click(function () {
+		if(!agreementDialog){
+			agreementDialog = BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				cssClass: 'list-dialog agreement_dialog',
+				closeByBackdrop: true,
+				title: '',
+				message: get_privacy_info(),
+				onhide:function(){
+					agreementDialog = null;
+				}
+			});
+		}
+	});
+	  document.onkeydown=function(event){
+		  e = event ? event :(window.event ? window.event : null);
+		  if(e.keyCode==13){
+			  checkLogin();
+		  }
+	  };
+//]]></script>
+<%+footer%>
+<%end%>
+

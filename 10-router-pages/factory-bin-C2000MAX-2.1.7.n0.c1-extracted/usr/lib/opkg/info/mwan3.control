@@ -1,0 +1,14 @@
+Package: mwan3
+Version: 2.0.2-1
+Depends: libc, ip, ipset, iptables, ip6tables, iptables-mod-conntrack-extra, iptables-mod-ipopt, conntrack
+Source: package/nradio/feeds/mwan3
+SourceName: mwan3
+License: GPLv2
+Section: net
+SourceDateEpoch: 1776075459
+Maintainer: Florian Eckert <fe@dev.tdt.de>
+Architecture: all
+Installed-Size: 8505
+Description:  Hotplug script which makes configuration of multiple WAN interfaces simple
+ and manageable. With loadbalancing/failover support for up to 250 wan
+ interfaces, connection tracking and an easy to manage traffic ruleset.

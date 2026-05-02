@@ -1,0 +1,14 @@
+
+LOG_PATH {
+	size 100k
+	nocompress
+	sharedscripts
+	olddir LOG_DIR
+	dateext
+	dateformat .%Y%m%d%H%M%S
+	rotate TIMES
+	postrotate
+		pidof rsyslogd|xargs kill -HUP >/dev/null 2>&1 || true
+	endscript
+}
+

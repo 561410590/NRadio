@@ -1,0 +1,12 @@
+Package: libestr
+Version: 0.1.11-3
+Depends: libc
+Source: package/nradio/feeds/libs/libestr
+SourceName: libestr
+License: LGPL-2.1-or-later
+LicenseFiles: COPYING
+Section: libs
+SourceDateEpoch: 1588063990
+Architecture: aarch64_cortex-a53
+Installed-Size: 4436
+Description:  libestr - some essentials for string handling (and a bit more)

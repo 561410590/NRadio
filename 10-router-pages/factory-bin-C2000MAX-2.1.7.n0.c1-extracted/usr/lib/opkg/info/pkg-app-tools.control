@@ -1,0 +1,10 @@
+Package: pkg-app-tools
+Version: 1.0-20221221
+Depends: libc, luci-app-nradio-app, nradio_crypto, combo, cellular_record, report_proactively, access_ctl, luci-app-nradio-access, luci-i18n-nradio-access-zh-cn, luci-i18n-nradio-access-en, luci-app-nradio-hsimlock, luci-i18n-nradio-hsimlock-en, luci-i18n-nradio-hsimlock-zh-cn, sync_bdinfo, logservice
+Source: package/nradio/collections/pkg-app-tools
+SourceName: pkg-app-tools
+Section: nradiowifi
+SourceDateEpoch: 1770117876
+Architecture: aarch64_cortex-a53
+Installed-Size: 105
+Description:  Pakcages for App using related

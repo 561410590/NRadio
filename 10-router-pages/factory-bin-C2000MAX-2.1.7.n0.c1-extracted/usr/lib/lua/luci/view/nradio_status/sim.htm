@@ -1,0 +1,382 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+
+<%
+	local lng  = require "luci.i18n"
+	local util = require "luci.util"
+	local nr = require "luci.nradio"
+	local uci  = require "luci.model.uci".cursor()
+	local disp = require "luci.dispatcher"
+	local request  = disp.context.requestpath
+	local model_str,cpe_section = nr.get_cellular_last(request[5])
+	local cpesel_info = uci:get_all("cpesel", "sim"..model_str) or {}
+	
+	cpesel_info.company = {}
+
+	local runtime_info = util.ubus("infocd", "get", { name = cpe_section.."_accumulation" }) or {list={}}	
+	for _,item in pairs(runtime_info.list) do
+		if item.parameter and item.parameter.sim_record then
+			
+			for _,sim_item in pairs(item.parameter.sim_record) do
+				nixio.syslog("err","DDS "..sim_item.Dds)
+				nixio.syslog("err","company "..sim_item.company)
+				if sim_item.company == 0 then
+					cpesel_info.company[#cpesel_info.company+1] = lng.translate("China Telecom")
+				elseif sim_item.company == 1 then
+					cpesel_info.company[#cpesel_info.company+1] = lng.translate("China Mobile")
+				elseif sim_item.company == 2 then
+					cpesel_info.company[#cpesel_info.company+1] = lng.translate("China Unicom")
+				elseif sim_item.company == 3 then
+					cpesel_info.company[#cpesel_info.company+1] = lng.translate("China Broadnet")
+				else
+					cpesel_info.company[#cpesel_info.company+1] = ""
+				end				
+			end			
+		end
+	end
+	local info_api_result_buffer = util.serialize_json({result=cpesel_info},nil)
+%>
+<%+themes/nradio/header_simple%>
+<style>
+
+	.container{
+		width: 100%;
+		padding: 0;
+	}
+	.modal-backdrop.fade {
+		opacity: 0;
+	}
+
+	.next-button::before{
+		top:9px;
+	}
+	.typing_loader {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		-webkit-animation: typing 1s linear infinite alternate;
+		-moz-animation: Typing 1s linear infinite alternate;
+		animation: typing 1s linear infinite alternate;
+		margin: 0px auto;
+		position: relative;
+		display: inline-block;;
+		box-sizing: border-box;
+	}
+	@-webkit-keyframes typing{
+		0%{
+			background-color: rgba(0,0,0, 1);
+			box-shadow: 12px 0px 0px 0px rgba(0,0,0,0.2),
+						24px 0px 0px 0px rgba(0,0,0,0.2);
+		}
+		25%{
+			background-color: rgba(0,0,0, 0.4);
+			box-shadow: 12px 0px 0px 0px rgba(0,0,0,2),
+						24px 0px 0px 0px rgba(0,0,0,0.2);
+		}
+		75%{ background-color: rgba(0,0,0, 0.4);
+			box-shadow: 12px 0px 0px 0px rgba(0,0,0,0.2),
+						24px 0px 0px 0px rgba(0,0,0,1);
+		}
+	}
+
+	@-moz-keyframes typing{
+	0%{
+			background-color: rgba(0,0,0, 1);
+			box-shadow: 12px 0px 0px 0px rgba(0,0,0,0.2),
+						24px 0px 0px 0px rgba(0,0,0,0.2);
+		}
+		25%{
+			background-color: rgba(0,0,0, 0.4);
+			box-shadow: 12px 0px 0px 0px rgba(0,0,0,2),
+						24px 0px 0px 0px rgba(0,0,0,0.2);
+		}
+		75%{ background-color: rgba(0,0,0, 0.4);
+			box-shadow: 12px 0px 0px 0px rgba(0,0,0,0.2),
+						24px 0px 0px 0px rgba(0,0,0,1);
+		}
+	}
+
+	@keyframes typing{
+	0%{
+			background-color: rgba(0,0,0, 1);
+			box-shadow: 12px 0px 0px 0px rgba(0,0,0,0.2),
+						24px 0px 0px 0px rgba(0,0,0,0.2);
+		}
+		25%{
+			background-color: rgba(0,0,0, 0.4);
+			box-shadow: 12px 0px 0px 0px rgba(0,0,0,2),
+						24px 0px 0px 0px rgba(0,0,0,0.2);
+		}
+		75%{ background-color: rgba(0,0,0, 0.4);
+			box-shadow: 12px 0px 0px 0px rgba(0,0,0,0.2),
+						24px 0px 0px 0px rgba(0,0,0,1);
+		}
+	}
+
+</style>
+			<div class="mobile_bg_color main_box">
+				<div class="panel-heading">
+					<h3 class="panel-title sub_label_color"><%:SIMSetTitle%></h3>
+				</div>	
+			</div>
+		
+			<div class="mobile_bg_color panel panel-info device-panel main_box">
+				<div class="panel-heading">
+					<h3 class="panel-title"></h3>
+				</div>
+				<div class="panel-body info-box no_padding">
+					<div class="row">
+						<div class="col-sm-12 col-xs-12 text-left">
+							<div class="row" id="switch_mode">
+								<div class="col-sm-6 col-xs-6 text-left" >
+									<%:Switch Mode%>
+								</div>
+								<div class="col-sm-6 col-xs-6 text-right sub_label_color" id="sim_box" data-value="" onclick="show_menu(this)">
+									<div id="sim_mode" style="display: inline-block"></div>&nbsp;&nbsp;&nbsp;
+									<div class="next-button" id="cpe_sim_next">
+										&nbsp;
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="mobile_bg_color panel panel-info device-panel mode_box">
+				<div class="panel-body info-box no_padding">
+					<div class="row" onclick="switch_menu(0)">
+						<div class="col-sm-12 col-xs-12 text-left">
+							<div class="row">
+								<div class="col-sm-6 col-xs-6 text-left" >
+									<%:Auto%>
+								</div>
+								<div class="col-sm-6 col-xs-6 text-right icon_color mode_class" data-value="0"  >
+									
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row" onclick="switch_menu(1)">
+						<div class="col-sm-12 col-xs-12 text-left">
+							<div class="row padding_fix line_top_class">
+								<div class="col-sm-6 col-xs-6 text-left" >
+									<%:Manual%>
+								</div>
+								<div class="col-sm-6 col-xs-6 text-right icon_color mode_class" data-value="1" >
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mobile_bg_color manual_box">
+				<div class="panel-heading sub_label_color">
+					<h3 class="panel-title"><%:SIMSelect%></h3>
+				</div>	
+			</div>
+			<div class="mobile_bg_color panel panel-info device-panel manual_box">
+				<div class="panel-body info-box no_padding sim_list">
+
+				</div>
+			</div>
+
+<script language="javascript">
+
+var SIMMobileRow = ''+
+'<div class="row">'+
+'<div class="col-sm-12 col-xs-12 text-left">'+
+'	<div class="row sub_row">'+
+'		<div class="col-sm-6 col-xs-6 text-left label_name" >'+
+'			{{name}}'+
+'		</div>'+
+'		<div class="col-sm-6 col-xs-6 text-right label_value sub_label_color" onclick="save_mode(1,{{index}})">'+
+'			{{isp}}&nbsp;&nbsp;{{checked}}'+
+'		</div>'+
+'	</div>' +
+'	</div>' +
+'</div>';
+function change_mode_box(mode){
+	$(".mode_class").each(function(){
+		if($(this).data("value") == mode){
+			$(this).html('<i class="far fa-nradio-ok2 fa-fw fa"></i>');
+		}
+		else{
+			$(this).html("");
+		}
+	});	
+}
+function stats_info(data){
+	var mobile_htm = "";
+	if(!data || !data.result)
+		return;
+	$(".mode_box").css("display","none");
+	if(data.result.mode == 1){
+		$("#sim_mode").html("<%:Manual%>");
+		$(".manual_box").css("display","block");
+		$("#sim_box").data("value","1");
+	}
+	else{
+		$("#sim_mode").html("<%:Auto%>");
+		$(".manual_box").css("display","none");
+		$("#sim_box").data("value","0");
+	}
+	if(data.result.max){
+		var sims_alias = <%=util.serialize_json(nr.get_sim_alias(),nil)%>;
+		sim_alias = sims_alias?sims_alias[0]:[];
+		for(i=0;i<data.result.max;i++){
+			var checked_html = '';
+			var checked="";
+			if(data.result.cur == (i+1))
+				checked = 'checked=checked';
+			var checked_html = '<input class="cbi-input-radio" '+checked+' type="radio" name="sim"  id="sim"'+(i+1)+' value="'+(i+1)+'" onclick="save_mode(1,'+(i+1)+')">';
+
+			mobile_htm+=SIMMobileRow.compose({
+				name:sim_alias[i],
+				isp:data.result.company[i]?data.result.company[i]:"",
+				checked: checked_html,
+				index:i+1,
+			});		
+		}
+		$(".sim_list").html(mobile_htm);
+	}
+	change_mode_box(data.result.mode);
+}
+
+function save_mode(mode,sim){
+	var data = {};
+	var save_dialog = null;
+	var url = '<%=controller%>nradio/system/sim/mode';
+	data['token']='<%=token%>';
+	data['mode']=mode;
+	data['cpe_section']="<%=cpe_section%>";
+	data['sim_section']="sim<%=model_str%>";
+	if(sim){
+		data['sim']=sim;
+		$("input[name='sim']").each(function(){
+			if($(this).val() == sim){
+				$(this).prop("checked",true);
+			}
+		});
+	}
+		
+	if(mode == 1){
+		save_dialog = BootstrapDialog.show({
+			type: BootstrapDialog.TYPE_DEFAULT,
+			title: "<%:SIMSwitching%>",
+			closable:false,
+			closeByBackdrop: false,
+			cssClass:'mobile_note',
+		});
+
+	}
+	(new XHR()).post(url, data, function(xhr){
+		var code = -1;
+		if (xhr.getResponseHeader("Content-Type") == "application/json") {
+			try {
+				var data_res = eval('(' + xhr.responseText + ')');
+				if(data_res && data_res.result){
+					var res = data_res.result;
+					if(res.code == 0){
+						code = 0;
+					}
+				}
+			}
+			catch(e) {
+			}
+		}
+		if(code == 0){
+			change_mode_box(mode);
+			if(mode == 0){
+				$("#sim_mode").html("<%:Auto%>");
+			}					
+			else{
+				$("#sim_mode").html("<%:Manual%>");
+			}
+		}
+		if(save_dialog){
+			if(code == 0){
+				save_dialog.setTitle("<%:SIMSwitchOK%>");
+			}				
+			else
+				save_dialog.setTitle("<%:SIMSwitchError%>");
+			window.setTimeout(() => {
+				save_dialog.close();
+				save_dialog = null;
+			}, 2000);
+		}		
+	});
+}
+
+function show_menu(obj){
+	if($(obj).data("value") == 1){
+		$(".main_box").css("display","none");
+		$(".mode_box").css("display","block");
+		$(".manual_box").css("display","block");
+
+		$("#sim_mode").html("<%:Manual%>");
+		goto_innter_page("<%:SIMSetTitle%>");
+	}
+	else{
+		$(".main_box").css("display","none");
+		$(".mode_box").css("display","block");
+		$(".manual_box").css("display","none");
+
+		$("#sim_mode").html("<%:Auto%>");
+		goto_innter_page("<%:SIMSetTitle%>");
+	}
+}
+function switch_menu(data){
+
+	var warning_htm = ''+
+	'<div class="note_box">'+
+	'<div class="note_body"><p><%:SIMSetHelp1%></p><p><%:SIMSetHelp2%></p></div>'+
+	'</div>';
+	BootstrapDialog.show({
+		type: BootstrapDialog.TYPE_DEFAULT,
+		title: '<%:Switch Mode%>',
+		message: warning_htm,
+		closeByBackdrop: false,
+		closable:false,
+		cssClass:'mobile_note',
+		buttons: [{
+			label: "<%:SetOK%>",
+			cssClass: 'mobile_note_btn',
+			action: function(dialog) {
+					if(data == 0){
+						$(".main_box").css("display","block");
+						$(".mode_box").css("display","none");
+						$(".manual_box").css("display","none");
+					}
+					else{
+						$(".main_box").css("display","block");
+						$(".mode_box").css("display","none");
+						$(".manual_box").css("display","block");						
+					}
+					goto_page('<%=controller%>nradio/system/overview',"<%:SIMTitle%>");
+					save_mode(data,null);
+					dialog.close();
+				}
+			}],
+	});
+}
+
+function goto_innter_page(title){
+	$(".nradio-logo").html(title).css("background","unset");
+	$(".menu_mobile").find("div").first().addClass("back-button").html("&nbsp;").off("click").on("click",function(){
+		$(".main_box").css("display","block");
+		$(".mode_box").css("display","none");
+		$(".manual_box").css("display","none");
+		goto_page('<%=controller%>nradio/system/overview',"<%:SIMTitle%>");
+	});
+}
+
+
+$(document).ready(function(){
+	goto_page('<%=controller%>nradio/system/overview',"<%:SIMTitle%>");
+	stats_info(<%=info_api_result_buffer%>);
+});
+</script>
+<%+themes/nradio/footer_simple%>

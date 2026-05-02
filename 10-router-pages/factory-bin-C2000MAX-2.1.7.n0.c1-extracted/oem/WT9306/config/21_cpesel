@@ -1,0 +1,5 @@
+uci set cpesel.sim.max=3
+uci set cpesel.sim.gval='1-1,0-2,1-2'
+uci set cpesel.sim.stype='0,4,4'
+uci set cpesel.sim.mode='0'
+uci set cpesel.sim.cur='2'

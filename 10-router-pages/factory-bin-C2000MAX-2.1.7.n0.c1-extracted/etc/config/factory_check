@@ -1,0 +1,7 @@
+
+config factest 'factest'
+	option force '0'
+
+config case 'cpe'
+	option wait '35'
+	option recheck '3'

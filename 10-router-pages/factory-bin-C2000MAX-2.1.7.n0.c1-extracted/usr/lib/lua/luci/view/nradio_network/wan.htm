@@ -1,0 +1,203 @@
+<%#
+ Copyright 2017-2018 NRadio
+-%>
+<%
+        local util = require "luci.util"
+		local uci  = require "luci.model.uci"
+		local nr = require "luci.nradio"
+		local fs = require "nixio.fs"
+		local mwan3_exist = false
+		local cur = uci.cursor()
+		
+		local port_data_string = util.serialize_json(nr.get_nrswitch_info(),nil)
+		if fs.access("/usr/sbin/mwan3") then
+			mwan3_exist = true
+		end
+		local overlap_dividing = cur:get("luci","main", "overlap_dividing")
+		local gType= util.serialize_json(nr.get_network_type(),nil)
+		local cellular_prefix,cellular_default = nr.get_cellular_prefix()
+		local exsit_cellular = false
+		local exsit_nbcpe = false
+		local count_cpe = nr.count_cpe()
+
+		for i = 0, count_cpe - 1 do
+			local iface = (i == 0 and cellular_default or cellular_prefix..i)
+			local iface_odu_mode = cur:get("network",iface, "mode") or ""
+			if iface_odu_mode == "odu" then
+				exsit_nbcpe = true
+			else
+				exsit_cellular = true
+			end
+		end
+%>
+
+
+<div class="cbi-value" >
+	<label class="cbi-value-title" > </label>
+	<div class="cbi-value-field">
+		<div class="cbi-section-node" style="border:1px solid #515151;width: auto;margin-top:0px;">
+			<div class="row" >
+				<div class="col-xs-12 col-sm-12">
+					<ul class="list-inline data_box">
+					</ul>
+				</div>					
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<script language="javascript">
+	var gPortData = <%=port_data_string%>;
+	function show_port_link(data_info,active_wan){
+		var htm="";
+		var data = data_info.port;
+		var gType=<%=gType%>;
+		var networktype = document.getElementById("cbid.network.wan.backup").value;
+		console.log("networktype:"+networktype+" active_wan:"+active_wan);
+		var nbcpe_exsit = 0;
+		var wired_exsit = 0;
+		for (key in gType){
+			if(gType[key] == networktype){
+				if(key.indexOf("NBCPE") != -1){
+					nbcpe_exsit = 1;
+
+				}
+				if(key.indexOf("Wired") != -1){
+					wired_exsit = 1;
+				}
+			}
+		};
+		for(sort in data)
+		{
+			var data_obj = data[sort];
+			var status = "";
+			var eth_label="LAN";
+			var switch_label = "&nbsp;";
+			var len = data;
+
+			if(data_obj["type"] == "m"){
+				if(nbcpe_exsit && wired_exsit){
+					eth_label = "WAN"
+					status="icon_color";
+				}
+			}
+			else if(data_obj["type"] == "M" || data_obj["type"] == "W"){
+				if(nbcpe_exsit && (data_info.last_wan_port == data_obj["port"])){
+					eth_label = "5G";
+					status="icon_color";
+					nbcpe_flag = 1;
+				}
+				else if (wired_exsit){
+					eth_label = "WAN"
+					status="icon_color";
+				}
+			}		
+	
+			switch_label=data_obj["label"];
+
+			htm+='<li>';
+			htm+='	<ul class="list-group">';
+			htm+='		<li class="list-group-item text-center">'+switch_label+'</li>';
+			htm+='		<li class="list-group-item text-center link_icon"><i class="far fa-nradio-ethernet fa-3x fa-fw"></i></li>';
+			htm+='		<li class="list-group-item text-center '+status+'">'+eth_label+'</li>';
+			htm+='	</ul>';
+			htm+='</li>';
+		}
+		return htm;
+	}
+
+	function load_data(){
+		var htm = "";		
+		var active_wan = true;
+		<% if exsit_nbcpe and not exsit_cellular then%>
+		var nbcpe = true;
+		<%else%>
+		var nbcpe = $(":checkbox[name='cbid.network.wan.nbcpe']").prop("checked");
+		<%end%>
+
+		active_wan = $(":checkbox[name='cbid.network.wan.active_wan']").prop("checked");
+		htm = show_port_link(gPortData,active_wan);
+		var keyobj =$(":radio[name='cbid.network.wan.dividing_default']");
+		var first_usefull_val = null;
+		var hidden_obj = null;
+		if(keyobj){
+			$(keyobj).each(function(){	
+				var depends_info = $(this).parent().data("depends");
+				var nbcpe_show = true;
+				var wan_show = true;
+				if(depends_info.length){
+					nbcpe_show = false;
+					wan_show = false;
+					for(i=0;i<depends_info.length;i++){
+						if (depends_info[i]["cbid.network.wan.nbcpe"] == "1"){
+							if(nbcpe)
+								nbcpe_show = true;							
+						}
+						else if (depends_info[i]["cbid.network.wan.active_wan"] == "1"){
+							if(active_wan)
+								wan_show = true;
+						}
+						else{
+							nbcpe_show = true;
+						}
+					}
+				}
+				if(nbcpe_show||wan_show){
+					$(this).parent().css("display","inline-block");
+					if(!first_usefull_val)
+						first_usefull_val = $(this).val();
+				}
+				else{
+					hidden_obj = $(this);
+					$(this).parent().css("display","none");				
+				}
+			})
+			if(hidden_obj && ($(hidden_obj).val() == $(":radio[name='cbid.network.wan.dividing_default']:checked").val())){
+				if(first_usefull_val)
+					$(":radio[name='cbid.network.wan.dividing_default'][value=" + first_usefull_val + "]").attr("checked","true");
+			}	
+		}
+		<%if mwan3_exist and overlap_dividing ~= "0" then%>
+		if(nbcpe){
+			$(".balance_nbcpe").css("display","inline-block");			
+		}
+		else{
+			$(".balance_nbcpe").css("display","none");
+		}
+		if(active_wan){
+			$(".balance_wan").css("display","inline-block");
+		}
+		else{
+			$(".balance_wan").css("display","none");
+		}
+		if(nbcpe && active_wan){
+			show_balance("all");
+		}
+		else if(nbcpe){
+			show_balance("nonwan");
+		}
+		else if(active_wan){
+			show_balance("nonbcpe");
+		}
+		<%end%>
+		$(".data_box").empty().append(htm);
+	}
+	$(document).ready(function(){
+		load_data();
+		document.getElementById('cbid.network.wan.backup').addEventListener('change', function(event) {
+			load_data();
+		});
+		document.getElementById('cbid.network.wan.active_wan').addEventListener('change', function(event) {
+			load_data();
+		});
+		var nbcpe_obj = document.getElementsByName('cbid.network.wan.nbcpe');
+		for(var i =0;i<nbcpe_obj.length;i++){
+			nbcpe_obj[i].addEventListener('change', function(event) {
+				load_data();
+			});
+		}
+
+		
+	})
+</script>

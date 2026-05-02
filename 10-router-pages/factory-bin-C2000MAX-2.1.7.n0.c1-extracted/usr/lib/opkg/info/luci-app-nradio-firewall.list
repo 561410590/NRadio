@@ -1,0 +1,2 @@
+/usr/lib/lua/luci/controller/nradio_adv/firewall.lua
+/usr/lib/lua/luci/model/cbi/nradio_adv/firewall.lua

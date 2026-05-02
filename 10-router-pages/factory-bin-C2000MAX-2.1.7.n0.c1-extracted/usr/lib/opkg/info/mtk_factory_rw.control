@@ -1,0 +1,10 @@
+Package: mtk_factory_rw
+Version: 1-2.1.7.n0.c1
+Depends: libc
+Source: feeds/mtk_openwrt_feed/feed/app/mtk_factory_rw
+SourceName: mtk_factory_rw
+Section: MTK Properties
+SourceDateEpoch: 1740647224
+Architecture: aarch64_cortex-a53
+Installed-Size: 1637
+Description:  mtk factory's data read and write

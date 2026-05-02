@@ -1,0 +1,43 @@
+#!/bin/sh
+
+radio0_channel_override="cloudd.g0radio.channel_overrideradio0"
+radio1_channel_override="cloudd.g0radio.channel_overrideradio1"
+
+# check g0radio.channel_overrideradio0
+if ! uci -q get "$radio0_channel_override"; then
+    uci -q set "${radio0_channel_override}=wireless.radio0.channel_override=0"
+    uci commit cloudd
+fi
+
+# check g0radio.channel_overrideradio1
+if ! uci -q get "$radio1_channel_override"; then
+    uci -q set "${radio1_channel_override}=wireless.radio1.channel_override=0"
+    uci commit cloudd
+fi
+
+
+
+# check t0 and create it if it don't exist
+if ! uci -q get "cloudd.t0"; then
+    ssid=$(uci -q get "cloudd.g0wlan.ssid_wlan1"|awk -F= '{print $2}')
+    uci batch <<-EOF
+        set cloudd.t0='template'
+        set cloudd.t0.name='Default'
+        set cloudd.t0.diff_2_4='1'
+        set cloudd.t0.encryption_wlan='Xnone'
+        set cloudd.t0.key_wlan='X'
+        set cloudd.t0.ssid_wlan="X$ssid"
+        set cloudd.t0.disabled_wlan='X0'
+        set cloudd.t0.disabled_wlan_0='X1'
+        set cloudd.t0.disabled_wlan_1='X1'
+        set cloudd.t0.disabled_wlan_2='X1'
+        set cloudd.t0.lowrssi_wlan='X'
+        set cloudd.t0.hidden_wlan='X'
+        set cloudd.t0.maxstanum_wlan='X'
+        add_list cloudd.g0.template='t0'
+        add_list cloudd.g0.template='t0'
+        delete cloudd.g0wlan
+        set cloudd.g0wlan='interface'
+        commit
+    EOF
+fi

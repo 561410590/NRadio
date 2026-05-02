@@ -1,0 +1,251 @@
+<%+header%>
+	<div class="column  second-text-padding">
+		<form class="form-horizontal" role="form">
+			<div id="static_mode" class="col-sm-8 col-xs-8 col-sm-offset-3 col-md-offset-4 col-xs-offset-1">		
+				
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:IP Address%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="ip" />
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:Subnet Mask%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="netmask" placeholder="255.255.255.0" />
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:Default Gateway%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="gateway" />
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:QSetupStaticDNS1%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="dns" />
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-3 col-md-2 qsetup-label"><%:QSetupStaticDNS2%></div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="dns1" />
+					</div>
+				</div>
+
+			</div>
+			<div class="clearfix second-btn-padding">
+				<div class="double_btn_box">
+					<li id="pre-btn" class="second-btn second-btn-left recommand-color" ><%:Back%></li>
+					<li id="next-btn" class="second-btn second-btn-right btn-color disable-btn-color" ><%:Next%></li>
+				</div>
+			</div>
+		</form>
+	</div>
+<script type="text/javascript">
+	function inet_network(ip_str){
+		if(!ip_str)
+			return -1;
+
+		var re = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/;
+		if(re.test(ip_str)){
+			var v1 = parseInt(RegExp.$1);
+			var v2 = parseInt(RegExp.$2);
+			var v3 = parseInt(RegExp.$3);
+			var v4 = parseInt(RegExp.$4);
+			if(v1 < 256 && v2 < 256 && v3 < 256 && v4 < 256)
+				return v1*256*256*256+v2*256*256+v3*256+v4;
+		}
+
+		return -2;
+	}
+
+	//Filtering ip address with leading zero, if end-user keyin IP 192.168.02.1, system auto filtering IP 192.168.2.1
+	function ipFilterZero(ip_str){
+		var re = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/;
+		if(re.test(ip_str)){
+			var v1 = parseInt(RegExp.$1);
+			var v2 = parseInt(RegExp.$2);
+			var v3 = parseInt(RegExp.$3);
+			var v4 = parseInt(RegExp.$4);
+			return v1+"."+v2+"."+v3+"."+v4;
+		}
+		return -2;
+	}
+
+	function valid_ip(value, type){
+		// A : 1.0.0.0~126.255.255.255
+		// B : 127.0.0.0~127.255.255.255 (forbidden)
+		// C : 128.0.0.0~255.255.255.254
+		var A_class_start = inet_network("1.0.0.0");
+		var A_class_end = inet_network("126.255.255.255");
+		var B_class_start = inet_network("127.0.0.0");
+		var B_class_end = inet_network("127.255.255.255");
+		var C_class_start = inet_network("128.0.0.0");
+		var C_class_end = inet_network("255.255.255.255");
+
+		var ip_num = inet_network(value);
+
+		if(type == "DNS" && ip_num == -1){ //DNS allows to input nothing
+			return [true,0];
+		}
+
+		if(type == "GW" && ip_num == -1){ //GW allows to input nothing
+			return [true,0];
+		}
+
+		if(ip_num > A_class_start && ip_num < A_class_end){
+			data = ipFilterZero(value);
+			return [true,data];
+		}
+		else if(ip_num > B_class_start && ip_num < B_class_end){
+			return [false,0];
+		}
+		else if(ip_num > C_class_start && ip_num < C_class_end){
+			data = ipFilterZero(value);
+			return [true,data];
+		}
+		else{
+			return [false,0];
+		}
+	}
+
+	//计算netmask是否正确
+	function verify(netmask){
+		while(netmask != 0){
+			if((netmask+1)%2 == 0){
+				netmask = (netmask+1)/2-1;
+			}else{
+				return 1;
+			}
+		}
+		return 0;
+	}
+	var ip,netmask,gateway,dns,dns1;
+	ip = 1;
+	$('#ip').on('input propertychange', function() {
+		var ip_num = $.trim($('#ip').val());
+		var data = valid_ip(ip_num,"");
+		if(data[0]){
+			$('#ip').css('border','1px solid #ccc');
+			ip = 0;
+		}else{
+			ip = 1;
+			$('#ip').css('border','1px solid red');
+		}
+	});
+
+	var wrong_netmask = 0;
+	netmask = 0;
+	$('#netmask').on('input propertychange', function() {
+		var netmask_str = $.trim($('#netmask').val());
+		var netmask_num = inet_network(netmask_str);
+		if(netmask_num==0){
+			var netmask_reverse_num = 0;
+		}else{
+			var netmask_reverse_num = ~netmask_num;
+		}
+		if(netmask_num < 0){
+			$('#netmask').css('border','1px solid red');
+			netmask = 1;
+		}else{
+			wrong_netmask = verify(netmask_reverse_num);
+			if(wrong_netmask == 1 ){
+				$('#netmask').css('border','1px solid red');
+				netmask = 1;
+			}else{
+				$('#netmask').css('border','1px solid #ccc');
+				netmask = 0;
+			}
+		}
+	});
+
+	gateway = 1;
+	$('#gateway').on('input propertychange', function() {
+		var gateway_num = $.trim($('#gateway').val());
+		var len = $.trim($('#gateway').val()).length;
+		var data = valid_ip(gateway_num,"GW");
+		if(data[0] || len == 0){
+			$('#gateway').css('border','1px solid #ccc');
+			gateway = 0;
+		}else{
+			gateway = 1;
+			$('#gateway').css('border','1px solid red');
+		}
+	});
+
+	dns = 0;
+	$('#dns').on('input propertychange', function() {
+		var dns_num = $.trim($('#dns').val());
+		var len = $.trim($('#dns').val()).length;
+		var data = valid_ip(dns_num,"DNS");
+		if(data[0] || len == 0){
+			dns = 0;
+			$('#dns').css('border','1px solid #ccc');
+		}else{
+			dns = 1;
+			$('#dns').css('border','1px solid red');
+		}
+	});
+
+	dns1 = 0;
+	$('#dns1').on('input propertychange', function() {
+		var dns1_num = $.trim($('#dns1').val());
+		var len = $.trim($('#dns1').val()).length;
+		var data = valid_ip(dns1_num,"DNS");
+		if(data[0] || len == 0){
+			dns1 = 0;
+			$('#dns1').css('border','1px solid #ccc');
+		}else{
+			dns1 = 1;
+			$('#dns1').css('border','1px solid red');
+		}
+	});
+
+	var static_check = 0;
+	$('input').on('input propertychange', function() {
+		if(ip != 1 && netmask != 1 && gateway != 1 && dns != 1 && dns1 != 1){
+			static_check= 1;
+		} else {
+			static_check = 0;
+		}
+
+		if (static_check){
+			$('#next-btn').removeClass("disable-btn-color");
+			$('#next-btn').addClass("btn-color");
+		}
+		else{
+			$('#next-btn').removeClass("btn-color");
+			$('#next-btn').addClass("disable-btn-color");
+		}
+	});
+
+	$('#pre-btn').click(function(){
+		self.location=document.referrer;
+	});
+
+	$('#next-btn').click (function(){
+		var data={};
+		data['token']='<%=token%>';
+		data['ip']=$('#ip').val();
+		if ($('#netmask').val().length > 0)
+			data['netmask']=$('#netmask').val();
+		else
+			data['netmask']='255.255.255.0';
+		data['gateway']=$('#gateway').val();
+		data['dns']=$('#dns').val();
+		data['dns1']=$('#dns1').val();
+
+		if(static_check == 1){
+			(new XHR()).post('<%=controller%>nradio/qsetup/staticset', data, function(){
+				location.href="/cgi-bin/luci/nradio/qsetup/second_wifi";
+			});
+		}
+	});
+</script>
+<%+footer%>

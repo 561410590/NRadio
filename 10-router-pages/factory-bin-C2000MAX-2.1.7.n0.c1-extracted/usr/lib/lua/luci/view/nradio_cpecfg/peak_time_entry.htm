@@ -1,0 +1,228 @@
+<%
+    local util = require "luci.util"
+    local id_str = cbid:gsub('%.', '_')
+    local cur = self:cfgvalue(section)
+    local init_val = ""
+    if type(cur) == "table" then
+        init_val = table.concat(cur, ";")
+    elseif type(cur) == "string" then
+        init_val = cur
+    end
+%>
+
+<%+cbi/valueheader%>
+
+<style>
+    .cbi-peakhour-svg-button {
+        padding: 6px 12px;
+        font-size: 14px;
+        font-weight: normal;
+        text-align: center;
+        line-height: unset;
+        width: auto;
+    }
+
+    fieldset div.cbi-value-field select.cbi-input-select.peak-width { width: 80px; min-width: 80px; max-width: 80px; }
+    fieldset div.cbi-value-field input[type="time"].peak-width { width: 95px; min-width: 95px; max-width: 95px; height: 34px !important;}
+    fieldset div.cbi-value-field .peak-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    fieldset div.cbi-value-field .peak-row-content { display: inline-flex; align-items: center; gap: 8px; border: 1px solid transparent; border-radius: 4px; padding: 4px; }
+</style>
+
+<input data-update="change"<%=
+    attr("id", cbid) ..
+    attr("name", cbid) ..
+    attr("type", "hidden") ..
+    attr("class", "cbi-input-text") ..
+    attr("value", init_val)
+%> />
+
+<div id="<%=id_str%>-rows"></div>
+
+<script>
+    var rowsContainer = document.getElementById("<%=id_str%>-rows");
+    var hidden = document.getElementById("<%=cbid%>");
+    var DEFAULT_ROW = ['5','18','0','20','30'];
+
+    function ensureOneRow() {
+        if (rowsContainer.querySelectorAll('.peak-row').length === 0) {
+            addRow(DEFAULT_ROW);
+        }
+        updateButtons();
+    }
+
+    function updateButtons() {
+        var rows = rowsContainer.querySelectorAll('.peak-row');
+        var count = rows.length;
+        rows.forEach(function (row, idx) {
+            var addBtn = row.querySelector('.btn-add');
+            var removeBtn = row.querySelector('.btn-remove');
+            var isSingle = count <= 1;
+            var isLast = idx === count - 1;
+            if (isSingle || isLast) {
+                if (addBtn) {
+                    addBtn.style.display = '';
+                    addBtn.disabled = false;
+                }
+                if (removeBtn) {
+                    removeBtn.style.display = 'none';
+                    removeBtn.disabled = true;
+                }
+            }
+            else {
+                if (addBtn) {
+                    addBtn.style.display = 'none';
+                    addBtn.disabled = true; }
+                if (removeBtn) {
+                    removeBtn.style.display = '';
+                    removeBtn.disabled = false;
+                }
+            }
+        });
+    }
+
+    function formatTime(hour, minute) {
+        return (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
+    }
+
+    function parseTime(timeStr) {
+        if (!timeStr || timeStr === '') return { hour: 0, minute: 0 };
+        var parts = timeStr.split(':');
+        return {
+            hour: parseInt(parts[0]) || 0,
+            minute: parseInt(parts[1]) || 0
+        };
+    }
+
+    function setHidden() {
+        var vals = [];
+        var rows = rowsContainer.querySelectorAll('.peak-row');
+        rows.forEach(function (row) {
+            var d = row.querySelector('.peak-day').value;
+            var startTime = parseTime(row.querySelector('.peak-start-time').value);
+            var endTime = parseTime(row.querySelector('.peak-end-time').value);
+
+            if (d !== '' && startTime && endTime) {
+                vals.push([d, startTime.hour, startTime.minute, endTime.hour, endTime.minute].join(','));
+            }
+        });
+        hidden.value = vals.join(';');
+    }
+
+    function validateRow(row) {
+        var target = row.querySelector('.peak-row-content') || row;
+        target.classList.remove('value-invalid');
+
+        var startTimeStr = row.querySelector('.peak-start-time').value;
+        var endTimeStr = row.querySelector('.peak-end-time').value;
+
+        if (!startTimeStr || !endTimeStr) {
+            target.classList.add('value-invalid');
+            return false;
+        }
+
+        var startTime = parseTime(startTimeStr);
+        var endTime = parseTime(endTimeStr);
+        var start = startTime.hour * 60 + startTime.minute;
+        var end = endTime.hour * 60 + endTime.minute;
+
+        if (start >= end) {
+            target.classList.add('value-invalid');
+            return false;
+        }
+        return true;
+    }
+
+    function validateAllRows() {
+        var status = true;
+        var rows = rowsContainer.querySelectorAll('.peak-row');
+        rows.forEach(function (row) {
+            if (!validateRow(row)) {
+                status = false;
+            }
+        });
+        return status;
+    }
+
+    function addRow(values) {
+        var row = document.createElement('div');
+        row.className = 'peak-row';
+        row.innerHTML = `
+            <div class="peak-row-content">
+                <select class="cbi-input-select peak-width peak-day">
+                    <option value="1"><%=translate("Monday")%></option>
+                    <option value="2"><%=translate("Tuesday")%></option>
+                    <option value="3"><%=translate("Wednesday")%></option>
+                    <option value="4"><%=translate("Thursday")%></option>
+                    <option value="5"><%=translate("Friday")%></option>
+                    <option value="6"><%=translate("Saturday")%></option>
+                    <option value="7"><%=translate("Sunday")%></option>
+                    <option value="8"><%=translate("Workdays")%></option>
+                    <option value="9"><%=translate("Weekends")%></option>
+                    <option value="10"><%=translate("every day")%></option>
+                </select>
+                <input type="time" class="cbi-input-text peak-width peak-start-time" />
+                <span> — </span>
+                <input type="time" class="cbi-input-text peak-width peak-end-time" />
+                <button style="border-radius: 4px;" class="input-group-addon cbi-peakhour-svg-button btn-remove"><svg class="svg-inline--fa fa-minus fa-w-12" aria-hidden="true" focusable="false" data-prefix="far" data-icon="minus" role="img" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M368 224H16c-8.84 0-16 7.16-16 16v32c0 8.84 7.16 16 16 16h352c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16z"></path></svg></button>
+                <button style="border-radius: 4px;" class="input-group-addon cbi-peakhour-svg-button btn-add"><svg class="svg-inline--fa fa-plus fa-w-12" aria-hidden="true" focusable="false" data-prefix="far" data-icon="plus" role="img" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M368 224H224V80c0-8.84-7.16-16-16-16h-32c-8.84 0-16 7.16-16 16v144H16c-8.84 0-16 7.16-16 16v32c0 8.84 7.16 16 16 16h144v144c0 8.84 7.16 16 16 16h32c8.84 0 16-7.16 16-16V288h144c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16z"></path></svg></button>
+                <a style="position: absolute; top: -9999px; left: -9999px; width: 0; height: 0; overflow: hidden;">&nbsp;</a>
+            </div>
+        `;
+        var startTimeInput = row.querySelector('.peak-start-time');
+        var endTimeInput = row.querySelector('.peak-end-time');
+
+        if (values && values.length === 5) {
+            row.querySelector('.peak-day').value = values[0];
+            startTimeInput.value = formatTime(parseInt(values[1]), parseInt(values[2]));
+            endTimeInput.value = formatTime(parseInt(values[3]), parseInt(values[4]));
+        }
+        row.addEventListener('change', function () {
+            setHidden();
+            validateAllRows();
+        });
+        row.querySelector('.btn-remove').onclick = function () {
+            rowsContainer.removeChild(row);
+            setHidden();
+            updateButtons();
+            validateAllRows();
+        };
+        row.querySelector('.btn-add').onclick = function () {
+            var hasRows = rowsContainer.querySelectorAll('.peak-row').length > 0;
+            addRow(hasRows ? null : DEFAULT_ROW);
+            setHidden();
+            updateButtons();
+            validateAllRows();
+        };
+        rowsContainer.appendChild(row);
+        updateButtons();
+    }
+
+    var init = hidden.value;
+    if (init && init.length > 0) {
+        init.split(';').forEach(function (s) {
+            var parts = s.split(',');
+            if (parts.length === 5) {
+                addRow(parts);
+            }
+        });
+    }
+
+    if (rowsContainer.children.length === 0) {
+      addRow(DEFAULT_ROW);
+    }
+
+    setHidden();
+    updateButtons();
+
+    var form = hidden.closest('form');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            if (!validateAllRows()) {
+                e.preventDefault();
+                create_info_box({msg:"<%:Peak Period is invalid: start time must be earlier than end time.%>",btn_val:"<%:OK%>"});
+            }
+        });
+    }
+</script>
+
+<%+cbi/valuefooter%>

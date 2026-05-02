@@ -1,0 +1,10 @@
+Package: terminal_trackd
+Version: 1.0-20250312
+Depends: libc, uci, ubus, libubox20210516, libjson-c5, libcurl4, tc, nradio-utils, libbdinfo, libopenssl1.1, libpthread
+Source: package/nradio/services/terminal_trackd
+SourceName: terminal_trackd
+Section: nradiowifi
+SourceDateEpoch: 1775741501
+Architecture: aarch64_cortex-a53
+Installed-Size: 37342
+Description:  Terminal management

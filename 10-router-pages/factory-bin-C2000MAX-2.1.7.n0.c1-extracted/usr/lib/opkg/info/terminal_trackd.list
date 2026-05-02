@@ -1,0 +1,4 @@
+/etc/config/terminal_trackd
+/etc/fixup.d/92-terminal_trackd
+/etc/init.d/terminal_trackd
+/usr/sbin/terminal_trackd

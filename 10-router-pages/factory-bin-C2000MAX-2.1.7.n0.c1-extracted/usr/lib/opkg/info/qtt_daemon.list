@@ -1,0 +1,5 @@
+/sbin/pin_checksum.sh
+/sbin/wsc_settings_STAUT
+/sbin/qtt_mtk_dut
+/sbin/wsc_settings_APUT
+/sbin/qtt_create_mbss.sh

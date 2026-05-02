@@ -1,0 +1,77 @@
+<%
+	local i, key
+	local util = require "luci.util"
+	local uci = require "luci.model.uci".cursor()
+	local id_str=cbid:gsub('%.', '_');
+%>
+
+
+
+<%+cbi/valueheader%>
+<style>
+	fieldset div.cbi-value-field>select.cbi-input-select.small-width{
+		width:80px;
+	}
+	fieldset select{
+		float:left;
+	}
+</style>
+		<input data-update="change"<%=
+			attr("id", cbid) ..
+			attr("name", cbid) ..
+			attr("type", "hidden") ..
+			attr("class", self.password and "cbi-input-password" or "cbi-input-text") ..
+			attr("value", self:cfgvalue(section) or self.default) ..
+			ifattr(self.size, "size") ..
+			ifattr(self.placeholder, "placeholder") ..
+			ifattr(self.readonly, "readonly") ..
+			ifattr(self.maxlength, "maxlength") ..
+			ifattr(self.datatype, "data-type", self.datatype) ..
+			ifattr(self.datatype, "data-optional", self.optional or self.rmempty) ..
+			ifattr(self.combobox_manual, "data-manual", self.combobox_manual) ..
+			ifattr(#self.keylist > 0, "data-choices", { self.keylist, self.vallist })
+		%> />
+		<select class="cbi-input-select small-width" onchange="set_start_time(this)" <%=
+		attr("id", cbid.."-starthour") ..
+		attr("name", cbid.."-starthour") ..
+		ifattr(self.size, "size")
+		%>>
+			<% for i = 0, 23 do -%>
+			<option<%=
+				attr("id", cbid.."-"..i) ..
+				attr("value", i) ..
+				attr("data-index", i) ..
+				ifattr(tostring(self:cfgvalue(section) or self.default) == i, "selected", "selected")
+			%>><%=i%></option>
+		<%- end %>
+		</select>
+		<div style="float:left;height:34px;width:10px;line-height: 34px;">:</div>
+		<select class="cbi-input-select small-width" onchange="set_start_time(this)" <%=
+		attr("id", cbid.."-startminute") ..
+		attr("name", cbid.."-startminute") ..
+		ifattr(self.size, "size")
+		%>>
+			<% for i = 0, 59 do -%>
+			<option<%=
+				attr("id", cbid.."-"..i) ..
+				attr("value", i) ..
+				attr("data-index", i) ..
+				ifattr(tostring(self:cfgvalue(section) or self.default) == i, "selected", "selected")
+			%>><%=i%></option>
+		<%- end %>
+		</select>
+		<script>
+			var data_<%=id_str%>=document.getElementById("<%=cbid%>").value;
+			if(data_<%=id_str%>){
+				document.getElementById("<%=cbid.."-starthour"%>").value=(data_<%=id_str%>.split(":")[0]);
+				document.getElementById("<%=cbid.."-startminute"%>").value=(data_<%=id_str%>.split(":")[1]);
+			}
+			function set_start_time(obj){
+				var id_var = $(obj).attr("id").split("-")[0];
+				
+				var data_var = document.getElementById(id_var+"-starthour").value + ":"+document.getElementById(id_var+"-startminute").value;
+				document.getElementById(id_var).value=data_var;
+				console.log("id:"+id_var+" val:"+data_var);
+			}
+		</script>
+<%+cbi/valuefooter%>

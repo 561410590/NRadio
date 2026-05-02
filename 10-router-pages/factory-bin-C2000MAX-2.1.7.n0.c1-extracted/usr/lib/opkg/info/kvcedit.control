@@ -1,0 +1,11 @@
+Package: kvcedit
+Version: 1
+Depends: libc, libkvcutil
+Source: package/nradio/apps/datconf
+SourceName: kvcedit
+Section: util
+SourceDateEpoch: 1649857235
+Maintainer: Weijie Gao <weijie.gao@mediatek.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 3630
+Description:  Utility for editing key-value based config files

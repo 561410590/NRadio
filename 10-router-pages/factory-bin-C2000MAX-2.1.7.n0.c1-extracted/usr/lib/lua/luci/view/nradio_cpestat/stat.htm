@@ -1,0 +1,192 @@
+<%
+
+local uci = require "luci.model.uci".cursor()
+local utl = require "luci.util"
+local lng = require "luci.i18n"
+local http = require "luci.http"
+local ut = require "luci.util"
+local nr = require "luci.nradio"
+local max, stype, t, idx
+
+local slt = tonumber(http.formvalue("slt") or "0")
+local slots = tonumber(uci:get("cpesel", "sim", "max") or "1")
+
+stype = ut.split(uci:get("cpesel", "sim", "stype") or "0", ",")
+stype_str = {translate("SIM Slot"),
+             translate("Embedded China Mobile SIM"),
+             translate("Embedded China Unicom SIM"),
+             translate("Embedded China Telecom SIM"),
+             translate("Embedded SIM")}
+
+stype_idx = {0, 0, 0, 0, 0}
+stype_cnt = {0, 0, 0, 0, 0}
+
+if 1 < slots then
+	if slt == 0 or slots < slt then
+		slt = 1
+	end
+else
+	slt = 0
+end
+
+local reset = uci:get("tcsd", iface, "reset") or "0"
+local tx_h = uci:get("tcsd", iface, "tx"..slt.."_h")
+local rx_h = uci:get("tcsd", iface, "rx"..slt.."_h")
+local mon_h = uci:get("tcsd", iface, "mon"..slt.."_h")
+
+local tx = tx_h and utl.split(tx_h, ",") or {}
+local rx = rx_h and utl.split(rx_h, ",") or {}
+local mon = mon_h and utl.split(mon_h, ",") or {}
+
+local function bytes_convert(tx, rx)
+	local unit = {"B", "KB", "MB", "GB", "TB"}
+	local _tx = tonumber(tx) or 0
+	local _rx = tonumber(rx) or 0
+	local _tot = _tx + _rx
+	local i = 1
+
+	while _tot > 1024 and i < #unit do
+		_tot = _tot / 1024
+		i = i + 1
+	end
+
+	return (string.format("%.2f", _tot)..unit[i])
+end
+
+local function get_runtime()
+	local name = iface..slt
+	local tc = utl.ubus("tcsd", "get", {name=name})
+	local _tx = 0
+	local _rx = 0
+	local tmp
+
+	if tc[name] then
+		tmp = utl.split(tc[name], ",") or "0,0"
+		_tx = tmp[1] or _tx
+		_rx = tmp[2] or _rx
+	end
+
+	if _tx == "0" or _rx == "0" then
+		_tx = uci:get("tcsd", iface, "tx"..slt) or _tx
+		_rx = uci:get("tcsd", iface, "rx"..slt) or _rx
+	end
+
+	return bytes_convert(_tx, _rx)
+end
+
+%>
+<fieldset class="cbi-section">
+<div class="cbi-section-node">
+<%
+if slots > 1 then
+	local sel = ""
+%>
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%:SIM Selection%></label>
+		<div class="cbi-value-field">
+			<select class="cbi-input-select" id="slot">
+
+<%
+	for i = 1, slots do
+		t = (stype[i] and stype[i] or 0) + 1
+		stype_cnt[t] = stype_cnt[t] + 1
+	end
+
+	if stype_cnt[1] == slots then
+		stype_str[1] = translate("SIM")
+	end
+
+	for i = 1, slots do
+		t = (stype[i] and stype[i] or 0) + 1
+		stype_idx[t] = stype_idx[t] + 1
+		idx = stype_idx[t]
+
+		if i == slt then
+			sel = "selected"
+		else
+			sel = ""
+		end
+
+		if stype_cnt[t] > 1 then
+%>
+			<option value=<%=i%> <%=sel%>><%=stype_str[t]%><%=idx%></option>
+<%
+		else
+%>
+			<option value=<%=i%> <%=sel%>><%=stype_str[t]%></option>
+<%
+		end
+	end
+%>
+			</select>
+		</div>
+	</div>
+<%
+end
+%>
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%:Data Usage%></label>
+		<div class="cbi-value-field">
+			<input type="text" class="cbi-input-text" disabled value="<%=get_runtime()%>">
+			<input type="button" class="cbi-button" value="<%:Clear%>" id="runtime-reset">
+		</div>
+	</div>
+<%
+if reset == "1" then
+	for i = 1, #tx do
+		local tit = mon[i].." "..lng.translate("Data Usage")
+		local val = bytes_convert(tx[i], rx[i])
+%>
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%=tit%></label>
+		<div class="cbi-value-field">
+			<input type="text" class="cbi-input-text" disabled value="<%=val%>">
+		</div>
+	</div>
+<%
+	end
+end
+%>
+	<div class="cbi-value">
+		<label class="cbi-value-title"> </label>
+		<div class="cbi-value-field">
+		<p><%:*NOTICE: The above traffic statistics are for reference only. For details of traffic usage, please refer to the statistics of the Internet Service Provider%></p>
+		</div>
+	</div>
+</div>
+</fieldset>
+<script language="javascript">
+	$(document).ready(function(){
+		$('#slot').on('change', function() {
+			window.location = window.location.href.split('?')[0]+'?slt='+this.value;
+		});
+		$("#runtime-reset").click(function(e){
+			var data={};
+			var row='<div><span class="far fa-fw fa-2x fa-exclamation-circle" aria-hidden="true"></span><%:Are you sure you want to clear the accumulated traffic statistics?%></div>';
+			var htm=row.compose();
+			data['token']='<%=token%>';
+			data['slot']='<%=slt%>';
+			data['iface']='<%=iface%>';
+			BootstrapDialog.show({
+				type: BootstrapDialog.TYPE_DEFAULT,
+				title: '',
+				message: htm,
+				buttons: [{
+					label: '<%:Cancel%>',
+					cssClass: 'btn-nradio-cancel',
+					action: function(dialog) {
+						dialog.close();
+					}
+				}, {
+					label: '<%:Yes%>',
+					cssClass: 'btn-nradio-apply',
+					action: function(dialog) {
+						(new XHR()).post('<%=controller%>nradio/cpestat/reset', data, function(){
+							location.reload();
+						});
+					}
+				}]
+			});
+		});
+	});
+</script>

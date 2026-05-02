@@ -1,0 +1,5 @@
+/usr/lib/lua/luci/luapdu/smsobject.lua
+/usr/lib/lua/luci/luapdu.lua
+/usr/lib/lua/luci/controller/nradio_adv/sms.lua
+/usr/lib/lua/luci/luapdu/string.lua
+/usr/lib/lua/luci/view/nradio_sms/index.htm
