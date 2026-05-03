@@ -1,5 +1,15 @@
 # Changelog
 
+## V2.0.30 - 2026-05-04
+
+- `SCRIPT_VERSION` 更新为 `V2.0.30`。
+- `SCRIPT_RELEASE_DATE` 更新为 `2026-05-04`。
+- 雷神主卸载链在官方卸载脚本执行后继续无条件兜底清理。
+- 雷神内置 `/usr/libexec/nradio-leigod-uninstall` 同步无条件兜底清理。
+- 雷神卸载链补删 `/etc/config/acc_version.ini` 和 `/tmp/leigod-plugin-install.sh`。
+- 实机验证确认应用商店卸载后无雷神二进制、init、配置、进程、监听端口、controller、view、icon 和 AppCenter 残留。
+- 公网页同步 V2.0.30 雷神卸载残留清理说明，并保留 V2.0.25 / V2.0.20 历史更新卡。
+
 ## V2.0.25 - 2026-05-03
 
 - `SCRIPT_VERSION` 更新为 `V2.0.25`。

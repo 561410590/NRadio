@@ -2,9 +2,9 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V2.0.25"
+SCRIPT_VERSION="V2.0.30"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
-SCRIPT_RELEASE_DATE="2026-05-03"
+SCRIPT_RELEASE_DATE="2026-05-04"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
 SCRIPT_MODEL_NOTICE="适用机型：NRadio_C8-668/NRadio_C8-688/NRadio_C5800-688/NRadio_NBCPE/NRadio_C2000MAX 官方NROS2.x系统"
 SCRIPT_SCOPE_NOTICE="适用于带 NRadio 应用商店的官方固件，并非标准 OpenWrt"
@@ -2578,14 +2578,13 @@ cleanup_leigod() {
     fi
     if [ -f "$LEIGOD_DIR/leigod_uninstall.sh" ]; then
         ( cd "$LEIGOD_DIR" && sh ./leigod_uninstall.sh ) >>/tmp/nradio-plugin-uninstall.log 2>&1 || true
-    else
-        kill_name acc-gw.router.arm64
-        kill_name acc-gw.router.aarch64
-        kill_name acc_upgrade_monitor
-        rm -rf "$LEIGOD_DIR" /tmp/acc 2>/dev/null || true
-        rm -f "$LEIGOD_INIT" /etc/config/accelerator 2>/dev/null || true
     fi
-    rm -f "$LEIGOD_CONTROLLER" "$LEIGOD_VIEW" 2>/dev/null || true
+    kill_name acc-gw.router.arm64
+    kill_name acc-gw.router.aarch64
+    kill_name acc_upgrade_monitor
+    rm -rf "$LEIGOD_DIR" /tmp/acc "${LEIGOD_VIEW%/*}" 2>/dev/null || true
+    rm -f "$LEIGOD_INIT" /etc/config/accelerator /etc/config/accelerator.ini /etc/config/acc_version.ini /tmp/leigod-plugin-install.sh 2>/dev/null || true
+    rm -f "$LEIGOD_CONTROLLER" "$LEIGOD_VIEW" /usr/libexec/nradio-leigod-uninstall 2>/dev/null || true
     remove_app_icon_file "$LEIGOD_ICON_NAME"
     cleanup_appcenter_entry "$LEIGOD_APP_NAME" "$LEIGOD_PACKAGE_NAME" "$LEIGOD_ROUTE"
     cleanup_appcenter_entry "$LEIGOD_PACKAGE_NAME" "$LEIGOD_PACKAGE_NAME" "$LEIGOD_ROUTE"
@@ -23878,6 +23877,7 @@ PKG_NAME="nradio-leigod"
 APP_ROUTE="nradioadv/system/leigod"
 APP_CONTROLLER="/usr/lib/lua/luci/controller/nradio_adv/leigod.lua"
 APP_VIEW="/usr/lib/lua/luci/view/nradiobridge_leigod/leigod.htm"
+APP_VIEW_DIR="${APP_VIEW%/*}"
 APP_ICON="/www/luci-static/nradio/images/icon/leigod.svg"
 LEIGOD_DIR="/usr/sbin/leigod"
 LEIGOD_INIT="/etc/init.d/acc"
@@ -23899,11 +23899,10 @@ if [ -x "$LEIGOD_INIT" ]; then
 fi
 if [ -f "$LEIGOD_DIR/leigod_uninstall.sh" ]; then
     ( cd "$LEIGOD_DIR" && sh ./leigod_uninstall.sh ) >/tmp/nradio-leigod-official-uninstall.log 2>&1 || true
-else
-    killall acc-gw.router.arm64 acc-gw.router.aarch64 acc_upgrade_monitor >/dev/null 2>&1 || true
-    rm -rf "$LEIGOD_DIR" /tmp/acc 2>/dev/null || true
-    rm -f "$LEIGOD_INIT" /etc/config/accelerator 2>/dev/null || true
 fi
+killall acc-gw.router.arm64 acc-gw.router.aarch64 acc_upgrade_monitor >/dev/null 2>&1 || true
+rm -rf "$LEIGOD_DIR" /tmp/acc "$APP_VIEW_DIR" 2>/dev/null || true
+rm -f "$LEIGOD_INIT" /etc/config/accelerator /etc/config/accelerator.ini /etc/config/acc_version.ini /tmp/leigod-plugin-install.sh 2>/dev/null || true
 delete_sections package name "$APP_NAME"
 delete_sections package name "$PKG_NAME"
 delete_sections package_list name "$APP_NAME"
@@ -23911,7 +23910,7 @@ delete_sections package_list pkg_name "$PKG_NAME"
 delete_sections package_list parent "$APP_NAME"
 delete_sections package_list luci_module_route "$APP_ROUTE"
 uci -q commit appcenter >/dev/null 2>&1 || true
-rm -f "$APP_CONTROLLER" "$APP_VIEW" "$APP_ICON" 2>/dev/null || true
+rm -f "$APP_CONTROLLER" "$APP_VIEW" "$APP_ICON" /usr/libexec/nradio-leigod-uninstall 2>/dev/null || true
 rm -f /tmp/luci-indexcache /tmp/infocd/cache/appcenter 2>/dev/null || true
 rm -f /tmp/luci-modulecache/* 2>/dev/null || true
 /etc/init.d/infocd restart >/dev/null 2>&1 || true

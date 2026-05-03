@@ -1,9 +1,9 @@
 # NRadio public file checksums
 
-Generated from local UTF-8 file contents on 2026-05-03.
+Generated from local UTF-8 file contents on 2026-05-04.
 
 ```text
-6752a063babaeeb32ab1b95fe101df20731baf158830ad9b502482e2ba02177e  987849  00-current/ssh-nradio-plugin-installer.sh
-e7289449993ed7966fd01cc37f6709fd02648aa6ee16064ef14260d1a9a7ad12  212854  40-server-web/mayebano-support/index.html
+40327b4a808b4440b785b1d662222121e3ad6f67581e1c55017040d8597a17d3  988115  00-current/ssh-nradio-plugin-installer.sh
+d7833437f437e4256453458fa0a46f6309fd7c6936836ff9be0cf1ebbb4e2df8  222056  40-server-web/mayebano-support/index.html
 14532b515ea892f02c6f601b9e6b48e98f82004d4c6c8820eb3c10f9980074c6     564  vercel.json
 ```
