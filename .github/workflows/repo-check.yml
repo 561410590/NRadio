@@ -36,14 +36,19 @@ jobs:
           printf '%s  %s\n' '754f54fd7502633097d30d52ac6d7b487074753d32575650d05b31bc03304fd2' '10-router-pages/factory-bin-C2000MAX-2.1.7.n0.c1-extracted/usr/lib/lua/luci/controller/nradio_adv/appcenter.lua' | sha256sum -c -
           printf '%s  %s\n' 'c7e4d540582152f1f7afde7ce604b305a48c7299cae5d18d1fa1736ff7ee2f23' '10-router-pages/factory-bin-C2000MAX-2.1.7.n0.c1-extracted/usr/lib/lua/luci/view/nradio_appcenter/appcenter.htm' | sha256sum -c -
 
-      - name: Verify V2.0.30 script state
+      - name: Verify V2.0.35 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V2.0.30"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'SCRIPT_RELEASE_DATE="2026-05-04"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V2.0.35"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_RELEASE_DATE="2026-05-06"' 00-current/ssh-nradio-plugin-installer.sh
           ! grep -q '测试中' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '2. 雷神加速器" 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'printf "6. MosDNS' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'install_mosdns' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'cleanup_mosdns' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'MOSDNS_VERSION' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'MosDNS 核心下载失败' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-668' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'HC-WT9108' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-688|NRadio_C2000MAX' 00-current/ssh-nradio-plugin-installer.sh
@@ -90,9 +95,11 @@ jobs:
 
       - name: Verify support page state
         run: |
+          grep -q 'V2.0.35' 40-server-web/mayebano-support/index.html
+          grep -q 'MosDNS' 40-server-web/mayebano-support/index.html
+          grep -q '脚本新增 MosDNS 插件' 40-server-web/mayebano-support/index.html
           grep -q 'V2.0.30' 40-server-web/mayebano-support/index.html
           grep -q '雷神卸载残留清理' 40-server-web/mayebano-support/index.html
-          grep -q '修复雷神加速器卸载后，系统里可能有残留的问题' 40-server-web/mayebano-support/index.html
           grep -q 'V2.0.25' 40-server-web/mayebano-support/index.html
           grep -q '应用商店美化可以恢复默认' 40-server-web/mayebano-support/index.html
           grep -q 'V2.0.20' 40-server-web/mayebano-support/index.html
@@ -131,12 +138,12 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q '40327b4a808b4440b785b1d662222121e3ad6f67581e1c55017040d8597a17d3' CHECKSUMS.txt
-          grep -q 'd7833437f437e4256453458fa0a46f6309fd7c6936836ff9be0cf1ebbb4e2df8' CHECKSUMS.txt
-          grep -q '988115  00-current/ssh-nradio-plugin-installer.sh' CHECKSUMS.txt
-          grep -q '222056  40-server-web/mayebano-support/index.html' CHECKSUMS.txt
-          printf '%s  %s\n' '40327b4a808b4440b785b1d662222121e3ad6f67581e1c55017040d8597a17d3' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
-          printf '%s  %s\n' 'd7833437f437e4256453458fa0a46f6309fd7c6936836ff9be0cf1ebbb4e2df8' '40-server-web/mayebano-support/index.html' | sha256sum -c -
+          grep -q 'b62aaeebb1d22edfc4a0e80d3a6cd3cb46cefbe0704c428f08f588b43f58176e' CHECKSUMS.txt
+          grep -q '1001725  00-current/ssh-nradio-plugin-installer.sh' CHECKSUMS.txt
+          grep -q '7a93c8a9056b839adb2456ebb96b97bd8e30d65a6bfcf415235fa4fb444c7b73' CHECKSUMS.txt
+          grep -q '222590  40-server-web/mayebano-support/index.html' CHECKSUMS.txt
+          printf '%s  %s\n' 'b62aaeebb1d22edfc4a0e80d3a6cd3cb46cefbe0704c428f08f588b43f58176e' '00-current/ssh-nradio-plugin-installer.sh' | sha256sum -c -
+          printf '%s  %s\n' '7a93c8a9056b839adb2456ebb96b97bd8e30d65a6bfcf415235fa4fb444c7b73' '40-server-web/mayebano-support/index.html' | sha256sum -c -
 
       - name: Verify license
         run: |
@@ -146,12 +153,12 @@ jobs:
 
       - name: Verify repository docs
         run: |
-          grep -q 'V2.0.30' README.md
-          grep -q 'V2.0.30' CHANGELOG.md
+          grep -q 'V2.0.35' README.md
+          grep -q 'V2.0.35' CHANGELOG.md
           grep -q 'OpenVPN 控制台界面升级' README.md
           grep -q 'OpenVPN 控制台界面升级' CHANGELOG.md
-          grep -q '40327b4a808b4440b785b1d662222121e3ad6f67581e1c55017040d8597a17d3' README.md
-          grep -q '988115' README.md
+          grep -q 'b62aaeebb1d22edfc4a0e80d3a6cd3cb46cefbe0704c428f08f588b43f58176e' README.md
+          grep -q '1001725' README.md
           grep -q 'GitHub main -> Vercel Production' CONTRIBUTING.md
           grep -q 'Only the current public script is maintained' SECURITY.md
           grep -q 'Do not include router passwords' .github/ISSUE_TEMPLATE/bug_report.yml

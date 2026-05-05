@@ -2,7 +2,7 @@
 
 NRadio 官方 NROS2.0 路由器使用的 SSH 菜单脚本。
 
-- 当前版本：`V2.0.30`
+- 当前版本：`V2.0.35`
 - 公网页：[https://nradio.mayebano.shop/](https://nradio.mayebano.shop/)
 - Release：[v2.0.30](https://github.com/561410590/ssh-nradio-plugin-installer/releases/tag/v2.0.30)
 
@@ -38,33 +38,28 @@ sh ssh-nradio-plugin-installer.sh
 
 ## 功能清单
 
-当前 6 个功能组：
+当前 5 个功能分类：
 
-| 功能组 | 内容 |
+| 功能分类 | 内容 |
 | --- | --- |
-| 常用插件 | Web SSH、OpenList、AdGuardHome、哈基米 |
-| 网络组网 | EasyTier、ZeroTier、OpenVPN |
-| 应用商店美化 | 卡片视觉、状态徽标、只读面板 |
-| 系统维护 | swap、自检、卸载链 |
-| 风扇控制 | C8-688、C2000MAX、Smart PWM |
-| 游戏加速器 | 奇游、雷神、状态读取 |
+| 常用插件安装 | Web SSH、OpenList、AdGuardHome、哈基米 |
+| VPN / 组网 / 路由向导 | EasyTier、ZeroTier、OpenVPN |
+| 游戏加速器 | 奇游、雷神、状态读取和卸载链 |
+| 应用商店与页面美化 | 卡片视觉、状态徽标、原厂还原 |
+| 设备维护与检测 | swap、自检、通用卸载链、风扇控制 |
 
-## V2.0.30 更新
+## V2.0.35 更新
 
-- 雷神加速器卸载链补强，卸载后继续兜底清理残留文件、进程和应用商店入口。
-- 补删 `/etc/config/acc_version.ini` 和 `/tmp/leigod-plugin-install.sh`。
-- 公网页同步 V2.0.30 雷神卸载残留清理说明，并继续保持粉色主题。
-- 应用商店与页面美化菜单保留“还原应用商店”入口。
-- 还原功能直接写回脚本内置 C2000MAX 2.1.7 原厂应用商店页面与控制器。
-- 该功能不读取旧备份目录，不覆盖 `/etc/config/appcenter`。
-- OpenVPN 控制台界面升级。
-- 主界面删除冗余状态项，保留连接状态、可用操作、路由与日志排查等核心信息。
-- “目标检查”面板更清楚地展示远端目标和规则状态。
-- 基础配置、高级配置、文件编辑和导入页面统一为暗色控制台风格。
-- 公网页继续保留 V2.0.25 应用商店恢复默认说明和 V2.0.20 历史更新卡。
+- 新增 **MosDNS** 插件（常用插件菜单第 6 项）：轻量 DNS 分流，支持国内外 DNS 分流/缓存，UCI 配置页 + 保存自动同步 YAML + 日志页。
+- 雷神加速器卸载链保留 V2.0.30 成果：补删 `/etc/config/acc_version.ini` 和 `/tmp/leigod-plugin-install.sh`。
+- 公网页同步 V2.0.35 版本口径，新增 MosDNS 说明。
+- 应用商店与页面美化菜单保留"还原应用商店"入口。
+- OpenVPN 控制台界面升级（Mk3）。
+- 脚本 SHA256：`b62aaeebb1d22edfc4a0e80d3a6cd3cb46cefbe0704c428f08f588b43f58176e`（大小 1001725 字节）。
 
 ## 版本记录
 
+- `V2.0.35`：新增 MosDNS 插件。
 - `V2.0.30`：雷神卸载残留清理。
 - `V2.0.25`：应用商店原厂还原入口与版本头更新。
 - `V2.0.20`：OpenVPN 控制台界面升级。
@@ -81,7 +76,7 @@ sh ssh-nradio-plugin-installer.sh
 
 | 文件 | 用途 |
 | --- | --- |
-| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.30 正式脚本 |
+| `00-current/ssh-nradio-plugin-installer.sh` | V2.0.35 正式脚本 |
 | `40-server-web/mayebano-support/index.html` | 公网支持页 |
 | `40-server-web/mayebano-support/wechat-donate.png` | 微信支持图片 |
 | `CHECKSUMS.txt` | 当前公开文件校验 |

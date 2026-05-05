@@ -2,9 +2,9 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V2.0.30"
+SCRIPT_VERSION="V2.0.35"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
-SCRIPT_RELEASE_DATE="2026-05-04"
+SCRIPT_RELEASE_DATE="2026-05-06"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
 SCRIPT_MODEL_NOTICE="适用机型：NRadio_C8-668/NRadio_C8-688/NRadio_C5800-688/NRadio_NBCPE/NRadio_C2000MAX 官方NROS2.x系统"
 SCRIPT_SCOPE_NOTICE="适用于带 NRadio 应用商店的官方固件，并非标准 OpenWrt"
@@ -124,6 +124,24 @@ OPENCLASH_ICON_NAME="${OPENCLASH_ICON_NAME:-openclash.svg}"
 OPENCLASH_ICON_URLS="${OPENCLASH_ICON_URLS:-https://ghproxy.net/https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png https://gh-proxy.com/https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png}"
 ADGUARDHOME_ICON_NAME="${ADGUARDHOME_ICON_NAME:-adguard.svg}"
 ADGUARDHOME_ICON_URLS="${ADGUARDHOME_ICON_URLS:-https://fastly.jsdelivr.net/npm/simple-icons@latest/icons/adguard.svg https://testingcf.jsdelivr.net/npm/simple-icons@latest/icons/adguard.svg https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/adguard.svg}"
+
+MOSDNS_VERSION="${MOSDNS_VERSION:-5.3.4}"
+MOSDNS_ASSET_NAME="${MOSDNS_ASSET_NAME:-mosdns-linux-arm64.zip}"
+MOSDNS_SHA256="${MOSDNS_SHA256:-82d80a1a21606fca0bc6b65ac6f90d30cff6bb4a19a6ab6a246cf247dbb78bc0}"
+MOSDNS_GITHUB_REL="${MOSDNS_GITHUB_REL:-IrineSistiana/mosdns/releases/download/v${MOSDNS_VERSION}/${MOSDNS_ASSET_NAME}}"
+MOSDNS_DOWNLOAD_URLS="${MOSDNS_DOWNLOAD_URLS:-https://mirror.ghproxy.com/https://github.com/${MOSDNS_GITHUB_REL} https://ghproxy.net/https://github.com/${MOSDNS_GITHUB_REL} https://gh-proxy.com/https://github.com/${MOSDNS_GITHUB_REL} https://github.com/${MOSDNS_GITHUB_REL}}"
+MOSDNS_BIN="${MOSDNS_BIN:-/usr/bin/mosdns}"
+MOSDNS_CONFIG_DIR="${MOSDNS_CONFIG_DIR:-/etc/mosdns}"
+MOSDNS_INIT="${MOSDNS_INIT:-/etc/init.d/mosdns}"
+MOSDNS_SYNC="${MOSDNS_SYNC:-/usr/libexec/mosdns-sync-config}"
+MOSDNS_UNINSTALL="${MOSDNS_UNINSTALL:-/usr/libexec/nradio-mosdns-uninstall}"
+MOSDNS_CONTROLLER="${MOSDNS_CONTROLLER:-/usr/lib/lua/luci/controller/nradio_adv/mosdns.lua}"
+MOSDNS_CBI="${MOSDNS_CBI:-/usr/lib/lua/luci/model/cbi/nradio_adv/mosdns_basic.lua}"
+MOSDNS_VIEW="${MOSDNS_VIEW:-/usr/lib/lua/luci/view/nradio_adv/mosdns_logs.htm}"
+MOSDNS_ICON_NAME="${MOSDNS_ICON_NAME:-mosdns.svg}"
+MOSDNS_APP_NAME="${MOSDNS_APP_NAME:-MosDNS}"
+MOSDNS_PORT="${MOSDNS_PORT:-553}"
+MOSDNS_UCI_CONFIG="${MOSDNS_UCI_CONFIG:-/etc/config/mosdns}"
 WEBSSH_ICON_NAME="${WEBSSH_ICON_NAME:-webssh.svg}"
 WEBSSH_ICON_URLS="${WEBSSH_ICON_URLS:-https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/svgs/solid/terminal.svg https://testingcf.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/svgs/solid/terminal.svg https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/svgs/solid/terminal.svg}"
 OPENVPN_ICON_NAME="${OPENVPN_ICON_NAME:-openvpn.svg}"
@@ -1726,6 +1744,15 @@ optimize_adguardhome_cdn_order() {
     log "提示: AdGuardHome CDN 优先级: $RANKED_URL_HOSTS"
 }
 
+optimize_mosdns_cdn_order() {
+    [ "${MOSDNS_CDN_RANKED:-0}" = '1' ] && return 0
+    rank_url_list_hosts "mosdns" "MosDNS" "$MOSDNS_DOWNLOAD_URLS"
+    [ -n "${RANKED_URL_HOSTS:-}" ] || return 0
+    MOSDNS_DOWNLOAD_URLS="$(reorder_urls_by_host_rank "$MOSDNS_DOWNLOAD_URLS" "$RANKED_URL_HOSTS")"
+    MOSDNS_CDN_RANKED='1'
+    log "提示: MosDNS CDN 优先级: $RANKED_URL_HOSTS"
+}
+
 get_core_arch() {
     machine="$(uname -m 2>/dev/null || true)"
 
@@ -2357,6 +2384,19 @@ cleanup_adguardhome() {
     cleanup_appcenter_entry "luci-app-adguardhome" "luci-app-adguardhome" "admin/services/AdGuardHome"
 }
 
+cleanup_mosdns() {
+    stop_disable /etc/init.d/mosdns
+    kill_name mosdns
+    rm -f /usr/bin/mosdns /etc/init.d/mosdns /etc/config/mosdns /usr/libexec/mosdns-sync-config
+    rm -rf /etc/mosdns
+    rm -f /usr/lib/lua/luci/controller/nradio_adv/mosdns.lua \
+        /usr/lib/lua/luci/model/cbi/nradio_adv/mosdns_basic.lua \
+        /usr/lib/lua/luci/view/nradio_adv/mosdns_logs.htm
+    rm -f /www/luci-static/nradio/images/icon/mosdns.svg /usr/libexec/nradio-mosdns-uninstall
+    remove_app_icon_file "mosdns.svg"
+    cleanup_appcenter_entry "MosDNS" "MosDNS" "nradioadv/system/mosdns/basic"
+}
+
 cleanup_openvpn() {
     stop_disable /etc/init.d/openvpn
     kill_name openvpn
@@ -2537,6 +2577,19 @@ cleanup_easytier() {
     cleanup_appcenter_entry "$EASYTIER_I18N_PACKAGE_NAME" "$EASYTIER_I18N_PACKAGE_NAME" "$EASYTIER_ROUTE"
 }
 
+cleanup_mosdns() {
+    stop_disable /etc/init.d/mosdns
+    kill_name mosdns
+    rm -f /usr/bin/mosdns /etc/init.d/mosdns /etc/config/mosdns /usr/libexec/mosdns-sync-config
+    rm -rf /etc/mosdns
+    rm -f /usr/lib/lua/luci/controller/nradio_adv/mosdns.lua \
+        /usr/lib/lua/luci/model/cbi/nradio_adv/mosdns_basic.lua \
+        /usr/lib/lua/luci/view/nradio_adv/mosdns_logs.htm
+    rm -f /www/luci-static/nradio/images/icon/mosdns.svg /usr/libexec/nradio-mosdns-uninstall
+    remove_app_icon_file "mosdns.svg"
+    cleanup_appcenter_entry "MosDNS" "MosDNS" "nradioadv/system/mosdns/basic"
+}
+
 cleanup_fanctrl() {
     stop_disable "$FANCTRL_INIT_FILE"
     kill_name "$(basename "$FANCTRL_BIN_PATH")"
@@ -2621,6 +2674,9 @@ case "$plugin" in
     leigod)
         cleanup_leigod
         ;;
+    mosdns)
+        cleanup_mosdns
+        ;;
     *)
         exit 1
         ;;
@@ -2656,6 +2712,7 @@ function index()
     entry({"nradioadv", "system", "plugin_uninstall", "fanctrl"}, call("uninstall_fanctrl"), nil, 104).leaf = true
     entry({"nradioadv", "system", "plugin_uninstall", "qiyou"}, call("uninstall_qiyou"), nil, 105).leaf = true
     entry({"nradioadv", "system", "plugin_uninstall", "leigod"}, call("uninstall_leigod"), nil, 106).leaf = true
+    entry({"nradioadv", "system", "plugin_uninstall", "mosdns"}, call("uninstall_mosdns"), nil, 107).leaf = true
 end
 
 local function json_response(code, msg, detail)
@@ -2719,6 +2776,8 @@ local function plugin_from_name(name)
         return "qiyou"
     elseif name == "雷神加速器" or name == "Leigod" or name == "LeigodAcc" or name == "leigod" or name == "nradio-leigod" then
         return "leigod"
+    elseif name == "MosDNS" or name == "mosdns" then
+        return "mosdns"
     end
 
     return nil
@@ -2836,6 +2895,10 @@ end
 
 function uninstall_leigod()
     start_plugin("leigod")
+end
+
+function uninstall_mosdns()
+    start_plugin("mosdns")
 end
 EOF_PLUGIN_UNINSTALL_CONTROLLER
 }
@@ -3399,6 +3462,9 @@ verify_appcenter_route() {
                 ;;
             OpenVPN)
                 [ "$actual_controller" = "/usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua" ] && return 0
+                ;;
+            MosDNS)
+                [ "$actual_controller" = "/usr/lib/lua/luci/controller/nradio_adv/mosdns.lua" ] && return 0
                 ;;
         esac
     done
@@ -9819,6 +9885,223 @@ get_openlist_effective_data_dir() {
     openlist_effective_data_dir="$(uci -q get openlist.main.data_dir 2>/dev/null || true)"
     [ -n "$openlist_effective_data_dir" ] || openlist_effective_data_dir="$OPENLIST_DATA_DIR"
     printf '%s\n' "$openlist_effective_data_dir"
+}
+
+install_mosdns_embedded_icon() {
+    mkdir -p "$APP_ICON_DIR"
+    backup_file "$APP_ICON_DIR/$MOSDNS_ICON_NAME"
+    cat > "$APP_ICON_DIR/$MOSDNS_ICON_NAME" <<'EOF_MOSDNS_ICON'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#0891b2"/></linearGradient><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff" stop-opacity=".22"/><stop offset="100%" stop-color="#fff" stop-opacity=".02"/></linearGradient><filter id="f" x="-24%" y="-24%" width="148%" height="148%"><feDropShadow dx="0" dy="30" stdDeviation="28" flood-color="#020617" flood-opacity=".32"/></filter></defs><rect x="96" y="96" width="832" height="832" rx="220" fill="#243241" opacity=".36"/><rect x="132" y="132" width="760" height="760" rx="196" fill="url(#g)" filter="url(#f)"/><rect x="158" y="158" width="708" height="708" rx="176" fill="url(#s)"/><circle cx="640" cy="328" r="64" fill="#fff" fill-opacity=".16"/><text x="512" y="594" text-anchor="middle" font-family="Arial,sans-serif" font-size="252" font-weight="900" fill="#fff">MD</text><rect x="132" y="132" width="760" height="760" rx="196" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="18"/></svg>
+EOF_MOSDNS_ICON
+    chmod 644 "$APP_ICON_DIR/$MOSDNS_ICON_NAME" 2>/dev/null || true
+    return 0
+}
+
+download_mosdns_core() {
+    optimize_mosdns_cdn_order
+    mkdir -p "$WORKDIR/mosdns"
+    zip_path="$WORKDIR/mosdns/$MOSDNS_ASSET_NAME"
+    download_from_urls "$zip_path" $MOSDNS_DOWNLOAD_URLS || die "MosDNS 核心下载失败"
+    actual="$(sha256sum "$zip_path" 2>/dev/null | awk '{print $1}')"
+    [ -n "$actual" ] && [ "$actual" != "$MOSDNS_SHA256" ] && die "MosDNS SHA256 不匹配"
+
+    mkdir -p "$WORKDIR/mosdns/unpack"
+    unzip -o "$zip_path" -d "$WORKDIR/mosdns/unpack" >/dev/null 2>&1 || die "MosDNS 解压失败"
+    bin=""
+    for c in "$WORKDIR/mosdns/unpack/mosdns" "$WORKDIR/mosdns/unpack"/*/mosdns; do
+        [ -f "$c" ] && { bin="$c"; break; }
+    done
+    [ -n "$bin" ] || die "未找到 mosdns 二进制"
+    [ -f "$MOSDNS_BIN" ] && backup_file "$MOSDNS_BIN"
+    cp "$bin" "$MOSDNS_BIN"; chmod 755 "$MOSDNS_BIN"
+}
+
+install_mosdns() {
+    require_nradio_oem_appcenter
+    log_stage 1 6 "MosDNS 安装"
+    download_mosdns_core
+    log_stage 2 6 "写入 MosDNS 配置文件"
+
+    mkdir -p "$MOSDNS_CONFIG_DIR" /usr/libexec
+    cat > "$MOSDNS_SYNC" <<'EOF_MOSDNS_SYNC'
+#!/bin/sh
+CFG="/etc/mosdns/config.yaml"
+LISTEN_ADDR="$(uci -q get mosdns.main.listen_addr 2>/dev/null || echo 127.0.0.1)"
+LISTEN_PORT="$(uci -q get mosdns.main.listen_port 2>/dev/null || echo 553)"
+DOMESTIC_DNS="$(uci -q get mosdns.main.domestic_dns 2>/dev/null || echo 'https://223.5.5.5/dns-query https://120.53.53.53/dns-query')"
+FOREIGN_DNS="$(uci -q get mosdns.main.foreign_dns 2>/dev/null || echo 'https://1.1.1.1/dns-query https://8.8.8.8/dns-query')"
+FALLBACK_DNS="$(uci -q get mosdns.main.fallback_dns 2>/dev/null || echo 114.114.114.114:53)"
+CACHE_SIZE="$(uci -q get mosdns.main.cache_size 2>/dev/null || echo 10240)"
+CACHE_TTL="$(uci -q get mosdns.main.cache_ttl 2>/dev/null || echo 600)"
+LOG_LEVEL="$(uci -q get mosdns.main.log_level 2>/dev/null || echo info)"
+mkdir -p "$(dirname "$CFG")"
+{
+cat <<YAML
+log:
+  level: ${LOG_LEVEL}
+  file: /tmp/mosdns.log
+plugins:
+  - tag: cache
+    type: cache
+    args:
+      size: ${CACHE_SIZE}
+      lazy_cache_ttl: ${CACHE_TTL}
+  - tag: domestic_dns
+    type: forward
+    args:
+      upstreams:
+YAML
+for dns in $DOMESTIC_DNS; do echo "        - addr: $dns"; done
+cat <<YAML
+  - tag: foreign_dns
+    type: forward
+    args:
+      upstreams:
+YAML
+for dns in $FOREIGN_DNS; do echo "        - addr: $dns"; done
+cat <<YAML
+  - tag: fallback_dns
+    type: forward
+    args:
+      upstreams:
+        - addr: ${FALLBACK_DNS}
+  - tag: main_seq
+    type: sequence
+    args:
+      - exec: \$cache
+      - matches: has_resp
+        exec: accept
+      - exec: \$domestic_dns
+      - matches: has_resp
+        exec: accept
+      - exec: \$foreign_dns
+      - matches: has_resp
+        exec: accept
+      - exec: \$fallback_dns
+  - tag: main_udp
+    type: udp_server
+    args:
+      entry: main_seq
+      listen: ${LISTEN_ADDR}:${LISTEN_PORT}
+YAML
+} > "$CFG"
+EOF_MOSDNS_SYNC
+    chmod 755 "$MOSDNS_SYNC"
+
+    cat > "$MOSDNS_UCI_CONFIG" <<'EOF_MOSDNS_UCI'
+config mosdns 'main'
+    option enabled '1'
+    option listen_addr '127.0.0.1'
+    option listen_port '553'
+    option domestic_dns 'https://223.5.5.5/dns-query https://120.53.53.53/dns-query'
+    option foreign_dns 'https://1.1.1.1/dns-query https://8.8.8.8/dns-query'
+    option fallback_dns '114.114.114.114:53'
+    option cache_size '10240'
+    option cache_ttl '600'
+    option log_file '/tmp/mosdns.log'
+    option log_level 'info'
+EOF_MOSDNS_UCI
+
+    log_stage 3 6 "写入 MosDNS 启动脚本"
+    cat > "$MOSDNS_INIT" <<'EOF_MOSDNS_INIT'
+#!/bin/sh /etc/rc.common
+USE_PROCD=1
+START=90
+STOP=15
+SYNC="/usr/libexec/mosdns-sync-config"
+BIN="/usr/bin/mosdns"
+CFG="/etc/mosdns/config.yaml"
+start_service() {
+    [ -x "$SYNC" ] && ("$SYNC" 2>/dev/null; true)
+    [ -x "$BIN" ] || return 1
+    [ "$(uci -q get mosdns.main.enabled 2>/dev/null || echo 1)" = "1" ] || return 0
+    procd_open_instance
+    procd_set_param command "$BIN" start -c "$CFG"
+    procd_set_param respawn 3600 5 5
+    procd_set_param stdout 1; procd_set_param stderr 1
+    procd_close_instance
+}
+reload_service() { stop; start; }
+service_triggers() { procd_add_reload_trigger "mosdns"; }
+EOF_MOSDNS_INIT
+    chmod 755 "$MOSDNS_INIT"
+
+    log_stage 4 6 "写入 MosDNS OEM 页面、图标并注册应用商店"
+    mkdir -p "$(dirname "$MOSDNS_CONTROLLER")" "$(dirname "$MOSDNS_CBI")" "$(dirname "$MOSDNS_VIEW")"
+
+    cat > "$MOSDNS_CONTROLLER" <<'EOF_MOSDNS_CTRL'
+module("luci.controller.nradio_adv.mosdns", package.seeall)
+function index()
+    entry({"nradioadv","system","mosdns"}, alias("nradioadv","system","mosdns","basic"), _("MosDNS"), 80)
+    entry({"nradioadv","system","mosdns","basic"}, cbi("nradio_adv/mosdns_basic"), _("设置"), 10).leaf = true
+    entry({"nradioadv","system","mosdns","logs"}, template("nradio_adv/mosdns_logs"), _("运行日志"), 20).leaf = true
+    entry({"nradioadv","system","appcenter","mosdns"}, alias("nradioadv","system","mosdns"), nil, nil, true).leaf = true
+end
+EOF_MOSDNS_CTRL
+
+    cat > "$MOSDNS_CBI" <<'EOF_MOSDNS_CBI'
+local m,s,o
+m=Map("mosdns", translate("MosDNS"),translate("DNS 分流: <a href='%s'>日志</a>"):format(require("luci.dispatcher").build_url("nradioadv","system","mosdns","logs")))
+s=m:section(NamedSection,"main","mosdns",translate("运行设置"))
+o=s:option(Flag,"enabled",translate("启用")); o.default=1; o.rmempty=false
+o=s:option(Value,"listen_addr",translate("监听地址")); o.default="127.0.0.1"; o.rmempty=false
+o=s:option(Value,"listen_port",translate("监听端口")); o.default="553"; o.datatype="port"; o.rmempty=false
+s=m:section(NamedSection,"main","mosdns",translate("上游 DNS"))
+o=s:option(Value,"domestic_dns",translate("国内 DNS")); o.default="https://223.5.5.5/dns-query https://120.53.53.53/dns-query"
+o=s:option(Value,"foreign_dns",translate("国外 DNS")); o.default="https://1.1.1.1/dns-query https://8.8.8.8/dns-query"
+o=s:option(Value,"fallback_dns",translate("兜底 DNS")); o.default="114.114.114.114:53"
+s=m:section(NamedSection,"main","mosdns",translate("缓存"))
+o=s:option(Value,"cache_size",translate("条数")); o.default="10240"; o.datatype="uinteger"
+o=s:option(Value,"cache_ttl",translate("TTL(秒)")); o.default="600"; o.datatype="uinteger"
+s=m:section(NamedSection,"main","mosdns",translate("日志"))
+o=s:option(Value,"log_file",translate("日志文件")); o.default="/tmp/mosdns.log"
+o=s:option(ListValue,"log_level",translate("日志级别"))
+o:value("debug"); o:value("info"); o:value("warn"); o:value("error"); o.default="info"
+m.on_after_commit=function()
+    require("luci.sys").call("/usr/libexec/mosdns-sync-config >/tmp/mosdns-sync.log 2>&1")
+    require("luci.sys").call("/etc/init.d/mosdns restart >/dev/null 2>&1")
+end
+return m
+EOF_MOSDNS_CBI
+
+    cat > "$MOSDNS_VIEW" <<'EOF_MOSDNS_VIEW'
+<%+header%>
+<% local u=require"luci.util"; local c=require"luci.model.uci".cursor(); local d=require"luci.dispatcher"
+   local pid=u.trim(u.exec("pgrep mosdns 2>/dev/null | head -1"):gsub("[^%d]","")); local running=pid~=""
+   local lf="/tmp/mosdns.log"; c:foreach("mosdns","main",function(s)if s.log_file and s.log_file~="" then lf=s.log_file end end) %>
+<div class="cbi-map"><h2>MosDNS</h2>
+<div class="cbi-section"><div class="cbi-section-node">
+<div class="cbi-value"><div class="cbi-value-title">状态</div><div class="cbi-value-field">
+<% if running then %>运行中 (PID: <%=pid%>)<% else %>已停止<% end %>
+</div></div>
+<div class="cbi-value"><div class="cbi-value-field"><a class="cbi-button cbi-button-apply" href="<%=d.build_url("nradioadv","system","mosdns","basic")%>">返回设置</a></div></div>
+<div class="cbi-value"><div class="cbi-value-field"><pre style="white-space:pre-wrap;word-break:break-all;max-height:70vh;overflow:auto;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:6px;font-size:13px"><%=u.pcdata(u.exec("tail -n 400 "..u.shellquote(lf).." 2>/dev/null") or "日志为空")%></pre></div></div>
+</div></div></div>
+<%+footer%>
+EOF_MOSDNS_VIEW
+
+    if ! install_mosdns_embedded_icon; then
+        log "备注: MosDNS 图标写入失败"
+    fi
+
+    backup_file "$CFG"
+    cleanup_appcenter_entry "$MOSDNS_APP_NAME" "$MOSDNS_APP_NAME" "nradioadv/system/mosdns/basic"
+    set_appcenter_entry "$MOSDNS_APP_NAME" "$MOSDNS_APP_NAME" "$MOSDNS_VERSION" "18000000" \
+        "$MOSDNS_CONTROLLER" "nradioadv/system/mosdns/basic" "$MOSDNS_ICON_NAME"
+    uci commit appcenter
+    write_plugin_uninstall_assets
+    patch_common_template
+    refresh_luci_appcenter
+    /etc/init.d/uhttpd reload >/dev/null 2>&1 || true
+
+    log_stage 5 6 "启动 MosDNS"
+    "$MOSDNS_SYNC" 2>/dev/null || true
+    "$MOSDNS_INIT" enable >/dev/null 2>&1 || true
+    "$MOSDNS_INIT" start >/dev/null 2>&1 || true
+    sleep 2
+
+    log_stage 6 6 "MosDNS 安装完成"
+    log "提示: dnsmasq 上游需手动设置为 127.0.0.1#553"
 }
 
 install_openlist() {
@@ -23386,10 +23669,9 @@ die_menu_input_issue() {
 }
 
 print_support_page_hint() {
-    log "如果这个脚本帮到了你，可自愿支持后续维护与更新（需 IPv6 网络访问）:"
+    log "如果这个脚本帮到了你，可自愿支持后续维护与更新:"
     log "$SUPPORT_PAGE_URL"
     log "说明: 页面仅提供自愿支持入口，不影响脚本功能使用"
-    log "提示: 若当前网络不支持 IPv6，该页面可能无法打开"
 }
 
 print_startup_disclaimer_text() {
@@ -23494,6 +23776,10 @@ run_menu_feature() {
         16)
             restore_appcenter_original
             ;;
+        17)
+            install_mosdns
+            show_support_page_hint='1'
+            ;;
         *)
             die_menu_input_issue "$feature_choice"
             ;;
@@ -23518,9 +23804,10 @@ common_plugin_menu() {
         printf '2. 哈基米\n'
         printf '3. ttyd / Web SSH\n'
         printf '4. AdGuardHome\n'
-        printf '5. OpenList\n'
-        printf '0. 返回功能分类\n'
-        printf '请选择 0、1、2、3、4 或 5: '
+    printf '5. OpenList\n'
+    printf '6. MosDNS\n'
+    printf '0. 返回功能分类\n'
+    printf '请选择 0、1、2、3、4、5 或 6: '
         read_category_choice
         case "$UI_READ_RESULT" in
             0) return 2 ;;
@@ -23529,6 +23816,7 @@ common_plugin_menu() {
             3) submenu_feature='3' ;;
             4) submenu_feature='4' ;;
             5) submenu_feature='5' ;;
+            6) submenu_feature='17' ;;
             *) die_menu_input_issue "$UI_READ_RESULT" ;;
         esac
         if run_menu_feature "$submenu_feature"; then

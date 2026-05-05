@@ -6,7 +6,7 @@
 
 - 确认设备是 NRadio 官方 NROS 固件，不是标准 OpenWrt。
 - 说明机型和固件版本，例如 `NRadio_C2000MAX NROS2.1.8.n0.c1`。
-- 说明脚本版本，例如 `V2.0.2`。
+- 说明脚本版本，例如 `V2.0.35`。
 - 贴出菜单路径、执行命令和关键输出。
 - 不要提交 root 密码、Cookie、公网 SSH 地址、内网穿透地址或完整私有配置。
 
@@ -32,4 +32,3 @@ D:\Downloads\NRadio -> GitHub main -> Vercel Production -> https://nradio.mayeba
 - `CHECKSUMS.txt`
 - `.github/workflows/repo-check.yml`
 - `40-server-web/mayebano-support/index.html`
-
