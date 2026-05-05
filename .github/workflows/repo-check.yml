@@ -44,7 +44,7 @@ jobs:
           grep -q "printf '3. 游戏加速器" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '1. 奇游联机宝" 00-current/ssh-nradio-plugin-installer.sh
           grep -q "printf '2. 雷神加速器" 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'printf "6. MosDNS' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q "printf '6. MosDNS" 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'install_mosdns' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'cleanup_mosdns' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'MOSDNS_VERSION' 00-current/ssh-nradio-plugin-installer.sh
