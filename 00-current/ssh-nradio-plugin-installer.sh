@@ -2,9 +2,9 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V3.0.6"
+SCRIPT_VERSION="V3.0.7"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
-SCRIPT_RELEASE_DATE="2026-09-03"
+SCRIPT_RELEASE_DATE="2026-09-07"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
 SCRIPT_MODEL_NOTICE="适用机型：NRadio_C8-668/NRadio_C8-688/NRadio_C8-788/NRadio_C5800-650/NRadio_C5800-688/NRadio_NBCPE/NRadio_C2000MAX/NRadio_C2000Ultra/NRadio_C2000Pro/NRadio_AK68-798 官方NROS系统"
 SCRIPT_SCOPE_NOTICE="适用于受支持的官方 NROS，含 C2000Pro / AK68-798 兼容应用商店；并非标准 OpenWrt"
@@ -38,12 +38,12 @@ NRADIO_SIM_NAME_MAP_JS="/www/luci-static/nradio/js/nradio-sim-name-map.js"
 NRADIO_OPERATOR_FIX_VIEW="/usr/lib/lua/luci/view/nradio_status/index.htm"
 NRADIO_OPERATOR_FIX_MARKER_BEGIN="<!-- nradio-operator-display-fix:start -->"
 NRADIO_OPERATOR_FIX_MARKER_END="<!-- nradio-operator-display-fix:end -->"
-NRADIO_HOME_TEMP_VERSION="20260827-3"
+NRADIO_HOME_TEMP_VERSION="20260906-3"
 NRADIO_HOME_TEMP_JS="/www/luci-static/nradio/js/nradio-home-temperature-switch.js"
 NRADIO_HOME_TEMP_VIEW="/usr/lib/lua/luci/view/nradio_status/index.htm"
 NRADIO_HOME_TEMP_MARKER_BEGIN="<!-- nradio-home-temperature-switch:start -->"
 NRADIO_HOME_TEMP_MARKER_END="<!-- nradio-home-temperature-switch:end -->"
-NRADIO_CPEOPT_VERSION="20260903-4"
+NRADIO_CPEOPT_VERSION="20260906-1"
 NRADIO_CPEOPT_CONTROLLER="/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua"
 NRADIO_CPEOPT_VIEW="/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm"
 NRADIO_CPEOPT_ICON="/www/luci-static/nradio/images/icon/cpeopt.svg"
@@ -84,6 +84,7 @@ OPENWRT_LUCI_8080_DOCROOT=""
 OPENWRT_LUCI_8080_CGI=""
 OPENWRT_LUCI_8080_STORAGE_LABEL=""
 OPENWRT_LUCI_8080_DETAILS="/usr/lib/lua/luci/view/admin_status/nradio_details.htm"
+OPENWRT_LUCI_8080_SYSAUTH="/usr/lib/lua/luci/view/admin_status/nradio_8080_sysauth.htm"
 OPENWRT_LUCI_8080_INDEX_CACHE="/tmp/luci-indexcache-bootstrap"
 OPENWRT_LUCI_8080_THEME_VERSION="git-20.356.64372-1259bb1-1"
 OPENWRT_LUCI_8080_THEME_URL="https://downloads.openwrt.org/releases/18.06.9/packages/aarch64_cortex-a53/luci/luci-theme-bootstrap_git-20.356.64372-1259bb1-1_all.ipk"
@@ -110,13 +111,13 @@ LEIGOD_VIEW="/usr/lib/lua/luci/view/nradiobridge_leigod/leigod.htm"
 LEIGOD_ICON_NAME="leigod.svg"
 LEIGOD_DIR="/usr/sbin/leigod"
 LEIGOD_INIT="/etc/init.d/acc"
-OPENCLASH_MIRRORS="${OPENCLASH_MIRRORS:-https://cdn.jsdelivr.net/gh/vernesong/OpenClash@package/${OPENCLASH_BRANCH} https://fastly.jsdelivr.net/gh/vernesong/OpenClash@package/${OPENCLASH_BRANCH} https://testingcf.jsdelivr.net/gh/vernesong/OpenClash@package/${OPENCLASH_BRANCH}}"
-OPENCLASH_CORE_VERSION_MIRRORS="${OPENCLASH_CORE_VERSION_MIRRORS:-https://cdn.jsdelivr.net/gh/vernesong/OpenClash@core/dev https://fastly.jsdelivr.net/gh/vernesong/OpenClash@core/dev https://testingcf.jsdelivr.net/gh/vernesong/OpenClash@core/dev}"
-OPENCLASH_CORE_SMART_MIRRORS="${OPENCLASH_CORE_SMART_MIRRORS:-https://cdn.jsdelivr.net/gh/vernesong/OpenClash@core/dev/smart https://fastly.jsdelivr.net/gh/vernesong/OpenClash@core/dev/smart https://testingcf.jsdelivr.net/gh/vernesong/OpenClash@core/dev/smart}"
-OPENCLASH_GEOASN_MIRRORS="${OPENCLASH_GEOASN_MIRRORS:-https://testingcf.jsdelivr.net/gh/xishang0128/geoip@release https://cdn.jsdelivr.net/gh/xishang0128/geoip@release https://fastly.jsdelivr.net/gh/xishang0128/geoip@release}"
-OPENCLASH_MODEL_URLS="${OPENCLASH_MODEL_URLS:-https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model.bin https://ghproxy.net/https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model.bin https://mirror.ghproxy.com/https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model.bin https://gh-proxy.com/https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model.bin}"
+OPENCLASH_MIRRORS="${OPENCLASH_MIRRORS:-https://gh-proxy.com/https://raw.githubusercontent.com/vernesong/OpenClash/package/${OPENCLASH_BRANCH} https://raw.githubusercontent.com/vernesong/OpenClash/package/${OPENCLASH_BRANCH} https://cdn.jsdelivr.net/gh/vernesong/OpenClash@package/${OPENCLASH_BRANCH} https://fastly.jsdelivr.net/gh/vernesong/OpenClash@package/${OPENCLASH_BRANCH} https://testingcf.jsdelivr.net/gh/vernesong/OpenClash@package/${OPENCLASH_BRANCH}}"
+OPENCLASH_CORE_VERSION_MIRRORS="${OPENCLASH_CORE_VERSION_MIRRORS:-https://gh-proxy.com/https://raw.githubusercontent.com/vernesong/OpenClash/core/dev https://raw.githubusercontent.com/vernesong/OpenClash/core/dev https://cdn.jsdelivr.net/gh/vernesong/OpenClash@core/dev https://fastly.jsdelivr.net/gh/vernesong/OpenClash@core/dev https://testingcf.jsdelivr.net/gh/vernesong/OpenClash@core/dev}"
+OPENCLASH_CORE_SMART_MIRRORS="${OPENCLASH_CORE_SMART_MIRRORS:-https://gh-proxy.com/https://raw.githubusercontent.com/vernesong/OpenClash/core/dev/smart https://raw.githubusercontent.com/vernesong/OpenClash/core/dev/smart https://cdn.jsdelivr.net/gh/vernesong/OpenClash@core/dev/smart https://fastly.jsdelivr.net/gh/vernesong/OpenClash@core/dev/smart https://testingcf.jsdelivr.net/gh/vernesong/OpenClash@core/dev/smart}"
+OPENCLASH_GEOASN_MIRRORS="${OPENCLASH_GEOASN_MIRRORS:-https://gh-proxy.com/https://raw.githubusercontent.com/xishang0128/geoip/release https://raw.githubusercontent.com/xishang0128/geoip/release https://testingcf.jsdelivr.net/gh/xishang0128/geoip@release https://cdn.jsdelivr.net/gh/xishang0128/geoip@release https://fastly.jsdelivr.net/gh/xishang0128/geoip@release}"
+OPENCLASH_MODEL_URLS="${OPENCLASH_MODEL_URLS:-https://gh-proxy.com/https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model.bin https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model.bin https://ghproxy.net/https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model.bin https://mirror.ghproxy.com/https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model.bin}"
 ADGUARDHOME_VERSION="${ADGUARDHOME_VERSION:-1.8-9}"
-ADGUARDHOME_IPK_URLS="${ADGUARDHOME_IPK_URLS:-https://ghproxy.net/https://github.com/rufengsuixing/luci-app-adguardhome/releases/download/${ADGUARDHOME_VERSION}/luci-app-adguardhome_${ADGUARDHOME_VERSION}_all.ipk https://mirror.ghproxy.com/https://github.com/rufengsuixing/luci-app-adguardhome/releases/download/${ADGUARDHOME_VERSION}/luci-app-adguardhome_${ADGUARDHOME_VERSION}_all.ipk https://gh-proxy.com/https://github.com/rufengsuixing/luci-app-adguardhome/releases/download/${ADGUARDHOME_VERSION}/luci-app-adguardhome_${ADGUARDHOME_VERSION}_all.ipk}"
+ADGUARDHOME_IPK_URLS="${ADGUARDHOME_IPK_URLS:-https://gh-proxy.com/https://github.com/rufengsuixing/luci-app-adguardhome/releases/download/${ADGUARDHOME_VERSION}/luci-app-adguardhome_${ADGUARDHOME_VERSION}_all.ipk https://github.com/rufengsuixing/luci-app-adguardhome/releases/download/${ADGUARDHOME_VERSION}/luci-app-adguardhome_${ADGUARDHOME_VERSION}_all.ipk https://ghproxy.net/https://github.com/rufengsuixing/luci-app-adguardhome/releases/download/${ADGUARDHOME_VERSION}/luci-app-adguardhome_${ADGUARDHOME_VERSION}_all.ipk https://mirror.ghproxy.com/https://github.com/rufengsuixing/luci-app-adguardhome/releases/download/${ADGUARDHOME_VERSION}/luci-app-adguardhome_${ADGUARDHOME_VERSION}_all.ipk}"
 ADGUARDHOME_CORE_MIRRORS="${ADGUARDHOME_CORE_MIRRORS:-https://static.adtidy.org/adguardhome/release}"
 ADGUARDHOME_DNS_PORT="${ADGUARDHOME_DNS_PORT:-554}"
 ADGUARDHOME_LEGACY_DNS_PORT="${ADGUARDHOME_LEGACY_DNS_PORT:-553}"
@@ -126,8 +127,8 @@ OPENLIST_VERSION="${OPENLIST_VERSION:-latest}"
 OPENLIST_ASSET_NAME="${OPENLIST_ASSET_NAME:-openlist-linux-musl-arm64.tar.gz}"
 OPENLIST_GITHUB_CDN_BASES="${OPENLIST_GITHUB_CDN_BASES:-}"
 OPENLIST_CDN_RANKED="${OPENLIST_CDN_RANKED:-0}"
-OPENLIST_STABLE_HOST_ORDER="${OPENLIST_STABLE_HOST_ORDER:-release-assets.githubusercontent.com github.com api.github.com}"
-OPENLIST_GITHUB_OFFICIAL_PROBE_URLS="${OPENLIST_GITHUB_OFFICIAL_PROBE_URLS:-https://github.com/OpenListTeam/OpenList/releases/latest/download/${OPENLIST_ASSET_NAME} https://api.github.com/repos/OpenListTeam/OpenList/releases/latest https://release-assets.githubusercontent.com/}"
+OPENLIST_STABLE_HOST_ORDER="${OPENLIST_STABLE_HOST_ORDER:-gh-proxy.com github.com api.github.com release-assets.githubusercontent.com}"
+OPENLIST_GITHUB_OFFICIAL_PROBE_URLS="${OPENLIST_GITHUB_OFFICIAL_PROBE_URLS:-https://gh-proxy.com/https://github.com/OpenListTeam/OpenList/releases/latest/download/${OPENLIST_ASSET_NAME} https://github.com/OpenListTeam/OpenList/releases/latest/download/${OPENLIST_ASSET_NAME} https://api.github.com/repos/OpenListTeam/OpenList/releases/latest https://release-assets.githubusercontent.com/}"
 OPENLIST_FAST_DOWNLOAD_MODE="${OPENLIST_FAST_DOWNLOAD_MODE:-1}"
 OPENLIST_ROOT_DIR="${OPENLIST_ROOT_DIR:-/mnt/app_data/openlist}"
 OPENLIST_BIN_DIR="${OPENLIST_BIN_DIR:-$OPENLIST_ROOT_DIR/bin}"
@@ -163,10 +164,10 @@ EASYTIER_PACKAGE_SERIES="${EASYTIER_PACKAGE_SERIES:-22.03.7}"
 EASYTIER_ASSET_NAME="${EASYTIER_ASSET_NAME:-EasyTier-v${EASYTIER_VERSION}-${EASYTIER_PACKAGE_ARCH}-${EASYTIER_PACKAGE_SERIES}.zip}"
 EASYTIER_GITHUB_CDN_BASES="${EASYTIER_GITHUB_CDN_BASES:-}"
 EASYTIER_CDN_RANKED="${EASYTIER_CDN_RANKED:-0}"
-EASYTIER_STABLE_HOST_ORDER="${EASYTIER_STABLE_HOST_ORDER:-release-assets.githubusercontent.com github.com api.github.com}"
+EASYTIER_STABLE_HOST_ORDER="${EASYTIER_STABLE_HOST_ORDER:-gh-proxy.com github.com api.github.com release-assets.githubusercontent.com}"
 EASYTIER_GITHUB_RELEASE_URL="${EASYTIER_GITHUB_RELEASE_URL:-https://github.com/EasyTier/luci-app-easytier/releases/download/v${EASYTIER_VERSION}/${EASYTIER_ASSET_NAME}}"
 EASYTIER_GITHUB_API_URL="${EASYTIER_GITHUB_API_URL:-https://api.github.com/repos/EasyTier/luci-app-easytier/releases/tags/v${EASYTIER_VERSION}}"
-EASYTIER_GITHUB_OFFICIAL_PROBE_URLS="${EASYTIER_GITHUB_OFFICIAL_PROBE_URLS:-${EASYTIER_GITHUB_RELEASE_URL} ${EASYTIER_GITHUB_API_URL} https://release-assets.githubusercontent.com/}"
+EASYTIER_GITHUB_OFFICIAL_PROBE_URLS="${EASYTIER_GITHUB_OFFICIAL_PROBE_URLS:-https://gh-proxy.com/${EASYTIER_GITHUB_RELEASE_URL} ${EASYTIER_GITHUB_RELEASE_URL} ${EASYTIER_GITHUB_API_URL} https://release-assets.githubusercontent.com/}"
 EASYTIER_PACKAGE_STALL_TIME="${EASYTIER_PACKAGE_STALL_TIME:-20}"
 EASYTIER_PACKAGE_STALL_SPEED="${EASYTIER_PACKAGE_STALL_SPEED:-2048}"
 EASYTIER_PACKAGE_RETRY_STALL_TIME="${EASYTIER_PACKAGE_RETRY_STALL_TIME:-35}"
@@ -192,14 +193,14 @@ FANCTRL_LEGACY_PACKAGE_NAME="${FANCTRL_LEGACY_PACKAGE_NAME:-fanctrl}"
 FANCTRL_LEGACY_ROUTE="${FANCTRL_LEGACY_ROUTE:-nradioadv/system/fanctrl}"
 APP_ICON_DIR="${APP_ICON_DIR:-/www/luci-static/nradio/images/icon}"
 OPENCLASH_ICON_NAME="${OPENCLASH_ICON_NAME:-openclash.svg}"
-OPENCLASH_ICON_URLS="${OPENCLASH_ICON_URLS:-https://ghproxy.net/https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png https://gh-proxy.com/https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png}"
+OPENCLASH_ICON_URLS="${OPENCLASH_ICON_URLS:-https://gh-proxy.com/https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png https://ghproxy.net/https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png}"
 ADGUARDHOME_ICON_NAME="${ADGUARDHOME_ICON_NAME:-adguard.svg}"
 ADGUARDHOME_ICON_URLS="${ADGUARDHOME_ICON_URLS:-https://fastly.jsdelivr.net/npm/simple-icons@latest/icons/adguard.svg https://testingcf.jsdelivr.net/npm/simple-icons@latest/icons/adguard.svg https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/adguard.svg}"
 
 MOSDNS_VERSION="${MOSDNS_VERSION:-5.3.4}"
 MOSDNS_ASSET_NAME="${MOSDNS_ASSET_NAME:-mosdns-linux-arm64.zip}"
 MOSDNS_GITHUB_REL="${MOSDNS_GITHUB_REL:-IrineSistiana/mosdns/releases/download/v${MOSDNS_VERSION}/${MOSDNS_ASSET_NAME}}"
-MOSDNS_DOWNLOAD_URLS="${MOSDNS_DOWNLOAD_URLS:-https://mirror.ghproxy.com/https://github.com/${MOSDNS_GITHUB_REL} https://ghproxy.net/https://github.com/${MOSDNS_GITHUB_REL} https://gh-proxy.com/https://github.com/${MOSDNS_GITHUB_REL} https://github.com/${MOSDNS_GITHUB_REL}}"
+MOSDNS_DOWNLOAD_URLS="${MOSDNS_DOWNLOAD_URLS:-https://gh-proxy.com/https://github.com/${MOSDNS_GITHUB_REL} https://github.com/${MOSDNS_GITHUB_REL} https://mirror.ghproxy.com/https://github.com/${MOSDNS_GITHUB_REL} https://ghproxy.net/https://github.com/${MOSDNS_GITHUB_REL}}"
 MOSDNS_BIN="${MOSDNS_BIN:-/usr/bin/mosdns}"
 MOSDNS_CONFIG_DIR="${MOSDNS_CONFIG_DIR:-/etc/mosdns}"
 MOSDNS_INIT="${MOSDNS_INIT:-/etc/init.d/mosdns}"
@@ -221,7 +222,7 @@ DDNSGO_RELEASE_VERSION="${DDNSGO_RELEASE_VERSION:-1.6.8}"
 DDNSGO_PACKAGE_ARCH="${DDNSGO_PACKAGE_ARCH:-aarch64_cortex-a53}"
 DDNSGO_ARCHIVE_NAME="${DDNSGO_ARCHIVE_NAME:-openwrt-24.10-${DDNSGO_PACKAGE_ARCH}.tar.gz}"
 DDNSGO_GITHUB_REL="${DDNSGO_GITHUB_REL:-sirpdboy/luci-app-ddns-go/releases/download/v${DDNSGO_RELEASE_VERSION}/${DDNSGO_ARCHIVE_NAME}}"
-DDNSGO_DOWNLOAD_URLS="${DDNSGO_DOWNLOAD_URLS:-https://mirror.ghproxy.com/https://github.com/${DDNSGO_GITHUB_REL} https://ghproxy.net/https://github.com/${DDNSGO_GITHUB_REL} https://gh-proxy.com/https://github.com/${DDNSGO_GITHUB_REL} https://github.com/${DDNSGO_GITHUB_REL}}"
+DDNSGO_DOWNLOAD_URLS="${DDNSGO_DOWNLOAD_URLS:-https://gh-proxy.com/https://github.com/${DDNSGO_GITHUB_REL} https://github.com/${DDNSGO_GITHUB_REL} https://mirror.ghproxy.com/https://github.com/${DDNSGO_GITHUB_REL} https://ghproxy.net/https://github.com/${DDNSGO_GITHUB_REL}}"
 DDNSGO_PACKAGE_NAME="${DDNSGO_PACKAGE_NAME:-ddns-go}"
 DDNSGO_LUCI_PACKAGE_NAME="${DDNSGO_LUCI_PACKAGE_NAME:-luci-app-ddns-go}"
 DDNSGO_I18N_PACKAGE_NAME="${DDNSGO_I18N_PACKAGE_NAME:-luci-i18n-ddns-go-zh-cn}"
@@ -246,19 +247,12 @@ DDNSGO_PACKAGE_RETRY_STALL_SPEED="${DDNSGO_PACKAGE_RETRY_STALL_SPEED:-1024}"
 DDNSGO_PACKAGE_MAX_TIME="${DDNSGO_PACKAGE_MAX_TIME:-900}"
 MT5700_APP_NAME="${MT5700_APP_NAME:-MT5700 WebUI}"
 MT5700_UI_NAME="${MT5700_UI_NAME:-semi-tcpweb}"
-MT5700_UI_VERSION="${MT5700_UI_VERSION:-3.0.0}"
 MT5700_DESCRIPTION="${MT5700_DESCRIPTION:-MT5700M-CN 5G 模组管理界面（React + Semi Design）}"
 MT5700_PACKAGE_NAME="${MT5700_PACKAGE_NAME:-at-webserver}"
-MT5700_PACKAGE_VERSION="${MT5700_PACKAGE_VERSION:-2.1-r1}"
 MT5700_PACKAGE_ARCH="${MT5700_PACKAGE_ARCH:-aarch64_cortex-a53}"
-MT5700_SOURCE_COMMIT="${MT5700_SOURCE_COMMIT:-bb60b1fab6ff5de6b3875b5ab788c0a79a50c0e5}"
 MT5700_UI_SOURCE_URL="${MT5700_UI_SOURCE_URL:-https://github.com/inotdream/mt5700webui-openwrt-server/tree/feat/go-backend/semi-tcpweb}"
-MT5700_ARTIFACT_RUN="${MT5700_ARTIFACT_RUN:-33146424830}"
-MT5700_ARTIFACT_NAME="${MT5700_ARTIFACT_NAME:-packages-aarch64_cortex-a53-openwrt-24.10.zip}"
-MT5700_ARTIFACT_URLS="${MT5700_ARTIFACT_URLS:-https://nightly.link/inotdream/mt5700webui-openwrt-server/actions/runs/${MT5700_ARTIFACT_RUN}/${MT5700_ARTIFACT_NAME}}"
-MT5700_IPK_NAME="${MT5700_IPK_NAME:-at-webserver_2.1-r1_aarch64_cortex-a53.ipk}"
-MT5700_UI_JS_ASSET="${MT5700_UI_JS_ASSET:-index-B3zUHGiQ.js}"
-MT5700_UI_CSS_ASSET="${MT5700_UI_CSS_ASSET:-index-DNLC8Juq.css}"
+MT5700_ARTIFACT_NAME="${MT5700_ARTIFACT_NAME:-packages-${MT5700_PACKAGE_ARCH}-openwrt-24.10.zip}"
+MT5700_ARTIFACT_URLS="${MT5700_ARTIFACT_URLS:-https://gh-proxy.com/https://nightly.link/inotdream/mt5700webui-openwrt-server/workflows/build.yml/feat%2Fgo-backend/${MT5700_ARTIFACT_NAME} https://nightly.link/inotdream/mt5700webui-openwrt-server/workflows/build.yml/feat%2Fgo-backend/${MT5700_ARTIFACT_NAME}}"
 MT5700_ROUTE="${MT5700_ROUTE:-nradioadv/system/mt5700}"
 MT5700_CONTROLLER="${MT5700_CONTROLLER:-/usr/lib/lua/luci/controller/nradio_adv/mt5700.lua}"
 MT5700_ICON_NAME="${MT5700_ICON_NAME:-mt5700.png}"
@@ -266,6 +260,9 @@ MT5700_WEB_ROOT="${MT5700_WEB_ROOT:-/www/5700}"
 MT5700_BIN_PATH="${MT5700_BIN_PATH:-/usr/bin/at-webserver}"
 MT5700_INIT_FILE="${MT5700_INIT_FILE:-/etc/init.d/at-webserver}"
 MT5700_CONFIG_FILE="${MT5700_CONFIG_FILE:-/etc/config/at-webserver}"
+MT5700_ATSD_PROXY_PATH="${MT5700_ATSD_PROXY_PATH:-/usr/libexec/nradio-mt5700-atsd-proxy.lua}"
+MT5700_ATSD_PROXY_INIT="${MT5700_ATSD_PROXY_INIT:-/etc/init.d/nradio-mt5700-atsd-proxy}"
+MT5700_ATSD_PROXY_PORT="20250"
 MT5700_MIN_FREE_BYTES="${MT5700_MIN_FREE_BYTES:-25165824}"
 DOCKER_APP_NAME="${DOCKER_APP_NAME:-Docker}"
 DOCKER_PACKAGE_NAME="${DOCKER_PACKAGE_NAME:-nradio-docker}"
@@ -548,27 +545,28 @@ now_epoch_seconds() {
     date +%s 2>/dev/null || printf '0\n'
 }
 
-get_url_content_length() {
-    url="$1"
-    content_length=""
-
-    if [ "${DOWNLOAD_SKIP_CONTENT_LENGTH:-0}" = '1' ]; then
-        printf '\n'
-        return 0
-    fi
-
-    if command -v curl >/dev/null 2>&1; then
-        headers="$(curl -L -sSI --connect-timeout "$DOWNLOAD_HEAD_CONNECT_TIMEOUT" --max-time "$DOWNLOAD_HEAD_MAX_TIME" "$url" 2>/dev/null || true)"
-        content_length="$(printf '%s\n' "$headers" | tr -d '\r' | sed -n 's/^[Cc]ontent-[Ll]ength: *//p' | tail -n 1)"
-    fi
-
-    case "$content_length" in
-        ''|*[!0-9]*)
-            content_length=""
-            ;;
-    esac
-
-    printf '%s\n' "$content_length"
+get_download_content_length() {
+    [ "${DOWNLOAD_SKIP_CONTENT_LENGTH:-0}" != '1' ] || return 0
+    [ -s "$1" ] || return 0
+    awk '
+        { sub(/\r$/, "") }
+        /^HTTP\// { status=$2; length_value=""; range_total=""; chunked=0; complete=0; next }
+        tolower($0) ~ /^content-length:/ {
+            value=$0; sub(/^[^:]*:[ \t]*/, "", value); sub(/[ \t]+$/, "", value)
+            if (value ~ /^[0-9]+$/) length_value=value
+        }
+        tolower($0) ~ /^content-range:/ {
+            value=$0; sub(/^.*\//, "", value); sub(/[ \t]+$/, "", value)
+            if (value ~ /^[0-9]+$/) range_total=value
+        }
+        tolower($0) ~ /^transfer-encoding:.*chunked/ { chunked=1 }
+        /^$/ { complete=1 }
+        END {
+            if (!complete) exit
+            if (status == 206 && range_total != "") print range_total
+            else if (status == 200 && !chunked && length_value != "") print length_value
+        }
+    ' "$1"
 }
 
 render_download_progress() {
@@ -576,42 +574,59 @@ render_download_progress() {
     current_bytes="$2"
     total_bytes="${3:-}"
     speed_bytes="${4:-}"
+    display_elapsed="${5:-0}"
     current_human="$(format_bytes_human "$current_bytes")"
-    line=""
+    current_human="${current_human% *}${current_human##* }"
+    display_columns="${DOWNLOAD_DISPLAY_COLUMNS:-${COLUMNS:-80}}"
+    case "$display_columns" in ''|*[!0-9]*) display_columns=80 ;; esac
+    line="$progress_state $current_human"
 
     if [ -n "$total_bytes" ] && [ "$total_bytes" -gt 0 ] 2>/dev/null; then
-        total_human="$(format_bytes_human "$total_bytes")"
         progress_percent=$(( current_bytes * 100 / total_bytes ))
-        [ "$progress_percent" -le 100 ] 2>/dev/null || progress_percent=100
-        _dl_bar_len=15
-        _dl_filled=$(( progress_percent * _dl_bar_len / 100 ))
-        _dl_empty=$(( _dl_bar_len - _dl_filled ))
-        _dl_bar=""
-        _dbi=0
-        while [ "$_dbi" -lt "$_dl_filled" ]; do _dl_bar="${_dl_bar}="; _dbi=$((_dbi + 1)); done
-        if [ "$_dl_empty" -gt 0 ]; then
-            _dl_bar="${_dl_bar}>"
-            _dbi=1
-            while [ "$_dbi" -lt "$_dl_empty" ]; do _dl_bar="${_dl_bar}."; _dbi=$((_dbi + 1)); done
+        [ "$progress_percent" -le 100 ] || progress_percent=100
+        if [ "$progress_state" != '下载完成' ] && [ "$progress_percent" -ge 100 ]; then
+            progress_percent=99
         fi
-        line="[${_dl_bar}] ${progress_state} ${current_human} / ${total_human} (${progress_percent}%)"
-    else
-        line="${progress_state} 已下载 ${current_human}"
+        line="$progress_state ${progress_percent}% $current_human"
+        if [ "$display_columns" -ge 60 ]; then
+            total_human="$(format_bytes_human "$total_bytes")"
+            total_human="${total_human% *}${total_human##* }"
+            line="$line/$total_human"
+        fi
+        if [ "$display_columns" -ge 80 ]; then
+            _dl_filled=$(( progress_percent * 15 / 100 ))
+            _dl_bar=''
+            _dbi=0
+            while [ "$_dbi" -lt 15 ]; do
+                if [ "$_dbi" -lt "$_dl_filled" ]; then
+                    _dl_bar="${_dl_bar}="
+                elif [ "$_dbi" -eq "$_dl_filled" ]; then
+                    _dl_bar="${_dl_bar}>"
+                else
+                    _dl_bar="${_dl_bar}."
+                fi
+                _dbi=$((_dbi + 1))
+            done
+            line="[$_dl_bar] $line"
+        fi
     fi
 
-    if [ -n "$speed_bytes" ]; then
-        case "$speed_bytes" in
-            ''|*[!0-9]*)
-                ;;
-            *)
+    case "$speed_bytes" in
+        ''|*[!0-9]*) ;;
+        *)
+            if [ "$display_columns" -ge 40 ]; then
                 speed_human="$(format_bytes_human "$speed_bytes")"
-                line="${line} ${speed_human}/s"
-                ;;
-        esac
+                speed_human="${speed_human% *}${speed_human##* }"
+                line="$line $speed_human/s"
+            fi
+            ;;
+    esac
+    if [ "$display_columns" -ge 60 ]; then
+        line="$line $((display_elapsed / 60))分$((display_elapsed % 60))秒"
     fi
 
     if stderr_is_tty; then
-        printf '\r%-88s' "$line" >&2
+        printf '\r\033[K%s' "$line" >&2
     else
         printf '%s\n' "$line" >&2
     fi
@@ -630,11 +645,10 @@ sleep_abort_poll() {
 sleep_download_poll() {
     poll_usec="${DOWNLOAD_PROGRESS_POLL_USEC:-250000}"
     case "$poll_usec" in
-        ''|*[!0-9]*)
-            poll_usec='250000'
-            ;;
+        ''|*[!0-9]*) poll_usec=250000 ;;
     esac
-    usleep "$poll_usec" 2>/dev/null || sleep_abort_poll
+    [ "$poll_usec" -ge 100000 ] || poll_usec=100000
+    usleep "$poll_usec" 2>/dev/null || sleep 0.25 2>/dev/null || sleep 1
 }
 
 terminate_pid_quick() {
@@ -721,6 +735,8 @@ terminate_active_download() {
 
     terminate_pid_quick "$active_pid"
     ACTIVE_DOWNLOAD_PID=''
+    [ -z "${progress_headers:-}" ] || rm -f "$progress_headers"
+    [ -z "${progress_error_log:-}" ] || rm -f "$progress_error_log"
 }
 
 run_download_with_progress() {
@@ -728,59 +744,69 @@ run_download_with_progress() {
     progress_out="$2"
     shift 2
 
-    progress_total="$(get_url_content_length "$progress_url")"
-    progress_last_size='-1'
-    progress_last_percent='-1'
-    progress_last_print_epoch='0'
-    progress_prev_sample_size='0'
-    progress_prev_sample_epoch='0'
+    progress_headers="$progress_out.headers"
+    progress_error_log="$progress_out.download.log"
+    : > "$progress_headers" || return 1
+    : > "$progress_error_log" || { rm -f "$progress_headers"; return 1; }
+    progress_total=''
+    progress_speed=''
+    DOWNLOAD_DISPLAY_COLUMNS="${COLUMNS:-80}"
+    if stderr_is_tty; then
+        progress_terminal_size="$(stty size </dev/tty 2>/dev/null || true)"
+        case "$progress_terminal_size" in
+            *' '*) DOWNLOAD_DISPLAY_COLUMNS="${progress_terminal_size##* }" ;;
+        esac
+    fi
+    progress_start_epoch="$(date +%s)"
+    progress_prev_sample_epoch="$progress_start_epoch"
+    progress_prev_sample_size="$(get_file_size_bytes "$progress_out")"
+    progress_initial_size="$progress_prev_sample_size"
+    progress_last_change_epoch="$progress_start_epoch"
+    progress_last_print_epoch="$progress_start_epoch"
+    progress_timeout="${DOWNLOAD_MAX_TIME:-900}"
+    case "$progress_timeout" in ''|*[!0-9]*) progress_timeout=900 ;; esac
+    progress_timed_out=0
+    render_download_progress "连接中" "$progress_initial_size" "" "" 0
 
-    "$@" &
+    if [ "$1" = 'curl' ]; then
+        "$@" --dump-header "$progress_headers" 2>"$progress_error_log" &
+    else
+        "$@" 2>"$progress_error_log" &
+    fi
     progress_pid="$!"
     ACTIVE_DOWNLOAD_PID="$progress_pid"
 
     while kill -0 "$progress_pid" 2>/dev/null; do
-        progress_size="$(get_file_size_bytes "$progress_out")"
-        progress_now_epoch="$(now_epoch_seconds)"
-        if [ -n "$progress_total" ] && [ "$progress_total" -gt 0 ] 2>/dev/null; then
-            progress_percent=$(( progress_size * 100 / progress_total ))
-            [ "$progress_percent" -le 100 ] 2>/dev/null || progress_percent=100
-        else
-            progress_percent='-1'
+        progress_now_epoch="$(date +%s)"
+        progress_elapsed=$((progress_now_epoch - progress_start_epoch))
+        if [ "$progress_timeout" -gt 0 ] && [ "$progress_elapsed" -ge "$progress_timeout" ]; then
+            progress_timed_out=1
+            terminate_pid_quick "$progress_pid"
+            break
         fi
-
-        progress_speed=''
-        if [ "$progress_prev_sample_epoch" -gt 0 ] 2>/dev/null; then
-            progress_elapsed=$(( progress_now_epoch - progress_prev_sample_epoch ))
-            if [ "$progress_elapsed" -ge 1 ] 2>/dev/null; then
-                progress_delta=$(( progress_size - progress_prev_sample_size ))
-                [ "$progress_delta" -ge 0 ] 2>/dev/null || progress_delta=0
-                progress_speed=$(( progress_delta / progress_elapsed ))
-                progress_prev_sample_size="$progress_size"
-                progress_prev_sample_epoch="$progress_now_epoch"
+        progress_sample_elapsed=$((progress_now_epoch - progress_prev_sample_epoch))
+        if [ "$progress_sample_elapsed" -ge 1 ]; then
+            progress_size="$(get_file_size_bytes "$progress_out")"
+            progress_total="$(get_download_content_length "$progress_headers")"
+            progress_delta=$((progress_size - progress_prev_sample_size))
+            if [ "$progress_delta" -ne 0 ]; then
+                progress_last_change_epoch="$progress_now_epoch"
             fi
-        else
+            [ "$progress_delta" -ge 0 ] || progress_delta=0
+            progress_speed=$((progress_delta / progress_sample_elapsed))
             progress_prev_sample_size="$progress_size"
             progress_prev_sample_epoch="$progress_now_epoch"
-        fi
-
-        if stderr_is_tty; then
-            render_download_progress "下载中" "$progress_size" "$progress_total" "$progress_speed"
-        else
-            progress_should_print='0'
-            if [ "$progress_size" != "$progress_last_size" ] || [ "$progress_percent" != "$progress_last_percent" ]; then
-                if [ "$progress_last_print_epoch" -eq 0 ] 2>/dev/null || [ $(( progress_now_epoch - progress_last_print_epoch )) -ge 1 ] 2>/dev/null; then
-                    progress_should_print='1'
-                fi
+            progress_state='下载中'
+            if [ $((progress_now_epoch - progress_last_change_epoch)) -ge 10 ]; then
+                progress_state='等待数据'
+            elif [ "$progress_size" -eq "$progress_initial_size" ] && [ "$progress_speed" -eq 0 ]; then
+                progress_state='连接中'
             fi
-            if [ "$progress_should_print" = '1' ]; then
-                render_download_progress "下载中" "$progress_size" "$progress_total" "$progress_speed"
+            if stderr_is_tty || [ $((progress_now_epoch - progress_last_print_epoch)) -ge 5 ]; then
+                render_download_progress "$progress_state" "$progress_size" "$progress_total" "$progress_speed" "$progress_elapsed"
                 progress_last_print_epoch="$progress_now_epoch"
             fi
         fi
-
-        progress_last_size="$progress_size"
-        progress_last_percent="$progress_percent"
         sleep_download_poll
     done
 
@@ -790,15 +816,29 @@ run_download_with_progress() {
         progress_rc="$?"
     fi
     ACTIVE_DOWNLOAD_PID=''
+    [ "$progress_timed_out" -eq 0 ] || progress_rc=28
     progress_size="$(get_file_size_bytes "$progress_out")"
+    progress_total="$(get_download_content_length "$progress_headers")"
+    progress_elapsed=$(( $(date +%s) - progress_start_epoch ))
+    [ "$progress_elapsed" -ge 0 ] || progress_elapsed=0
+    if [ "$progress_rc" -eq 0 ] && [ "$progress_size" -eq 0 ]; then
+        progress_rc=1
+        printf '%s\n' '下载结果为空' >> "$progress_error_log"
+    fi
 
     if [ "$progress_rc" -eq 0 ]; then
-        render_download_progress "下载完成" "$progress_size" "$progress_total"
+        render_download_progress "下载完成" "$progress_size" "$progress_size" "" "$progress_elapsed"
     else
-        render_download_progress "下载失败" "$progress_size" "$progress_total"
+        render_download_progress "下载失败" "$progress_size" "$progress_total" "" "$progress_elapsed"
     fi
     finish_download_progress_line
-
+    if [ "$progress_timed_out" -eq 1 ]; then
+        printf '下载超时：已达 %s 秒\n' "$progress_timeout" >&2
+    fi
+    if [ "$progress_rc" -ne 0 ] && [ -s "$progress_error_log" ]; then
+        tail -n 8 "$progress_error_log" >&2
+    fi
+    rm -f "$progress_headers" "$progress_error_log"
     return "$progress_rc"
 }
 
@@ -918,31 +958,29 @@ confirm_default_yes() {
 run_startup_disclaimer_countdown() {
     disclaimer_countdown_remaining="${1:-10}"
     case "$disclaimer_countdown_remaining" in
-        ''|*[!0-9]*)
-            disclaimer_countdown_remaining='10'
-            ;;
+        ''|*[!0-9]*) disclaimer_countdown_remaining=10 ;;
     esac
 
     if [ -t 1 ]; then
         while [ "$disclaimer_countdown_remaining" -gt 0 ]; do
-            printf '\r请先完整阅读免责声明，%s 秒后可选择是否同意...' "$disclaimer_countdown_remaining"
+            printf '\r\033[K阅读等待 %s 秒...' "$disclaimer_countdown_remaining"
             sleep 1
             disclaimer_countdown_remaining=$((disclaimer_countdown_remaining - 1))
         done
-        printf '\r请先完整阅读免责声明，10 秒倒计时已结束。              \n'
-        return 0
+        printf '\r\033[K可以选择是否同意。\n'
+    else
+        printf '阅读等待 %s 秒...\n' "$disclaimer_countdown_remaining"
+        while [ "$disclaimer_countdown_remaining" -gt 0 ]; do
+            sleep 1
+            disclaimer_countdown_remaining=$((disclaimer_countdown_remaining - 1))
+        done
+        printf '可以选择是否同意。\n'
     fi
-
-    while [ "$disclaimer_countdown_remaining" -gt 0 ]; do
-        printf '请先完整阅读免责声明，%s 秒后可选择是否同意...\n' "$disclaimer_countdown_remaining"
-        sleep 1
-        disclaimer_countdown_remaining=$((disclaimer_countdown_remaining - 1))
-    done
-    printf '请先完整阅读免责声明，10 秒倒计时已结束。\n'
 }
 
 clear_startup_screen() {
-    printf '\033[H\033[2J\033[3J'
+    [ -t 1 ] || return 0
+    printf '\033[H\033[2J'
 }
 
 prime_startup_disclaimer_model() {
@@ -961,21 +999,20 @@ require_startup_disclaimer_acceptance_once() {
 
     [ -f "$DISCLAIMER_ACCEPTED_FLAG_FILE" ] && return 0
 
-    mkdir -p "$STATE_DIR" >/dev/null 2>&1 || die "创建免责声明状态目录失败: $STATE_DIR"
     prime_startup_disclaimer_model
     clear_startup_screen
     print_startup_disclaimer_text
     printf '\n'
     run_startup_disclaimer_countdown 10
-    printf '是否同意以上免责声明？[y/N]: '
+    printf '\n同意并继续 [y/N，回车退出]: '
     ui_read_line || die "input cancelled"
     disclaimer_answer="$UI_READ_RESULT"
 
     case "$disclaimer_answer" in
         y|Y)
+            mkdir -p "$STATE_DIR" >/dev/null 2>&1 || die "创建免责声明状态目录失败: $STATE_DIR"
             printf '%s\n' "accepted ${SCRIPT_VERSION} ${SCRIPT_RELEASE_DATE}" > "$DISCLAIMER_ACCEPTED_FLAG_FILE" || die "写入免责声明同意标记失败: $DISCLAIMER_ACCEPTED_FLAG_FILE"
-            printf '\n'
-            clear_startup_screen
+            printf '\n已确认使用条款，进入功能菜单。\n'
             ;;
         *)
             log "未同意免责声明，脚本已退出"
@@ -1200,6 +1237,13 @@ is_supported_nros_revision() {
     esac
 }
 
+c2000_storage_swap_model_supported() {
+    case "${1:-${CURRENT_DETECTED_MODEL:-}}" in
+        NRadio_C2000MAX|NRadio_C2000Ultra) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
 detect_c2000max_storage_mount() {
     local mount_path
 
@@ -1361,17 +1405,17 @@ require_c2000max_storage_ready() {
     local normalized_model="$1"
     local storage_mount storage_avail_kib storage_avail_mib storage_avail_display
 
-    [ "$normalized_model" = 'NRadio_C2000MAX' ] || return 0
+    c2000_storage_swap_model_supported "$normalized_model" || return 0
 
     storage_mount="$(detect_c2000max_storage_mount 2>/dev/null || true)"
-    [ -n "$storage_mount" ] || die "环境检测失败：当前机型为 NRadio_C2000MAX，但未检测到存储卡，已停止继续安装"
+    [ -n "$storage_mount" ] || die "环境检测失败：当前机型为 $normalized_model，但未检测到 SD 存储卡，已停止继续安装"
 
     storage_avail_kib="$(get_mount_available_kib "$storage_mount" 2>/dev/null || true)"
-    [ -n "$storage_avail_kib" ] || die "环境检测失败：当前机型为 NRadio_C2000MAX，但无法识别存储卡空间大小，已停止继续安装"
+    [ -n "$storage_avail_kib" ] || die "环境检测失败：当前机型为 $normalized_model，但无法识别 SD 存储卡空间大小，已停止继续安装"
 
     storage_avail_mib="$((storage_avail_kib / 1024))"
     storage_avail_display="$(format_mib_or_gib "$storage_avail_mib" 2>/dev/null || printf '%sM' "$storage_avail_mib")"
-    log "检测到 C2000MAX 存储卡：$storage_mount，可用空间约 ${storage_avail_display}"
+    log "检测到 ${normalized_model#NRadio_} SD 存储卡：$storage_mount，可用空间约 ${storage_avail_display}"
 }
 
 require_supported_nradio_model_environment() {
@@ -1654,56 +1698,36 @@ download_file_once() {
 
     if command -v curl >/dev/null 2>&1; then
         LAST_DOWNLOAD_TOOL='curl'
-        case "$url" in
-            https://api.github.com/repos/*/releases/assets/*)
-                if [ -s "$tmp_out" ]; then
-                    if run_download_with_progress "$url" "$tmp_out" curl -C - -LfS --silent --show-error --connect-timeout "$DOWNLOAD_CONNECT_TIMEOUT" --max-time "$DOWNLOAD_MAX_TIME" --speed-time "$DOWNLOAD_STALL_TIME" --speed-limit "$DOWNLOAD_STALL_SPEED" --retry "$DOWNLOAD_RETRY" --retry-delay 2 -H 'Accept: application/octet-stream' -H 'X-GitHub-Api-Version: 2022-11-28' -H 'User-Agent: nradio-plugin-assistant' "$url" -o "$tmp_out"; then
-                        LAST_DOWNLOAD_RC='0'
-                    else
-                        LAST_DOWNLOAD_RC="$?"
-                        if [ "$keep_partial" != '1' ] || [ ! -s "$tmp_out" ]; then
-                            rm -f "$tmp_out"
-                        fi
-                        return 1
-                    fi
-                else
-                    rm -f "$tmp_out" 2>/dev/null || true
-                    if run_download_with_progress "$url" "$tmp_out" curl -LfS --silent --show-error --connect-timeout "$DOWNLOAD_CONNECT_TIMEOUT" --max-time "$DOWNLOAD_MAX_TIME" --speed-time "$DOWNLOAD_STALL_TIME" --speed-limit "$DOWNLOAD_STALL_SPEED" --retry "$DOWNLOAD_RETRY" --retry-delay 2 -H 'Accept: application/octet-stream' -H 'X-GitHub-Api-Version: 2022-11-28' -H 'User-Agent: nradio-plugin-assistant' "$url" -o "$tmp_out"; then
-                        LAST_DOWNLOAD_RC='0'
-                    else
-                        LAST_DOWNLOAD_RC="$?"
-                        if [ "$keep_partial" != '1' ] || [ ! -s "$tmp_out" ]; then
-                            rm -f "$tmp_out"
-                        fi
-                        return 1
-                    fi
-                fi
-                ;;
-            *)
-                if [ -s "$tmp_out" ]; then
-                    if run_download_with_progress "$url" "$tmp_out" curl -C - -LfS --silent --show-error --connect-timeout "$DOWNLOAD_CONNECT_TIMEOUT" --max-time "$DOWNLOAD_MAX_TIME" --speed-time "$DOWNLOAD_STALL_TIME" --speed-limit "$DOWNLOAD_STALL_SPEED" --retry "$DOWNLOAD_RETRY" --retry-delay 2 "$url" -o "$tmp_out"; then
-                        LAST_DOWNLOAD_RC='0'
-                    else
-                        LAST_DOWNLOAD_RC="$?"
-                        if [ "$keep_partial" != '1' ] || [ ! -s "$tmp_out" ]; then
-                            rm -f "$tmp_out"
-                        fi
-                        return 1
-                    fi
-                else
-                    rm -f "$tmp_out" 2>/dev/null || true
-                    if run_download_with_progress "$url" "$tmp_out" curl -LfS --silent --show-error --connect-timeout "$DOWNLOAD_CONNECT_TIMEOUT" --max-time "$DOWNLOAD_MAX_TIME" --speed-time "$DOWNLOAD_STALL_TIME" --speed-limit "$DOWNLOAD_STALL_SPEED" --retry "$DOWNLOAD_RETRY" --retry-delay 2 "$url" -o "$tmp_out"; then
-                        LAST_DOWNLOAD_RC='0'
-                    else
-                        LAST_DOWNLOAD_RC="$?"
-                        if [ "$keep_partial" != '1' ] || [ ! -s "$tmp_out" ]; then
-                            rm -f "$tmp_out"
-                        fi
-                        return 1
-                    fi
-                fi
-                ;;
-        esac
+        curl_restart_attempted=0
+        while :; do
+            set -- curl -LfS --silent --show-error --connect-timeout "$DOWNLOAD_CONNECT_TIMEOUT" --max-time "$DOWNLOAD_MAX_TIME" --speed-time "$DOWNLOAD_STALL_TIME" --speed-limit "$DOWNLOAD_STALL_SPEED" --retry "$DOWNLOAD_RETRY" --retry-delay 2
+            curl_resuming=0
+            if [ -s "$tmp_out" ]; then
+                curl_resuming=1
+                set -- "$@" -C -
+            fi
+            case "$url" in
+                https://api.github.com/repos/*/releases/assets/*|https://gh-proxy.com/https://api.github.com/repos/*/releases/assets/*)
+                    set -- "$@" -H 'Accept: application/octet-stream' -H 'X-GitHub-Api-Version: 2022-11-28' -H 'User-Agent: nradio-plugin-assistant'
+                    ;;
+            esac
+            if run_download_with_progress "$url" "$tmp_out" "$@" "$url" -o "$tmp_out"; then
+                LAST_DOWNLOAD_RC='0'
+                break
+            else
+                LAST_DOWNLOAD_RC="$?"
+            fi
+            if [ "$LAST_DOWNLOAD_RC" = '33' ] && [ "$curl_resuming" = '1' ] && [ "$curl_restart_attempted" = '0' ]; then
+                curl_restart_attempted=1
+                log "提示: 当前地址不支持续传，正在重新完整下载..." >&2
+                rm -f "$tmp_out" || return 1
+                continue
+            fi
+            if [ "$keep_partial" != '1' ] || [ ! -s "$tmp_out" ]; then
+                rm -f "$tmp_out"
+            fi
+            return 1
+        done
     elif command -v wget >/dev/null 2>&1; then
         LAST_DOWNLOAD_TOOL='wget'
         case "$DOWNLOAD_RETRY" in
@@ -1769,7 +1793,7 @@ download_file_once() {
 download_from_mirrors() {
     rel="$1"
     out="$2"
-    base_list="${3:-$OPENCLASH_MIRRORS}"
+    base_list="$(prioritize_github_proxy_urls "${3:-$OPENCLASH_MIRRORS}")"
     mirror_count=0
     mirror_index=0
     LAST_DOWNLOAD_SOURCE=''
@@ -1827,6 +1851,9 @@ format_download_source_label() {
     filename="$(extract_url_filename "$url")"
 
     case "$host" in
+        gh-proxy.com)
+            printf 'GitHub 加速（%s / %s）\n' "$host" "$filename"
+            ;;
         release-assets.githubusercontent.com)
             printf 'GitHub 官方 CDN（%s / %s）\n' "$host" "$filename"
             ;;
@@ -1905,6 +1932,31 @@ format_probe_ping_avg_label() {
     fi
 }
 
+prioritize_github_proxy_urls() (
+    # 只对已配置 gh-proxy 的列表应用固定优先级；自定义非代理源保持原序。
+    case " $1" in
+        *' https://gh-proxy.com/https://'*) ;;
+        *) printf '%s\n' "$1"; return 0 ;;
+    esac
+    proxy_urls=''
+    official_urls=''
+    other_urls=''
+    seen_urls=' '
+    for candidate_url in $1; do
+        case "$seen_urls" in *" $candidate_url "*) continue ;; esac
+        seen_urls="$seen_urls$candidate_url "
+        case "$candidate_url" in
+            https://gh-proxy.com/https://*) proxy_urls="$proxy_urls $candidate_url" ;;
+            https://github.com/*|https://raw.githubusercontent.com/*|https://api.github.com/*|https://nightly.link/*)
+                official_urls="$official_urls $candidate_url"
+                ;;
+            *) other_urls="$other_urls $candidate_url" ;;
+        esac
+    done
+    ordered_urls="$proxy_urls$official_urls$other_urls"
+    printf '%s\n' "${ordered_urls# }"
+)
+
 reorder_urls_by_host_rank() {
     url_list="$1"
     ranked_hosts="$2"
@@ -1938,7 +1990,7 @@ reorder_urls_by_host_rank() {
         fi
     done
 
-    printf '%s\n' "$ordered_urls"
+    prioritize_github_proxy_urls "$ordered_urls"
 }
 
 build_urls_from_base_list() {
@@ -2066,6 +2118,13 @@ rank_hosts_by_partial_download_probe() {
     rank_min_bytes="${5:-1}"
 
     RANKED_URL_HOSTS=""
+    case " $url_list" in
+        *' https://gh-proxy.com/https://'*)
+            RANKED_URL_HOSTS="$(summarize_url_hosts $(prioritize_github_proxy_urls "$url_list"))"
+            log "下载源: $rank_label 使用 gh-proxy 优先，失败自动回退"
+            return 0
+            ;;
+    esac
     command -v curl >/dev/null 2>&1 || return 0
     [ -n "$url_list" ] || return 0
 
@@ -2454,6 +2513,7 @@ install_openclash_smart_core() {
 download_from_urls() {
     out="$1"
     shift
+    set -- $(prioritize_github_proxy_urls "$*")
     url_count=0
     url_index=0
     LAST_DOWNLOAD_SOURCE=''
@@ -2479,6 +2539,7 @@ download_from_urls() {
 download_openlist_from_urls() {
     out="$1"
     shift
+    set -- $(prioritize_github_proxy_urls "$*")
 
     [ "${CURRENT_DETECTED_MODEL:-}" = 'NRadio_C2000MAX' ] || {
         download_from_urls "$out" "$@"
@@ -3277,6 +3338,8 @@ MT5700_ROUTE="nradioadv/system/mt5700"
 MT5700_CONTROLLER="/usr/lib/lua/luci/controller/nradio_adv/mt5700.lua"
 MT5700_ICON_NAME="mt5700.png"
 MT5700_WEB_ROOT="/www/5700"
+MT5700_ATSD_PROXY_PATH="/usr/libexec/nradio-mt5700-atsd-proxy.lua"
+MT5700_ATSD_PROXY_INIT="/etc/init.d/nradio-mt5700-atsd-proxy"
 DOCKER_APP_NAME="Docker"
 DOCKER_PACKAGE_NAME="nradio-docker"
 DOCKER_ROUTE="nradioadv/system/docker"
@@ -4136,6 +4199,10 @@ cleanup_ddnsgo() {
 
 cleanup_mt5700_firewall_rules() {
     mt5700_firewall_changed='0'
+    if uci -q get firewall.nradio_mt5700_cpe1 >/dev/null 2>&1; then
+        uci -q delete firewall.nradio_mt5700_cpe1
+        mt5700_firewall_changed='1'
+    fi
     for mt5700_rule_name in \
         at_webserver_wan_block \
         at_webserver_wan_allow \
@@ -4158,6 +4225,8 @@ cleanup_mt5700_firewall_rules() {
 }
 
 cleanup_mt5700() {
+    stop_disable /etc/init.d/nradio-mt5700-dual
+    stop_disable "$MT5700_ATSD_PROXY_INIT"
     stop_disable /etc/init.d/at-webserver
     kill_name at-webserver
     cleanup_mt5700_firewall_rules
@@ -4168,6 +4237,10 @@ cleanup_mt5700() {
         /usr/bin/at-webserver \
         /etc/init.d/at-webserver \
         /etc/config/at-webserver \
+        /etc/config/at-webserver-cpe1 \
+        "$MT5700_ATSD_PROXY_PATH" \
+        "$MT5700_ATSD_PROXY_INIT" \
+        /etc/init.d/nradio-mt5700-dual \
         /www/cgi-bin/at-ws-info \
         /www/cgi-bin/at-log-clear \
         "$MT5700_CONTROLLER" \
@@ -4178,6 +4251,7 @@ cleanup_mt5700() {
         /usr/lib/opkg/info/luci-i18n-at-webserver-zh-cn.* \
         2>/dev/null || true
     rm -rf "$MT5700_WEB_ROOT" /www/luci-static/resources/view/at-webserver 2>/dev/null || true
+    rm -rf /etc/nradio-mt5700-dual /usr/libexec/nradio-mt5700-dual 2>/dev/null || true
     rm -rf /mnt/rootfs_2nd_data/nradio-apps/www/5700 /mnt/rootfs_2nd_data/nradio-apps/usr/bin/at-webserver 2>/dev/null || true
     if [ -f /etc/nradio_storage_expand_migrated.list ]; then
         mt5700_migrate_list_tmp="/etc/nradio_storage_expand_migrated.list.tmp.$$"
@@ -5875,6 +5949,25 @@ build_package_download_urls_from_meta() {
     printf '%s\n' "$urls"
 }
 
+get_github_release_metadata() (
+    command -v curl >/dev/null 2>&1 || return 1
+    [ -n "$1" ] || return 1
+    case "$1" in
+        https://api.github.com/repos/*/releases/*)
+            metadata_urls="https://gh-proxy.com/$1 $1"
+            ;;
+        *) metadata_urls="$1" ;;
+    esac
+    for metadata_url in $metadata_urls; do
+        metadata_json="$(curl -fL -sS --connect-timeout "$DOWNLOAD_HEAD_CONNECT_TIMEOUT" --max-time "$DOWNLOAD_HEAD_MAX_TIME" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' -H 'User-Agent: nradio-plugin-assistant' "$metadata_url" 2>/dev/null)" || continue
+        # HTTP 200 的代理提示页也应回退，避免交给资产解析器当 JSON 使用。
+        printf '%s' "$metadata_json" | grep -q '"assets"[[:space:]]*:' || continue
+        printf '%s\n' "$metadata_json"
+        return 0
+    done
+    return 1
+)
+
 get_github_release_asset_browser_url() {
     api_url="$1"
     asset_name="$2"
@@ -5883,7 +5976,11 @@ get_github_release_asset_browser_url() {
     [ -n "$api_url" ] || return 1
     [ -n "$asset_name" ] || return 1
 
-    api_response="$(curl -L -sS --connect-timeout "$DOWNLOAD_HEAD_CONNECT_TIMEOUT" --max-time "$DOWNLOAD_HEAD_MAX_TIME" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' -H 'User-Agent: nradio-plugin-assistant' "$api_url" 2>/dev/null || true)"
+    if [ "$#" -ge 3 ]; then
+        api_response="$3"
+    else
+        api_response="$(get_github_release_metadata "$api_url" 2>/dev/null || true)"
+    fi
     [ -n "$api_response" ] || return 1
 
     browser_candidates="$(printf '%s' "$api_response" | tr -d '\r\n' | sed 's/[[:space:]]*,[[:space:]]*"/\n"/g' | sed -n 's/.*"browser_download_url"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | sed 's#\\/#/#g')"
@@ -5909,7 +6006,11 @@ get_github_release_asset_api_url() {
     [ -n "$api_url" ] || return 1
     [ -n "$asset_name" ] || return 1
 
-    api_response="$(curl -L -sS --connect-timeout "$DOWNLOAD_HEAD_CONNECT_TIMEOUT" --max-time "$DOWNLOAD_HEAD_MAX_TIME" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' -H 'User-Agent: nradio-plugin-assistant' "$api_url" 2>/dev/null || true)"
+    if [ "$#" -ge 3 ]; then
+        api_response="$3"
+    else
+        api_response="$(get_github_release_metadata "$api_url" 2>/dev/null || true)"
+    fi
     [ -n "$api_response" ] || return 1
 
     asset_api_url="$(printf '%s' "$api_response" | tr -d '\r\n' | sed 's#\\/#/#g' | sed -n 's#.*"url"[[:space:]]*:[[:space:]]*"\(https://api\.github\.com/repos/[^"]*/releases/assets/[^"]*\)".*"browser_download_url"[[:space:]]*:[[:space:]]*"[^"]*/'"$asset_name"'".*#\1#p')"
@@ -5923,7 +6024,7 @@ run_github_release_asset_resolve_curl() {
     shift
 
     case "$resolve_url" in
-        https://api.github.com/repos/*/releases/assets/*)
+        https://api.github.com/repos/*/releases/assets/*|https://gh-proxy.com/https://api.github.com/repos/*/releases/assets/*)
             curl "$@" -H 'Accept: application/octet-stream' -H 'X-GitHub-Api-Version: 2022-11-28' -H 'User-Agent: nradio-plugin-assistant' "$resolve_url"
             ;;
         *)
@@ -6007,7 +6108,7 @@ get_openlist_active_asset_name() {
 
 build_openlist_official_probe_urls() {
     openlist_probe_asset="$(get_openlist_active_asset_name)"
-    printf '%s %s %s\n' "https://github.com/OpenListTeam/OpenList/releases/latest/download/${openlist_probe_asset}" "https://api.github.com/repos/OpenListTeam/OpenList/releases/latest" "https://release-assets.githubusercontent.com/"
+    printf '%s %s %s %s\n' "https://gh-proxy.com/https://github.com/OpenListTeam/OpenList/releases/latest/download/${openlist_probe_asset}" "https://github.com/OpenListTeam/OpenList/releases/latest/download/${openlist_probe_asset}" "https://api.github.com/repos/OpenListTeam/OpenList/releases/latest" "https://release-assets.githubusercontent.com/"
 }
 
 build_openlist_download_urls() {
@@ -6021,25 +6122,26 @@ build_openlist_download_urls() {
     openlist_api_latest_url="https://api.github.com/repos/OpenListTeam/OpenList/releases/latest"
     openlist_urls=""
 
-    openlist_browser_url="$(get_github_release_asset_browser_url "$openlist_api_latest_url" "$openlist_asset_name" 2>/dev/null || true)"
-    openlist_asset_api_url="$(get_github_release_asset_api_url "$openlist_api_latest_url" "$openlist_asset_name" 2>/dev/null || true)"
+    openlist_metadata="$(get_github_release_metadata "$openlist_api_latest_url" 2>/dev/null || true)"
+    openlist_browser_url="$(get_github_release_asset_browser_url "$openlist_api_latest_url" "$openlist_asset_name" "$openlist_metadata" 2>/dev/null || true)"
+    openlist_asset_api_url="$(get_github_release_asset_api_url "$openlist_api_latest_url" "$openlist_asset_name" "$openlist_metadata" 2>/dev/null || true)"
     [ -n "$openlist_browser_url" ] || openlist_browser_url="$openlist_official_latest_url"
 
-    openlist_resolved_api_cdn_url="$(resolve_github_release_asset_cdn_url "$openlist_asset_api_url" 2>/dev/null || true)"
-    openlist_resolved_cdn_url="$(resolve_github_release_asset_cdn_url "$openlist_browser_url" 2>/dev/null || true)"
-    openlist_resolved_latest_cdn_url="$(resolve_github_release_asset_cdn_url "$openlist_official_latest_url" 2>/dev/null || true)"
-    openlist_urls="$(append_unique_list_item "$openlist_urls" "$openlist_resolved_api_cdn_url")"
-    openlist_urls="$(append_unique_list_item "$openlist_urls" "$openlist_resolved_cdn_url")"
-    openlist_urls="$(append_unique_list_item "$openlist_urls" "$openlist_resolved_latest_cdn_url")"
-    openlist_urls="$(append_unique_list_item "$openlist_urls" "$openlist_asset_api_url")"
+    # 保留稳定下载地址，由 curl -L 在真正下载时跟随官方 CDN 跳转。
+    case "$openlist_browser_url" in
+        https://github.com/*)
+            openlist_urls="$(append_unique_list_item "$openlist_urls" "https://gh-proxy.com/$openlist_browser_url")"
+            ;;
+    esac
     openlist_urls="$(append_unique_list_item "$openlist_urls" "$openlist_browser_url")"
+    openlist_urls="$(append_unique_list_item "$openlist_urls" "$openlist_asset_api_url")"
     openlist_urls="$(append_unique_list_item "$openlist_urls" "$openlist_official_latest_url")"
 
     for openlist_extra_url in $(build_urls_from_base_list "$openlist_asset_name" "$OPENLIST_GITHUB_CDN_BASES" 2>/dev/null || true); do
         openlist_urls="$(append_unique_list_item "$openlist_urls" "$openlist_extra_url")"
     done
 
-    OPENLIST_RESOLVED_DOWNLOAD_URLS="$openlist_urls"
+    OPENLIST_RESOLVED_DOWNLOAD_URLS="$(prioritize_github_proxy_urls "$openlist_urls")"
     printf '%s\n' "$OPENLIST_RESOLVED_DOWNLOAD_URLS"
 }
 
@@ -6050,25 +6152,25 @@ build_easytier_download_urls() {
     fi
 
     easytier_urls=""
-    easytier_browser_url="$(get_github_release_asset_browser_url "$EASYTIER_GITHUB_API_URL" "$EASYTIER_ASSET_NAME" 2>/dev/null || true)"
-    easytier_asset_api_url="$(get_github_release_asset_api_url "$EASYTIER_GITHUB_API_URL" "$EASYTIER_ASSET_NAME" 2>/dev/null || true)"
+    easytier_metadata="$(get_github_release_metadata "$EASYTIER_GITHUB_API_URL" 2>/dev/null || true)"
+    easytier_browser_url="$(get_github_release_asset_browser_url "$EASYTIER_GITHUB_API_URL" "$EASYTIER_ASSET_NAME" "$easytier_metadata" 2>/dev/null || true)"
+    easytier_asset_api_url="$(get_github_release_asset_api_url "$EASYTIER_GITHUB_API_URL" "$EASYTIER_ASSET_NAME" "$easytier_metadata" 2>/dev/null || true)"
     [ -n "$easytier_browser_url" ] || easytier_browser_url="$EASYTIER_GITHUB_RELEASE_URL"
 
-    easytier_resolved_api_cdn_url="$(resolve_github_release_asset_cdn_url "$easytier_asset_api_url" 2>/dev/null || true)"
-    easytier_resolved_cdn_url="$(resolve_github_release_asset_cdn_url "$easytier_browser_url" 2>/dev/null || true)"
-    easytier_resolved_latest_cdn_url="$(resolve_github_release_asset_cdn_url "$EASYTIER_GITHUB_RELEASE_URL" 2>/dev/null || true)"
-    easytier_urls="$(append_unique_list_item "$easytier_urls" "$easytier_resolved_api_cdn_url")"
-    easytier_urls="$(append_unique_list_item "$easytier_urls" "$easytier_resolved_cdn_url")"
-    easytier_urls="$(append_unique_list_item "$easytier_urls" "$easytier_resolved_latest_cdn_url")"
-    easytier_urls="$(append_unique_list_item "$easytier_urls" "$easytier_asset_api_url")"
+    case "$easytier_browser_url" in
+        https://github.com/*)
+            easytier_urls="$(append_unique_list_item "$easytier_urls" "https://gh-proxy.com/$easytier_browser_url")"
+            ;;
+    esac
     easytier_urls="$(append_unique_list_item "$easytier_urls" "$easytier_browser_url")"
+    easytier_urls="$(append_unique_list_item "$easytier_urls" "$easytier_asset_api_url")"
     easytier_urls="$(append_unique_list_item "$easytier_urls" "$EASYTIER_GITHUB_RELEASE_URL")"
 
     for easytier_extra_url in $(build_urls_from_base_list "$EASYTIER_ASSET_NAME" "$EASYTIER_GITHUB_CDN_BASES" 2>/dev/null || true); do
         easytier_urls="$(append_unique_list_item "$easytier_urls" "$easytier_extra_url")"
     done
 
-    EASYTIER_RESOLVED_DOWNLOAD_URLS="$easytier_urls"
+    EASYTIER_RESOLVED_DOWNLOAD_URLS="$(prioritize_github_proxy_urls "$easytier_urls")"
     printf '%s\n' "$EASYTIER_RESOLVED_DOWNLOAD_URLS"
 }
 
@@ -6974,8 +7076,9 @@ function action_sys_status()
 	local mem_total, mem_used, mem_percent = nradio_appcenter_read_system_memory()
 	local model_name = nradio_appcenter_read_model_name()
 	local is_c2000max = model_name == "NRadio_C2000MAX"
+	local supports_swap = is_c2000max or model_name == "NRadio_C2000Ultra"
 	local swap_total, swap_used, swap_percent = 0, 0, 0
-	if is_c2000max then
+	if supports_swap then
 		swap_total, swap_used, swap_percent = nradio_appcenter_read_swap_memory()
 	end
 	json_response({
@@ -6987,6 +7090,7 @@ function action_sys_status()
 			mem_percent = mem_percent,
 			model_name = model_name,
 			is_c2000max = is_c2000max,
+			supports_swap = supports_swap,
 			swap_total = swap_total,
 			swap_used = swap_used,
 			swap_percent = swap_percent,
@@ -7549,82 +7653,51 @@ patch_mt5700_appcenter_list_controller() {
 
     cat > "$mt5700_app_list_lua" <<'EOF_MT5700_APPCENTER_LIST_LUA'
 
--- MT5700 appcenter installed-app preservation v1
+-- MT5700 appcenter installed-app preservation v4
 local function mt5700_appcenter_preserve_installed_v1(parameter)
 	if type(parameter) ~= "table" or type(parameter.applist) ~= "table" then
 		return parameter
 	end
 
-	local fs = require "nixio.fs"
-	local mt5700_installed = fs.access("/usr/bin/at-webserver") and fs.access("/www/5700")
-	if not mt5700_installed then
-		for index = #parameter.applist, 1, -1 do
-			local app = parameter.applist[index]
-			if type(app) == "table" and
-				(app.name == "MT5700 WebUI" or app.name == "at-webserver" or app.name == "luci-app-at-webserver") then
-				table.remove(parameter.applist, index)
-			end
-		end
-	end
-	local function has_app(name)
+	-- The daemon's registered application list is authoritative. Only format
+	-- the version on an existing MT5700 card; never add or remove cards here.
+	local package_version = nradio_appcenter_installed_package_version_v2("at-webserver")
+	if package_version ~= "" then
+		local ui_version = package_version:gsub("%-r?%d+$", "")
 		for _, app in pairs(parameter.applist) do
-			if type(app) == "table" and tostring(app.name or "") == name then
-				return true
+			if type(app) == "table" and app.name == "MT5700 WebUI" then
+				app.version = ui_version
+				for _, pkg in pairs(type(app.list) == "table" and app.list or {}) do
+					if type(pkg) == "table" and (pkg.pkg_name == "at-webserver" or pkg.name == "at-webserver") then
+						pkg.version = package_version
+					end
+				end
 			end
 		end
-		return false
-	end
-	local function add_app(name, package_name, version, icon, description, route)
-		if has_app(name) then return end
-		version = version ~= "" and version or "installed"
-		table.insert(parameter.applist, {
-			name = name, version = version, size = 0, status = 1,
-			has_luci = 1, open = 0, icon = icon, des = description,
-			action_status = 0, luci_module_route = route,
-			list = {{name = package_name, pkg_name = package_name, size = 0,
-				version = version, status = 0, type = 1, has_luci = 1,
-				action_status = 0, luci_module_route = route}}
-		})
-	end
-
-	if fs.access("/usr/lib/lua/luci/controller/openclash.lua") and fs.access("/etc/openclash") then
-		add_app("luci-app-openclash", "luci-app-openclash",
-			nradio_appcenter_installed_package_version_v2("luci-app-openclash"),
-			"openclash.svg", "OpenClash 代理客户端", "admin/services/openclash")
-	end
-	if fs.access("/usr/lib/lua/luci/controller/AdGuardHome.lua") and fs.access("/usr/bin/AdGuardHome/AdGuardHome") then
-		add_app("luci-app-adguardhome", "luci-app-adguardhome",
-			nradio_appcenter_installed_package_version_v2("luci-app-adguardhome"),
-			"adguard.svg", "AdGuardHome 网络广告与跟踪拦截", "admin/services/AdGuardHome")
-	end
-	if fs.access("/usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua") and fs.access("/etc/init.d/openvpn") then
-		add_app("OpenVPN", "luci-app-openvpn",
-			nradio_appcenter_installed_package_version_v2("luci-app-openvpn"),
-			"openvpn.svg", "OpenVPN 客户端与服务端管理", "nradioadv/system/openvpnfull")
-	end
-	if fs.access("/usr/lib/lua/luci/controller/nradio_adv/qiyou.lua") and fs.access("/etc/qy") then
-		add_app("奇游联机宝", "nradio-qiyou", "1.2.1",
-			"qiyou.svg", "奇游联机宝游戏加速器", "nradioadv/system/qiyou")
-	end
-	if mt5700_installed then
-		add_app("MT5700 WebUI", "at-webserver", "3.0.0", "mt5700.png",
-			"MT5700M-CN 5G 模组管理界面（React + Semi Design）", "nradioadv/system/mt5700")
 	end
 	return parameter
 end
 EOF_MT5700_APPCENTER_LIST_LUA
 
-    if ! grep -q 'MT5700 appcenter installed-app preservation v1' "$APPCENTER_CONTROLLER" 2>/dev/null; then
-        awk -v lua_file="$mt5700_app_list_lua" '
-            /^function action_app_list_data\(\)/ && !inserted {
-                while ((getline extra < lua_file) > 0) print extra
-                close(lua_file)
-                inserted = 1
-            }
-            { print }
-        ' "$APPCENTER_CONTROLLER" > "$mt5700_app_list_tmp"
-        cp "$mt5700_app_list_tmp" "$APPCENTER_CONTROLLER"
-    fi
+    awk -v lua_file="$mt5700_app_list_lua" '
+        function insert_helper() {
+            while ((getline extra < lua_file) > 0) print extra
+            close(lua_file)
+            inserted = 1
+        }
+        /^-- MT5700 appcenter installed-app preservation v[0-9]+$/ {
+            insert_helper()
+            replacing = 1
+            next
+        }
+        replacing {
+            if ($0 == "end") replacing = 0
+            next
+        }
+        /^function action_app_list_data\(\)/ && !inserted { insert_helper() }
+        { print }
+    ' "$APPCENTER_CONTROLLER" > "$mt5700_app_list_tmp"
+    cp "$mt5700_app_list_tmp" "$APPCENTER_CONTROLLER"
 
     if ! grep -q 'return mt5700_appcenter_preserve_installed_v1(nradio_appcenter_runtime_compat_v2(applist.parameter))' "$APPCENTER_CONTROLLER" 2>/dev/null; then
         awk '
@@ -7646,13 +7719,6 @@ refresh_mt5700_luci_appcenter() {
     sleep 2
 }
 
-cleanup_mt5700_legacy_menu_entries() {
-    cleanup_appcenter_entry "luci-app-openclash" "luci-app-openclash" "admin/services/openclash"
-    cleanup_appcenter_entry "luci-app-adguardhome" "luci-app-adguardhome" "admin/services/AdGuardHome"
-    cleanup_appcenter_entry "OpenVPN" "luci-app-openvpn" "nradioadv/system/openvpnfull"
-    cleanup_appcenter_entry "$QIYOU_APP_NAME" "$QIYOU_PACKAGE_NAME" "$QIYOU_ROUTE"
-}
-
 cleanup_mt5700_appcenter_entries() {
     uci -q delete appcenter.nradio_mt5700 >/dev/null 2>&1 || true
     uci -q delete appcenter.nradio_mt5700_core >/dev/null 2>&1 || true
@@ -7663,31 +7729,13 @@ cleanup_mt5700_appcenter_entries() {
 set_mt5700_appcenter_entry() {
     mt5700_core_size="$1"
 
-    cleanup_mt5700_legacy_menu_entries
     cleanup_mt5700_appcenter_entries
-    mt5700_pkg_sec="nradio_mt5700"
-    mt5700_core_sec="nradio_mt5700_core"
-    uci set "appcenter.$mt5700_pkg_sec=package"
-    uci set "appcenter.$mt5700_core_sec=package_list"
-
-    uci set "appcenter.$mt5700_pkg_sec.name=$MT5700_APP_NAME"
-    uci set "appcenter.$mt5700_pkg_sec.version=$MT5700_UI_VERSION"
-    uci set "appcenter.$mt5700_pkg_sec.icon=$MT5700_ICON_NAME"
+    set_appcenter_entry "$MT5700_APP_NAME" "$MT5700_PACKAGE_NAME" "$MT5700_UI_VERSION" \
+        "$mt5700_core_size" "$MT5700_CONTROLLER" "$MT5700_ROUTE" "$MT5700_ICON_NAME"
+    mt5700_pkg_sec="$pkg_sec"
+    mt5700_core_sec="$list_sec"
     uci set "appcenter.$mt5700_pkg_sec.des=$MT5700_DESCRIPTION"
-    uci set "appcenter.$mt5700_pkg_sec.size=$mt5700_core_size"
-    uci set "appcenter.$mt5700_pkg_sec.status=1"
-    uci set "appcenter.$mt5700_pkg_sec.has_luci=1"
-    uci set "appcenter.$mt5700_pkg_sec.open=0"
-
-    uci set "appcenter.$mt5700_core_sec.name=$MT5700_PACKAGE_NAME"
-    uci set "appcenter.$mt5700_core_sec.pkg_name=$MT5700_PACKAGE_NAME"
-    uci set "appcenter.$mt5700_core_sec.parent=$MT5700_APP_NAME"
-    uci set "appcenter.$mt5700_core_sec.size=$mt5700_core_size"
     uci set "appcenter.$mt5700_core_sec.version=$MT5700_PACKAGE_VERSION"
-    uci set "appcenter.$mt5700_core_sec.luci_module_file=$MT5700_CONTROLLER"
-    uci set "appcenter.$mt5700_core_sec.luci_module_route=$MT5700_ROUTE"
-    uci set "appcenter.$mt5700_core_sec.has_luci=1"
-    uci set "appcenter.$mt5700_core_sec.type=1"
 }
 
 set_ddnsgo_appcenter_entry() {
@@ -8382,14 +8430,14 @@ patch_common_template() {
     .modal.app_frame.in .modal-dialog{
         width: 96vw;
         max-width: none;
-        margin: 28px auto;
+        margin: 8px auto;
     }
-    @media (min-width: 1200px) {
+    @media (min-width: 768px) {
         .modal.app_frame .modal-dialog,
         .modal.app_frame.in .modal-dialog{
-            width: 88vw;
+            width: 90vw;
             max-width: none;
-            margin: 42px 6vw;
+            margin: 8px 5vw;
         }
     }
     @media (max-height: 760px) {
@@ -8402,11 +8450,35 @@ patch_common_template() {
     .modal.app_frame .modal-content,
     .modal.app_frame.in .modal-content{
         width: 100%;
-        height: auto;
+        height: calc(100vh - 16px);
         min-height: 0;
         max-height: calc(100vh - 16px);
         max-width: none;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        overflow: hidden;
         box-sizing: border-box;
+    }
+    .modal.app_frame .modal-header{
+        height: auto !important;
+        min-height: 32px;
+        flex: 0 0 auto;
+        padding: 0 8px;
+        border: 0;
+        background: transparent;
+        box-sizing: border-box;
+    }
+    .modal.app_frame .bootstrap-dialog-header{
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    .modal.app_frame .bootstrap-dialog-title{
+        display: none;
+    }
+    .modal.app_frame .modal-footer{
+        display: none;
     }
     .modal.app_frame .modal-body,
     .modal.app_frame .bootstrap-dialog-body,
@@ -8419,41 +8491,45 @@ patch_common_template() {
         min-width: 0 !important;
         height: auto !important;
         min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column;
+        flex: 1 1 0;
+        padding: 0 !important;
+        margin: 0 !important;
         box-sizing: border-box;
         overflow: hidden !important;
+    }
+    .modal.app_frame .modal-body{
+        padding: 8px !important;
     }
     .app_frame_box{
         width: 100% !important;
         max-width: none !important;
         min-width: 0 !important;
-        height: 84vh;
+        height: auto;
         min-height: 0;
-        max-height: calc(100vh - 96px);
+        max-height: none;
+        flex: 1 1 0;
         box-sizing: border-box;
         overflow: hidden;
         display: flex;
         flex-direction: column;
     }
     .app_frame_plain{
-        height: 84vh;
+        height: auto;
         min-height: 0;
-        max-height: calc(100vh - 96px);
+        max-height: none;
     }
     .app_frame_tabs{
-        height: 84vh;
+        height: auto;
         min-height: 0;
-        max-height: calc(100vh - 96px);
+        max-height: none;
     }
     @supports (height: 100dvh) {
         .modal.app_frame .modal-content,
         .modal.app_frame.in .modal-content{
+            height: calc(100dvh - 16px);
             max-height: calc(100dvh - 16px);
-        }
-        .modal.app_frame .app_frame_box,
-        .modal.app_frame .app_frame_plain,
-        .modal.app_frame .app_frame_tabs{
-            height: 84dvh;
-            max-height: calc(100dvh - 96px);
         }
     }
     .app_frame_nav{
@@ -8505,6 +8581,65 @@ patch_common_template() {
     .app_frame_origin_button:hover{
         background: #009fe8;
         border-color: #16b8f2;
+    }
+    .app_frame_openclash .app_frame_nav{
+        flex-wrap: nowrap;
+        gap: 8px;
+        min-width: 0;
+        padding: 10px 12px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(76,198,216,.38) transparent;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        background: #101e2d;
+    }
+    .app_frame_openclash .app_frame_nav_item, .app_frame_openclash .app_frame_origin_button{
+        flex: 0 0 auto;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0 14px;
+        border: 1px solid rgba(128,157,184,.22);
+        border-radius: 9px;
+        background: rgba(128,157,184,.06);
+        color: #c5d2de;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.25;
+        white-space: nowrap;
+        appearance: none;
+        box-shadow: none;
+        text-shadow: none;
+        transition: background-color .16s ease,border-color .16s ease,color .16s ease;
+    }
+    .app_frame_openclash .app_frame_nav_item:hover, .app_frame_openclash .app_frame_origin_button:hover{
+        background: rgba(76,198,216,.13);
+        border-color: rgba(76,198,216,.45);
+        color: #edfaff;
+    }
+    .app_frame_openclash .app_frame_nav_item_active, .app_frame_openclash .app_frame_nav_item_active:hover{
+        background: #42c4d5;
+        border-color: #42c4d5;
+        color: #06242e;
+    }
+    .app_frame_openclash .app_frame_nav_item:focus-visible, .app_frame_openclash .app_frame_origin_button:focus-visible{
+        outline: 2px solid #79e0ea;
+        outline-offset: 2px;
+    }
+    .app_frame_openclash .app_frame_origin_button{
+        margin-left: auto;
+        border-color: rgba(76,198,216,.36);
+    }
+    @media (max-width: 680px) {
+        .app_frame_openclash .app_frame_nav{
+            padding: 8px;
+            gap: 6px;
+        }
+        .app_frame_openclash .app_frame_nav_item, .app_frame_openclash .app_frame_origin_button{
+            min-height: 44px;
+            font-size: 14px;
+            padding: 0 12px;
+        }
     }
     .nr-openclash-fallback{
         display: none;
@@ -8576,8 +8711,8 @@ patch_common_template() {
     }
     .app_frame_box iframe{
         display: block;
-        flex: 1 1 auto;
-        height: 100%;
+        flex: 1 1 0;
+        height: auto;
         min-height: 0;
         overflow: auto;
         border: 0;
@@ -8593,7 +8728,8 @@ patch_common_template() {
         width: 100% !important;
         max-width: none !important;
         min-width: 0 !important;
-        height: 100% !important;
+        height: auto !important;
+        flex: 1 1 0 !important;
         min-height: 0 !important;
         border: 0 !important;
         background: #101018 !important;
@@ -8626,9 +8762,18 @@ EOF
         style.id = "nr-app-frame-polish-css";
         style.type = "text/css";
         style.appendChild(document.createTextNode([
-            ".modal.app_frame .modal-content{min-height:0!important;max-height:calc(100vh - 16px)!important;}",
-            ".modal.app_frame .app_frame_box,.modal.app_frame .app_frame_plain,.modal.app_frame .app_frame_tabs{height:84vh!important;min-height:0!important;max-height:calc(100vh - 96px)!important;}",
-            "@supports (height:100dvh){.modal.app_frame .modal-content{max-height:calc(100dvh - 16px)!important;}.modal.app_frame .app_frame_box,.modal.app_frame .app_frame_plain,.modal.app_frame .app_frame_tabs{height:84dvh!important;max-height:calc(100dvh - 96px)!important;}}",
+            ".modal.app_frame .modal-dialog,.modal.app_frame.in .modal-dialog{width:96vw!important;max-width:none!important;margin:8px 2vw!important;}",
+            "@media (min-width:768px){.modal.app_frame .modal-dialog,.modal.app_frame.in .modal-dialog{width:90vw!important;margin:8px 5vw!important;}}",
+            ".modal.app_frame .modal-content{display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;height:calc(100vh - 16px)!important;min-height:0!important;max-height:calc(100vh - 16px)!important;padding:0!important;overflow:hidden!important;box-sizing:border-box!important;}",
+            "@supports (height:100dvh){.modal.app_frame .modal-content{height:calc(100dvh - 16px)!important;max-height:calc(100dvh - 16px)!important;}}",
+            ".modal.app_frame .modal-header{height:auto!important;min-height:32px!important;flex:0 0 auto!important;padding:0 8px!important;border:0!important;background:transparent!important;box-sizing:border-box!important;}",
+            ".modal.app_frame .bootstrap-dialog-header{display:flex!important;align-items:center!important;justify-content:flex-end!important;}",
+            ".modal.app_frame .bootstrap-dialog-title{display:none!important;}",
+            ".modal.app_frame .modal-footer{display:none!important;}",
+            ".modal.app_frame .modal-body,.modal.app_frame .bootstrap-dialog-body,.modal.app_frame .bootstrap-dialog-message{display:flex!important;flex-direction:column!important;flex:1 1 0!important;width:100%!important;max-width:none!important;min-width:0!important;height:auto!important;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;box-sizing:border-box!important;}",
+            ".modal.app_frame .modal-body{padding:8px!important;}",
+            ".modal.app_frame .app_frame_box,.modal.app_frame .app_frame_plain,.modal.app_frame .app_frame_tabs{display:flex!important;flex-direction:column!important;flex:1 1 0!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:hidden!important;}",
+            ".modal.app_frame #sub_frame,.modal.app_frame.in #sub_frame{flex:1 1 0!important;height:auto!important;min-height:0!important;}",
             ".modal.app_frame{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;}",
             ".modal.app_frame #sub_frame{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-x pan-y!important;overscroll-behavior-y:contain!important;}",
             "@media (max-height:760px){.modal.app_frame .modal-dialog,.modal.app_frame.in .modal-dialog{margin-top:8px!important;margin-bottom:8px!important;}}",
@@ -8638,6 +8783,13 @@ EOF
             ".modal.app_frame .app_frame_nav_item_active{color:#10bdf2!important;background:rgba(0,136,204,.12)!important;border-color:rgba(0,136,204,.32)!important;border-bottom-color:#0088cc!important;}",
             ".modal.app_frame .app_frame_origin_button{margin-left:auto!important;min-height:30px!important;padding:0 13px!important;border:1px solid rgba(0,136,204,.55)!important;border-radius:4px!important;background:#0088cc!important;color:#fff!important;cursor:pointer!important;font-weight:700!important;line-height:1.2!important;box-shadow:0 4px 12px rgba(0,136,204,.18)!important;}",
             ".modal.app_frame .app_frame_origin_button:hover{background:#009fe8!important;border-color:#16b8f2!important;}",
+            ".modal.app_frame .app_frame_openclash .app_frame_nav{flex-wrap:nowrap!important;gap:8px!important;min-width:0!important;padding:10px 12px!important;overflow-x:auto!important;scrollbar-width:thin!important;scrollbar-color:rgba(76,198,216,.38) transparent!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-x:contain!important;background:#101e2d!important;}",
+            ".modal.app_frame .app_frame_openclash .app_frame_nav_item,.modal.app_frame .app_frame_openclash .app_frame_origin_button{flex:0 0 auto!important;justify-content:center!important;min-height:38px!important;padding:0 14px!important;border:1px solid rgba(128,157,184,.22)!important;border-radius:9px!important;background:rgba(128,157,184,.06)!important;color:#c5d2de!important;font-size:13px!important;font-weight:600!important;line-height:1.25!important;white-space:nowrap!important;appearance:none!important;box-shadow:none!important;text-shadow:none!important;transition:background-color .16s ease,border-color .16s ease,color .16s ease!important;}",
+            ".modal.app_frame .app_frame_openclash .app_frame_nav_item:hover,.modal.app_frame .app_frame_openclash .app_frame_origin_button:hover{background:rgba(76,198,216,.13)!important;border-color:rgba(76,198,216,.45)!important;color:#edfaff!important;}",
+            ".modal.app_frame .app_frame_openclash .app_frame_nav_item_active,.modal.app_frame .app_frame_openclash .app_frame_nav_item_active:hover{background:#42c4d5!important;border-color:#42c4d5!important;color:#06242e!important;}",
+            ".modal.app_frame .app_frame_openclash .app_frame_nav_item:focus-visible,.modal.app_frame .app_frame_openclash .app_frame_origin_button:focus-visible{outline:2px solid #79e0ea!important;outline-offset:2px!important;}",
+            ".modal.app_frame .app_frame_openclash .app_frame_origin_button{margin-left:auto!important;border-color:rgba(76,198,216,.36)!important;}",
+            "@media (max-width:680px){.modal.app_frame .app_frame_openclash .app_frame_nav{padding:8px!important;gap:6px!important;}.modal.app_frame .app_frame_openclash .app_frame_nav_item,.modal.app_frame .app_frame_openclash .app_frame_origin_button{min-height:44px!important;font-size:14px!important;padding:0 12px!important;}}",
             ".modal.app_frame .nr-openclash-fallback{display:none!important;flex:0 0 auto!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;margin:10px 15px 0!important;padding:10px 12px!important;border:1px solid rgba(0,136,204,.28)!important;border-left:4px solid #00b7ee!important;border-radius:5px!important;background:rgba(24,31,43,.96)!important;color:#dce8f5!important;box-sizing:border-box!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;}",
             ".modal.app_frame .app_frame_openclash.nr-openclash-fallback-on .nr-openclash-fallback{display:flex!important;}",
             ".modal.app_frame .nr-openclash-fallback_badge{flex:0 0 auto!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;width:22px!important;height:22px!important;border-radius:50%!important;background:rgba(0,183,238,.16)!important;color:#23c8f4!important;font-weight:800!important;}",
@@ -8842,40 +8994,13 @@ EOF
         try {
             ensure_app_frame_polish_css();
             $(".modal.app_frame").scrollTop(0);
-            var compact_frame_height = window.innerHeight <= 760;
-            var compact_frame_width = window.innerWidth <= 767;
-            $(".app_frame .modal-dialog").css({
-                "width": compact_frame_width ? "96vw" : "88vw",
-                "max-width": "none",
-                "margin-top": compact_frame_height ? "8px" : (compact_frame_width ? "16px" : "42px"),
-                "margin-bottom": compact_frame_height ? "8px" : (compact_frame_width ? "16px" : "42px"),
-                "margin-left": compact_frame_width ? "2vw" : "6vw",
-                "margin-right": compact_frame_width ? "2vw" : "6vw"
-            });
-            $(".app_frame .modal-content").css({
-                "width": "100%",
-                "max-width": "none",
-                "height": "auto",
-                "min-height": "0",
-                "max-height": "calc(100vh - 16px)",
-                "box-sizing": "border-box"
-            });
-            $(".app_frame .modal-body, .app_frame .bootstrap-dialog-body, .app_frame .bootstrap-dialog-message").css({
-                "width": "100%",
-                "max-width": "none",
-                "min-width": "0",
-                "height": "auto",
-                "min-height": "0",
-                "overflow": "hidden",
-                "box-sizing": "border-box"
-            });
             $("#sub_frame").css({
                 "display": "block",
-                "flex": "1 1 auto",
+                "flex": "1 1 0",
                 "width": "100%",
                 "max-width": "none",
                 "min-width": "0",
-                "height": "100%",
+                "height": "auto",
                 "min-height": "0",
                 "border": "0",
                 "background": "#101018"
@@ -9100,15 +9225,15 @@ EOF
             {route: "admin/services/openclash/log", title: "<%:Server Logs%>"}
         ];
 
-        var sub_web_ht = "<div class='app_frame_box app_frame_tabs app_frame_openclash'><div class='app_frame_nav'>";
+        var sub_web_ht = "<div class='app_frame_box app_frame_tabs app_frame_openclash'><nav class='app_frame_nav' aria-label='哈基米功能导航'>";
         $.each(tabs, function(index, tab){
             var active_class = "";
             if(tab.route == current_route)
                 active_class = " app_frame_nav_item_active";
-            sub_web_ht += "<span class='app_frame_nav_item" + active_class + "' data-route='" + tab.route + "' onclick='switch_app_frame_route(this)'>" + tab.title + "</span>";
+            sub_web_ht += "<button type='button' class='app_frame_nav_item" + active_class + "' aria-pressed='" + (tab.route == current_route ? "true" : "false") + "' data-route='" + tab.route + "' onclick='switch_app_frame_route(this)'>" + tab.title + "</button>";
         });
         sub_web_ht += "<button type='button' class='app_frame_origin_button' onclick='open_openclash_original_page()'>原版页面</button>";
-        sub_web_ht += "</div><div id='nr-openclash-fallback' class='nr-openclash-fallback'><span class='nr-openclash-fallback_badge'>!</span><span class='nr-openclash-fallback_text'><strong>OpenClash 页面未正常显示</strong><em>可重载弹窗，或在顶层打开原版页面。</em></span><span class='nr-openclash-fallback_actions'><button type='button' class='nr-openclash-fallback_btn' onclick='reload_openclash_frame()'>重载</button><button type='button' class='nr-openclash-fallback_btn' onclick='open_openclash_original_page()'>原版页面</button></span></div>" + build_app_iframe(current_route) + "</div>";
+        sub_web_ht += "</nav><div id='nr-openclash-fallback' class='nr-openclash-fallback'><span class='nr-openclash-fallback_badge'>!</span><span class='nr-openclash-fallback_text'><strong>OpenClash 页面未正常显示</strong><em>可重载弹窗，或在顶层打开原版页面。</em></span><span class='nr-openclash-fallback_actions'><button type='button' class='nr-openclash-fallback_btn' onclick='reload_openclash_frame()'>重载</button><button type='button' class='nr-openclash-fallback_btn' onclick='open_openclash_original_page()'>原版页面</button></span></div>" + build_app_iframe(current_route) + "</div>";
 
         return sub_web_ht;
     }
@@ -9143,8 +9268,8 @@ EOF
     }
     function switch_app_frame_route(obj){
         var route = $(obj).data("route");
-        $(".app_frame_nav_item").removeClass("app_frame_nav_item_active");
-        $(obj).addClass("app_frame_nav_item_active");
+        $(".app_frame_nav_item").removeClass("app_frame_nav_item_active").filter("[aria-pressed]").attr("aria-pressed", "false");
+        $(obj).addClass("app_frame_nav_item_active").filter("[aria-pressed]").attr("aria-pressed", "true");
         var frame_src = get_app_route_url(route);
         $("#sub_frame").removeClass("nr-frame-ready").addClass("nr-frame-loading").attr("data-src", frame_src).attr("src", frame_src);
     }
@@ -9682,7 +9807,7 @@ EOF
     verify_template_marker "scrolling='auto'" 'iframe 自动滚动'
     verify_template_marker "touch-action:pan-x pan-y" '插件 iframe 手机双向触摸滚动'
     verify_template_marker 'height:100dvh' '插件 iframe 手机动态视口高度'
-    verify_template_marker 'max-height:calc(100vh - 96px)' 'iframe 短窗口响应式高度'
+    verify_template_marker 'height:calc(100dvh - 16px)' 'iframe 可用视口高度'
     verify_template_marker 'rgba(104, 130, 166, .24)' 'iframe 标签栏暗色边线'
     verify_template_marker 'app_frame_openclash' 'OpenClash iframe 弹窗容器'
     verify_template_marker 'nr-openclash-fallback' 'OpenClash iframe 防黑屏内容'
@@ -9921,8 +10046,9 @@ function action_sys_status()
 	local mem_total, mem_used, mem_percent = nradio_appcenter_read_system_memory()
 	local model_name = nradio_appcenter_read_model_name()
 	local is_c2000max = model_name == "NRadio_C2000MAX"
+	local supports_swap = is_c2000max or model_name == "NRadio_C2000Ultra"
 	local swap_total, swap_used, swap_percent = 0, 0, 0
-	if is_c2000max then
+	if supports_swap then
 		swap_total, swap_used, swap_percent = nradio_appcenter_read_swap_memory()
 	end
 
@@ -9934,6 +10060,7 @@ function action_sys_status()
 		mem_percent = mem_percent,
 		model_name = model_name,
 		is_c2000max = is_c2000max,
+		supports_swap = supports_swap,
 		swap_total = swap_total,
 		swap_used = swap_used,
 		swap_percent = swap_percent,
@@ -9945,6 +10072,7 @@ EOF_APPCENTER_SYS_STATUS_LUA
     if ! grep -q 'function action_sys_status()' "$APPCENTER_CONTROLLER" 2>/dev/null; then
         cat "$status_lua_file" >> "$APPCENTER_CONTROLLER"
     elif ! grep -q 'swap_total = swap_total' "$APPCENTER_CONTROLLER" 2>/dev/null || \
+         ! grep -q 'supports_swap = supports_swap' "$APPCENTER_CONTROLLER" 2>/dev/null || \
          ! grep -q 'local function nradio_appcenter_read_model_name()' "$APPCENTER_CONTROLLER" 2>/dev/null || \
          ! grep -q 'local function nradio_appcenter_read_swap_memory()' "$APPCENTER_CONTROLLER" 2>/dev/null || \
          ! grep -q 'now - prev_time < min_interval' "$APPCENTER_CONTROLLER" 2>/dev/null; then
@@ -14498,14 +14626,14 @@ EOF_APPCENTER_PREMIUM_VISUAL_FINISH
         $(".app_status_mem").text(mem_text).attr("title", mem_text + " · " + mem_percent.toFixed(1) + "%");
         set_status_width(".app_status_mem_bar", mem_percent);
 
-        var is_c2000max = data.is_c2000max === true || data.is_c2000max == 1 || data.model_name == "NRadio_C2000MAX" || data.model == "NRadio_C2000MAX";
-        if(is_c2000max){
+        var supports_swap = data.supports_swap === true || data.supports_swap == 1 || data.is_c2000max === true || data.is_c2000max == 1 || data.model_name == "NRadio_C2000MAX" || data.model == "NRadio_C2000MAX" || data.model_name == "NRadio_C2000Ultra" || data.model == "NRadio_C2000Ultra";
+        if(supports_swap){
             var swap_total = Number(data.swap_total || 0);
             var swap_used = Number(data.swap_used || 0);
             var swap_percent = Number(data.swap_percent || 0);
             var swap_text = swap_total > 0 ? (format_kib(swap_used) + " / " + format_kib(swap_total)) : "未启用";
             $(".app_status_swap_metric").show();
-            $(".app_status_swap").text(swap_text).attr("title", swap_total > 0 ? (swap_text + " · " + swap_percent.toFixed(1) + "%") : "C2000MAX 未启用 swap");
+            $(".app_status_swap").text(swap_text).attr("title", swap_total > 0 ? (swap_text + " · " + swap_percent.toFixed(1) + "%") : "未启用 swap");
             set_status_width(".app_status_swap_bar", swap_total > 0 ? swap_percent : 0);
         }
         else{
@@ -15115,8 +15243,8 @@ EOF_APPCENTER_EMPTY_STATE_JS
     verify_template_marker 'display_version: nr_appcenter_display_version(db.name, db.version)' '应用商店 OpenVPN 版本号显示数据'
     verify_template_marker '{{display_version}}' '应用商店 OpenVPN 版本号挂载'
     verify_template_marker 'app_status_mem").text(mem_text)' '应用商店系统卡片内存显示'
-    verify_template_marker 'app_status_swap").text(swap_text)' '应用商店 C2000MAX swap 显示'
-    verify_template_marker 'app_status_swap_bar' '应用商店 C2000MAX swap 状态条'
+    verify_template_marker 'app_status_swap").text(swap_text)' '应用商店 C2000MAX / C2000Ultra swap 显示'
+    verify_template_marker 'app_status_swap_bar' '应用商店 C2000MAX / C2000Ultra swap 状态条'
     verify_template_marker 'build_app_status_panel_from_data' '应用商店右侧系统状态面板'
     verify_template_marker 'function start_app_status_polling()' '应用商店系统状态刷新函数'
     verify_template_marker 'id="app_status_mount"' '应用商店右侧系统状态面板挂载点'
@@ -15139,13 +15267,13 @@ patch_appcenter_card_polish_v3() {
     /* NRadio appcenter v3: begin */
     .appcontainer{
         --nr-v3-bg: #07101b;
-        --nr-v3-panel: #0b1725;
+        --nr-v3-panel: #0f1d2b;
         --nr-v3-panel-2: #0f1d2d;
-        --nr-v3-line: rgba(128,157,184,.22);
+        --nr-v3-line: rgba(128,157,184,.16);
         --nr-v3-line-strong: rgba(70,190,214,.42);
         --nr-v3-text: #edf5fb;
-        --nr-v3-text-soft: #bdcad7;
-        --nr-v3-muted: #8294a7;
+        --nr-v3-text-soft: #c5d2de;
+        --nr-v3-muted: #91a5b8;
         --nr-v3-cyan: #4cc6d8;
         --nr-v3-blue: #5f9eea;
         --nr-v3-green: #50c697;
@@ -15158,7 +15286,7 @@ patch_appcenter_card_polish_v3() {
             "toolbar toolbar"
             "menu content"
             "status status";
-        gap: 12px;
+        gap: 16px;
         align-items: start;
         width: 100%;
         min-width: 0;
@@ -15190,11 +15318,11 @@ patch_appcenter_card_polish_v3() {
     #app_top_menu .top_menu{
         flex: 0 0 auto;
         margin: 0;
-        padding: 6px 9px;
+        padding: 8px 10px;
         border: 1px solid transparent;
         border-radius: 8px;
         color: var(--nr-v3-muted);
-        font-size: 12px;
+        font-size: 13px;
         line-height: 1.2;
         white-space: nowrap;
         -webkit-background-clip: border-box !important;
@@ -15232,8 +15360,8 @@ patch_appcenter_card_polish_v3() {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 22px;
-        height: 22px;
+        width: 28px;
+        height: 28px;
         margin: 0 3px 0 -2px;
         padding: 0;
         border: 0;
@@ -15244,7 +15372,7 @@ patch_appcenter_card_polish_v3() {
         color: var(--nr-v3-muted);
         -webkit-text-fill-color: currentColor !important;
         font-size: 0 !important;
-        opacity: .46 !important;
+        opacity: .72 !important;
         cursor: pointer;
         transition: color .16s ease, opacity .16s ease, background-color .16s ease;
     }
@@ -15271,8 +15399,8 @@ patch_appcenter_card_polish_v3() {
         padding: 11px 12px;
         border: 1px solid var(--nr-v3-line);
         border-radius: 12px;
-        background: linear-gradient(145deg, rgba(15,29,45,.96), rgba(7,16,27,.94));
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 8px 20px rgba(0,0,0,.16);
+        background: #0c1825;
+        box-shadow: none;
     }
     .app_btn_box .mem_track{
         width: auto;
@@ -15283,7 +15411,7 @@ patch_appcenter_card_polish_v3() {
         color: var(--nr-v3-text-soft);
     }
     .app_btn_box .mem_header{
-        font-size: 12px;
+        font-size: 13px;
         color: var(--nr-v3-text-soft);
     }
     .app_btn_box .mem_progress{
@@ -15337,17 +15465,17 @@ patch_appcenter_card_polish_v3() {
     #nr_app_search_input{
         display: block;
         width: 100%;
-        height: 34px;
+        height: 38px;
         padding: 0 86px 0 34px;
         border: 1px solid var(--nr-v3-line);
         border-radius: 9px;
         outline: none;
         background: rgba(3,9,16,.58);
         color: var(--nr-v3-text);
-        font-size: 13px;
+        font-size: 14px;
     }
     #nr_app_search_input::placeholder{
-        color: #6f8193;
+        color: #93a7ba;
     }
     #nr_app_search_input:focus{
         border-color: var(--nr-v3-line-strong);
@@ -15364,11 +15492,11 @@ patch_appcenter_card_polish_v3() {
         border: 0;
         background: transparent;
         color: var(--nr-v3-muted);
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 650;
         line-height: 1;
         text-align: center;
-        opacity: .82;
+        opacity: 1;
         pointer-events: none;
     }
     .nr_app_search_clear{
@@ -15378,8 +15506,8 @@ patch_appcenter_card_polish_v3() {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 23px;
-        height: 23px;
+        width: 28px;
+        height: 28px;
         padding: 0;
         transform: translateY(-50%) scale(.88);
         border: 0;
@@ -15411,15 +15539,15 @@ patch_appcenter_card_polish_v3() {
         gap: 8px;
     }
     .app_btn_group .app_btn_class{
-        min-height: 34px;
+        min-height: 38px;
         padding: 0 14px;
         border: 1px solid rgba(76,198,216,.30);
         border-radius: 9px;
         background: rgba(76,198,216,.075);
         color: #cceff5;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 700;
-        line-height: 32px;
+        line-height: 36px;
         white-space: nowrap;
         cursor: pointer;
     }
@@ -15453,7 +15581,7 @@ patch_appcenter_card_polish_v3() {
     .container_left .app_menu{
         display: flex;
         align-items: center;
-        min-height: 34px;
+        min-height: 38px;
         margin: 0 0 6px;
         justify-content: space-between;
         gap: 7px;
@@ -15461,7 +15589,7 @@ patch_appcenter_card_polish_v3() {
         border: 1px solid transparent;
         border-radius: 8px;
         color: var(--nr-v3-muted);
-        font-size: 12px;
+        font-size: 13px;
         line-height: 1.2;
         white-space: nowrap;
         -webkit-background-clip: border-box !important;
@@ -15478,7 +15606,7 @@ patch_appcenter_card_polish_v3() {
     }
     .container_left .app_menu.menu_active{
         border-color: rgba(76,198,216,.28);
-        background: linear-gradient(90deg, rgba(76,198,216,.13), rgba(76,198,216,.04));
+        background: rgba(76,198,216,.10);
         color: #e5fbff !important;
         -webkit-text-fill-color: #e5fbff !important;
         box-shadow: inset 3px 0 0 var(--nr-v3-cyan);
@@ -15487,15 +15615,15 @@ patch_appcenter_card_polish_v3() {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 20px;
-        height: 20px;
+        min-width: 22px;
+        height: 22px;
         padding: 0 5px;
         border-radius: 999px;
         background: rgba(128,157,184,.08);
         color: var(--nr-v3-muted);
-        font-size: 9px;
+        font-size: 11px;
         font-weight: 700;
-        line-height: 20px;
+        line-height: 22px;
         font-variant-numeric: tabular-nums;
     }
     .container_left .app_menu.menu_active .nr_menu_count{
@@ -15509,7 +15637,9 @@ patch_appcenter_card_polish_v3() {
         grid-area: content;
         display: grid;
         grid-template-columns: repeat(3,minmax(0,1fr));
-        gap: 14px;
+        grid-auto-rows: 1fr;
+        align-items: stretch;
+        gap: 16px;
         float: none !important;
         width: auto !important;
         min-width: 0;
@@ -15522,31 +15652,30 @@ patch_appcenter_card_polish_v3() {
     .container_right .app_box{
         position: relative;
         display: grid;
-        grid-template-columns: 58px minmax(0,1fr);
-        grid-template-rows: minmax(76px,1fr) auto;
-        column-gap: 11px;
+        grid-template-columns: 52px minmax(0,1fr);
+        grid-template-rows: minmax(110px,1fr) auto;
+        column-gap: 12px;
         min-width: 0;
-        min-height: 142px;
+        min-height: 210px;
         width: 100% !important;
         max-width: none !important;
         height: auto !important;
         margin: 0 !important;
         float: none !important;
-        padding: 13px;
+        padding: 16px;
         overflow: hidden;
-        border: 1px solid rgba(128,157,184,.22);
+        border: 1px solid var(--nr-v3-line);
         border-radius: 12px;
-        background:
-            radial-gradient(circle at 0 0, rgba(76,198,216,.055), transparent 42%),
-            linear-gradient(145deg, rgba(15,29,45,.97), rgba(7,15,25,.96));
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 12px 26px rgba(0,0,0,.22);
-        transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background-color .16s ease;
+        background: var(--nr-v3-panel);
+        box-shadow: 0 3px 10px rgba(0,0,0,.10);
+        transition: border-color .16s ease, box-shadow .16s ease, background-color .16s ease;
     }
     .container_right .app_box:hover,
     .container_right .app_box:focus-within{
-        transform: translateY(-1px);
-        border-color: rgba(76,198,216,.40);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 15px 32px rgba(0,0,0,.28);
+        transform: none;
+        border-color: var(--nr-v3-line-strong);
+        background: #132334;
+        box-shadow: 0 5px 14px rgba(0,0,0,.14);
     }
     .container_right .app_icon{
         grid-column: 1;
@@ -15562,17 +15691,17 @@ patch_appcenter_card_polish_v3() {
         display: block;
         width: 52px;
         height: 52px;
-        padding: 4px;
-        border: 1px solid rgba(128,157,184,.22);
+        padding: 3px;
+        border: 1px solid rgba(128,157,184,.10);
         border-radius: 12px;
-        background: rgba(255,255,255,.035);
+        background: rgba(128,157,184,.04);
         object-fit: contain;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 8px 18px rgba(0,0,0,.22);
-        transition: transform .16s ease, border-color .16s ease;
+        box-shadow: none;
+        transition: border-color .16s ease;
     }
     .container_right .app_box:hover .app_icon_img,
     .container_right .app_box:focus-within .app_icon_img{
-        transform: scale(1.025);
+        transform: none;
         border-color: rgba(76,198,216,.34);
     }
     .container_right .app_info{
@@ -15586,8 +15715,10 @@ patch_appcenter_card_polish_v3() {
     .container_right .app_title{
         display: grid;
         grid-template-columns: minmax(0,1fr) auto;
-        gap: 4px 8px;
-        align-items: center;
+        gap: 5px 8px;
+        align-items: start;
+        align-content: start;
+        min-height: 48px;
         min-width: 0;
     }
     .container_right .app_name{
@@ -15598,9 +15729,9 @@ patch_appcenter_card_polish_v3() {
         min-width: 0;
         overflow: hidden;
         color: var(--nr-v3-text);
-        font-size: 15px;
-        font-weight: 750;
-        line-height: 1.35;
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.4;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
@@ -15611,8 +15742,10 @@ patch_appcenter_card_polish_v3() {
         height: auto;
         overflow: hidden;
         color: var(--nr-v3-muted);
-        font-size: 11px;
-        line-height: 1.35;
+        font-size: 12px;
+        font-weight: 400;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.4;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
@@ -15622,20 +15755,20 @@ patch_appcenter_card_polish_v3() {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        gap: 5px;
+        gap: 4px;
     }
     .container_right .app_state_badge,
     .container_right .app_open_badge{
         display: inline-flex;
         align-items: center;
         min-height: 21px;
-        padding: 0 7px;
-        border: 1px solid rgba(128,157,184,.18);
-        border-radius: 999px;
+        padding: 0 6px;
+        border: 1px solid rgba(128,157,184,.14);
+        border-radius: 6px;
         background: rgba(128,157,184,.07);
         color: var(--nr-v3-text-soft);
-        font-size: 10px;
-        font-weight: 700;
+        font-size: 11px;
+        font-weight: 500;
         line-height: 19px;
         white-space: nowrap;
     }
@@ -15658,12 +15791,13 @@ patch_appcenter_card_polish_v3() {
     .container_right .app_des{
         float: none;
         width: 100%;
-        height: 34px;
-        margin: 7px 0 0;
+        height: 44px;
+        margin: 12px 0 0;
         overflow: hidden;
-        color: var(--nr-v3-text-soft);
-        font-size: 12px;
-        line-height: 1.55;
+        color: #b5c5d4;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 22px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -15673,35 +15807,38 @@ patch_appcenter_card_polish_v3() {
         grid-row: 2;
         float: none;
         width: 100%;
-        margin: 9px 0 0;
-        padding-top: 9px;
-        border-top: 1px solid rgba(128,157,184,.13);
+        align-self: end;
+        margin: 14px 0 0;
+        padding-top: 12px;
+        border-top: 1px solid rgba(128,157,184,.10);
     }
     .container_right .action_list{
         display: flex;
         justify-content: flex-end;
-        gap: 7px;
+        gap: 10px;
         float: none;
         margin: 0;
         padding: 0;
         list-style: none;
+        align-items: center;
     }
     .container_right .action_list_li{
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 58px;
-        min-height: 30px;
-        padding: 0 10px;
+        min-width: 72px;
+        min-height: 38px;
+        padding: 0 14px;
         border: 1px solid rgba(128,157,184,.24);
         border-radius: 8px;
         background: rgba(128,157,184,.055);
         color: var(--nr-v3-text-soft);
-        font-size: 11px;
-        font-weight: 700;
-        line-height: 28px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 36px;
         cursor: pointer;
         -webkit-text-fill-color: currentColor;
+        transition: background-color .16s ease, border-color .16s ease, color .16s ease;
     }
     .container_right .action_list_li:hover,
     .container_right .action_list_li:focus-visible{
@@ -15710,16 +15847,36 @@ patch_appcenter_card_polish_v3() {
         color: #e7fbff;
         outline: none;
     }
+    .container_right .nr_action_install,
     .container_right .nr_action_open{
-        border-color: rgba(76,198,216,.30);
-        color: #bfeef5;
+        border-color: var(--nr-v3-cyan);
+        color: #06242e;
+        background: var(--nr-v3-cyan);
     }
     .container_right .nr_action_update{
         border-color: rgba(225,173,100,.28);
         color: #eed0a0;
+        background: rgba(225,173,100,.10);
     }
     .container_right .nr_action_uninstall{
-        color: #d9a1a5;
+        margin-right: auto;
+        color: #bd929b;
+        background: transparent;
+        border-color: transparent;
+    }
+    .container_right .nr_action_open:hover,
+    .container_right .nr_action_open:focus-visible,
+    .container_right .nr_action_install:hover,
+    .container_right .nr_action_install:focus-visible{
+        border-color: #79e0ea;
+        background: #79e0ea;
+        color: #06242e;
+    }
+    .container_right .nr_action_uninstall:hover,
+    .container_right .nr_action_uninstall:focus-visible{
+        border-color: rgba(223,125,130,.28);
+        background: rgba(223,125,130,.09);
+        color: #f2b8c0;
     }
     .app_empty_state{
         grid-column: 1 / -1;
@@ -15750,7 +15907,7 @@ patch_appcenter_card_polish_v3() {
         padding: 24px;
         border: 1px dashed rgba(76,198,216,.25);
         border-radius: 12px;
-        background: linear-gradient(145deg, rgba(15,29,45,.52), rgba(7,15,25,.48));
+        background: #0c1825;
         color: var(--nr-v3-muted);
         text-align: center;
     }
@@ -15768,7 +15925,7 @@ patch_appcenter_card_polish_v3() {
     }
     .nr_search_empty span{
         margin-top: 4px;
-        font-size: 11px;
+        font-size: 12px;
     }
     #app_status_mount{
         grid-area: status;
@@ -15777,14 +15934,14 @@ patch_appcenter_card_polish_v3() {
     }
     .app_status_panel{
         display: grid;
-        grid-template-columns: 112px 200px repeat(auto-fit,minmax(145px,1fr));
-        gap: 6px;
+        grid-template-columns: 112px 180px repeat(auto-fit,minmax(130px,1fr));
+        gap: 8px;
         align-items: stretch;
-        padding: 8px 10px;
+        padding: 10px 12px;
         border: 1px solid var(--nr-v3-line);
         border-radius: 10px;
-        background: linear-gradient(145deg, rgba(14,28,43,.96), rgba(7,15,25,.95));
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 8px 18px rgba(0,0,0,.16);
+        background: #0c1825;
+        box-shadow: none;
     }
     .app_status_head{
         display: flex;
@@ -15797,12 +15954,12 @@ patch_appcenter_card_polish_v3() {
     }
     .app_status_head span{
         color: var(--nr-v3-text);
-        font-size: 12px;
-        font-weight: 750;
+        font-size: 13px;
+        font-weight: 700;
     }
     .app_status_time{
         color: var(--nr-v3-muted);
-        font-size: 9px;
+        font-size: 11px;
         font-style: normal;
         font-variant-numeric: tabular-nums;
     }
@@ -15818,21 +15975,21 @@ patch_appcenter_card_polish_v3() {
         align-items: center;
         justify-content: center;
         min-height: 42px;
-        padding: 4px 3px;
-        border: 1px solid rgba(128,157,184,.16);
+        padding: 5px 3px;
+        border: 0;
         border-radius: 7px;
-        background: rgba(255,255,255,.02);
+        background: transparent;
     }
     .app_status_tile strong{
         color: #f4fbff;
-        font-size: 15px;
+        font-size: 18px;
         line-height: 1.1;
         font-variant-numeric: tabular-nums;
     }
     .app_status_tile span{
         margin-top: 2px;
         color: var(--nr-v3-muted);
-        font-size: 10px;
+        font-size: 11px;
     }
     .app_status_metric{
         display: flex;
@@ -15840,26 +15997,28 @@ patch_appcenter_card_polish_v3() {
         justify-content: center;
         margin: 0;
         padding: 6px 8px;
-        border: 1px solid rgba(128,157,184,.10);
-        border-radius: 7px;
-        background: rgba(3,9,16,.22);
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        border-left: 1px solid rgba(128,157,184,.14);
     }
     .app_status_metric_row{
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 8px;
+        gap: 4px 8px;
         margin-bottom: 5px;
+        flex-wrap: wrap;
     }
     .app_status_metric_row span{
         color: var(--nr-v3-muted);
-        font-size: 10px;
+        font-size: 12px;
     }
     .app_status_metric_row strong{
-        max-width: 145px;
+        max-width: 100%;
         overflow: hidden;
         color: var(--nr-v3-text-soft);
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 700;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -15900,7 +16059,7 @@ patch_appcenter_card_polish_v3() {
     }
     .app_status_toggle_text{
         color: var(--nr-v3-cyan);
-        font-size: 9px;
+        font-size: 11px;
         font-weight: 700;
     }
     #app_status_mount.nr_status_collapsed .app_status_panel{
@@ -15924,11 +16083,11 @@ patch_appcenter_card_polish_v3() {
     #app_status_mount.nr_status_collapsed .app_status_toggle{
         flex-direction: row;
         width: auto;
-        padding: 4px 10px;
+        padding: 7px 12px;
         border: 1px solid rgba(76,198,216,.23);
         border-radius: 8px;
-        background: linear-gradient(145deg, rgba(15,29,45,.90), rgba(8,18,30,.88));
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 6px 16px rgba(0,0,0,.13);
+        background: #0f1d2b;
+        box-shadow: none;
     }
     #app_status_mount.nr_status_collapsed .app_status_toggle::before{
         content: "";
@@ -15940,7 +16099,7 @@ patch_appcenter_card_polish_v3() {
     }
     #app_status_mount.nr_status_collapsed .app_status_toggle:hover{
         border-color: rgba(76,198,216,.46);
-        background: linear-gradient(145deg, rgba(18,35,52,.96), rgba(9,21,33,.94));
+        background: #132334;
     }
     #app_top_menu .top_menu[role="button"]:focus-visible,
     #app_top_menu .top_menu_inner_icon:focus-visible,
@@ -15978,13 +16137,13 @@ patch_appcenter_card_polish_v3() {
     }
     .bootstrap-dialog-message .nr_dialog_loading strong{
         color: #edf5fb;
-        font-size: 14px;
+        font-size: 15px;
         line-height: 1.4;
     }
     .bootstrap-dialog-message .nr_dialog_loading small{
         margin-top: 5px;
-        color: #8294a7;
-        font-size: 11px;
+        color: #9aaec0;
+        font-size: 13px;
         line-height: 1.5;
     }
     .bootstrap-dialog-message .error_box{
@@ -16015,6 +16174,54 @@ patch_appcenter_card_polish_v3() {
         float: none !important;
         white-space: pre-wrap;
         word-break: break-word;
+    }
+    .modal.bootstrap-dialog .modal-content{
+        border: 1px solid rgba(128,157,184,.25);
+        border-radius: 14px;
+        background: #0d1a29;
+        color: #edf5fb;
+        box-shadow: 0 16px 44px rgba(0,0,0,.32);
+    }
+    .modal.bootstrap-dialog .modal-header{
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(128,157,184,.16);
+        border-radius: 14px 14px 0 0;
+        background: #112235;
+    }
+    .modal.bootstrap-dialog .bootstrap-dialog-title{
+        color: #edf5fb;
+        font-size: 15px;
+        line-height: 32px;
+    }
+    .modal.bootstrap-dialog .modal-body{
+        color: #c5d2de;
+        background: #0d1a29;
+        border-radius: 0 0 14px 14px;
+        font-size: 14px;
+    }
+    .modal.bootstrap-dialog .modal-footer{
+        padding: 12px 16px;
+        border-top: 1px solid rgba(128,157,184,.16);
+        border-radius: 0 0 14px 14px;
+        background: #0d1a29;
+    }
+    .modal.bootstrap-dialog .bootstrap-dialog-close-button .close{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        color: #c5d2de;
+        text-shadow: none;
+        opacity: 1;
+    }
+    .modal.bootstrap-dialog .bootstrap-dialog-close-button .close:hover,
+    .modal.bootstrap-dialog .bootstrap-dialog-close-button .close:focus-visible{
+        background: rgba(76,198,216,.12);
+        color: #f1fdff;
+        outline: 2px solid #4cc6d8;
+        outline-offset: 2px;
     }
     @keyframes nr-dialog-spin{
         to{ transform: rotate(360deg); }
@@ -16051,6 +16258,35 @@ patch_appcenter_card_polish_v3() {
         }
     }
     @media (max-width: 680px){
+        #nr_app_search_input{
+            height: 42px;
+            font-size: 16px;
+        }
+        .app_btn_group .app_btn_class,
+        .container_left .app_menu{
+            min-height: 42px;
+        }
+        .app_btn_group .app_btn_class{
+            line-height: 40px;
+        }
+        .container_right .action_list_li{
+            min-height: 44px;
+            padding: 0 14px;
+            font-size: 13px;
+            line-height: 42px;
+        }
+        .app_status_metric{
+            border-left: 0;
+            padding: 8px;
+        }
+        #app_top_menu .top_menu_inner_icon,
+        .modal.bootstrap-dialog .bootstrap-dialog-close-button .close{
+            width: 40px;
+            height: 40px;
+        }
+        .modal.bootstrap-dialog .bootstrap-dialog-title{
+            line-height: 40px;
+        }
         .appcontainer{
             grid-template-columns: 1fr;
             grid-template-areas:
@@ -16129,10 +16365,16 @@ patch_appcenter_card_polish_v3() {
             border-radius: 11px;
         }
         .container_right .app_name{
-            font-size: 14px;
+            font-size: 15px;
         }
         .container_right .app_meta_row{
-            display: none;
+            grid-column: 1;
+            grid-row: 3;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px;
+            margin-top: 3px;
         }
         .container_right .app_title{
             grid-template-columns: 1fr;
@@ -16164,7 +16406,7 @@ EOF_APPCENTER_V3_CSS
     cat > "$v3_js" <<'EOF_APPCENTER_V3_JS'
     function nr_appcenter_display_name(name){
         var key = (name || "").toLowerCase();
-        if(key == "luci-app-openclash" || key == "openclash") return "OpenClash";
+        if(key == "luci-app-openclash" || key == "openclash") return "哈基米";
         if(key == "luci-app-adguardhome") return "AdGuardHome";
         if(key == "luci-app-ddns-go") return "DDNS-GO";
         return name || "未命名应用";
@@ -16273,8 +16515,8 @@ EOF_APPCENTER_V3_CSS
         }
         $(".app_status_mem").text(memText).attr("title", memText+" · "+memPercent.toFixed(1)+"%");
         nr_set_status_width(".app_status_mem_bar", memPercent);
-        var isC2000 = data.is_c2000max === true || data.is_c2000max == 1 || data.model_name == "NRadio_C2000MAX";
-        if(isC2000){
+        var supportsSwap = data.supports_swap === true || data.supports_swap == 1 || data.is_c2000max === true || data.is_c2000max == 1 || data.model_name == "NRadio_C2000MAX" || data.model == "NRadio_C2000MAX" || data.model_name == "NRadio_C2000Ultra" || data.model == "NRadio_C2000Ultra";
+        if(supportsSwap){
             if(!NR_APP_STATUS_AUTO_EXPANDED){
                 NR_APP_STATUS_AUTO_EXPANDED = true;
                 NR_APP_STATUS_EXPANDED = true;
@@ -16552,8 +16794,8 @@ EOF_APPCENTER_V3_LUA
     grep -Fq 'id="nr_app_search_input"' "$TPL" 2>/dev/null || die "应用商店 V3 搜索框校验失败"
     grep -Fq 'function nr_start_status_polling()' "$TPL" 2>/dev/null || die "应用商店 V3 状态刷新校验失败"
     grep -Fq 'NR_APP_STATUS_INTERVAL = 5000' "$TPL" 2>/dev/null || die "应用商店 V3 采样间隔校验失败"
-    grep -Fq 'NR_APP_STATUS_AUTO_EXPANDED = true' "$TPL" 2>/dev/null || die "应用商店 V3 C2000MAX 状态自动展开校验失败"
-    grep -Fq '<span>Swap 虚拟内存</span>' "$TPL" 2>/dev/null || die "应用商店 V3 C2000MAX Swap 标签校验失败"
+    grep -Fq 'NR_APP_STATUS_AUTO_EXPANDED = true' "$TPL" 2>/dev/null || die "应用商店 V3 C2000MAX / C2000Ultra 状态自动展开校验失败"
+    grep -Fq '<span>Swap 虚拟内存</span>' "$TPL" 2>/dev/null || die "应用商店 V3 C2000MAX / C2000Ultra Swap 标签校验失败"
     grep -Fq 'app_state_badge app_state_{{status}}' "$TPL" 2>/dev/null || die "应用商店 V3 状态徽标校验失败"
     grep -Fq 'function nr_apply_app_search()' "$TPL" 2>/dev/null || die "应用商店 V3 搜索逻辑校验失败"
     grep -Fq 'id="nr_app_search_clear"' "$TPL" 2>/dev/null || die "应用商店 V3 搜索清除按钮校验失败"
@@ -18115,7 +18357,7 @@ run_openlist_cdn_selfcheck() {
         return 0
     fi
 
-    rank_url_list_hosts "openlist-unified" "OpenList GitHub 官方" "$OPENLIST_GITHUB_OFFICIAL_PROBE_URLS" "$openlist_probe_urls"
+    rank_url_list_hosts "openlist-unified" "OpenList GitHub 下载源" "$OPENLIST_GITHUB_OFFICIAL_PROBE_URLS" "$openlist_probe_urls"
     if [ -n "${RANKED_URL_HOSTS:-}" ]; then
         log "CDN:      OpenList = $RANKED_URL_HOSTS"
         set_last_selfcheck_status PASS 0 0
@@ -18133,7 +18375,7 @@ run_easytier_cdn_selfcheck() {
         return 0
     fi
 
-    rank_url_list_hosts "easytier-unified" "$EASYTIER_DISPLAY_NAME GitHub 官方" "$EASYTIER_GITHUB_OFFICIAL_PROBE_URLS" "$easytier_probe_urls"
+    rank_url_list_hosts "easytier-unified" "$EASYTIER_DISPLAY_NAME GitHub 下载源" "$EASYTIER_GITHUB_OFFICIAL_PROBE_URLS" "$easytier_probe_urls"
     if [ -n "${RANKED_URL_HOSTS:-}" ]; then
         log "CDN:      $EASYTIER_DISPLAY_NAME = $RANKED_URL_HOSTS"
         set_last_selfcheck_status PASS 0 0
@@ -19638,7 +19880,7 @@ run_unified_system_health_summary() {
         log "存储:   /mnt/app_data = 不存在"
     fi
 
-    if [ "$detected_model" = 'NRadio_C2000MAX' ]; then
+    if c2000_storage_swap_model_supported "$detected_model"; then
         storage_mount="$(detect_c2000max_storage_mount 2>/dev/null || true)"
         if [ -n "$storage_mount" ]; then
             unified_health_print_path_usage "存储卡" "$storage_mount" || health_warnings=$((health_warnings + 1))
@@ -19849,18 +20091,19 @@ run_unified_storage_migration_integrity_check() {
 }
 
 run_unified_c2000max_storage_card_health_check() {
+    local c2k_model="${1:-$(unified_detect_model_name 2>/dev/null || true)}"
     c2k_warnings=0
     c2k_storage_mount="$(detect_c2000max_storage_mount 2>/dev/null || true)"
 
-    selfcheck_print_header "C2000MAX 存储卡健康"
+    selfcheck_print_header "${c2k_model#NRadio_} 存储卡健康"
     if [ -z "$c2k_storage_mount" ]; then
-        log "存储卡: 未检测到 C2000MAX 存储卡挂载"
+        log "存储卡: 未检测到 ${c2k_model#NRadio_} 存储卡挂载"
         set_last_selfcheck_status WARN 0 1
         return 0
     fi
 
     log "存储卡: 挂载点=$c2k_storage_mount"
-    unified_health_print_path_usage "C2000MAX 存储卡" "$c2k_storage_mount" || c2k_warnings=$((c2k_warnings + 1))
+    unified_health_print_path_usage "${c2k_model#NRadio_} 存储卡" "$c2k_storage_mount" || c2k_warnings=$((c2k_warnings + 1))
     if openlist_dir_is_writable "$c2k_storage_mount"; then
         log "存储卡: 写入测试 = 正常"
     else
@@ -20041,7 +20284,7 @@ run_unified_install_preflight_check() {
         fi
     fi
 
-    unified_preflight_check_urls "OpenList" "https://github.com/OpenListTeam/OpenList/releases/latest/download/${openlist_preflight_asset} https://api.github.com/repos/OpenListTeam/OpenList/releases/latest https://release-assets.githubusercontent.com/"
+    unified_preflight_check_urls "OpenList" "https://gh-proxy.com/https://github.com/OpenListTeam/OpenList/releases/latest/download/${openlist_preflight_asset} https://github.com/OpenListTeam/OpenList/releases/latest/download/${openlist_preflight_asset} https://api.github.com/repos/OpenListTeam/OpenList/releases/latest https://release-assets.githubusercontent.com/"
     unified_preflight_check_urls "AdGuardHome" "$ADGUARDHOME_IPK_URLS"
     unified_preflight_check_urls "DDNS-GO" "$DDNSGO_DOWNLOAD_URLS"
     unified_preflight_check_urls "MosDNS" "$MOSDNS_DOWNLOAD_URLS"
@@ -21659,7 +21902,7 @@ run_unified_sanitized_diagnostic_summary() {
     tmp_free_kib="$(unified_num_or_zero "$(unified_health_path_free_kib /tmp 2>/dev/null || true)")"
     overlay_free_kib="$(unified_num_or_zero "$(unified_health_path_free_kib /overlay 2>/dev/null || true)")"
     storage_mount=''
-    if [ "${detected_model:-}" = 'NRadio_C2000MAX' ]; then
+    if c2000_storage_swap_model_supported "$detected_model"; then
         storage_mount="$(detect_c2000max_storage_mount 2>/dev/null || true)"
     fi
     openclash_config_path="$(unified_get_openclash_config_path 2>/dev/null || true)"
@@ -21669,7 +21912,7 @@ run_unified_sanitized_diagnostic_summary() {
     log "script=${SCRIPT_VERSION} date=${SCRIPT_RELEASE_DATE}"
     log "model=${detected_model:-未知} nros=${nros_revision:-未知} arch=${arch_name}"
     log "mem_available=$(unified_health_kib_display "$mem_available_kib") swap_free=$(unified_health_kib_display "$swap_free_kib")"
-    if [ "${detected_model:-}" = 'NRadio_C2000MAX' ]; then
+    if c2000_storage_swap_model_supported "$detected_model"; then
         log "tmp_free=$(unified_health_kib_display "$tmp_free_kib") overlay_free=$(unified_health_kib_display "$overlay_free_kib") storage=${storage_mount:-未检测到}"
     else
         log "tmp_free=$(unified_health_kib_display "$tmp_free_kib") overlay_free=$(unified_health_kib_display "$overlay_free_kib")"
@@ -21719,9 +21962,9 @@ run_unified_test_mode() {
     run_unified_storage_migration_integrity_check
     record_unified_selfcheck_summary "eMMC 迁移链"
     log ""
-    if [ "$(unified_detect_model_name 2>/dev/null || true)" = 'NRadio_C2000MAX' ]; then
+    if c2000_storage_swap_model_supported "$(unified_detect_model_name 2>/dev/null || true)"; then
         run_unified_c2000max_storage_card_health_check
-        record_unified_selfcheck_summary "C2000MAX 存储卡"
+        record_unified_selfcheck_summary "SD 存储卡"
         log ""
     fi
     run_unified_network_path_check
@@ -29838,24 +30081,36 @@ ensure_adguard_openclash_dns_chain() {
         return 0
     fi
 
+    adg_dns_runtime_changed="$adg_dns_chain_changed"
+    adg_dnsmasq_changed='0'
     if [ -f /etc/config/dhcp ]; then
         if [ "$(uci -q get AdGuardHome.AdGuardHome.enabled 2>/dev/null || true)" != '1' ]; then
             adg_dns_chain_changed='1'
+            adg_dns_runtime_changed='1'
         fi
         if [ "$(uci -q get AdGuardHome.AdGuardHome.binpath 2>/dev/null || true)" != "$adg_binpath" ]; then
             adg_dns_chain_changed='1'
+            adg_dns_runtime_changed='1'
         fi
         if [ "$(uci -q get AdGuardHome.AdGuardHome.configpath 2>/dev/null || true)" != "$configpath" ]; then
             adg_dns_chain_changed='1'
+            adg_dns_runtime_changed='1'
         fi
         if [ "$(uci -q get "dhcp.@dnsmasq[0].port" 2>/dev/null || true)" != '53' ]; then
             adg_dns_chain_changed='1'
+            adg_dnsmasq_changed='1'
+        fi
+        if [ "$(uci -q get "dhcp.@dnsmasq[0].localuse" 2>/dev/null || true)" != '1' ]; then
+            adg_dns_chain_changed='1'
+            adg_dnsmasq_changed='1'
         fi
         if [ "$(uci -q get "dhcp.@dnsmasq[0].noresolv" 2>/dev/null || true)" != '1' ]; then
             adg_dns_chain_changed='1'
+            adg_dnsmasq_changed='1'
         fi
         if ! uci -q get 'dhcp.@dnsmasq[0].server' 2>/dev/null | tr ' ' '\n' | grep -Fx "$adg_dns_server_rule" >/dev/null 2>&1; then
             adg_dns_chain_changed='1'
+            adg_dnsmasq_changed='1'
         fi
         if uci -q show dhcp 2>/dev/null | awk -F"'" -v keep="$adg_dns_server_rule" -v legacy="$adg_legacy_dns_server_rule" '
             /^dhcp\.@dnsmasq\[0\]\.server=/ {
@@ -29869,9 +30124,11 @@ ensure_adguard_openclash_dns_chain() {
             }
         ' | grep -q .; then
             adg_dns_chain_changed='1'
+            adg_dnsmasq_changed='1'
         fi
         if uci -q get 'dhcp.@dnsmasq[0].server' 2>/dev/null | tr ' ' '\n' | grep -Fx "$adg_legacy_dns_server_rule" >/dev/null 2>&1; then
             adg_dns_chain_changed='1'
+            adg_dnsmasq_changed='1'
         fi
 
         uci -q get AdGuardHome.AdGuardHome >/dev/null 2>&1 || \
@@ -29881,6 +30138,7 @@ ensure_adguard_openclash_dns_chain() {
         uci set "AdGuardHome.AdGuardHome.configpath=$configpath" >/dev/null 2>&1 || { restore_adguard_dns_transaction; return 1; }
         uci commit AdGuardHome >/dev/null 2>&1 || { restore_adguard_dns_transaction; return 1; }
         uci set "dhcp.@dnsmasq[0].port=53" >/dev/null 2>&1 || { restore_adguard_dns_transaction; return 1; }
+        uci set "dhcp.@dnsmasq[0].localuse=1" >/dev/null 2>&1 || { restore_adguard_dns_transaction; return 1; }
         uci set "dhcp.@dnsmasq[0].noresolv=1" >/dev/null 2>&1 || { restore_adguard_dns_transaction; return 1; }
         stale_dns_server_rules="$(uci -q show dhcp 2>/dev/null | awk -F"'" -v keep="$adg_dns_server_rule" -v legacy="$adg_legacy_dns_server_rule" '
             /^dhcp\.@dnsmasq\[0\]\.server=/ {
@@ -29901,18 +30159,23 @@ ensure_adguard_openclash_dns_chain() {
     fi
 
     if [ "$adg_dns_chain_changed" = '1' ]; then
-        [ -x /etc/init.d/AdGuardHome ] || { restore_adguard_dns_transaction; return 1; }
-        [ -x /etc/init.d/dnsmasq ] || { restore_adguard_dns_transaction; return 1; }
-        /etc/init.d/AdGuardHome restart >/dev/null 2>&1 || { restore_adguard_dns_transaction; return 1; }
-        sleep 2
-        is_local_port_listening "$adg_dns_port" || { restore_adguard_dns_transaction; return 1; }
-        /etc/init.d/dnsmasq restart >/dev/null 2>&1 || { restore_adguard_dns_transaction; return 1; }
-        sleep 1
-        is_local_port_listening 53 || { restore_adguard_dns_transaction; return 1; }
+        if [ "$adg_dns_runtime_changed" = '1' ] || ! is_local_port_listening "$adg_dns_port"; then
+            [ -x /etc/init.d/AdGuardHome ] || { restore_adguard_dns_transaction; return 1; }
+            /etc/init.d/AdGuardHome restart >/dev/null 2>&1 || { restore_adguard_dns_transaction; return 1; }
+            sleep 2
+            is_local_port_listening "$adg_dns_port" || { restore_adguard_dns_transaction; return 1; }
+        fi
+        if [ "$adg_dnsmasq_changed" = '1' ]; then
+            [ -x /etc/init.d/dnsmasq ] || { restore_adguard_dns_transaction; return 1; }
+            /etc/init.d/dnsmasq restart >/dev/null 2>&1 || { restore_adguard_dns_transaction; return 1; }
+            sleep 1
+            is_local_port_listening 53 || { restore_adguard_dns_transaction; return 1; }
+        fi
         log "DNS:    已写入 dnsmasq:53 -> AdGuardHome:$adg_dns_port -> $OPENCLASH_DISPLAY_NAME:$oc_dns_port"
     else
         log "DNS:    已确认 dnsmasq:53 -> AdGuardHome:$adg_dns_port -> $OPENCLASH_DISPLAY_NAME:$oc_dns_port"
     fi
+    log "DNS:    本机与局域网普通查询统一经 AdGuardHome，保留已有域名专用上游"
     rm -rf "$adg_dns_txn_dir" >/dev/null 2>&1 || true
     return 0
 }
@@ -30243,7 +30506,7 @@ manage_swapfile() {
     local swapfile="/overlay/swapfile"
     local current_bytes current_mib target_mib final_mib swap_limit_mib
 
-    [ "${CURRENT_DETECTED_MODEL:-}" = 'NRadio_C2000MAX' ] || die "扩容 swap 虚拟内存仅支持 NRadio_C2000MAX，当前机型：${CURRENT_DETECTED_MODEL:-unknown}"
+    c2000_storage_swap_model_supported || die "扩容 swap 虚拟内存仅支持 NRadio_C2000MAX / NRadio_C2000Ultra，当前机型：${CURRENT_DETECTED_MODEL:-unknown}"
 
     swap_limit_mib=2048
 
@@ -34791,6 +35054,49 @@ function action_mt5700()
     local fs = require "nixio.fs"
     local http = require "luci.http"
 
+    if http.formvalue("dual") == "1" and fs.access("/etc/nradio-mt5700-dual/enabled") then
+        local line = http.formvalue("line") or "cpe"
+        if line ~= "cpe" and line ~= "cpe1" then
+            http.status(400, "Bad Request")
+            http.write_json({ success = false, error = "未知线路" })
+            return
+        end
+        local uci = require "luci.model.uci"
+        local cur = uci.cursor()
+        local ok, runtime = pcall(require("luci.util").ubus, "infocd", "runtime")
+        if not ok or type(runtime) ~= "table" or type(runtime.cpe) ~= "table" then
+            http.status(503, "Service Unavailable")
+            http.write_json({ success = false, error = "线路信息读取失败" })
+            return
+        end
+        local by_name, lines = {}, {}
+        for _, item in ipairs(runtime.cpe) do
+            if type(item) == "table" and (item.name == "cpe" or item.name == "cpe1") then
+                by_name[item.name] = item
+            end
+        end
+        for _, name in ipairs({ "cpe", "cpe1" }) do
+            local item = by_name[name]
+            if item then
+                lines[#lines + 1] = {
+                    name = name, available = true,
+                    status = tonumber(item.status), mode = item.mode, band = item.band,
+                    rsrp = item.rsrp, rsrq = item.rsrq, sinr = item.sinr,
+                    temperature = item.model_temp, operator = item.sim_company or item.isp_company,
+                    pci = item.pci, arfcn = item.earfcn
+                }
+            end
+        end
+        if not by_name[line] and lines[1] then line = lines[1].name end
+        local config_name = line == "cpe1" and "at-webserver-cpe1" or "at-webserver"
+        http.header("Cache-Control", "no-store")
+        http.write_json({ success = true, line = line, lines = lines, timestamp = os.time(), data = {
+            port = tonumber(cur:get(config_name, "config", "websocket_port")) or (line == "cpe1" and 8766 or 8765),
+            require_auth = (cur:get(config_name, "config", "websocket_auth_key") or "") ~= ""
+        } })
+        return
+    end
+
     if not fs.access(WEB_INDEX) then
         render_unavailable()
         return
@@ -34798,11 +35104,26 @@ function action_mt5700()
 
     http.header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
     http.header("Pragma", "no-cache")
-    http.redirect("/5700/?v=3.0.0#/network/info")
+    local version = require("luci.model.uci").cursor():get("appcenter", "nradio_mt5700", "version") or "installed"
+    version = version:gsub("[^%w._%-]", "")
+    http.redirect("/5700/?v=" .. version .. "#/network/info")
 end
 EOF_MT5700_NRADIO_CONTROLLER
     chmod 644 "$mt5700_controller_tmp" 2>/dev/null || true
     mv "$mt5700_controller_tmp" "$MT5700_CONTROLLER" || die "写入 MT5700 WebUI 控制器失败"
+}
+
+patch_mt5700_version_display() {
+    # 上游包版本已更新，但页面标题与品牌文案仍可能保留旧版本号。
+    sed -i "s/\(MT5700M-CN V\)[0-9][0-9A-Za-z.+-]*/\1$MT5700_UI_VERSION/g" "$MT5700_WEB_ROOT/index.html"
+    for mt5700_entry_asset in "$MT5700_WEB_ROOT"/assets/index-*.js; do
+        [ -f "$mt5700_entry_asset" ] || continue
+        sed -i \
+            -e "s/\(5G CPE · V\)[0-9][0-9A-Za-z.+-]*/\1$MT5700_UI_VERSION/g" \
+            -e "s/\(5G CPE Management · V\)[0-9][0-9A-Za-z.+-]*/\1$MT5700_UI_VERSION/g" \
+            "$mt5700_entry_asset"
+    done
+    sed -i "s|\(/5700/assets/[^\"?]*\)\(?[^\"]*\)\{0,1\}\"|\1?v=$MT5700_UI_VERSION\"|g" "$MT5700_WEB_ROOT/index.html"
 }
 
 patch_mt5700_boot_fallback() {
@@ -34867,51 +35188,500 @@ EOF_MT5700_BOOT_FALLBACK
     mv "$mt5700_index_tmp" "$mt5700_index" || die "写入 MT5700 WebUI 防黑屏内容失败"
 }
 
+write_mt5700_atsd_proxy_program() {
+    mkdir -p "$(dirname "$MT5700_ATSD_PROXY_PATH")" || die "创建 MT5700 AT 共享桥目录失败"
+    cat > "$MT5700_ATSD_PROXY_PATH" <<'EOF_MT5700_ATSD_PROXY'
+#!/usr/bin/lua
+
+local socket = require("socket")
+local listen_port = tonumber(os.getenv("MT5700_ATSD_PROXY_PORT") or "20250")
+local line = os.getenv("MT5700_ATSD_PROXY_LINE") or "cpe"
+assert(line == "cpe" or line == "cpe1", "invalid AT line")
+
+local function shell_quote(value)
+    return "'" .. value:gsub("'", "'\\''") .. "'"
+end
+
+local function normalize_response(response)
+    response = (response or ""):gsub("\r\n", "\n"):gsub("\r", "\n"):gsub("\n", "\r\n")
+    if response == "" then
+        return "ERROR\r\n"
+    end
+    if response:sub(-2) ~= "\r\n" then
+        response = response .. "\r\n"
+    end
+    return response
+end
+
+local function execute_at(command)
+    command = command:gsub("^%s+", ""):gsub("%s+$", "")
+    local upper = command:upper()
+    if upper:sub(1, 2) ~= "AT" and command:lower() ~= "abcd" then
+        return "ERROR\r\n"
+    end
+
+    local wait_ms = 1500
+    if upper:find("^AT%^CELLSCAN") then
+        wait_ms = 180000
+    end
+
+    local pipe = io.popen(
+        "/usr/sbin/atsd_cli -i " .. line .. " -c " .. shell_quote(command) ..
+        " -w " .. tostring(wait_ms) .. " -L 1 2>/dev/null",
+        "r"
+    )
+    if not pipe then
+        return "ERROR\r\n"
+    end
+    local response = pipe:read("*a")
+    pipe:close()
+    return normalize_response(response)
+end
+
+local server, bind_error = socket.bind("127.0.0.1", listen_port, 4)
+if not server then
+    error("MT5700 ATSd proxy bind failed: " .. tostring(bind_error))
+end
+server:settimeout(nil)
+
+while true do
+    local client = server:accept()
+    if client then
+        client:settimeout(nil)
+        local buffer = {}
+        local length = 0
+
+        while true do
+            local data, receive_error, partial = client:receive(1)
+            local byte = data or partial
+            if byte and byte ~= "" then
+                if byte == "\r" or byte == "\n" then
+                    if length > 0 then
+                        local command = table.concat(buffer)
+                        buffer = {}
+                        length = 0
+                        local response = execute_at(command)
+                        local sent, send_error = client:send(response)
+                        if not sent or send_error then
+                            break
+                        end
+                    end
+                elseif length < 16384 then
+                    length = length + 1
+                    buffer[length] = byte
+                else
+                    buffer = {}
+                    length = 0
+                    client:send("ERROR\r\n")
+                end
+            end
+            if receive_error then
+                break
+            end
+        end
+        client:close()
+    else
+        socket.sleep(1)
+    end
+end
+EOF_MT5700_ATSD_PROXY
+    chmod 700 "$MT5700_ATSD_PROXY_PATH" || die "设置 MT5700 AT 共享桥权限失败"
+}
+
+write_mt5700_c2000max_atsd_proxy() {
+    [ "${CURRENT_DETECTED_MODEL:-}" = 'NRadio_C2000MAX' ] || return 0
+    [ -x /usr/sbin/atsd_cli ] || die "C2000MAX 缺少 NROS atsd_cli，无法建立共享 AT 通道"
+    [ -x /usr/bin/lua ] || die "C2000MAX 缺少 Lua，无法建立共享 AT 通道"
+    /usr/bin/lua -e 'require("socket")' >/dev/null 2>&1 || die "C2000MAX 缺少 LuaSocket，无法建立共享 AT 通道"
+    write_mt5700_atsd_proxy_program
+
+    cat > "$MT5700_ATSD_PROXY_INIT" <<'EOF_MT5700_ATSD_PROXY_INIT'
+#!/bin/sh /etc/rc.common
+
+START=98
+STOP=11
+USE_PROCD=1
+PROG=/usr/libexec/nradio-mt5700-atsd-proxy.lua
+
+start_service() {
+    procd_open_instance
+    procd_set_param command /usr/bin/lua "$PROG"
+    procd_set_param env MT5700_ATSD_PROXY_PORT=20250
+    procd_set_param respawn 3600 5 5
+    procd_set_param stdout 1
+    procd_set_param stderr 1
+    procd_close_instance
+}
+EOF_MT5700_ATSD_PROXY_INIT
+    chmod 755 "$MT5700_ATSD_PROXY_INIT" || die "设置 MT5700 AT 共享桥服务权限失败"
+
+    mt5700_config_backup="$mt5700_workdir/at-webserver.config.before-c2000max"
+    cp -p "$MT5700_CONFIG_FILE" "$mt5700_config_backup" || die "备份 MT5700 WebUI 原配置失败"
+    uci set at-webserver.config.connection_type='NETWORK' || die "设置 C2000MAX AT 连接类型失败"
+    uci set at-webserver.config.network_host='127.0.0.1' || die "设置 C2000MAX AT 共享地址失败"
+    uci set "at-webserver.config.network_port=$MT5700_ATSD_PROXY_PORT" || die "设置 C2000MAX AT 共享端口失败"
+    uci commit at-webserver || die "保存 C2000MAX AT 共享配置失败"
+
+    "$MT5700_ATSD_PROXY_INIT" enable || die "MT5700 AT 共享桥开机启动配置失败"
+    "$MT5700_ATSD_PROXY_INIT" stop >/dev/null 2>&1 || true
+    "$MT5700_ATSD_PROXY_INIT" start || die "MT5700 AT 共享桥启动失败"
+    log "适配: C2000MAX 使用 NROS atsd_cli 共享 AT 通道（127.0.0.1:$MT5700_ATSD_PROXY_PORT）"
+}
+
+write_mt5700_c5800_dual() {
+    case "${CURRENT_DETECTED_MODEL:-}" in
+        NRadio_C5800-650|NRadio_C5800-688) ;;
+        *) return 0 ;;
+    esac
+    # 单路与双路均按 NROS 线路标识接入，离线状态不等于没有这条线路。
+    mt5700_lines_json="$(/usr/bin/lua -e '
+local ok, r = pcall(require("luci.util").ubus, "infocd", "runtime")
+local found = {}
+for _, v in ipairs(ok and type(r) == "table" and type(r.cpe) == "table" and r.cpe or {}) do
+    if type(v) == "table" then found[v.name or ""] = true end
+end
+local names = {}
+for _, name in ipairs({"cpe", "cpe1"}) do
+    if found[name] then names[#names + 1] = "\"" .. name .. "\"" end
+end
+io.write("[" .. table.concat(names, ",") .. "]")
+' 2>/dev/null)"
+    case "$mt5700_lines_json" in
+        '["cpe"]'|'["cpe1"]'|'["cpe","cpe1"]') ;;
+        *)
+            [ -f /etc/nradio-mt5700-dual/enabled ] || return 0
+            mt5700_lines_json='[]'
+            ;;
+    esac
+
+    log "适配: 5800 按实际 CPE / CPE1 显示单线路或双线路"
+    mt5700_dual_dir=/etc/nradio-mt5700-dual
+    mt5700_dual_bin=/usr/libexec/nradio-mt5700-dual
+    mkdir -p "$mt5700_dual_dir" "$mt5700_dual_bin" || die "创建双线路配置目录失败"
+    chmod 700 "$mt5700_dual_dir"
+    if [ ! -f "$mt5700_dual_dir/before-dual.config" ]; then
+        cp -p "$MT5700_CONFIG_FILE" "$mt5700_dual_dir/before-dual.config" || die "保存双线路适配前配置失败"
+    fi
+    mt5700_main_ws="$(uci -q get at-webserver.config.websocket_port)"
+    case "$mt5700_main_ws" in ''|*[!0-9]*) mt5700_main_ws=8765 ;; esac
+    [ "$mt5700_main_ws" -ge 1024 ] && [ "$mt5700_main_ws" -lt 65535 ] || mt5700_main_ws=8765
+    mt5700_second_ws=$((mt5700_main_ws + 1))
+    if [ ! -f /etc/config/at-webserver-cpe1 ]; then
+        cp -p "$mt5700_dual_dir/before-dual.config" /etc/config/at-webserver-cpe1 || die "创建副线路配置失败"
+        # 首次建立副线路配置时，不复制主线路正在执行的定时锁频计划。
+        uci set at-webserver-cpe1.config.schedule_enabled=0
+        uci set at-webserver-cpe1.config.log_file=/tmp/mt5700-cpe1.log
+    fi
+    uci set at-webserver.config.connection_type=NETWORK || die "设置主线路连接失败"
+    uci set at-webserver.config.network_host=127.0.0.1
+    uci set at-webserver.config.network_port=20250
+    uci set "at-webserver.config.websocket_port=$mt5700_main_ws"
+    uci commit at-webserver || die "保存主线路配置失败"
+    for mt5700_option in enabled=1 connection_type=NETWORK network_host=127.0.0.1 network_port=20251 "websocket_port=$mt5700_second_ws"; do
+        uci set "at-webserver-cpe1.config.$mt5700_option" || die "设置副线路配置失败"
+    done
+    uci commit at-webserver-cpe1 || die "保存副线路配置失败"
+    chmod 600 "$mt5700_dual_dir/before-dual.config" /etc/config/at-webserver-cpe1
+    write_mt5700_atsd_proxy_program
+
+    # 上游按进程名停止会误杀副实例；双路环境交由 procd 按服务名处理。
+    awk '
+    /^# BEGIN NRADIO_MT5700_DUAL_RELOAD$/ { skip = 1; next }
+    /^# END NRADIO_MT5700_DUAL_RELOAD$/ { skip = 0; next }
+    skip { next }
+    /^[[:space:]]*killall -q "\$PROG_NAME" 2>\/dev\/null[[:space:]]*$/ {
+        print "\tprocd_kill at-webserver"
+        next
+    }
+    { print }
+    END {
+        print "# BEGIN NRADIO_MT5700_DUAL_RELOAD"
+        print "reload_service() {"
+        print "    stop"
+        print "    start"
+        print "}"
+        print "# END NRADIO_MT5700_DUAL_RELOAD"
+    }' "$MT5700_INIT_FILE" > "$mt5700_workdir/dual-init" || die "写入双线路启停适配失败"
+    cp "$mt5700_workdir/dual-init" "$MT5700_INIT_FILE" || die "部署双线路启停适配失败"
+    chmod 755 "$MT5700_INIT_FILE"
+
+    # 上游通过 PATH 调用 uci；副实例映射独立包名，配置与未提交变更均隔离。
+    cat > "$mt5700_dual_bin/uci" <<'EOF_MT5700_DUAL_UCI'
+#!/bin/sh
+[ "$NRADIO_MT5700_LINE" = cpe1 ] || exit 2
+remaining=$#
+while [ "$remaining" -gt 0 ]; do
+    value="$1"
+    shift
+    case "$value" in
+        at-webserver|at-webserver.*) value="at-webserver-cpe1${value#at-webserver}" ;;
+    esac
+    set -- "$@" "$value"
+    remaining=$((remaining - 1))
+done
+output="$(/sbin/uci "$@")"
+result=$?
+printf '%s\n' "$output" | sed 's/^at-webserver-cpe1\./at-webserver./;s/^at-webserver-cpe1=/at-webserver=/'
+exit "$result"
+EOF_MT5700_DUAL_UCI
+    chmod 755 "$mt5700_dual_bin/uci"
+    cat > /etc/init.d/nradio-mt5700-dual <<'EOF_MT5700_DUAL_INIT'
+#!/bin/sh /etc/rc.common
+START=98
+STOP=11
+USE_PROCD=1
+start_service() {
+    [ -f /etc/nradio-mt5700-dual/enabled ] || return 0
+    [ "$(/sbin/uci -q get at-webserver.config.enabled)" != 0 ] || return 0
+    local line port
+    for line in cpe cpe1; do
+        port=20250
+        [ "$line" = cpe1 ] && port=20251
+        procd_open_instance "bridge_$line"
+        procd_set_param command /usr/bin/lua /usr/libexec/nradio-mt5700-atsd-proxy.lua
+        procd_set_param env "MT5700_ATSD_PROXY_LINE=$line" "MT5700_ATSD_PROXY_PORT=$port"
+        procd_set_param respawn 3600 5 5
+        procd_set_param stderr 1
+        procd_close_instance
+    done
+    procd_open_instance web_cpe1
+    procd_set_param command /usr/bin/at-webserver
+    procd_set_param env NRADIO_MT5700_LINE=cpe1 "PATH=/usr/libexec/nradio-mt5700-dual:$PATH"
+    procd_set_param file /etc/config/at-webserver-cpe1
+    procd_set_param respawn 3600 5 5
+    procd_set_param stderr 1
+    procd_close_instance
+}
+service_triggers() {
+    procd_add_reload_trigger at-webserver at-webserver-cpe1
+}
+EOF_MT5700_DUAL_INIT
+    chmod 755 /etc/init.d/nradio-mt5700-dual
+
+    # 副实例遵循主实例的 WAN 访问选择；独立命名，避免上游重启时删除。
+    uci set firewall.nradio_mt5700_cpe1=rule
+    uci set firewall.nradio_mt5700_cpe1.name=nradio_mt5700_cpe1
+    uci set firewall.nradio_mt5700_cpe1.src=wan
+    uci set firewall.nradio_mt5700_cpe1.proto=tcp
+    uci set "firewall.nradio_mt5700_cpe1.dest_port=$mt5700_second_ws"
+    mt5700_dual_target=REJECT
+    [ "$(uci -q get at-webserver.config.websocket_allow_wan)" = 1 ] && mt5700_dual_target=ACCEPT
+    uci set "firewall.nradio_mt5700_cpe1.target=$mt5700_dual_target"
+    uci set firewall.nradio_mt5700_cpe1.enabled=1
+    uci commit firewall || die "保存双线路服务访问配置失败"
+
+    cat > "$MT5700_WEB_ROOT/nradio-dual-config.js" <<EOF_MT5700_DUAL_CONFIG
+window.NRadioMT5700Dual = {cpe:$mt5700_main_ws,cpe1:$mt5700_second_ws,lines:$mt5700_lines_json};
+EOF_MT5700_DUAL_CONFIG
+    cat > "$MT5700_WEB_ROOT/nradio-dual-ui.js" <<'EOF_MT5700_DUAL_UI'
+(function () {
+    'use strict';
+    var ports = window.NRadioMT5700Dual;
+    if (!ports || !ports.cpe || !ports.cpe1) return;
+    var available = ['cpe', 'cpe1'].filter(function (name) { return (ports.lines || []).indexOf(name) !== -1; });
+    var query = new URL(location.href).searchParams;
+    var line = query.get('line');
+    if (line !== 'cpe' && line !== 'cpe1') {
+        try { line = sessionStorage.getItem('nradio-mt5700-line'); } catch (_) {}
+        if (available.indexOf(line) === -1) line = available[0];
+    }
+    line = line === 'cpe1' ? 'cpe1' : 'cpe';
+    try { sessionStorage.setItem('nradio-mt5700-line', line); } catch (_) {}
+    var nativeFetch = window.fetch.bind(window);
+    var NativeWebSocket = window.WebSocket;
+    var api = '/cgi-bin/luci/nradioadv/system/mt5700?dual=1&line=' + line;
+    var host = location.hostname.replace(/^\[|\]$/g, '');
+    // 每个页面固定绑定一路；多个标签页、重连、旧的本地连接设置均不会串线。
+    window.WebSocket = class extends NativeWebSocket {
+        constructor(url, protocols) {
+            var target = new URL(url, location.href);
+            target.hostname = location.hostname;
+            target.port = String(ports[line]);
+            if (protocols === undefined) super(target.href); else super(target.href, protocols);
+        }
+    };
+    window.fetch = function (input, init) {
+        var url = new URL(typeof input === 'string' ? input : input.url || String(input), location.href);
+        if (url.origin === location.origin && (url.pathname === '/cgi-bin/at-ws-info' || url.pathname === '/5700/config.json')) {
+            return nativeFetch(api, Object.assign({}, init, {cache: 'no-store', credentials: 'same-origin'})).then(function (response) {
+                if (!response.ok) throw new Error('线路连接配置读取失败');
+                return response.json();
+            }).then(function (result) {
+                if (!result.success) throw new Error('线路连接配置读取失败');
+                if (result.line !== line) {
+                    switchLine(result.line);
+                    throw new Error('正在切换到可用线路');
+                }
+                var data = {host: host, port: ports[line], require_auth: result.data.require_auth};
+                var payload = url.pathname === '/cgi-bin/at-ws-info' ? {success: true, data: data} : {status: 'true', at: data, require_auth: data.require_auth};
+                return new Response(JSON.stringify(payload), {headers: {'Content-Type': 'application/json'}});
+            });
+        }
+        return nativeFetch(input, init);
+    };
+
+    var panel, shadow, timer, controller, busy = false, leaving = false;
+    var cacheKey = 'nradio-mt5700-signals:' + location.host;
+    function metric(value, unit) {
+        return value !== null && value !== undefined && String(value).trim() !== '' ? String(value) + unit : '—';
+    }
+    function switchLine(name) {
+        if ((name !== 'cpe' && name !== 'cpe1') || name === line || leaving) return;
+        leaving = true;
+        if (controller) controller.abort();
+        clearTimeout(timer);
+        if (shadow) shadow.querySelector('.selected').textContent = '正在切换到 ' + name.toUpperCase() + '…';
+        var target = new URL(location.href);
+        target.searchParams.set('line', name);
+        // 重建 AT 队列和详情状态，旧响应随旧页面销毁。
+        location.replace(target.href);
+    }
+    function updateLines(names) {
+        available = names;
+        var cards = shadow.querySelector('.cards');
+        ['cpe', 'cpe1'].forEach(function (name) {
+            var button = shadow.querySelector('[data-line="' + name + '"]');
+            if (names.indexOf(name) === -1) {
+                if (button) button.remove();
+                return;
+            }
+            if (button) return;
+            button = document.createElement('button');
+            button.type = 'button';
+            button.setAttribute('data-line', name);
+            button.setAttribute('aria-pressed', String(line === name));
+            button.innerHTML = '<div class="top"><strong>' + name.toUpperCase() + '</strong><span class="state">读取中</span></div><div class="network"></div><div class="signal"></div><div class="extra"></div>';
+            button.addEventListener('click', function () { switchLine(name); });
+            // CPE1 单线恢复双路后仍保持 CPE、CPE1 顺序。
+            if (name === 'cpe') cards.insertBefore(button, cards.firstChild); else cards.appendChild(button);
+        });
+        cards.style.gridTemplateColumns = names.length > 1 ? 'repeat(2,minmax(0,1fr))' : 'minmax(0,1fr)';
+        shadow.querySelector('.selected').textContent = names.length > 1 ? '双线路 · 当前管理：' + line.toUpperCase() : names.length === 1 ? '单线路 · ' + names[0].toUpperCase() : '未检测到线路';
+    }
+    function render(result, cached) {
+        if (!shadow) return;
+        var items = {};
+        (Array.isArray(result.lines) ? result.lines : []).forEach(function (item) {
+            if (item.available !== false && (item.name === 'cpe' || item.name === 'cpe1')) items[item.name] = item;
+        });
+        // 缓存只补数值；线路数量由安装识别或当前成功响应决定。
+        if (!cached) updateLines(['cpe', 'cpe1'].filter(function (name) { return !!items[name]; }));
+        available.forEach(function (name) {
+            var item = items[name] || {};
+            var node = shadow.querySelector('[data-line="' + name + '"]');
+            var band = metric(item.band, '');
+            if (/^\d+$/.test(band)) band = (/NR|5G|SA/i.test(item.mode || '') ? 'N' : /LTE|4G/i.test(item.mode || '') ? 'B' : '') + band;
+            node.querySelector('.state').textContent = !items[name] ? '读取中' : item.status === 0 ? '已连接' : item.status == null ? '状态未知' : '未连接';
+            node.querySelector('.network').textContent = [item.operator, item.mode, band === '—' ? '' : band].filter(Boolean).join(' · ') || '等待线路信息';
+            node.querySelector('.signal').textContent = 'RSRP ' + metric(item.rsrp, ' dBm') + '　SINR ' + metric(item.sinr, ' dB');
+            node.querySelector('.extra').textContent = 'RSRQ ' + metric(item.rsrq, ' dB') + '　温度 ' + metric(item.temperature, '°C');
+        });
+        shadow.querySelector('.stamp').textContent = cached ? '上次读数，正在刷新…' : '更新于 ' + new Date(result.timestamp * 1000).toLocaleTimeString();
+    }
+    function mount() {
+        var content = document.querySelector('.app-content');
+        if (!content || leaving) return;
+        if (!panel) {
+            panel = document.createElement('section');
+            panel.id = 'nradio-mt5700-dual';
+            panel.style.cssText = 'display:block;flex:0 0 auto;min-width:0;width:100%;margin-bottom:16px';
+            shadow = panel.attachShadow({mode: 'open'});
+            shadow.innerHTML = '<style>:host{font-family:inherit;color:var(--semi-color-text-0,#18202b)}*{box-sizing:border-box}.heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;font-size:14px}.stamp{font-size:12px;color:var(--semi-color-text-2,#667085)}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}button{font:inherit;text-align:left;cursor:pointer;min-width:0;min-height:44px;padding:12px;border:1px solid var(--semi-color-border,#dce1e7);border-radius:10px;background:var(--semi-color-bg-2,#fff);color:inherit}button[aria-pressed=true]{border-color:#c7000b;box-shadow:inset 0 0 0 1px #c7000b}button:focus-visible{outline:2px solid #1677ff;outline-offset:2px}.top{display:flex;justify-content:space-between;gap:8px;font-size:14px}.state{font-size:12px}.network,.signal,.extra{font-size:12px;line-height:1.6;overflow-wrap:anywhere;margin-top:4px}.extra{color:var(--semi-color-text-2,#667085)}@media(max-width:420px){.cards{gap:8px}button{padding:10px}.signal,.extra{font-size:11px}.top{flex-wrap:wrap}}</style><div class="heading"><strong class="selected"></strong><span class="stamp">正在读取线路信号…</span></div><div class="cards"></div>';
+            updateLines(available);
+            try {
+                var cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null');
+                if (cached && Date.now() - cached.timestamp * 1000 < 60000) render(cached, true);
+            } catch (_) {}
+        }
+        if (panel.parentNode !== content) content.insertBefore(panel, content.firstChild);
+    }
+    function refresh() {
+        clearTimeout(timer);
+        if (busy || leaving || document.hidden) return;
+        busy = true;
+        controller = new AbortController();
+        var deadline = setTimeout(function () { controller.abort(); }, 6000);
+        nativeFetch(api, {cache: 'no-store', credentials: 'same-origin', signal: controller.signal}).then(function (response) {
+            if (!response.ok) throw new Error('信号读取失败');
+            return response.json();
+        }).then(function (result) {
+            if (!result.success || leaving) return;
+            mount();
+            render(result, false);
+            try { sessionStorage.setItem(cacheKey, JSON.stringify(result)); } catch (_) {}
+            if (result.line !== line) switchLine(result.line);
+        }).catch(function () {
+            if (shadow && !leaving) shadow.querySelector('.stamp').textContent = '刷新失败，显示上次读数';
+        }).finally(function () {
+            clearTimeout(deadline);
+            busy = false;
+            if (!leaving && !document.hidden) timer = setTimeout(refresh, 5000);
+        });
+    }
+    function start() {
+        mount();
+        new MutationObserver(mount).observe(document.body, {childList: true, subtree: true});
+        refresh();
+        document.addEventListener('visibilitychange', function () {
+            clearTimeout(timer);
+            if (document.hidden) { if (controller) controller.abort(); } else refresh();
+        });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once: true}); else start();
+}());
+EOF_MT5700_DUAL_UI
+    mt5700_dual_index="$mt5700_workdir/dual-index.html"
+    awk -v stamp="$MT5700_UI_VERSION-$mt5700_main_ws-$mt5700_second_ws-20260908-1" '
+    {
+        gsub(/<script src="\/5700\/nradio-dual-(config|ui)\.js[^\"]*"><\/script>/, "")
+        if (!added && /<head[^>]*>/) {
+            sub(/<head[^>]*>/, "&\n<script src=\"/5700/nradio-dual-config.js?v=" stamp "\"></script>\n<script src=\"/5700/nradio-dual-ui.js?v=" stamp "\"></script>")
+            added = 1
+        }
+        print
+    }' "$MT5700_WEB_ROOT/index.html" > "$mt5700_dual_index" || die "写入双线路页面入口失败"
+    cp "$mt5700_dual_index" "$MT5700_WEB_ROOT/index.html" || die "部署双线路页面失败"
+    chmod 644 "$MT5700_WEB_ROOT/nradio-dual-config.js" "$MT5700_WEB_ROOT/nradio-dual-ui.js" "$MT5700_WEB_ROOT/index.html"
+    printf '%s\n' '20260908-1' > "$mt5700_dual_dir/enabled"
+    /etc/init.d/nradio-mt5700-dual enable || die "启用双线路服务失败"
+    /etc/init.d/nradio-mt5700-dual restart || die "启动双线路服务失败"
+}
+
 install_mt5700_webui() {
     require_nradio_oem_appcenter
 
     mt5700_workdir="$WORKDIR/mt5700"
     mt5700_artifact="$mt5700_workdir/$MT5700_ARTIFACT_NAME"
     mt5700_unpack="$mt5700_workdir/unpack"
-    mt5700_preloaded_ipk="${MT5700_PRELOADED_IPK:-/tmp/$MT5700_IPK_NAME}"
     mt5700_ipk=''
 
-    log "前端: $MT5700_UI_NAME V$MT5700_UI_VERSION（指定的新版本）"
+    log "前端: $MT5700_UI_NAME（上游最新成功构建）"
     log "说明: 只安装包含该前端的上游 Go 核心包，不安装不兼容 NROS 的标准 luci-app-at-webserver"
     log "说明: 应用商店入口使用 NROS 传统 Lua 控制器，打开后直接跳转 /5700/，不嵌套第二层 iframe"
     log "来源: $MT5700_UI_SOURCE_URL"
-    log "固定: commit $MT5700_SOURCE_COMMIT / Actions run $MT5700_ARTIFACT_RUN"
-    confirm_or_exit "确认继续安装 MT5700 WebUI（$MT5700_UI_NAME V$MT5700_UI_VERSION）并接入 NRadio 应用商店吗？"
+    confirm_or_exit "确认下载安装 MT5700 WebUI 上游最新版本并接入 NRadio 应用商店吗？"
 
     mkdir -p "$mt5700_workdir" || die "创建 MT5700 WebUI 工作目录失败"
-    if [ -s "$mt5700_preloaded_ipk" ]; then
-        log_stage 1 5 "读取预上传的 MT5700 WebUI 安装包"
-        mt5700_ipk="$mt5700_workdir/$MT5700_IPK_NAME"
-        cp "$mt5700_preloaded_ipk" "$mt5700_ipk" || die "读取预上传的 MT5700 WebUI 安装包失败"
-        log_stage 2 5 "准备 MT5700 WebUI IPK"
-    else
-        log_stage 1 5 "下载 MT5700 WebUI 官方 aarch64 构建产物"
-        mt5700_download_url=''
-        if download_from_urls "$mt5700_artifact" $MT5700_ARTIFACT_URLS; then
-            mt5700_download_url="$LAST_DOWNLOAD_SOURCE"
-        fi
-        [ -n "$mt5700_download_url" ] || die "无法下载 MT5700 WebUI 官方构建产物；可预上传 $MT5700_IPK_NAME 到 $mt5700_preloaded_ipk"
-
-        log_stage 2 5 "解包 MT5700 WebUI IPK"
-        rm -rf "$mt5700_unpack"
-        mkdir -p "$mt5700_unpack" || die "创建 MT5700 WebUI 解压目录失败"
-        unzip -oq "$mt5700_artifact" -d "$mt5700_unpack" >"$mt5700_workdir/unzip.log" 2>&1 || die "解压 MT5700 WebUI 官方构建产物失败"
-        for mt5700_candidate in \
-            "$mt5700_unpack/$MT5700_IPK_NAME" \
-            "$mt5700_unpack"/*/"$MT5700_IPK_NAME" \
-            "$mt5700_unpack"/*/*/"$MT5700_IPK_NAME"
-        do
-            [ -s "$mt5700_candidate" ] || continue
-            mt5700_ipk="$mt5700_candidate"
-            break
-        done
-        [ -n "$mt5700_ipk" ] || die "构建产物中未找到 $MT5700_IPK_NAME"
+    log_stage 1 5 "下载 MT5700 WebUI 上游最新成功构建"
+    # 滚动地址内容会变化，每次完整下载，避免旧包或旧断点混入新构建。
+    if ! DOWNLOAD_KEEP_PARTIAL=0 download_from_urls "$mt5700_artifact" $MT5700_ARTIFACT_URLS; then
+        die "无法下载 MT5700 WebUI 最新构建，请稍后重新安装"
     fi
+
+    log_stage 2 5 "解包 MT5700 WebUI IPK"
+    rm -rf "$mt5700_unpack"
+    mkdir -p "$mt5700_unpack" || die "创建 MT5700 WebUI 解压目录失败"
+    unzip -oq "$mt5700_artifact" -d "$mt5700_unpack" >"$mt5700_workdir/unzip.log" 2>&1 || die "解压 MT5700 WebUI 官方构建产物失败"
+    for mt5700_candidate in \
+        "$mt5700_unpack/${MT5700_PACKAGE_NAME}_"*"_${MT5700_PACKAGE_ARCH}.ipk" \
+        "$mt5700_unpack"/*/"${MT5700_PACKAGE_NAME}_"*"_${MT5700_PACKAGE_ARCH}.ipk" \
+        "$mt5700_unpack"/*/*/"${MT5700_PACKAGE_NAME}_"*"_${MT5700_PACKAGE_ARCH}.ipk"
+    do
+        [ -s "$mt5700_candidate" ] || continue
+        mt5700_ipk="$mt5700_candidate"
+        break
+    done
+    [ -n "$mt5700_ipk" ] || die "最新构建中未找到 $MT5700_PACKAGE_NAME 的 $MT5700_PACKAGE_ARCH 安装包"
     mt5700_ipk_size="$(get_file_size_bytes "$mt5700_ipk" 2>/dev/null || true)"
     case "$mt5700_ipk_size" in
         ''|*[!0-9]*) mt5700_ipk_size='0' ;;
@@ -34919,9 +35689,17 @@ install_mt5700_webui() {
 
     log_stage 3 5 "安装 MT5700 WebUI Go 后端与静态页面"
     install_ipk_file "$mt5700_ipk" "$MT5700_APP_NAME 核心"
+    MT5700_PACKAGE_VERSION="$(get_installed_package_version "$MT5700_PACKAGE_NAME")"
+    if [ -z "$MT5700_PACKAGE_VERSION" ]; then
+        mt5700_ipk_basename="${mt5700_ipk##*/}"
+        MT5700_PACKAGE_VERSION="${mt5700_ipk_basename#${MT5700_PACKAGE_NAME}_}"
+        MT5700_PACKAGE_VERSION="${MT5700_PACKAGE_VERSION%_${MT5700_PACKAGE_ARCH}.ipk}"
+    fi
+    MT5700_UI_VERSION="$(printf '%s' "$MT5700_PACKAGE_VERSION" | sed 's/-r\{0,1\}[0-9][0-9]*$//')"
+    patch_mt5700_version_display
     patch_mt5700_boot_fallback
-    sed -i "s|/5700/assets/$MT5700_UI_JS_ASSET\"|/5700/assets/$MT5700_UI_JS_ASSET?v=$MT5700_UI_VERSION\"|" "$MT5700_WEB_ROOT/index.html"
-    sed -i "s|/5700/assets/$MT5700_UI_CSS_ASSET\"|/5700/assets/$MT5700_UI_CSS_ASSET?v=$MT5700_UI_VERSION\"|" "$MT5700_WEB_ROOT/index.html"
+    write_mt5700_c2000max_atsd_proxy
+    write_mt5700_c5800_dual
 
     log_stage 4 5 "写入 NROS 打开入口、图标、应用商店与异步卸载链"
     write_mt5700_nradio_controller
@@ -34986,14 +35764,14 @@ install_openlist() {
     openlist_archive="$openlist_workdir/$openlist_asset_name"
     openlist_unpack="$openlist_workdir/unpack"
 
-    log_stage 1 5 "OpenList GitHub 官方 CDN 安装规划"
+    log_stage 1 5 "OpenList GitHub 加速下载规划"
     openlist_official_ping_hosts=""
     openlist_official_probe_urls="$(build_openlist_official_probe_urls)"
-    rank_url_list_hosts "openlist-official" "OpenList GitHub 官方" "$openlist_official_probe_urls"
+    rank_url_list_hosts "openlist-official" "OpenList GitHub 下载源" "$openlist_official_probe_urls"
     openlist_official_ping_hosts="$RANKED_URL_HOSTS"
     [ -n "$openlist_official_ping_hosts" ] || openlist_official_ping_hosts="$OPENLIST_STABLE_HOST_ORDER"
     if [ "${OPENLIST_FAST_DOWNLOAD_MODE:-1}" = '1' ]; then
-        log "提示: OpenList 启用 GitHub 官方快速下载模式，跳过 HTTP / 部分下载探测"
+        log "提示: OpenList 启用快速下载模式，gh-proxy 优先，失败回退官方地址"
     else
         openlist_package_urls="$(build_openlist_download_urls)"
         if [ -n "$openlist_official_ping_hosts" ]; then
@@ -35007,7 +35785,7 @@ install_openlist() {
         fi
     fi
     openlist_official_ping_hosts="$(printf '%s\n' "$openlist_official_ping_hosts" | sed 's/[[:space:]][[:space:]]*/ /g; s/^[[:space:]]*//; s/[[:space:]]*$//')"
-    log "提示: OpenList 下载主机优先级: $openlist_official_ping_hosts"
+    log "提示: OpenList 下载优先使用 gh-proxy，官方地址和其他镜像作为后备"
     if [ "$openlist_c2000max_mode" = '1' ]; then
         log "提示: 检测到 C2000MAX，OpenList 官方完整包体积较大，低内存设备可能在下载或解压阶段被系统 Killed"
         log "提示: 本次将自动改用 OpenList lite 安装包，并把下载包与解压目录放到存储卡"
@@ -35017,7 +35795,7 @@ install_openlist() {
     log "说明: 将下载 OpenList 官方发布包，并自动接入 OEM 应用商店"
     confirm_or_exit "确认继续安装 OpenList 并修改系统吗？"
 
-    log_stage 2 5 "通过 GitHub 官方 CDN 下载 OpenList 官方安装包"
+    log_stage 2 5 "通过 GitHub 加速源下载 OpenList 官方安装包"
     openlist_package_urls="$(build_openlist_download_urls)"
     if [ -n "${openlist_official_ping_hosts:-}" ]; then
         openlist_package_urls="$(reorder_urls_by_host_rank "$openlist_package_urls" "$openlist_official_ping_hosts")"
@@ -35449,17 +36227,17 @@ install_easytier() {
     easytier_i18n_ipk=""
     EASYTIER_RESOLVED_DOWNLOAD_URLS=''
 
-    log_stage 1 5 "$EASYTIER_DISPLAY_NAME GitHub 官方 CDN 安装规划"
+    log_stage 1 5 "$EASYTIER_DISPLAY_NAME GitHub 加速下载规划"
     easytier_official_ping_hosts=""
-    rank_url_list_hosts "easytier-official" "$EASYTIER_DISPLAY_NAME GitHub 官方" "$EASYTIER_GITHUB_OFFICIAL_PROBE_URLS"
+    rank_url_list_hosts "easytier-official" "$EASYTIER_DISPLAY_NAME GitHub 下载源" "$EASYTIER_GITHUB_OFFICIAL_PROBE_URLS"
     easytier_official_ping_hosts="$RANKED_URL_HOSTS"
     [ -n "$easytier_official_ping_hosts" ] || easytier_official_ping_hosts="$EASYTIER_STABLE_HOST_ORDER"
     easytier_official_ping_hosts="$(printf '%s\n' "$easytier_official_ping_hosts" | sed 's/[[:space:]][[:space:]]*/ /g; s/^[[:space:]]*//; s/[[:space:]]*$//')"
-    log "提示: $EASYTIER_DISPLAY_NAME 下载主机优先级: $easytier_official_ping_hosts"
+    log "提示: $EASYTIER_DISPLAY_NAME 下载优先使用 gh-proxy，官方地址和其他镜像作为后备"
     log "说明: 将下载 $EASYTIER_DISPLAY_NAME 官方发布包，并自动接入 OEM 应用商店"
     confirm_or_exit "确认继续安装 $EASYTIER_DISPLAY_NAME 并修改系统吗？"
 
-    log_stage 2 5 "通过 GitHub 官方 CDN 下载 $EASYTIER_DISPLAY_NAME 官方安装包"
+    log_stage 2 5 "通过 GitHub 加速源下载 $EASYTIER_DISPLAY_NAME 官方安装包"
     easytier_package_urls="$(build_easytier_download_urls)"
     if [ -n "${easytier_official_ping_hosts:-}" ]; then
         easytier_package_urls="$(reorder_urls_by_host_rank "$easytier_package_urls" "$easytier_official_ping_hosts")"
@@ -50766,47 +51544,8 @@ install_openvpn() {
     write_plugin_uninstall_assets
     patch_common_template
     refresh_luci_appcenter
-    log_stage 5 5 "写入虚拟内存并校验 OpenVPN 界面文件与 LuCI 路由"
+    log_stage 5 5 "接入虚拟内存并完成 OpenVPN 安装"
     ensure_existing_swap_access "OpenVPN"
-    verify_appcenter_route "OpenVPN" "nradioadv/system/openvpnfull"
-    for openvpn_ui_file in \
-        /usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua \
-        /usr/lib/lua/luci/view/nradio_adv/openvpn_full.htm \
-        /usr/lib/lua/luci/view/openvpn/ovpn_css.htm \
-        /usr/lib/lua/luci/view/openvpn/pageswitch.htm \
-        /usr/lib/lua/luci/view/openvpn/cbi-select-input-add.htm \
-        /usr/lib/lua/luci/view/openvpn/overview_intro.htm \
-        /usr/lib/lua/luci/view/openvpn/nsection.htm \
-        /usr/lib/lua/luci/model/cbi/openvpn.lua \
-        /usr/lib/lua/luci/model/cbi/openvpn-file.lua \
-        /usr/lib/lua/luci/model/cbi/openvpn-basic.lua \
-        /usr/lib/lua/luci/model/cbi/openvpn-advanced.lua; do
-        verify_file_exists "$openvpn_ui_file" "OpenVPN"
-    done
-    grep -Fq 'OpenVPN Mk5 pass 7 precision finish: local six-file polish.' /usr/lib/lua/luci/view/openvpn/ovpn_css.htm || die "OpenVPN verify failed: missing Mk5 pass 7 CSS"
-    grep -Fq 'OpenVPN Mk5 pass 8 precision finish: diagnostics, entry actions and CBI polish.' /usr/lib/lua/luci/view/openvpn/ovpn_css.htm || die "OpenVPN verify failed: missing Mk5 pass 8 CSS"
-    grep -Fq 'OpenVPN Mk5 pass 9: 250-line webpage precision layer.' /usr/lib/lua/luci/view/openvpn/ovpn_css.htm || die "OpenVPN verify failed: missing Mk5 pass 9 CSS"
-    grep -Fq 'OpenVPN Mk5 pass 10 precision shell polish: modal-safe visual layer' /usr/lib/lua/luci/view/openvpn/ovpn_css.htm || die "OpenVPN verify failed: missing Mk5 pass 10 CSS"
-    grep -Fq 'OpenVPN Mk5 pass 11 precision webpage polish: compact responsive forms, stronger focus states, and cleaner console blocks.' /usr/lib/lua/luci/view/openvpn/ovpn_css.htm || die "OpenVPN verify failed: missing Mk5 pass 11 CSS"
-    grep -Fq 'vpn-hero-console' /usr/lib/lua/luci/view/nradio_adv/openvpn_full.htm || die "OpenVPN verify failed: missing Mk5 console classes"
-    grep -Fq 'vpn-shell-config' /usr/lib/lua/luci/view/openvpn/pageswitch.htm || die "OpenVPN verify failed: missing Mk5 config classes"
-    grep -Fq 'vpn-entry-grid-import' /usr/lib/lua/luci/view/openvpn/cbi-select-input-add.htm || die "OpenVPN verify failed: missing Mk5 import classes"
-    grep -Fq 'vpn-shell-overview' /usr/lib/lua/luci/view/openvpn/overview_intro.htm || die "OpenVPN verify failed: missing Mk5 overview classes"
-    grep -Fq 'vpn-cbi-descr' /usr/lib/lua/luci/view/openvpn/nsection.htm || die "OpenVPN verify failed: missing Mk5 CBI classes"
-    grep -Fq 'local ROUTE_STATE_PATH = "/root/.nradio-plugin-menu/openvpn_routes.conf"' /usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua || die "OpenVPN verify failed: missing route-state diagnostics"
-    grep -Fq 'restart_page.post = true' /usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua || die "OpenVPN verify failed: restart endpoint is not POST-only"
-    grep -Fq 'name="token"' /usr/lib/lua/luci/view/nradio_adv/openvpn_full.htm || die "OpenVPN verify failed: missing CSRF token"
-    grep -Fq 'xhr.timeout = 15000' /usr/lib/lua/luci/view/nradio_adv/openvpn_full.htm || die "OpenVPN verify failed: missing status request timeout"
-    grep -Fq 'local cfg = read_cfg_limited("/etc/openvpn/client.ovpn", 102400)' /usr/lib/lua/luci/view/nradio_adv/openvpn_full.htm || die "OpenVPN verify failed: config size guard missing"
-    grep -Fq 'configured_log == "/tmp/openvpn-client.log"' /usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua || die "OpenVPN verify failed: legacy runtime log path compatibility missing"
-    grep -Fq 'shell_quote(active_log_path)' /usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua || die "OpenVPN verify failed: runtime log path guard missing"
-    grep -Fq 'probe_ping_batch' /usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua || die "OpenVPN verify failed: parallel target probe missing"
-    grep -Fq 'log_notice_label' /usr/lib/lua/luci/controller/nradio_adv/openvpn_full.lua || die "OpenVPN verify failed: log event classification missing"
-    grep -Fq 'vpn-log-event' /usr/lib/lua/luci/view/nradio_adv/openvpn_full.htm || die "OpenVPN verify failed: log event notice missing"
-    grep -Fq 'return "/etc/openvpn/auth.txt"' /usr/lib/lua/luci/model/cbi/openvpn-file.lua || die "OpenVPN verify failed: custom auth path fallback missing"
-    grep -Fq 'fs.chmod(auth_file, "0600")' /usr/lib/lua/luci/model/cbi/openvpn-file.lua || die "OpenVPN verify failed: auth file permissions missing"
-    verify_luci_route admin/services/openvpn "OpenVPN"
-    verify_luci_route nradioadv/system/openvpnfull "OpenVPN"
 
     log "安装完成"
     log "插件:   OpenVPN"
@@ -51827,8 +52566,8 @@ umask 077
 
 APP_NAME="ttyd Web SSH 助手"
 TTYD_VERSION="1.7.7"
-TTYD_RELEASE_MIRRORS="${TTYD_RELEASE_MIRRORS:-https://ghproxy.net/https://github.com/tsl0922/ttyd/releases/download/$TTYD_VERSION https://github.com/tsl0922/ttyd/releases/download/$TTYD_VERSION}"
-TTYD_RAW_MIRRORS="${TTYD_RAW_MIRRORS:-https://ghproxy.net/https://raw.githubusercontent.com/ozon/luci-app-ttyd/master https://cdn.jsdelivr.net/gh/ozon/luci-app-ttyd@master https://raw.githubusercontent.com/ozon/luci-app-ttyd/master}"
+TTYD_RELEASE_MIRRORS="${TTYD_RELEASE_MIRRORS:-https://gh-proxy.com/https://github.com/tsl0922/ttyd/releases/download/$TTYD_VERSION https://github.com/tsl0922/ttyd/releases/download/$TTYD_VERSION https://ghproxy.net/https://github.com/tsl0922/ttyd/releases/download/$TTYD_VERSION}"
+TTYD_RAW_MIRRORS="${TTYD_RAW_MIRRORS:-https://gh-proxy.com/https://raw.githubusercontent.com/ozon/luci-app-ttyd/master https://raw.githubusercontent.com/ozon/luci-app-ttyd/master https://ghproxy.net/https://raw.githubusercontent.com/ozon/luci-app-ttyd/master https://cdn.jsdelivr.net/gh/ozon/luci-app-ttyd@master}"
 WORKDIR="/var/run/nradio-ttyd-webssh/work.$$"
 ACTIVE_DOWNLOAD_PID=''
 ABORTING='0'
@@ -51931,50 +52670,88 @@ format_bytes_human() {
     fi
 }
 
-get_url_content_length() {
-    url="$1"
-    content_length=""
-
-    if command -v curl >/dev/null 2>&1; then
-        headers="$(curl -kL -sSI --connect-timeout 15 --max-time 20 "$url" 2>/dev/null || true)"
-        content_length="$(printf '%s\n' "$headers" | tr -d '\r' | sed -n 's/^[Cc]ontent-[Ll]ength: *//p' | tail -n 1)"
-    fi
-
-    case "$content_length" in
-        ''|*[!0-9]*) content_length="" ;;
-    esac
-
-    printf '%s\n' "$content_length"
+get_download_content_length() {
+    [ "${DOWNLOAD_SKIP_CONTENT_LENGTH:-0}" != '1' ] || return 0
+    [ -s "$1" ] || return 0
+    awk '
+        { sub(/\r$/, "") }
+        /^HTTP\// { status=$2; length_value=""; range_total=""; chunked=0; complete=0; next }
+        tolower($0) ~ /^content-length:/ {
+            value=$0; sub(/^[^:]*:[ \t]*/, "", value); sub(/[ \t]+$/, "", value)
+            if (value ~ /^[0-9]+$/) length_value=value
+        }
+        tolower($0) ~ /^content-range:/ {
+            value=$0; sub(/^.*\//, "", value); sub(/[ \t]+$/, "", value)
+            if (value ~ /^[0-9]+$/) range_total=value
+        }
+        tolower($0) ~ /^transfer-encoding:.*chunked/ { chunked=1 }
+        /^$/ { complete=1 }
+        END {
+            if (!complete) exit
+            if (status == 206 && range_total != "") print range_total
+            else if (status == 200 && !chunked && length_value != "") print length_value
+        }
+    ' "$1"
 }
 
 render_download_progress() {
     progress_state="$1"
     current_bytes="$2"
     total_bytes="${3:-}"
+    speed_bytes="${4:-}"
+    display_elapsed="${5:-0}"
     current_human="$(format_bytes_human "$current_bytes")"
+    current_human="${current_human% *}${current_human##* }"
+    display_columns="${DOWNLOAD_DISPLAY_COLUMNS:-${COLUMNS:-80}}"
+    case "$display_columns" in ''|*[!0-9]*) display_columns=80 ;; esac
+    line="$progress_state $current_human"
 
     if [ -n "$total_bytes" ] && [ "$total_bytes" -gt 0 ] 2>/dev/null; then
-        total_human="$(format_bytes_human "$total_bytes")"
         progress_percent=$(( current_bytes * 100 / total_bytes ))
-        [ "$progress_percent" -le 100 ] 2>/dev/null || progress_percent=100
-        _dl_bar_len=15
-        _dl_filled=$(( progress_percent * _dl_bar_len / 100 ))
-        _dl_empty=$(( _dl_bar_len - _dl_filled ))
-        _dl_bar=""
-        _dbi=0
-        while [ "$_dbi" -lt "$_dl_filled" ]; do _dl_bar="${_dl_bar}="; _dbi=$((_dbi + 1)); done
-        if [ "$_dl_empty" -gt 0 ]; then
-            _dl_bar="${_dl_bar}>"
-            _dbi=1
-            while [ "$_dbi" -lt "$_dl_empty" ]; do _dl_bar="${_dl_bar}."; _dbi=$((_dbi + 1)); done
+        [ "$progress_percent" -le 100 ] || progress_percent=100
+        if [ "$progress_state" != '下载完成' ] && [ "$progress_percent" -ge 100 ]; then
+            progress_percent=99
         fi
-        line="[${_dl_bar}] ${progress_state} ${current_human} / ${total_human} (${progress_percent}%)"
-    else
-        line="${progress_state} 已下载 ${current_human}"
+        line="$progress_state ${progress_percent}% $current_human"
+        if [ "$display_columns" -ge 60 ]; then
+            total_human="$(format_bytes_human "$total_bytes")"
+            total_human="${total_human% *}${total_human##* }"
+            line="$line/$total_human"
+        fi
+        if [ "$display_columns" -ge 80 ]; then
+            _dl_filled=$(( progress_percent * 15 / 100 ))
+            _dl_bar=''
+            _dbi=0
+            while [ "$_dbi" -lt 15 ]; do
+                if [ "$_dbi" -lt "$_dl_filled" ]; then
+                    _dl_bar="${_dl_bar}="
+                elif [ "$_dbi" -eq "$_dl_filled" ]; then
+                    _dl_bar="${_dl_bar}>"
+                else
+                    _dl_bar="${_dl_bar}."
+                fi
+                _dbi=$((_dbi + 1))
+            done
+            line="[$_dl_bar] $line"
+        fi
+    fi
+
+    case "$speed_bytes" in
+        ''|*[!0-9]*) ;;
+        *)
+            if [ "$display_columns" -ge 40 ]; then
+                speed_human="$(format_bytes_human "$speed_bytes")"
+                speed_human="${speed_human% *}${speed_human##* }"
+                line="$line $speed_human/s"
+            fi
+            ;;
+    esac
+    if [ "$display_columns" -ge 60 ]; then
+        line="$line $((display_elapsed / 60))分$((display_elapsed % 60))秒"
     fi
 
     if stderr_is_tty; then
-        printf '\r%-88s' "$line" >&2
+        printf '\r\033[K%s' "$line" >&2
     else
         printf '%s\n' "$line" >&2
     fi
@@ -52025,6 +52802,17 @@ terminate_active_download() {
 
     terminate_pid_quick "$active_pid"
     ACTIVE_DOWNLOAD_PID=''
+    [ -z "${progress_headers:-}" ] || rm -f "$progress_headers"
+    [ -z "${progress_error_log:-}" ] || rm -f "$progress_error_log"
+}
+
+sleep_download_poll() {
+    poll_usec="${DOWNLOAD_PROGRESS_POLL_USEC:-250000}"
+    case "$poll_usec" in
+        ''|*[!0-9]*) poll_usec=250000 ;;
+    esac
+    [ "$poll_usec" -ge 100000 ] || poll_usec=100000
+    usleep "$poll_usec" 2>/dev/null || sleep 0.25 2>/dev/null || sleep 1
 }
 
 run_download_with_progress() {
@@ -52032,32 +52820,70 @@ run_download_with_progress() {
     progress_out="$2"
     shift 2
 
-    progress_total="$(get_url_content_length "$progress_url")"
-    progress_last_size='-1'
-    progress_last_percent='-1'
+    progress_headers="$progress_out.headers"
+    progress_error_log="$progress_out.download.log"
+    : > "$progress_headers" || return 1
+    : > "$progress_error_log" || { rm -f "$progress_headers"; return 1; }
+    progress_total=''
+    progress_speed=''
+    DOWNLOAD_DISPLAY_COLUMNS="${COLUMNS:-80}"
+    if stderr_is_tty; then
+        progress_terminal_size="$(stty size </dev/tty 2>/dev/null || true)"
+        case "$progress_terminal_size" in
+            *' '*) DOWNLOAD_DISPLAY_COLUMNS="${progress_terminal_size##* }" ;;
+        esac
+    fi
+    progress_start_epoch="$(date +%s)"
+    progress_prev_sample_epoch="$progress_start_epoch"
+    progress_prev_sample_size="$(get_file_size_bytes "$progress_out")"
+    progress_initial_size="$progress_prev_sample_size"
+    progress_last_change_epoch="$progress_start_epoch"
+    progress_last_print_epoch="$progress_start_epoch"
+    progress_timeout="${DOWNLOAD_MAX_TIME:-900}"
+    case "$progress_timeout" in ''|*[!0-9]*) progress_timeout=900 ;; esac
+    progress_timed_out=0
+    render_download_progress "连接中" "$progress_initial_size" "" "" 0
 
-    "$@" &
+    if [ "$1" = 'curl' ]; then
+        "$@" --dump-header "$progress_headers" 2>"$progress_error_log" &
+    else
+        "$@" 2>"$progress_error_log" &
+    fi
     progress_pid="$!"
     ACTIVE_DOWNLOAD_PID="$progress_pid"
 
     while kill -0 "$progress_pid" 2>/dev/null; do
-        progress_size="$(get_file_size_bytes "$progress_out")"
-        if [ -n "$progress_total" ] && [ "$progress_total" -gt 0 ] 2>/dev/null; then
-            progress_percent=$(( progress_size * 100 / progress_total ))
-            [ "$progress_percent" -le 100 ] 2>/dev/null || progress_percent=100
-        else
-            progress_percent='-1'
+        progress_now_epoch="$(date +%s)"
+        progress_elapsed=$((progress_now_epoch - progress_start_epoch))
+        if [ "$progress_timeout" -gt 0 ] && [ "$progress_elapsed" -ge "$progress_timeout" ]; then
+            progress_timed_out=1
+            terminate_pid_quick "$progress_pid"
+            break
         fi
-
-        if stderr_is_tty; then
-            render_download_progress "下载中" "$progress_size" "$progress_total"
-        elif [ "$progress_size" != "$progress_last_size" ] || [ "$progress_percent" != "$progress_last_percent" ]; then
-            render_download_progress "下载中" "$progress_size" "$progress_total"
+        progress_sample_elapsed=$((progress_now_epoch - progress_prev_sample_epoch))
+        if [ "$progress_sample_elapsed" -ge 1 ]; then
+            progress_size="$(get_file_size_bytes "$progress_out")"
+            progress_total="$(get_download_content_length "$progress_headers")"
+            progress_delta=$((progress_size - progress_prev_sample_size))
+            if [ "$progress_delta" -ne 0 ]; then
+                progress_last_change_epoch="$progress_now_epoch"
+            fi
+            [ "$progress_delta" -ge 0 ] || progress_delta=0
+            progress_speed=$((progress_delta / progress_sample_elapsed))
+            progress_prev_sample_size="$progress_size"
+            progress_prev_sample_epoch="$progress_now_epoch"
+            progress_state='下载中'
+            if [ $((progress_now_epoch - progress_last_change_epoch)) -ge 10 ]; then
+                progress_state='等待数据'
+            elif [ "$progress_size" -eq "$progress_initial_size" ] && [ "$progress_speed" -eq 0 ]; then
+                progress_state='连接中'
+            fi
+            if stderr_is_tty || [ $((progress_now_epoch - progress_last_print_epoch)) -ge 5 ]; then
+                render_download_progress "$progress_state" "$progress_size" "$progress_total" "$progress_speed" "$progress_elapsed"
+                progress_last_print_epoch="$progress_now_epoch"
+            fi
         fi
-
-        progress_last_size="$progress_size"
-        progress_last_percent="$progress_percent"
-        sleep_abort_poll
+        sleep_download_poll
     done
 
     if wait "$progress_pid"; then
@@ -52066,15 +52892,29 @@ run_download_with_progress() {
         progress_rc="$?"
     fi
     ACTIVE_DOWNLOAD_PID=''
+    [ "$progress_timed_out" -eq 0 ] || progress_rc=28
     progress_size="$(get_file_size_bytes "$progress_out")"
+    progress_total="$(get_download_content_length "$progress_headers")"
+    progress_elapsed=$(( $(date +%s) - progress_start_epoch ))
+    [ "$progress_elapsed" -ge 0 ] || progress_elapsed=0
+    if [ "$progress_rc" -eq 0 ] && [ "$progress_size" -eq 0 ]; then
+        progress_rc=1
+        printf '%s\n' '下载结果为空' >> "$progress_error_log"
+    fi
 
     if [ "$progress_rc" -eq 0 ]; then
-        render_download_progress "下载完成" "$progress_size" "$progress_total"
+        render_download_progress "下载完成" "$progress_size" "$progress_size" "" "$progress_elapsed"
     else
-        render_download_progress "下载失败" "$progress_size" "$progress_total"
+        render_download_progress "下载失败" "$progress_size" "$progress_total" "" "$progress_elapsed"
     fi
     finish_download_progress_line
-
+    if [ "$progress_timed_out" -eq 1 ]; then
+        printf '下载超时：已达 %s 秒\n' "$progress_timeout" >&2
+    fi
+    if [ "$progress_rc" -ne 0 ] && [ -s "$progress_error_log" ]; then
+        tail -n 8 "$progress_error_log" >&2
+    fi
+    rm -f "$progress_headers" "$progress_error_log"
     return "$progress_rc"
 }
 
@@ -53990,16 +54830,37 @@ __TTYD_HELPER__
 
 }
 
+print_menu_header() {
+    printf '\n%s\n' '--------------------------------'
+    printf '  %s\n' "$1"
+    printf '%s\n\n' '--------------------------------'
+}
+
+print_menu_item() {
+    printf '  %2s. %s\n' "$1" "$2"
+}
+
+print_menu_prompt() {
+    printf '\n选择 [%s]: ' "$1"
+}
+
+print_main_menu_header() {
+    print_menu_header 'NRadio 官方系统插件安装助手'
+    printf '  版本  %s  /  %s\n' "$SCRIPT_VERSION" "$SCRIPT_RELEASE_DATE"
+    printf '  设备  %s\n' "${CURRENT_DETECTED_MODEL:-识别中}"
+    printf '  系统  NROS %s\n' "${CURRENT_DETECTED_NROS_REVISION:-识别中}"
+    printf '  作者  maye\n'
+}
+
 die_menu_input_issue() {
     choice_text="$1"
     if [ -n "$choice_text" ]; then
-        die "invalid choice: $choice_text"
+        die "无效编号：$choice_text，请选择菜单中显示的编号"
     fi
     if [ -t 0 ]; then
-        die "invalid choice: empty input"
+        die "未输入编号，请重新运行并选择菜单"
     fi
-    die "invalid choice: no menu input detected; please run the saved script in an interactive terminal, or pass an action like: sh -s -- 4"
-
+    die "未读到菜单输入，请在终端运行已保存的脚本并输入菜单编号"
 }
 
 print_support_page_hint() {
@@ -54010,35 +54871,64 @@ print_support_page_hint() {
 
 print_startup_disclaimer_text() {
     disclaimer_model="${CURRENT_DETECTED_MODEL:-当前识别机型}"
+    print_menu_header '首次运行 / 使用须知'
+    printf '版本：%s  /  %s\n' "$SCRIPT_VERSION" "$SCRIPT_RELEASE_DATE"
+    printf '设备：%s\n' "$disclaimer_model"
+    printf '\n%s\n' "$SCRIPT_DISCLAIMER"
+    printf '请完整阅读以下条款；输入 y 同意，回车退出。\n'
     cat <<EOF
+
 免责声明书
 
 深圳鲲鹏无线科技有限公司当前检测到的设备机型（${disclaimer_model}，以下简称“本设备”）系基于Linux技术开发的5G CPE产品。本设备支持开源，为了使您正确并合法地使用本设备，请您在开源使用前务必阅读清楚下面的协议条款（如您对以下任一条款持反对意见或未能完全理解，请勿勾选本免责声明书）：
+
 一、本免责声明书适用于当前检测到的设备机型（${disclaimer_model}）
+
 二、许可的权利
+
 1. 您可以在完全遵守本声明书的基础上，将本设备应用于非商业用途；
+
 2. 您可以在《中华人民共和国网络安全法》及相关法律法规允许的范围内修改源代码以适应您的使用要求/需求；
+
 3. 您在获取本设备密钥后拥有使用本设备构建源代码等全部内容所有权，并独立承担与这些内容的相关法律义务；
+
 4. 获得商业授权之后，您可以将本设备应用于商业用途，同时依据所购买的授权类型中确定的技术支持内容，自购买时刻起，在技术支持期限内拥有通过指定的方式获得指定范围内的技术支持服务。商业授权用户享有反映和提出意见的权力，相关意见将被作为首要考虑，但没有一定被采纳的承诺或保证。
+
 三、约束和限制
+
 1. 未获商业授权之前，不得将本设备用于商业用途（包括但不限于以营利为目的或实现盈利）。购买商业授权请与我司了解最新说明；
+
 2. 未经官方许可，不得对本设备或与之关联的商业授权进行出租、出售、抵押或发放子许可证；
+
 3. 不管您是否整体使用，还是部分使用，在本设备的整体或任何部分基础上以发展任何派生版本、修改版本或第三方版本不得用于重新分发；
+
 4. 本设备开源后您可根据自身需求对本设备进行使用，故本公司也不对开源后您的任何行为承担任何类型的责任担保，开源后您在使用过程中产生的一切风险全部由您自行承担；
+
 5. 您不得删除或更改受保护的源代码形式中包含的任何许可声明（包括版权、专利、免责声明或责任限制）的实质内容，除非是纠正已知的事实错误所需；
+
 6. 请您在开源使用过程中严格遵守国内外法律法规，不得将本设备用于任何非法用途；
+
 7. 如果您未能遵守本协议的条款，您的授权将被终止，所被许可的权利将被收回，并承担相应法律责任。
+
 四、有限担保和免责声明
+
 1. 本设备及所附带的文件是作为不提供任何明确的或隐含的赔偿或担保的形式提供的；
+
 2. 用户出于自愿而使用本设备，您必须了解开源使用本设备的风险，在尚未购买产品技术服务之前，我们不承诺对免费用户提供任何形式的技术支持、使用担保，也不承担任何因使用本设备而产生问题的相关责任；
+
 3. 电子文本形式的授权协议如同双方书面签署的协议一样，具有完全的和等同的法律效力。您一旦开始确认本协议并使用开源相关功能，即被视为完全理解并接受本协议的各项条款，在享有上述条款授予的权力的同时，受到相关的约束和限制。协议许可范围以外的行为，将直接违反本授权协议并构成侵权，我们有权随时终止授权，责令停止损害，并保留追究相关责任的权力；
+
 4. 如果本设备带有其它软件的整合示范例子包，这些文件版权不属于本软件官方，并且这些文件是没经过授权发布的，请参考相关软件的使用许可合法的使用。
 EOF
     if [ "${CURRENT_DETECTED_MODEL:-}" = 'NRadio_C2000Pro' ]; then
         cat <<'EOF'
+
 五、C2000Pro 专属风险提示
+
 1. 当前识别机型为 NRadio_C2000Pro。该机型内存、存储空间和运行余量较小，安装或运行第三方插件、兼容应用商店层、代理服务、Web 终端、下载解压任务、swap 或其它扩展功能时，可能出现卡死、重启、服务异常、配置损坏、overlay 写满、系统无法正常启动等风险。
+
 2. 用户确认已理解上述硬件资源限制，并自愿承担因内存不足、存储不足、写入失败、插件冲突或系统资源耗尽造成的一切后果。
+
 3. 因上述原因导致的系统崩溃、数据丢失、配置损坏、无法启动、需要恢复出厂或重新刷机等问题，脚本作者和相关分享方概不负责。
 EOF
         disclaimer_user_responsibility_title="六、用户责任声明"
@@ -54047,8 +54937,11 @@ EOF
     fi
     cat <<EOF
 ${disclaimer_user_responsibility_title}
+
 1. 用户已认真阅读并理解上述内容，同意上述条款，并承诺遵守以上约定；
+
 2. 用户知悉本设备生产商/提供方在开源后不对本设备存在任何管理责任，因此用户承诺开源使用本设备过程中发生的一切法律、经济责任均由用户本人承担，与本设备生产商/提供方无关；
+
 3. 用户开源使用本设备视为对本免责声明书以上全部内容的理解和认可。
 EOF
 }
@@ -54802,6 +55695,36 @@ write_nradio_home_temperature_switch_js() {
     var runtimeRequest = null;
     var runtimeRequestSequence = 0;
     var runtimeAppliedSequence = 0;
+    var runtimeRevision = 0;
+    var runtimeUpdatedAt = 0;
+    var storageKey = 'nradio.home-temperature.modes.v1';
+
+    function restoreTemperatureModes() {
+        var saved;
+        var name;
+        try {
+            saved = JSON.parse(window.localStorage.getItem(storageKey) || '{}');
+            if (!saved || typeof saved !== 'object') {
+                return;
+            }
+            for (name in saved) {
+                if (Object.prototype.hasOwnProperty.call(saved, name) &&
+                    (saved[name] === 'cpu' || saved[name] === 'cpe')) {
+                    temperatureModes[name] = saved[name];
+                }
+            }
+        } catch (error) {
+            // Storage may be unavailable; the current page still keeps its choice.
+        }
+    }
+
+    function saveTemperatureModes() {
+        try {
+            window.localStorage.setItem(storageKey, JSON.stringify(temperatureModes));
+        } catch (error) {
+            // Switching does not depend on browser storage being writable.
+        }
+    }
 
     function findRuntimeUrl() {
         var script = document.currentScript;
@@ -54829,6 +55752,7 @@ write_nradio_home_temperature_switch_js() {
     function refreshRuntimeNow() {
         var request;
         var sequence;
+        var revision;
         var separator;
         var requestUrl;
 
@@ -54836,11 +55760,12 @@ write_nradio_home_temperature_switch_js() {
             return;
         }
         if (runtimeRequest && runtimeRequest.readyState !== 4) {
-            runtimeRequest.abort();
+            return;
         }
 
         sequence = runtimeRequestSequence + 1;
         runtimeRequestSequence = sequence;
+        revision = runtimeRevision;
         separator = runtimeUrl.indexOf('?') === -1 ? '?' : '&';
         requestUrl = runtimeUrl + separator + '_nrht=' +
             String(new Date().getTime()) + '-' + String(sequence);
@@ -54855,7 +55780,7 @@ write_nradio_home_temperature_switch_js() {
                 runtimeRequest = null;
             }
             if (request.status < 200 || request.status >= 300 ||
-                sequence < runtimeAppliedSequence) {
+                sequence < runtimeAppliedSequence || revision !== runtimeRevision) {
                 return;
             }
             try {
@@ -54871,8 +55796,14 @@ write_nradio_home_temperature_switch_js() {
                 window.stats_info(data);
             }
         };
+        request.onerror = request.ontimeout = request.onabort = function () {
+            if (runtimeRequest === request) {
+                runtimeRequest = null;
+            }
+        };
         try {
             request.open('GET', requestUrl, true);
+            request.timeout = 8000;
             request.send(null);
         } catch (error) {
             if (runtimeRequest === request) {
@@ -54933,6 +55864,8 @@ write_nradio_home_temperature_switch_js() {
         if (!data || !data.result) {
             return;
         }
+        runtimeRevision += 1;
+        runtimeUpdatedAt = new Date().getTime();
         result = data.result;
         globalInfo = result.global || {};
         cpuPercent = validPercent(globalInfo.cpu_percent);
@@ -55037,46 +55970,91 @@ write_nradio_home_temperature_switch_js() {
         return state && (state.nrcap === '0' || state.nrcap === '') ? '4G温度' : '5G温度';
     }
 
-    function makeTemperatureButton(name, mode, label, active, disabled) {
-        var button = document.createElement('button');
+    function updateTemperatureButton(button, name, mode, label, active, disabled, value) {
+        var fullLabel;
+        var compactLabel;
         button.type = 'button';
-        button.className = 'nr-home-temp-choice' + (active ? ' active' : '');
+        button.className = 'nr-home-temp-choice' + (active && !disabled ? ' active' : '');
         button.setAttribute('data-name', name);
         button.setAttribute('data-mode', mode);
-        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        button.setAttribute('aria-pressed', active && !disabled ? 'true' : 'false');
         button.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+        button.title = label + (disabled ? '：暂无数据' : '：' + formattedTemperature(value));
+        button.setAttribute('aria-label', button.title);
         button.disabled = disabled;
-        button.textContent = label;
-        return button;
+        if (button.getAttribute('data-temperature-label') !== label) {
+            button.textContent = '';
+            fullLabel = document.createElement('span');
+            fullLabel.className = 'nr-home-temp-label-full';
+            fullLabel.textContent = label;
+            compactLabel = document.createElement('span');
+            compactLabel.className = 'nr-home-temp-label-compact';
+            compactLabel.textContent = mode === 'cpu' ? 'CPU' : label.slice(0, 2);
+            button.appendChild(fullLabel);
+            button.appendChild(compactLabel);
+            button.setAttribute('data-temperature-label', label);
+        }
+    }
+
+    function markTemperatureCard(node) {
+        var card = node.parentNode;
+        var classes;
+        var group;
+        while (card && card !== document) {
+            classes = ' ' + (card.className || '') + ' ';
+            if (classes.indexOf(' pc_box ') !== -1 && classes.indexOf(' pc_box1 ') !== -1) {
+                card.setAttribute('data-nradio-home-temp-card', '1');
+                group = card.parentNode;
+                if (group && (' ' + (group.className || '') + ' ').indexOf(' speedflow_combine_box ') !== -1) {
+                    group.setAttribute('data-nradio-home-temp-grid', '1');
+                }
+                return;
+            }
+            card = card.parentNode;
+        }
     }
 
     function renderTemperatureLabel(node, name, mode, state) {
-        var switcher = document.createElement('span');
+        var switcher = node.nradioTemperatureSwitcher;
+        var buttons;
+        var index = 0;
         var cpuDisabled = !temperatureAvailable(cpuTemperature);
         var cpeDisabled = !temperatureAvailable(state.modelTemperature);
         var secondaryFixed = secondary5GIsFixed(name);
-        switcher.className = 'nr-home-temp-switch';
-        switcher.setAttribute('data-temperature-name', name);
+        markTemperatureCard(node);
+        if (!switcher) {
+            switcher = document.createElement('span');
+            switcher.className = 'nr-home-temp-switch';
+            switcher.setAttribute('data-temperature-name', name);
+            switcher.setAttribute('role', 'group');
+            switcher.setAttribute('aria-label', '温度来源');
+            node.nradioTemperatureSwitcher = switcher;
+        }
+        buttons = switcher.querySelectorAll('button');
+        if (buttons.length !== (secondaryFixed ? 1 : 2)) {
+            while (switcher.firstChild) {
+                switcher.removeChild(switcher.firstChild);
+            }
+            if (!secondaryFixed) {
+                switcher.appendChild(document.createElement('button'));
+            }
+            switcher.appendChild(document.createElement('button'));
+            buttons = switcher.querySelectorAll('button');
+        }
         if (!secondaryFixed) {
-            switcher.appendChild(makeTemperatureButton(
-                name,
-                'cpu',
-                'CPU温度',
-                mode === 'cpu',
-                cpuDisabled
-            ));
+            updateTemperatureButton(buttons[index], name, 'cpu', 'CPU温度',
+                mode === 'cpu', cpuDisabled, cpuTemperature);
+            index += 1;
         }
-        switcher.appendChild(makeTemperatureButton(
-            name,
-            'cpe',
+        updateTemperatureButton(buttons[index], name, 'cpe',
             secondaryFixed ? '5G温度' : cpeTemperatureLabel(state),
-            mode === 'cpe',
-            cpeDisabled
-        ));
-        while (node.firstChild) {
-            node.removeChild(node.firstChild);
+            mode === 'cpe', cpeDisabled, state.modelTemperature);
+        if (node.firstChild !== switcher) {
+            while (node.firstChild) {
+                node.removeChild(node.firstChild);
+            }
+            node.appendChild(switcher);
         }
-        node.appendChild(switcher);
     }
 
     function formattedTemperature(value) {
@@ -55087,6 +56065,9 @@ write_nradio_home_temperature_switch_js() {
     }
 
     function formattedTemperatureDescription(value) {
+        if (!temperatureAvailable(value)) {
+            return '暂无温度数据';
+        }
         if (typeof window.format_temp_des === 'function') {
             return window.format_temp_des(value);
         }
@@ -55123,6 +56104,24 @@ write_nradio_home_temperature_switch_js() {
         }
     }
 
+    function renderTemperatureGauge(gauge, id, value) {
+        // The OEM gauge drops updates during animation. Settle its previous
+        // value before updating, then draw the selected source synchronously.
+        if (gauge && typeof gauge.drawProgressAnimate === 'function') {
+            gauge.animation = false;
+            gauge.percentage = gauge.progress;
+            gauge.isEnd = true;
+        }
+        gauge = window.canvas_val_show(
+            gauge, id, value, 125, window.temp_range, window.temp_lang, '℃'
+        );
+        if (gauge && typeof gauge.drawProgressAnimate === 'function') {
+            gauge.animation = false;
+            gauge.drawProgressAnimate();
+        }
+        return gauge;
+    }
+
     function updateTemperatureGauge(name, value) {
         var wanItem;
         var singleId = 'tempprogress-container-' + name + 'single';
@@ -55138,25 +56137,17 @@ write_nradio_home_temperature_switch_js() {
             return;
         }
         if (document.getElementById(singleId)) {
-            wanItem.arcProgressTempSingle = window.canvas_val_show(
+            wanItem.arcProgressTempSingle = renderTemperatureGauge(
                 wanItem.arcProgressTempSingle,
                 singleId,
-                value,
-                125,
-                window.temp_range,
-                window.temp_lang,
-                '℃'
+                value
             );
         }
         if (document.getElementById(multiId)) {
-            wanItem.arcProgressTempMulti = window.canvas_val_show(
+            wanItem.arcProgressTempMulti = renderTemperatureGauge(
                 wanItem.arcProgressTempMulti,
                 multiId,
-                value,
-                125,
-                window.temp_range,
-                window.temp_lang,
-                '℃'
+                value
             );
         }
     }
@@ -55212,12 +56203,27 @@ write_nradio_home_temperature_switch_js() {
         style = document.createElement('style');
         style.id = 'nr-home-temperature-switch-style';
         style.textContent =
-            '.nr-home-temp-switch{display:inline-flex;align-items:center;padding:2px;border:1px solid rgba(0,174,239,.55);border-radius:14px;vertical-align:middle}' +
-            '.nr-home-temp-choice{border:0;border-radius:11px;background:transparent;color:inherit;cursor:pointer;font-size:12px;font-weight:600;line-height:20px;padding:0 7px}' +
+            '.nr-home-temp-switch{display:inline-flex;flex-wrap:wrap;align-items:center;max-width:100%;padding:2px;border:1px solid rgba(0,174,239,.55);border-radius:16px;vertical-align:middle}' +
+            '.nr-home-temp-choice{border:0;border-radius:13px;background:transparent;color:inherit;cursor:pointer;font-size:12px;font-weight:600;line-height:24px;min-height:28px;padding:0 8px;white-space:nowrap;touch-action:manipulation}' +
             '.nr-home-temp-choice+.nr-home-temp-choice{margin-left:2px}' +
             '.nr-home-temp-choice.active{background:#00aeef;color:#fff}' +
             '.nr-home-temp-choice:focus{outline:1px solid #7bdcff;outline-offset:1px}' +
-            '.nr-home-temp-choice:disabled{cursor:not-allowed;opacity:.45}';
+            '.nr-home-temp-choice:disabled{cursor:not-allowed;opacity:.45}' +
+            '.nr-home-temp-label-compact{display:none}' +
+            '@media(max-width:767px){' +
+            'body [data-nradio-home-temp-grid]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;float:none;width:100%;height:auto;min-height:0;margin:0 0 20px}' +
+            'body [data-nradio-home-temp-grid]>.pc_box{float:none;width:auto;min-width:0;height:auto;min-height:159px;margin:0;box-sizing:border-box}' +
+            'body [data-nradio-home-temp-card]>.panel-heading{padding:8px 8px 0}' +
+            '[data-nradio-home-temp-card]>.panel-heading>.row>div{padding:0}' +
+            '[data-nradio-home-temp-card]>.panel-body{padding:0 8px 8px}' +
+            '[data-nradio-home-temp-card] [id^="tempprogress-container-"]{width:100%;max-width:130px;margin:0 auto!important}' +
+            '[data-nradio-home-temp-card] canvas{display:block;max-width:100%;height:auto!important;margin:0 auto}' +
+            '.nr-home-temp-switch{display:flex;flex-wrap:nowrap;width:100%;box-sizing:border-box;gap:2px;border-radius:12px}' +
+            '.nr-home-temp-choice{flex:1 1 0;min-width:0;box-sizing:border-box;min-height:44px;line-height:20px;padding:6px 2px;border-radius:9px}' +
+            '.nr-home-temp-choice+.nr-home-temp-choice{margin-left:0}' +
+            '.nr-home-temp-label-full{display:none}' +
+            '.nr-home-temp-label-compact{display:inline}' +
+            '}';
         (document.head || document.documentElement).appendChild(style);
     }
 
@@ -55246,12 +56252,18 @@ write_nradio_home_temperature_switch_js() {
         }
         event.preventDefault();
         event.stopPropagation();
+        if (temperatureModes[name] === mode) {
+            return;
+        }
         temperatureModes[name] = mode;
+        saveTemperatureModes();
         if (window.nr_temp_modes && typeof window.nr_temp_modes === 'object') {
             window.nr_temp_modes[name] = effectiveMode(name);
         }
         renderTemperature(name);
-        refreshRuntimeNow();
+        if (new Date().getTime() - runtimeUpdatedAt >= 5000) {
+            refreshRuntimeNow();
+        }
     }
 
     function installTemperatureSwitch() {
@@ -55272,13 +56284,20 @@ write_nradio_home_temperature_switch_js() {
             return;
         }
 
+        restoreTemperatureModes();
         wrappedStatsInfo = function (data) {
+            var focused = findTemperatureButton(document.activeElement);
             var result;
             captureRuntime(data);
             synchronizeLegacyTemperatureModes();
             result = originalStatsInfo.apply(this, arguments);
             renderPrimaryLineUsage();
             renderAllTemperatures();
+            if (focused && document.documentElement.contains(focused) &&
+                document.activeElement !== focused &&
+                (!document.activeElement || document.activeElement === document.body)) {
+                focused.focus();
+            }
             return result;
         };
         wrappedStatsInfo.nradioHomeTemperatureSwitch = VERSION;
@@ -55381,17 +56400,30 @@ install_nradio_home_temperature_switch() {
     log "版本:   $NRADIO_HOME_TEMP_VERSION"
     log "范围:   全部受支持 NROS；按首页 runtime 能力检测，不限制机型"
     log "显示:   双线路时副5G固定显示5G温度；仅副5G单线路时可切换CPU/5G温度"
-    log "备份:   disabled（仅使用同目录瞬时原子临时文件）"
+    log "操作:   首页点击温度按钮切换，当前浏览器自动记住选择"
+    log "手机:   温源按钮横排，状态卡片两列自适应高度"
+    log "生效:   重新加载 LuCI 首页"
+}
+
+nradio_home_temperature_install_state() {
+    home_temp_installed_version=''
+    if [ -s "$NRADIO_HOME_TEMP_JS" ]; then
+        home_temp_installed_version="$(awk -F "'" '/^[[:space:]]*var VERSION = / { print $2; exit }' "$NRADIO_HOME_TEMP_JS" 2>/dev/null || true)"
+    fi
+    if verify_nradio_home_temperature_switch; then
+        printf '已安装 %s\n' "$NRADIO_HOME_TEMP_VERSION"
+    elif [ -n "$home_temp_installed_version" ] && [ "$home_temp_installed_version" != "$NRADIO_HOME_TEMP_VERSION" ]; then
+        printf '已安装 %s，可更新至 %s\n' "$home_temp_installed_version" "$NRADIO_HOME_TEMP_VERSION"
+    elif [ -e "$NRADIO_HOME_TEMP_JS" ] || grep -Fq "$NRADIO_HOME_TEMP_MARKER_BEGIN" "$NRADIO_HOME_TEMP_VIEW" 2>/dev/null; then
+        printf '安装文件不完整，请选择安装或更新\n'
+    else
+        printf '未安装\n'
+    fi
 }
 
 show_nradio_home_temperature_switch_status() {
     log "LuCI 首页 CPU / 5G 温度切换状态:"
-    if verify_nradio_home_temperature_switch; then
-        log "状态:   PASS 已安装"
-        log "版本:   $NRADIO_HOME_TEMP_VERSION"
-    else
-        log "状态:   未安装或文件不完整"
-    fi
+    log "状态:   $(nradio_home_temperature_install_state)"
     log "脚本:   $NRADIO_HOME_TEMP_JS"
     log "模板:   $NRADIO_HOME_TEMP_VIEW"
     log "范围:   全部受支持 NROS"
@@ -55450,13 +56482,17 @@ run_nradio_home_temperature_selfcheck() {
 }
 
 manage_nradio_home_temperature_switch() {
+    home_temperature_menu_path="${CURRENT_HOME_TEMP_MENU_PATH:-首页温度}"
     while :; do
-        printf '\nNRadio LuCI 首页 CPU / 5G 温度切换（全部 NROS）:\n'
-        printf '1. 安装或更新温度切换\n'
-        printf '2. 查看安装状态\n'
-        printf '3. 移除温度切换\n'
-        printf '0. 返回设备维护与检测\n'
-        printf '请选择 0、1、2 或 3: '
+        print_menu_header "$home_temperature_menu_path / 首页温度显示"
+        printf '  状态  %s\n' "$(nradio_home_temperature_install_state)"
+        printf '  温源  CPU / 5G，选择自动记忆\n'
+        printf '  双路  主线路可切换，副 5G 显示模组温度\n\n'
+        print_menu_item 1 '安装或更新'
+        print_menu_item 2 '查看安装详情'
+        print_menu_item 3 '移除温度切换'
+        print_menu_item 0 '返回设备维护'
+        print_menu_prompt '0-3'
         read_category_choice
         case "$UI_READ_RESULT" in
             0)
@@ -55464,7 +56500,7 @@ manage_nradio_home_temperature_switch() {
                 ;;
             1)
                 install_nradio_home_temperature_switch
-                record_action_history "5 > 10 > 1" "LuCI 首页温度切换安装或更新" "PASS" "disabled"
+                record_action_history "$home_temperature_menu_path > 1" "LuCI 首页温度切换安装或更新" "PASS" "disabled"
                 MENU_ACTION_COMPLETED='1'
                 return 0
                 ;;
@@ -55475,7 +56511,7 @@ manage_nradio_home_temperature_switch() {
                 ;;
             3)
                 uninstall_nradio_home_temperature_switch
-                record_action_history "5 > 10 > 3" "LuCI 首页温度切换移除" "PASS" "disabled"
+                record_action_history "$home_temperature_menu_path > 3" "LuCI 首页温度切换移除" "PASS" "disabled"
                 MENU_ACTION_COMPLETED='1'
                 return 0
                 ;;
@@ -55519,55 +56555,6 @@ nradio_cpeopt_require_capabilities() {
         /usr/lib/lua/luci/view/nradio_adv/index.htm; do
         [ -f "$cpeopt_required" ] || die "当前 NROS 缺少 5G 连接监听所需组件：$cpeopt_required"
     done
-}
-
-nradio_cpeopt_payload_markers_ok() {
-    cpeopt_payload_root="$1"
-
-    [ -s "$cpeopt_payload_root/usr/bin/cpetools.sh" ] || return 1
-    [ -s "$cpeopt_payload_root/usr/bin/cpesel.sh" ] || return 1
-    [ -s "$cpeopt_payload_root/etc/cpetools/generic.sh" ] || return 1
-    [ -s "$cpeopt_payload_root/etc/cpetools/huawei.sh" ] || return 1
-    [ -s "$cpeopt_payload_root/usr/lib/lua/luci/model/cbi/nradio_cpecfg/cpelock.lua" ] || return 1
-    [ -s "$cpeopt_payload_root/usr/lib/lua/luci/view/nradio_adv/index.htm" ] || return 1
-    [ -s "$cpeopt_payload_root/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua" ] || return 1
-    [ -s "$cpeopt_payload_root/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm" ] || return 1
-    [ -s "$cpeopt_payload_root/www/luci-static/nradio/images/icon/cpeopt.svg" ] || return 1
-    [ -s "$cpeopt_payload_root/usr/libexec/nradio-cpe-monitor.lua" ] || return 1
-    [ -s "$cpeopt_payload_root/etc/init.d/nradio-cpe-monitor" ] || return 1
-
-    sh -n "$cpeopt_payload_root/usr/bin/cpetools.sh" || return 1
-    sh -n "$cpeopt_payload_root/usr/bin/cpesel.sh" || return 1
-    sh -n "$cpeopt_payload_root/etc/cpetools/generic.sh" || return 1
-    sh -n "$cpeopt_payload_root/etc/cpetools/huawei.sh" || return 1
-    sh -n "$cpeopt_payload_root/etc/init.d/nradio-cpe-monitor" || return 1
-    lua "$cpeopt_payload_root/usr/libexec/nradio-cpe-monitor.lua" --check || return 1
-
-    grep -Fq 'record_dial_log()' "$cpeopt_payload_root/usr/bin/cpetools.sh" || return 1
-    grep -Fq 'run_command_retry()' "$cpeopt_payload_root/usr/bin/cpetools.sh" || return 1
-    grep -Fq 'validate_freq_data()' "$cpeopt_payload_root/usr/bin/cpetools.sh" || return 1
-    grep -Fq 'record_dial_log()' "$cpeopt_payload_root/usr/bin/cpesel.sh" || return 1
-    grep -Fq 'sim_switch_running()' "$cpeopt_payload_root/usr/bin/cpesel.sh" || return 1
-    grep -Fq '/usr/sbin/atsd_cli -i "$1" -c "$2"' "$cpeopt_payload_root/etc/cpetools/generic.sh" || return 1
-    grep -Fq -e '-L 1' "$cpeopt_payload_root/etc/cpetools/generic.sh" || return 1
-    grep -Fq 'verify_only="$4"' "$cpeopt_payload_root/etc/cpetools/huawei.sh" || return 1
-    grep -Fq 'validate_freq_value' "$cpeopt_payload_root/usr/lib/lua/luci/model/cbi/nradio_cpecfg/cpelock.lua" || return 1
-    grep -Fq 'tt_nnode.image' "$cpeopt_payload_root/usr/lib/lua/luci/view/nradio_adv/index.htm" || return 1
-    grep -Fq "version = \"$NRADIO_CPEOPT_VERSION\"" "$cpeopt_payload_root/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua" || return 1
-    grep -Fq "data-nradio-cpeopt=\"$NRADIO_CPEOPT_VERSION\"" "$cpeopt_payload_root/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm" || return 1
-    grep -Fq 'action_smart_status' "$cpeopt_payload_root/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua" || return 1
-    grep -Fq 'action_smart_apply' "$cpeopt_payload_root/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua" || return 1
-    grep -Fq 'id="nr5g-smart-apply"' "$cpeopt_payload_root/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm" || return 1
-    grep -Fq 'HC-WT9120' "$cpeopt_payload_root/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua" || return 1
-    grep -Fq 'HC-WT9126' "$cpeopt_payload_root/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua" || return 1
-    grep -Fq 'HC-WT9303' "$cpeopt_payload_root/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua" || return 1
-    grep -Fq 'NRadio CPE background monitor 20260903-1' "$cpeopt_payload_root/usr/libexec/nradio-cpe-monitor.lua" || return 1
-    grep -Fq '/etc/nradio-cpe-monitor/events.log' "$cpeopt_payload_root/usr/libexec/nradio-cpe-monitor.lua" || return 1
-    grep -Fq 'network:find("4G", 1, true)' "$cpeopt_payload_root/usr/libexec/nradio-cpe-monitor.lua" || return 1
-    grep -Fq 'procd_set_param command /usr/bin/lua "$PROG"' "$cpeopt_payload_root/etc/init.d/nradio-cpe-monitor" || return 1
-    grep -Fq "name.indexOf('4G')" "$cpeopt_payload_root/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm" || return 1
-    ! grep -Fq 'nradio-cpeopt-events-v2' "$cpeopt_payload_root/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm" || return 1
-    return 0
 }
 
 extract_nradio_cpeopt_payload() {
@@ -61981,13 +62968,13 @@ EOF_NRADIO_CPEOPT_INDEX
     cat > "$cpeopt_payload_root/usr/libexec/nradio-cpe-monitor.lua" <<'EOF_NRADIO_CPEOPT_MONITOR'
 #!/usr/bin/lua
 
--- NRadio CPE background monitor 20260903-1
+-- NRadio CPE background monitor 20260906-1
 
 local nixio = require "nixio"
 local fs = require "nixio.fs"
 local util = require "luci.util"
 
-local VERSION = "20260903-1"
+local VERSION = "20260906-1"
 local INTERVAL = 10
 local LOG_LIMIT = 262144
 local LOG_PATH = "/etc/nradio-cpe-monitor/events.log"
@@ -61995,6 +62982,11 @@ local LOG_ROTATED_PATH = "/etc/nradio-cpe-monitor/events.log.1"
 local STATUS_PATH = "/var/run/nradio-cpe-monitor/status"
 local allowed_cpe = { cpe = true, cpe1 = true }
 local previous = {}
+local observed = {}
+local pending = {}
+local overflow = {}
+local sample_gap = {}
+local PENDING_LIMIT = 128
 
 local function clean(value)
 	value = tostring(value or "")
@@ -62024,20 +63016,34 @@ end
 local function rotate_log()
 	local stat = fs.stat(LOG_PATH)
 	if stat and tonumber(stat.size or 0) >= LOG_LIMIT then
-		fs.unlink(LOG_ROTATED_PATH)
-		os.rename(LOG_PATH, LOG_ROTATED_PATH)
+		return os.rename(LOG_PATH, LOG_ROTATED_PATH) and true or false
 	end
+	return true
 end
 
-local function append_event(name, level, detail)
-	rotate_log()
+local function append_event(event)
+	if not rotate_log() then
+		return false
+	end
 	local handle = io.open(LOG_PATH, "a")
 	if not handle then
 		return false
 	end
-	handle:write(os.date("%Y-%m-%d %H:%M:%S"), "\t", clean(name), "\t",
-		clean(level), "\t", clean(detail), "\n")
-	handle:close()
+	local written = handle:write(event.time, "\t", clean(event.name), "\t",
+		clean(event.level), "\t", clean(event.detail), "\n")
+	local closed = handle:close()
+	return written ~= nil and closed ~= nil
+end
+
+local function flush_pending()
+	while #pending > 0 do
+		local event = pending[1]
+		if not append_event(event) then
+			return false
+		end
+		previous[event.name] = event.state
+		table.remove(pending, 1)
+	end
 	return true
 end
 
@@ -62047,10 +63053,10 @@ local function write_status(sample_state, line_count)
 	if not handle then
 		return false
 	end
-	handle:write(tostring(os.time()), "\t", os.date("%Y-%m-%d %H:%M:%S"), "\t",
+	local written = handle:write(tostring(os.time()), "\t", os.date("%Y-%m-%d %H:%M:%S"), "\t",
 		tostring(line_count or 0), "\t", clean(sample_state), "\t", VERSION, "\n")
-	handle:close()
-	if not os.rename(tmp, STATUS_PATH) then
+	local closed = handle:close()
+	if not written or not closed or not os.rename(tmp, STATUS_PATH) then
 		fs.unlink(tmp)
 		return false
 	end
@@ -62080,7 +63086,7 @@ local function keep_last_nonempty(now, old)
 end
 
 local function record_state(name, now)
-	local old = previous[name]
+	local old = observed[name] or previous[name]
 	keep_last_nonempty(now, old)
 	local changes = {}
 	local level = ""
@@ -62113,28 +63119,53 @@ local function record_state(name, now)
 		end
 	end
 
-	if #changes > 0 then
-		append_event(name, level, table.concat(changes, "；"))
+	if sample_gap[name] then
+		table.insert(changes, 1, "记录中断：采样异常后恢复，中间变化未知")
+		level = "warn"
 	end
-	previous[name] = now
+	if overflow[name] then
+		table.insert(changes, 1, "记录中断：写入失败期间缓冲已满，部分变化缺失")
+		level = "warn"
+	end
+	if #changes > 0 then
+		if #pending >= PENDING_LIMIT then
+			overflow[name] = true
+			return
+		end
+		pending[#pending + 1] = {
+			time = os.date("%Y-%m-%d %H:%M:%S"),
+			name = name, level = level, detail = table.concat(changes, "；"), state = now
+		}
+		overflow[name] = nil
+		sample_gap[name] = nil
+	end
+	observed[name] = now
 end
 
 local function sample()
+	flush_pending()
 	local ok, runtime = pcall(util.ubus, "infocd", "runtime")
 	if not ok or type(runtime) ~= "table" or type(runtime.cpe) ~= "table" then
+		sample_gap.cpe, sample_gap.cpe1 = true, true
 		write_status("read_error", 0)
 		return
 	end
 
 	local line_count = 0
+	local seen = {}
 	for _, item in ipairs(runtime.cpe) do
 		local name = clean(item.name)
 		if allowed_cpe[name] then
+			seen[name] = true
 			line_count = line_count + 1
 			record_state(name, normalize_state(item))
 		end
 	end
-	write_status("ok", line_count)
+	for name in pairs(allowed_cpe) do
+		if not seen[name] then sample_gap[name] = true end
+	end
+	local saved = flush_pending()
+	write_status(not saved and "write_error" or (line_count == 0 and "no_lines" or "ok"), line_count)
 end
 
 if arg and arg[1] == "--check" then
@@ -62144,6 +63175,7 @@ end
 while true do
 	local ok = pcall(sample)
 	if not ok then
+		sample_gap.cpe, sample_gap.cpe1 = true, true
 		write_status("runtime_error", 0)
 	end
 	nixio.nanosleep(INTERVAL)
@@ -62202,10 +63234,22 @@ local SMART_BAND_CRON = "/etc/crontabs/root"
 local SMART_BAND_CRON_LINE = "*/30 5-21 * * * sh /root/nradio-smart-band.sh >/dev/null 2>&1 # nradio-smart-band"
 local SMART_BAND_RUNTIME = "/var/run/nradio-smart-band"
 local SMART_BAND_STOP = SMART_BAND_RUNTIME .. "/stopping"
+local SMART_BAND_PENDING = SMART_BAND_RUNTIME .. "/pending_auto"
 local SMART_BAND_LOCK_PID = SMART_BAND_RUNTIME .. "/lock/pid"
+local SMART_BAND_LOCK_START = SMART_BAND_RUNTIME .. "/lock/starttime"
+local SMART_BAND_UI_TASK = SMART_BAND_RUNTIME .. "/ui-run"
+local SMART_BAND_UI_LAUNCH_LOCK = SMART_BAND_RUNTIME .. "/ui-run.lock"
+local SMART_BAND_UI_STATE = SMART_BAND_UI_TASK .. "/state"
+local SMART_BAND_UI_PID = SMART_BAND_UI_TASK .. "/pid"
+local SMART_BAND_UI_START = SMART_BAND_UI_TASK .. "/starttime"
+local SMART_BAND_UI_STARTED = SMART_BAND_UI_TASK .. "/started"
+local SMART_BAND_UI_FINISHED = SMART_BAND_UI_TASK .. "/finished"
+local SMART_BAND_UI_RC = SMART_BAND_UI_TASK .. "/rc"
+local SMART_BAND_UI_OUTPUT = SMART_BAND_UI_TASK .. "/output"
 
 local function trim(value)
-	return tostring(value or ""):gsub("^%s+", ""):gsub("%s+$", "")
+	local cleaned = tostring(value or ""):gsub("^%s+", ""):gsub("%s+$", "")
+	return cleaned
 end
 
 local function smart_band_supported(model)
@@ -62220,16 +63264,132 @@ local function run_smart_band(sys, mode)
 	return code, output
 end
 
+local function process_starttime(fs, pid)
+	local stat = fs.readfile("/proc/" .. tostring(pid or "") .. "/stat") or ""
+	local fields = stat:match("^%d+ %b() (.+)$") or ""
+	local index = 0
+	for field in fields:gmatch("%S+") do
+		index = index + 1
+		if index == 20 then
+			return field
+		end
+	end
+	return ""
+end
+
+local function process_matches(fs, pid, starttime, needle)
+	pid = trim(pid)
+	starttime = trim(starttime)
+	if not pid:match("^%d+$") or tonumber(pid) <= 1 or not starttime:match("^%d+$") then
+		return false
+	end
+	if process_starttime(fs, pid) ~= starttime then
+		return false
+	end
+	local cmdline = fs.readfile("/proc/" .. pid .. "/cmdline") or ""
+	return cmdline:find(needle, 1, true) ~= nil
+end
+
+local function smart_band_process_running(fs)
+	return process_matches(
+		fs,
+		fs.readfile(SMART_BAND_LOCK_PID),
+		fs.readfile(SMART_BAND_LOCK_START),
+		SMART_BAND_SCRIPT
+	)
+end
+
+local function smart_band_task_summary(fs)
+	local state = trim(fs.readfile(SMART_BAND_UI_STATE))
+	local pid = trim(fs.readfile(SMART_BAND_UI_PID))
+	local starttime = trim(fs.readfile(SMART_BAND_UI_START))
+	local started = tonumber(trim(fs.readfile(SMART_BAND_UI_STARTED))) or 0
+	local starting_grace = state == "starting" and started > 0 and os.time() - started <= 5
+	local task_running = starting_grace or ((state == "starting" or state == "running") and
+		process_matches(fs, pid, starttime, SMART_BAND_SCRIPT))
+	if (state == "starting" or state == "running") and not task_running then
+		state = "failed"
+	end
+	local task = {
+		source = "manual",
+		state = state ~= "" and state or "idle",
+		running = task_running,
+		started = started,
+		finished = tonumber(trim(fs.readfile(SMART_BAND_UI_FINISHED))) or 0,
+		rc = tonumber(trim(fs.readfile(SMART_BAND_UI_RC)))
+	}
+	local source, run_started, finished, run_state, rc = (fs.readfile(SMART_BAND_RUNTIME .. "/last_run") or ""):match(
+		"^([^\t]+)\t(%d+)\t(%d+)\t([^\t]+)\t(%d+)")
+	run_started = tonumber(run_started) or 0
+	if (source == "auto" or source == "manual") and run_started > 0 and
+		(run_started > task.started or (run_started == task.started and task.state ~= "busy")) then
+		local running = run_state == "running" and smart_band_process_running(fs)
+		if run_state == "running" and not running then run_state = "interrupted" end
+		return {
+			source = source, state = run_state, running = running,
+			started = run_started, finished = tonumber(finished) or 0, rc = tonumber(rc)
+		}
+	end
+	return task
+end
+
+local function smart_band_cron_state(cron)
+	local active_count = 0
+	local exact_count = 0
+	for line in (cron .. "\n"):gmatch("(.-)\n") do
+		local candidate = trim(line)
+		if candidate ~= "" and candidate:sub(1, 1) ~= "#" and
+			candidate:find(SMART_BAND_SCRIPT, 1, true) then
+			active_count = active_count + 1
+			if candidate == SMART_BAND_CRON_LINE then
+				exact_count = exact_count + 1
+			end
+		end
+	end
+	return active_count > 0, active_count == 1 and exact_count == 1, active_count
+end
+
 local function smart_band_summary(fs, model)
 	local cron = fs.readfile(SMART_BAND_CRON) or ""
 	local installed = fs.access(SMART_BAND_SCRIPT) and true or false
-	local scheduled = cron:find(SMART_BAND_SCRIPT, 1, true) ~= nil
+	local source = installed and (fs.readfile(SMART_BAND_SCRIPT) or "") or ""
+	local version = source:match('SMART_BAND_VERSION="([^"]+)"') or
+		source:match("智能频段切换%s+(v[%w%._-]+)") or "未知"
+	local scheduled, schedule_valid, schedule_count = smart_band_cron_state(cron)
+	local task = smart_band_task_summary(fs)
+	local core_running = smart_band_process_running(fs)
+	local stopped = fs.access(SMART_BAND_STOP) and true or false
+	local pending_auto = fs.access(SMART_BAND_PENDING) and true or false
+	local enabled = installed and scheduled and not stopped
+	local phase
+	if stopped and core_running then
+		phase = "stopping"
+	elseif stopped and pending_auto then
+		phase = "restore-pending"
+	elseif stopped or not enabled then
+		phase = "disabled"
+	elseif core_running or task.running then
+		phase = "running"
+	else
+		phase = "idle"
+	end
 	return {
 		supported = smart_band_supported(model),
 		installed = installed,
 		scheduled = scheduled,
-		enabled = installed and scheduled and not fs.access(SMART_BAND_STOP),
-		version = "v7"
+		schedule_valid = schedule_valid,
+		schedule_count = schedule_count,
+		enabled = enabled,
+		stopped = stopped,
+		pending_auto = pending_auto,
+		running = core_running or task.running,
+		phase = phase,
+		version = version,
+		run_state = task.state,
+		last_started = task.started,
+		last_finished = task.finished,
+		last_rc = task.rc,
+		last_source = task.source
 	}
 end
 
@@ -62286,15 +63446,25 @@ local function disable_smart_band(fs, sys)
 	end
 
 	local pid = trim(fs.readfile(SMART_BAND_LOCK_PID))
-	if pid:match("^%d+$") and tonumber(pid) and tonumber(pid) > 1 then
-		local cmdline = fs.readfile("/proc/" .. pid .. "/cmdline") or ""
-		if cmdline:find(SMART_BAND_SCRIPT, 1, true) then
-			sys.call("kill -TERM " .. pid .. " >/dev/null 2>&1")
+	local starttime = trim(fs.readfile(SMART_BAND_LOCK_START))
+	if process_matches(fs, pid, starttime, SMART_BAND_SCRIPT) then
+		sys.call("kill -TERM " .. pid .. " >/dev/null 2>&1")
+		for _ = 1, 12 do
+			if not process_matches(fs, pid, starttime, SMART_BAND_SCRIPT) then
+				break
+			end
+			sys.call("sleep 1")
 		end
 	end
 
 	if not reload_smart_band_cron(fs, sys) then
 		return false, "智能频段已停用，但 crond 刷新失败"
+	end
+	if process_matches(fs, pid, starttime, SMART_BAND_SCRIPT) then
+		return false, "自动任务已停用，但当前实例尚未退出，页面将继续跟踪"
+	end
+	if fs.access(SMART_BAND_PENDING) then
+		return false, "自动任务已停用，但自动频段恢复未完成；请重新启用后执行一次恢复"
 	end
 	return true, "智能频段已停用，5G 连接监听继续运行，频段交由系统管理"
 end
@@ -62312,6 +63482,52 @@ local function enable_smart_band(fs, sys)
 		return false, "智能频段已启用，但 crond 刷新失败"
 	end
 	return true, "智能频段已启用，将按每 30 分钟执行；5G 连接监听继续运行"
+end
+
+local function start_smart_band_task(fs, sys)
+	if sys.call("mkdir -p " .. SMART_BAND_UI_TASK .. " && chmod 700 " .. SMART_BAND_UI_TASK) ~= 0 then
+		return false, "无法创建智能频段任务目录", "failed"
+	end
+	if sys.call("mkdir " .. SMART_BAND_UI_LAUNCH_LOCK .. " >/dev/null 2>&1") ~= 0 then
+		local existing = smart_band_task_summary(fs)
+		if existing.running then
+			return true, "智能频段已有任务运行，未重复启动", "running"
+		end
+		if existing.started == 0 or os.time() - existing.started < 300 then
+			return false, "智能频段任务正在收尾，请稍后重试", "failed"
+		end
+		if sys.call("rmdir " .. SMART_BAND_UI_LAUNCH_LOCK .. " >/dev/null 2>&1 && mkdir " .. SMART_BAND_UI_LAUNCH_LOCK .. " >/dev/null 2>&1") ~= 0 then
+			return false, "智能频段任务锁异常，请稍后重试", "failed"
+		end
+	end
+	for _, path in ipairs({ SMART_BAND_UI_PID, SMART_BAND_UI_START, SMART_BAND_UI_FINISHED, SMART_BAND_UI_RC, SMART_BAND_UI_OUTPUT }) do
+		fs.unlink(path)
+	end
+	if not fs.writefile(SMART_BAND_UI_STATE, "starting\n") or
+		not fs.writefile(SMART_BAND_UI_STARTED, tostring(os.time()) .. "\n") then
+		sys.call("rmdir " .. SMART_BAND_UI_LAUNCH_LOCK .. " >/dev/null 2>&1")
+		return false, "无法初始化智能频段任务状态", "failed"
+	end
+
+	local body =
+		"umask 077; " ..
+		"printf '%s\\n' \"$$\" > " .. SMART_BAND_UI_PID .. "; " ..
+		"sed 's/^[^)]*) //' /proc/$$/stat 2>/dev/null | awk '{print $20}' > " .. SMART_BAND_UI_START .. "; " ..
+		"printf '%s\\n' running > " .. SMART_BAND_UI_STATE .. "; " ..
+		"sh " .. SMART_BAND_SCRIPT .. " manual > " .. SMART_BAND_UI_OUTPUT .. " 2>&1; " ..
+		"rc=$?; printf '%s\\n' \"$rc\" > " .. SMART_BAND_UI_RC .. "; date +%s > " .. SMART_BAND_UI_FINISHED .. "; " ..
+		"if [ \"$rc\" -eq 0 ]; then state=success; elif [ \"$rc\" -eq 3 ]; then state=busy; " ..
+		"elif grep -Eq '=(UNHEALTHY WAIT|UNHEALTHY BLOCKED|WAIT |BLOCKED )' " .. SMART_BAND_UI_OUTPUT .. "; then state=attention; else state=failed; fi; " ..
+		"printf '%s\\n' \"$state\" > " .. SMART_BAND_UI_STATE .. "; " ..
+		"rm -f " .. SMART_BAND_UI_PID .. " " .. SMART_BAND_UI_START .. "; " ..
+		"rmdir " .. SMART_BAND_UI_LAUNCH_LOCK .. " >/dev/null 2>&1"
+	local command = "( sh -c '" .. body:gsub("'", "'\\''") .. "' ) >/dev/null 2>&1 </dev/null &"
+	if sys.call(command) ~= 0 then
+		fs.writefile(SMART_BAND_UI_STATE, "failed\n")
+		sys.call("rmdir " .. SMART_BAND_UI_LAUNCH_LOCK .. " >/dev/null 2>&1")
+		return false, "无法启动智能频段后台任务", "failed"
+	end
+	return true, "智能频段任务已启动，页面将持续显示运行状态", "starting"
 end
 
 function index()
@@ -62332,9 +63548,9 @@ function index()
 	)
 	page.icon = "signal-4"
 	if fs.access("/www/luci-static/nradio/images/icon/cpeopt.png") then
-		page.image = "/luci-static/nradio/images/icon/cpeopt.png?v=20260903-4"
+		page.image = "/luci-static/nradio/images/icon/cpeopt.png?v=20260906-1"
 	else
-		page.image = "/luci-static/nradio/images/icon/cpeopt.svg?v=20260903-4"
+		page.image = "/luci-static/nradio/images/icon/cpeopt.svg?v=20260906-1"
 	end
 	page.show = true
 	page.leaf = false
@@ -62385,12 +63601,59 @@ function index()
 	smart_enable.post = true
 end
 
+
+-- Only join periods whose entry and exit are present in the retained log.
+local function event_epoch(stamp)
+	local y, m, d, h, minute, s = stamp:match("^(%d%d%d%d)%-(%d%d)%-(%d%d) (%d%d):(%d%d):(%d%d)$")
+	if not y then return nil end
+	return os.time({ year = tonumber(y), month = tonumber(m), day = tonumber(d),
+		hour = tonumber(h), min = tonumber(minute), sec = tonumber(s) })
+end
+
+local function band_periods(events, date_filter, line_filter)
+	local active, periods = {}, {}
+	for _, event in ipairs(events) do
+		local detail, name = event.detail, event.name
+		local epoch = event_epoch(event.time)
+		if (name == "cpe" or name == "cpe1") and epoch then
+			local old_band, new_band = detail:match("频段 ([NB]%d+) → ([NB]%d+)")
+			local gap = detail:find("后台监听启动", 1, true) or detail:find("记录中断", 1, true) or
+				detail:find("线路", 1, true) or detail:find("SIM ", 1, true) or
+				(detail:find("网络 ", 1, true) and not old_band) or
+				(detail:find("频段 ", 1, true) and not old_band)
+			if gap then active[name] = nil end
+			if old_band and not gap then
+				local start = active[name]
+				if start and start.band == old_band and epoch >= start.epoch then
+					if (line_filter == "" or name == line_filter) and
+						(date_filter == "" or (start.time:sub(1, 10) <= date_filter and event.time:sub(1, 10) >= date_filter)) then
+						periods[#periods + 1] = {
+							name = name, band = old_band, next_band = new_band,
+							entered = start.time, left = event.time, seconds = epoch - start.epoch
+						}
+					end
+				end
+				active[name] = { band = new_band, time = event.time, epoch = epoch }
+			end
+		end
+	end
+	local result = {}
+	for index = #periods, math.max(1, #periods - 49), -1 do
+		result[#result + 1] = periods[index]
+	end
+	return result
+end
+
 function action_status()
 	local fs = require "nixio.fs"
 	local http = require "luci.http"
 	local util = require "luci.util"
 	local uci = require "luci.model.uci".cursor()
 	local allowed_cpe = { cpe = true, cpe1 = true }
+	local date_filter = http.formvalue("event_date") or ""
+	local line_filter = http.formvalue("event_line") or ""
+	if not date_filter:match("^%d%d%d%d%-%d%d%-%d%d$") then date_filter = "" end
+	if not allowed_cpe[line_filter] then line_filter = "" end
 	local model = tostring(fs.readfile("/tmp/sysinfo/model") or "")
 	model = model:gsub("^%s+", ""):gsub("%s+$", "")
 
@@ -62471,18 +63734,17 @@ function action_status()
 		end
 
 		local events = {}
-		local first = math.max(1, #all - 199)
-		for index = #all, first, -1 do
-			events[#events + 1] = all[index]
+		for index = #all, 1, -1 do
+			local event = all[index]
+			if (date_filter == "" or event.time:sub(1, 10) == date_filter) and
+				(line_filter == "" or event.name == line_filter) then
+				events[#events + 1] = event
+				if #events >= 100 then break end
+			end
 		end
-		if read_error then
-			return events, "read_error"
-		elseif existing == 0 then
-			return events, "missing"
-		elseif #all == 0 then
-			return events, "empty"
-		end
-		return events, "ready"
+		local status = read_error and "read_error" or
+			(existing == 0 and "missing" or (#all == 0 and "empty" or "ready"))
+		return events, status, read_error and {} or band_periods(all, date_filter, line_filter), #all
 	end
 
 	local function read_monitor_status()
@@ -62490,8 +63752,10 @@ function action_status()
 		local epoch, stamp, count, sample_state, version = content:match("^(%d+)\t([^\t]*)\t(%d+)\t([^\t]*)\t([^\r\n]*)")
 		epoch = tonumber(epoch or "0") or 0
 		local age = epoch > 0 and (os.time() - epoch) or 999999
+		local alive = age >= 0 and age <= 30
 		return {
-			active = age >= 0 and age <= 30,
+			alive = alive,
+			active = alive and sample_state == "ok" and tonumber(count or "0") > 0,
 			last_sample = stamp or "",
 			line_count = tonumber(count or "0") or 0,
 			sample_state = sample_state or "missing",
@@ -62499,45 +63763,21 @@ function action_status()
 		}
 	end
 
-	local function merge_smart_band_logs(logs, status)
-		if not smart_band_supported(model) then
-			return logs, status
-		end
-		local content = fs.readfile("/var/run/nradio-smart-band/runtime.log") or ""
-		for line in content:gmatch("[^\r\n]+") do
-			local stamp = line:sub(1, 19)
-			local detail = trim(line:sub(20))
-			local name = detail:match("^(cpe1)%(") or detail:match("^(cpe)%(") or ""
-			logs[#logs + 1] = {
-				time = stamp,
-				source = "smart-band",
-				name = name,
-				detail = detail
-			}
-		end
-		table.sort(logs, function(a, b)
-			return tostring(a.time or "") > tostring(b.time or "")
-		end)
-		while #logs > 200 do
-			table.remove(logs)
-		end
-		return logs, #logs > 0 and "ready" or status
-	end
-
 	local runtime = util.ubus("infocd", "runtime") or {}
 	local dial_logs, dial_log_status = read_dial_logs()
-	dial_logs, dial_log_status = merge_smart_band_logs(dial_logs, dial_log_status)
-	local events, event_log_status = read_event_logs()
+	local events, event_log_status, periods, event_count = read_event_logs()
 	local monitor = read_monitor_status()
 	local smart_band = smart_band_summary(fs, model)
 	local result = {
 		ok = true,
-		version = "20260903-4",
+		version = "20260906-1",
 		model = model,
 		dial_logs = dial_logs,
 		dial_log_status = dial_log_status,
 		events = events,
 		event_log_status = event_log_status,
+		band_periods = periods,
+		event_count = event_count,
 		monitor = monitor,
 		smart_band = smart_band,
 		components = {
@@ -62612,8 +63852,20 @@ function action_smart_status()
 	local summary = smart_band_summary(fs, model)
 	local preview = {}
 	local code, output = 1, ""
+	local message = ""
+	local priority = {
+		["WOULD-RECOVER"] = 60,
+		["WOULD-SOFT-RECOVER-THEN-CFUN"] = 50,
+		["BLOCKED"] = 40,
+		["WAIT"] = 30,
+		["UNHEALTHY"] = 20,
+		["HOLD"] = 10,
+		["DISABLED"] = 5
+	}
 
-	if summary.supported and summary.installed then
+	if summary.running then
+		message = "智能频段正在运行，暂不发起并行预览"
+	elseif summary.supported and summary.installed and summary.enabled then
 		code, output = run_smart_band(sys, "dry-run")
 		for line in output:gmatch("[^\r\n]+") do
 			local name, detail = line:match("^(cpe1)=(.*)$")
@@ -62621,16 +63873,26 @@ function action_smart_status()
 				name, detail = line:match("^(cpe)=(.*)$")
 			end
 			if name and detail then
-				preview[name] = detail
+				local token = detail:match("^(%S+)") or ""
+				local current = preview[name]
+				local current_token = current and current:match("^(%S+)") or ""
+				if not current or (priority[token] or 0) > (priority[current_token] or 0) then
+					preview[name] = detail
+				end
 			end
 		end
+	elseif not summary.enabled then
+		message = "智能频段已停用，当前由系统管理频段"
 	end
 
 	http.prepare_content("application/json")
 	http.write_json({
-		ok = summary.supported and summary.installed and code == 0,
+		ok = summary.running or (summary.supported and summary.installed and summary.enabled and code == 0),
 		installed = summary.installed,
 		scheduled = summary.scheduled,
+		enabled = summary.enabled,
+		running = summary.running,
+		message = message,
 		preview = preview
 	})
 end
@@ -62653,11 +63915,21 @@ function action_smart_apply()
 		return
 	end
 
-	local code = run_smart_band(sys, "apply")
+	if summary.running then
+		http.prepare_content("application/json")
+		http.write_json({ ok = true, state = "running", message = "智能频段已有任务运行，未重复启动" })
+		return
+	end
+
+	local ok, message, state = start_smart_band_task(fs, sys)
+	if not ok then
+		http.status(500, "Internal Server Error")
+	end
 	http.prepare_content("application/json")
 	http.write_json({
-		ok = code == 0,
-		message = code == 0 and "智能频段执行完成" or ("智能频段执行异常，退出码=" .. code)
+		ok = ok,
+		state = state,
+		message = message
 	})
 end
 
@@ -62673,7 +63945,11 @@ function action_smart_disable()
 		http.write_json({ ok = false, message = "当前机型不支持智能频段" })
 		return
 	end
-	if not summary.installed or not summary.enabled then
+	if not summary.installed then
+		http.write_json({ ok = true, message = "智能频段已停用，当前由系统管理频段" })
+		return
+	end
+	if not summary.enabled and not summary.running and not summary.pending_auto then
 		http.write_json({ ok = true, message = "智能频段已停用，当前由系统管理频段" })
 		return
 	end
@@ -62701,7 +63977,7 @@ function action_smart_enable()
 		http.write_json({ ok = false, message = "智能频段脚本不存在，请先更新 5G 连接监听" })
 		return
 	end
-	if summary.enabled then
+	if summary.enabled and summary.schedule_valid then
 		http.write_json({ ok = true, message = "智能频段已启用" })
 		return
 	end
@@ -62764,6 +64040,7 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 .nr5g-head{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.nr5g-eyebrow{margin-bottom:7px;color:var(--nr5g-cyan);font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}.nr5g-head h2{margin:0;color:#fff;font-size:28px;line-height:1.12;letter-spacing:-.03em}.nr5g-subtitle{max-width:670px;margin-top:9px;color:#a9b9ce;font-size:13px;line-height:1.7}.nr5g-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:390px;max-width:100%}.nr5g-button{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;min-width:0;min-height:42px;margin:0!important;padding:0 16px!important;border-radius:11px!important;font-size:13px!important;font-weight:750!important;line-height:1.2!important;white-space:nowrap;text-align:center;text-decoration:none!important;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease}.nr5g-button-primary,.nr5g-button-stop{grid-column:1/-1;min-height:46px}.nr5g-hero .nr5g-button{border:1px solid rgba(125,211,252,.3)!important;background:rgba(15,35,60,.78)!important;color:#e6f7ff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 20px rgba(2,8,23,.2);backdrop-filter:blur(8px)}.nr5g-hero .nr5g-button-primary{border-color:rgba(34,211,238,.52)!important;background:linear-gradient(135deg,rgba(8,145,178,.9),rgba(37,99,235,.86))!important;color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 12px 28px rgba(8,145,178,.23)}.nr5g-hero .nr5g-button-stop{border-color:rgba(245,158,11,.38)!important;background:rgba(120,53,15,.32)!important;color:#fde7b0!important}.nr5g-hero .nr5g-button:hover{border-color:rgba(125,211,252,.58)!important;background:rgba(20,47,79,.92)!important;transform:translateY(-1px)}.nr5g-hero .nr5g-button-primary:hover{background:linear-gradient(135deg,rgba(6,182,212,.95),rgba(37,99,235,.94))!important}.nr5g-hero .nr5g-button-stop:hover{border-color:rgba(251,191,36,.62)!important;background:rgba(146,64,14,.42)!important}.nr5g-hero .nr5g-button:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(34,211,238,.2),inset 0 1px 0 rgba(255,255,255,.08)}.nr5g-hero .nr5g-button:disabled{cursor:not-allowed;opacity:.55;transform:none}
 .nr5g-hero .nr5g-button-enable{border-color:rgba(34,197,94,.42)!important;background:linear-gradient(135deg,rgba(21,128,61,.72),rgba(5,150,105,.72))!important;color:#ecfdf5!important}.nr5g-hero .nr5g-button-enable:hover{border-color:rgba(74,222,128,.68)!important;background:linear-gradient(135deg,rgba(22,163,74,.86),rgba(5,150,105,.86))!important}
 .nr5g-hero-tags{position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.nr5g-hero-tag{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(148,163,184,.16);border-radius:999px;padding:6px 10px;background:rgba(15,23,42,.42);color:#aebed1;font-size:11px}.nr5g-hero-tag:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--nr5g-cyan);box-shadow:0 0 12px var(--nr5g-cyan)}
+.nr5g-smart-overview{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px;padding:10px;border:1px solid rgba(34,211,238,.14);border-radius:14px;background:rgba(3,14,28,.38)}.nr5g-smart-cell{min-width:0;padding:7px 9px}.nr5g-smart-label{display:block;margin-bottom:4px;color:#7189a7;font-size:10px}.nr5g-smart-value{display:block;color:#dff7ff;font-size:12px;font-weight:700;overflow-wrap:anywhere}.nr5g-smart-value.ok{color:#6ee7a0}.nr5g-smart-value.warn{color:#fbbf24}.nr5g-smart-value.bad{color:#fb7185}
 .nr5g-summary{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.nr5g-summary-card{border:1px solid rgba(148,163,184,.15);border-radius:13px;padding:12px 13px;background:rgba(8,20,37,.64);backdrop-filter:blur(10px)}.nr5g-summary-label{display:block;color:#7890ad;font-size:11px;margin-bottom:5px}.nr5g-summary-value{display:block;color:#f4f9ff;font-size:15px;font-weight:750;overflow-wrap:anywhere}.nr5g-summary-value.ok{color:#6ee7a0}.nr5g-summary-value.warn{color:#fbbf24}
 .nr5g-message{display:none;margin:0 0 14px;padding:11px 13px;border:1px solid rgba(37,99,235,.22);border-radius:10px;background:rgba(37,99,235,.1)}.nr5g-message.error{border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.1);color:#f87171}
 .nr5g-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.nr5g-card,.nr5g-panel,.nr5g-components{position:relative;overflow:hidden;border:1px solid var(--nr5g-line);border-radius:16px;background:linear-gradient(145deg,rgba(20,36,58,.96),rgba(9,20,35,.96));padding:17px;box-sizing:border-box;box-shadow:0 13px 34px rgba(2,8,23,.16)}.nr5g-card:before,.nr5g-panel:before,.nr5g-components:before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(34,211,238,.7),transparent)}
@@ -62771,15 +64048,16 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 .nr5g-kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.nr5g-item{min-width:0;border:1px solid rgba(148,163,184,.1);border-radius:10px;background:rgba(4,15,29,.46);padding:10px}.nr5g-key{display:block;color:#7890aa;font-size:11px;margin-bottom:4px}.nr5g-value{display:block;color:#e7f0fb;font-size:13px;font-weight:650;overflow-wrap:anywhere}.nr5g-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:13px}.nr5g-note{font-size:12px;color:var(--nr5g-muted)}.nr5g-signal-good,.nr5g-lock-ok{color:#4ade80}.nr5g-signal-mid{color:#fbbf24}.nr5g-signal-bad,.nr5g-lock-warn{color:#fb7185}.nr5g-lock-neutral{color:#94a3b8}.nr5g-empty{grid-column:1/-1;text-align:center;padding:28px;color:var(--nr5g-muted)}
 .nr5g-diagnostics{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(330px,.7fr);gap:14px;margin-top:14px}.nr5g-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.nr5g-chartbox{min-width:0;border:1px solid rgba(148,163,184,.1);border-radius:11px;background:rgba(3,13,26,.48);padding:9px}.nr5g-chart-title{display:flex;align-items:center;justify-content:space-between;color:#7890aa;font-size:11px;margin-bottom:4px}.nr5g-chart{display:block;width:100%;height:160px}.nr5g-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;color:#8da2bb}.nr5g-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;box-shadow:0 0 10px currentColor}
 .nr5g-events{list-style:none;margin:0;padding:0;max-height:438px;overflow:auto}.nr5g-event{position:relative;border:1px solid rgba(14,165,233,.14);border-left:3px solid #22d3ee;padding:9px 10px;margin:0 0 8px;background:rgba(8,25,43,.72);border-radius:0 9px 9px 0}.nr5g-event.warn{border-left-color:#f59e0b}.nr5g-event-time{display:block;color:#7890aa;font-size:10px;margin-bottom:3px}.nr5g-small-button{padding:3px 8px;min-height:28px;border-radius:8px!important}
+.nr5g-history-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}.nr5g-history-filter label{display:flex;align-items:center;gap:5px;color:#8ba0bb;font-size:12px}.nr5g-history-filter input,.nr5g-history-filter select{box-sizing:border-box;max-width:100%;min-height:36px;border:1px solid rgba(148,163,184,.25);border-radius:8px;padding:5px 8px;background:#0b1b2d;color:#e8f2ff;color-scheme:dark}.nr5g-periods{max-height:190px;margin-bottom:14px}.nr5g-history-note{color:#8ba0bb;font-size:11px;line-height:1.6;margin-bottom:10px}
 .nr5g-components{margin-top:14px}.nr5g-component-list{display:flex;gap:8px;flex-wrap:wrap}.nr5g-component{border:1px solid rgba(148,163,184,.13);border-radius:999px;padding:6px 10px;background:rgba(4,15,29,.42);color:#94a3b8;font-size:12px}.nr5g-component.ok{border-color:rgba(34,197,94,.22);color:#4ade80}.nr5g-component.bad{border-color:rgba(239,68,68,.22);color:#fb7185}.nr5g-component.disabled{border-color:rgba(245,158,11,.24);color:#fbbf24}
 .nr5g-loglist{display:block;max-height:420px;overflow:auto;border:1px solid rgba(148,163,184,.1);border-radius:10px;background:rgba(2,10,22,.58)}.nr5g-logrow{display:grid;grid-template-columns:145px 94px 70px minmax(0,1fr);gap:8px;padding:9px 10px;border-bottom:1px solid rgba(148,163,184,.11);font-family:monospace;font-size:12px;align-items:start}.nr5g-logrow:last-child{border-bottom:0}.nr5g-logtime,.nr5g-logsource,.nr5g-logline{color:#7890aa}.nr5g-logdetail{overflow-wrap:anywhere;color:#c9d6e5}
 @media(max-width:1000px){.nr5g-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.nr5g-diagnostics{grid-template-columns:1fr}.nr5g-events{max-height:300px}}
-@media(max-width:820px){.nr5g-head{flex-direction:column}.nr5g-actions{align-self:flex-start}.nr5g-grid{grid-template-columns:1fr}.nr5g-kv{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:820px){.nr5g-head{flex-direction:column}.nr5g-actions{align-self:flex-start}.nr5g-grid{grid-template-columns:1fr}.nr5g-kv{grid-template-columns:repeat(2,minmax(0,1fr))}.nr5g-smart-overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:720px){.nr5g-charts{grid-template-columns:1fr}.nr5g-logrow{grid-template-columns:1fr;gap:2px}}
 @media(max-width:430px){.nr5g-hero{padding:18px;border-radius:16px}.nr5g-head h2{font-size:24px}.nr5g-summary{grid-template-columns:1fr 1fr}.nr5g-actions{width:100%;grid-template-columns:1fr}.nr5g-button-primary,.nr5g-button-stop{grid-column:auto}.nr5g-kv{grid-template-columns:1fr}.nr5g-foot{align-items:stretch;flex-direction:column}.nr5g-foot .cbi-button{width:100%}}
 </style>
 
-<div class="nr5g-wrap" data-nradio-cpeopt="20260903-4">
+<div class="nr5g-wrap" data-nradio-cpeopt="20260906-1">
 	<div class="nr5g-hero">
 		<div class="nr5g-head">
 			<div>
@@ -62795,6 +64073,12 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 			</div>
 		</div>
 		<div class="nr5g-hero-tags"><span class="nr5g-hero-tag">10 秒后台采样</span><span class="nr5g-hero-tag">关页持续记录</span><span class="nr5g-hero-tag">256 KiB 自动轮转</span></div>
+		<div class="nr5g-smart-overview" id="nr5g-smart-overview" style="display:none">
+			<div class="nr5g-smart-cell"><span class="nr5g-smart-label">智能频段</span><strong class="nr5g-smart-value" id="nr5g-smart-state">检测中</strong></div>
+			<div class="nr5g-smart-cell"><span class="nr5g-smart-label">任务状态</span><strong class="nr5g-smart-value" id="nr5g-smart-run-state">待机</strong></div>
+			<div class="nr5g-smart-cell"><span class="nr5g-smart-label">最近执行</span><strong class="nr5g-smart-value" id="nr5g-smart-last-run">-</strong></div>
+			<div class="nr5g-smart-cell"><span class="nr5g-smart-label">自动计划</span><strong class="nr5g-smart-value" id="nr5g-smart-schedule">-</strong></div>
+		</div>
 		<div class="nr5g-summary">
 			<div class="nr5g-summary-card"><span class="nr5g-summary-label">后台服务</span><strong class="nr5g-summary-value" id="nr5g-monitor-service">检测中</strong></div>
 			<div class="nr5g-summary-card"><span class="nr5g-summary-label">最近采样</span><strong class="nr5g-summary-value" id="nr5g-monitor-sample">-</strong></div>
@@ -62818,6 +64102,13 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 		</section>
 		<section class="nr5g-panel">
 			<div class="nr5g-title"><h3>后台切换时间线</h3><button class="cbi-button nr5g-small-button" id="nr5g-clear-events" type="button">清空记录</button></div>
+			<div class="nr5g-history-filter">
+				<label>日期 <input id="nr5g-event-date" type="date" aria-label="后台记录日期"></label>
+				<label>线路 <select id="nr5g-event-line"><option value="">全部</option><option value="cpe">主线路 cpe</option><option value="cpe1">副线路 cpe1</option></select></label>
+				<button class="cbi-button nr5g-small-button" id="nr5g-event-reset" type="button">全部日期</button>
+			</div>
+			<div class="nr5g-history-note">频段停留：仅统计保留日志中入段、离段均有记录的完整区间；跨日区间显示全程时长。</div>
+			<ul class="nr5g-events nr5g-periods" id="nr5g-periods"></ul>
 			<ul class="nr5g-events" id="nr5g-events"><li class="nr5g-note">正在读取后台记录…</li></ul>
 		</section>
 	</div>
@@ -62850,18 +64141,27 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 	var smartApplyButton=document.getElementById('nr5g-smart-apply');
 	var smartToggleButton=document.getElementById('nr5g-smart-toggle');
 	var timelineEvents=[];
+	var eventDate=document.getElementById('nr5g-event-date');
+	var eventLine=document.getElementById('nr5g-event-line');
+	var watchSmartTask=false;
 	var smartPreview={};
 	var smartBand={};
 	var latestLines=[];
 	var signalHistory={cpe:[],cpe1:[]};
 	var lineColors={cpe:'#00d5ff',cpe1:'#f59e0b'};
+	var statusLoading=false;
+	var smartPreviewLoading=false;
+	var smartPreviewUpdated=0;
+	var smartPollTimer=null;
+	var messageSticky=false;
 
 	function text(value,fallback){
 		if(value===undefined||value===null||value===''){return fallback||'-';}
 		return String(value);
 	}
 
-	function showMessage(value,error){
+	function showMessage(value,error,sticky){
+		messageSticky=!!sticky;
 		message.textContent=value||'';
 		message.className='nr5g-message'+(error?' error':'');
 		message.style.display=value?'block':'none';
@@ -62904,7 +64204,7 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 			}else if(status==='read_error'){
 				empty.textContent='后台事件日志读取失败';
 			}else{
-				empty.textContent='后台监听运行中，暂无切换记录';
+				empty.textContent=eventDate.value||eventLine.value?'暂无符合筛选的切换记录':'暂无切换记录';
 			}
 			list.appendChild(empty);
 			return;
@@ -62917,6 +64217,33 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 			stamp.className='nr5g-event-time';
 			stamp.textContent=cleanValue(item.time)+' · '+cleanValue(item.name);
 			detail.textContent=cleanValue(item.detail);
+			row.appendChild(stamp);
+			row.appendChild(detail);
+			list.appendChild(row);
+		});
+	}
+
+
+	function renderPeriods(periods){
+		var list=document.getElementById('nr5g-periods');
+		list.textContent='';
+		if(!periods.length){
+			var empty=document.createElement('li');
+			empty.className='nr5g-note';
+			empty.textContent='暂无完整的频段停留区间';
+			list.appendChild(empty);
+		}
+		periods.forEach(function(item){
+			var row=document.createElement('li');
+			var stamp=document.createElement('span');
+			var detail=document.createElement('span');
+			var seconds=Math.max(0,Number(item.seconds)||0);
+			var hours=Math.floor(seconds/3600),minutes=Math.floor(seconds%3600/60);
+			row.className='nr5g-event';
+			stamp.className='nr5g-event-time';
+			stamp.textContent=cleanValue(item.name)+' · '+cleanValue(item.entered)+' → '+cleanValue(item.left);
+			detail.textContent=cleanValue(item.band)+' 停留 '+(hours?hours+'小时':'')+
+				(minutes?minutes+'分':'')+(seconds%60)+'秒 → '+cleanValue(item.next_band);
 			row.appendChild(stamp);
 			row.appendChild(detail);
 			list.appendChild(row);
@@ -62978,6 +64305,7 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 		var labels={
 			'HOLD':'保持当前频段',
 			'WAIT':'等待连续健康检查',
+			'WOULD-RECOVER':'预计恢复运营商优选频段',
 			'WOULD-SOFT-RECOVER-THEN-CFUN':'预计先软恢复再重连',
 			'BLOCKED':'当前已阻止执行',
 			'RECOVERED':'本轮已恢复',
@@ -62988,7 +64316,7 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 	function smartPreviewClass(value){
 		var token=cleanValue(value).split(/\s+/)[0];
 		if(token==='HOLD'||token==='RECOVERED'){return 'nr5g-lock-ok';}
-		if(token==='WAIT'||token==='WOULD-SOFT-RECOVER-THEN-CFUN'||token==='BLOCKED'||token==='UNHEALTHY'){return 'nr5g-lock-warn';}
+		if(token==='WAIT'||token==='WOULD-RECOVER'||token==='WOULD-SOFT-RECOVER-THEN-CFUN'||token==='BLOCKED'||token==='UNHEALTHY'){return 'nr5g-lock-warn';}
 		return 'nr5g-lock-neutral';
 	}
 
@@ -63137,14 +64465,61 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 			}
 			list.appendChild(node);
 		});
-		versionNode.textContent=(version||'未知版本')+(monitor.active?' · 后台记录中':' · 后台未运行');
+		var sampleLabels={read_error:'采样读取失败',runtime_error:'采样运行异常',write_error:'事件写入失败 · 等待补写',no_lines:'未读取到监听线路',missing:'等待首次采样'};
+		var health=monitor.active?'持续记录中':(monitor.alive?(sampleLabels[monitor.sample_state]||'采样状态异常'):'心跳中断');
+		versionNode.textContent=(version||'未知版本')+' · '+health;
 		versionNode.className='nr5g-badge '+(monitor.active?'ok':'warn');
 		var service=document.getElementById('nr5g-monitor-service');
-		service.textContent=monitor.active?'持续记录中':'未运行';
+		service.textContent=health;
 		service.className='nr5g-summary-value '+(monitor.active?'ok':'warn');
 		document.getElementById('nr5g-monitor-sample').textContent=monitor.last_sample||'-';
 		document.getElementById('nr5g-monitor-lines').textContent=String(monitor.line_count||0)+' 路';
 		document.getElementById('nr5g-monitor-events').textContent=String(eventCount||0)+' 条';
+	}
+
+	function formatEpoch(value){
+		var epoch=parseInt(value,10);
+		if(!epoch){return '-';}
+		var date=new Date(epoch*1000);
+		var pad=function(v){return v<10?'0'+v:String(v);};
+		return pad(date.getMonth()+1)+'-'+pad(date.getDate())+' '+pad(date.getHours())+':'+pad(date.getMinutes())+':'+pad(date.getSeconds());
+	}
+
+	function queueSmartPoll(){
+		if(smartPollTimer||!smartBand.running){return;}
+		smartPollTimer=window.setTimeout(function(){
+			smartPollTimer=null;
+			loadStatus(false);
+		},2000);
+	}
+
+	function renderSmartOverview(){
+		var overview=document.getElementById('nr5g-smart-overview');
+		if(!smartBand.supported){
+			overview.style.display='none';
+			return;
+		}
+		overview.style.display='grid';
+		var state=document.getElementById('nr5g-smart-state');
+		var run=document.getElementById('nr5g-smart-run-state');
+		var last=document.getElementById('nr5g-smart-last-run');
+		var schedule=document.getElementById('nr5g-smart-schedule');
+		var phaseLabels={running:'运行中',stopping:'正在停用','restore-pending':'自动频段恢复待处理',disabled:'已停用 · 系统管理',idle:'已启用'};
+		var runLabels={starting:'正在启动',running:'执行中',success:'最近执行成功',busy:'已有任务，本次未重复执行',failed:'最近执行失败',attention:'线路异常 · 等待策略条件',stopped:'任务已停止',interrupted:'任务中断',idle:'待机'};
+		state.textContent=(phaseLabels[smartBand.phase]||'状态未知')+' · '+text(smartBand.version,'未知版本');
+		state.className='nr5g-smart-value '+(smartBand.enabled?'ok':(smartBand.pending_auto?'bad':'warn'));
+		run.textContent=smartBand.running?'执行中':(runLabels[smartBand.run_state]||text(smartBand.run_state,'待机'));
+		run.className='nr5g-smart-value '+(smartBand.running?'warn':(smartBand.run_state==='failed'||smartBand.run_state==='interrupted'?'bad':(smartBand.run_state==='success'?'ok':'warn')));
+		last.textContent=(smartBand.last_started?(smartBand.last_source==='auto'?'自动 · ':'手动 · '):'')+formatEpoch(smartBand.last_finished||smartBand.last_started);
+		last.className='nr5g-smart-value';
+		schedule.textContent=smartBand.enabled?(smartBand.schedule_valid?'每 30 分钟 · 05:00–21:30':'任务格式异常'):'未启用';
+		schedule.className='nr5g-smart-value '+(smartBand.enabled&&smartBand.schedule_valid?'ok':(smartBand.enabled?'bad':'warn'));
+		if(watchSmartTask&&!smartBand.running&&smartBand.run_state!=='starting'){
+			watchSmartTask=false;
+			showMessage(runLabels[smartBand.run_state]||'任务状态已更新',
+				smartBand.run_state==='failed'||smartBand.run_state==='interrupted',true);
+		}
+		queueSmartPoll();
 	}
 
 	function renderDialLogs(logs,status){
@@ -63206,43 +64581,59 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 		timelineEvents=data.events||[];
 		smartBand=data.smart_band||{};
 		renderEvents(data.event_log_status);
+		renderPeriods(data.band_periods||[]);
 		sampleSignals(lines);
 		renderLines(lines);
-		renderComponents(data.components||{},data.version,data.monitor||{},timelineEvents.length);
+		renderComponents(data.components||{},data.version,data.monitor||{},data.event_count===undefined?timelineEvents.length:data.event_count);
 		renderDialLogs(data.dial_logs||[],data.dial_log_status);
+		renderSmartOverview();
 		smartApplyButton.style.display=smartBand.supported&&smartBand.enabled?'inline-flex':'none';
-		smartApplyButton.disabled=!smartBand.enabled;
+		smartApplyButton.disabled=!smartBand.enabled||smartBand.running;
+		smartApplyButton.textContent=smartBand.running?'智能频段执行中…':'立即执行智能频段';
 		smartToggleButton.style.display=smartBand.supported&&smartBand.installed?'inline-flex':'none';
-		smartToggleButton.disabled=false;
+		smartToggleButton.disabled=smartBand.phase==='stopping';
 		smartToggleButton.className='cbi-button nr5g-button nr5g-button-stop'+(smartBand.enabled?'':' nr5g-button-enable');
-		smartToggleButton.textContent=smartBand.enabled?'停用智能频段（系统管理）':'启用智能频段';
+		smartToggleButton.textContent=smartBand.phase==='stopping'?'正在停用并恢复自动频段…':(smartBand.pending_auto?'重新启用以恢复自动频段':(smartBand.enabled?'停用智能频段（系统管理）':'启用智能频段'));
 	}
 
-	function loadSmartPreview(){
-		if(!smartBand.supported||!smartBand.enabled){return;}
+	function loadSmartPreview(force){
+		if(!smartBand.supported||!smartBand.enabled||smartBand.running||smartPreviewLoading){return;}
+		if(!force&&Date.now()-smartPreviewUpdated<60000){return;}
+		smartPreviewLoading=true;
 		(new XHR()).get(smartStatusUrl,null,function(x){
+			smartPreviewLoading=false;
+			smartPreviewUpdated=Date.now();
 			try{
 				var data=JSON.parse(x.responseText||'{}');
-				smartPreview=data.preview||{};
+				if(!data.ok){throw new Error(data.message||'策略分析失败');}
+				smartPreview=data.preview||smartPreview;
 				renderLines(latestLines);
 			}catch(e){
-				smartPreview={};
+				if(!smartBand.running){showMessage(e.message||'策略分析失败',true,false);}
 			}
 		});
 	}
 
 	function loadStatus(refreshSmart){
+		if(statusLoading){return;}
+		statusLoading=true;
 		refreshButton.disabled=true;
-		(new XHR()).get(statusUrl,null,function(x){
+		var filters={event_date:eventDate.value,event_line:eventLine.value};
+		(new XHR()).get(statusUrl,filters,function(x){
+			statusLoading=false;
 			refreshButton.disabled=false;
+			if(filters.event_date!==eventDate.value||filters.event_line!==eventLine.value){
+				loadStatus(false);
+				return;
+			}
 			try{
 				var data=JSON.parse(x.responseText||'{}');
 				if(!data.ok){throw new Error(data.message||'状态读取失败');}
 				render(data);
-				if(refreshSmart){loadSmartPreview();}
-				showMessage('',false);
+				loadSmartPreview(!!refreshSmart);
+				if(!messageSticky){showMessage('',false,false);}
 			}catch(e){
-				showMessage(e.message||'状态读取失败',true);
+				showMessage(e.message||'状态读取失败',true,false);
 			}
 		});
 	}
@@ -63263,32 +64654,36 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 		});
 	}
 
-	refreshButton.onclick=function(){loadStatus(true);};
+	eventDate.onchange=eventLine.onchange=function(){loadStatus(false);};
+	document.getElementById('nr5g-event-reset').onclick=function(){eventDate.value='';loadStatus(false);};
+	refreshButton.onclick=function(){showMessage('',false,false);loadStatus(true);};
 	smartApplyButton.onclick=function(){
 		if(!window.confirm('立即执行一次智能频段？运行中可能调整频段或恢复异常线路。')){return;}
 		smartApplyButton.disabled=true;
-		showMessage('正在执行智能频段…',false);
+		showMessage('正在启动智能频段后台任务…',false,false);
 		(new XHR()).post(smartApplyUrl,{token:csrfToken},function(x){
 			try{
 				var data=JSON.parse(x.responseText||'{}');
-				showMessage(data.message||'操作完成',!data.ok);
-			}catch(e){showMessage('智能频段执行失败',true);}
-			window.setTimeout(function(){loadStatus(true);},1200);
+				watchSmartTask=!!data.ok;
+				showMessage(data.message||'操作完成',!data.ok,true);
+			}catch(e){showMessage('智能频段任务启动失败',true,true);}
+			window.setTimeout(function(){loadStatus(false);},300);
 		});
 	};
 	smartToggleButton.onclick=function(){
 		var enabling=!smartBand.enabled;
 		var prompt=enabling?'启用智能频段后，将恢复每 30 分钟自动任务。确认启用？':'停用智能频段后，将移除自动任务并停止当前运行；5G 连接监听继续工作，频段交由系统管理。确认停用？';
 		if(!window.confirm(prompt)){return;}
+		watchSmartTask=false;
 		smartToggleButton.disabled=true;
 		smartApplyButton.disabled=true;
-		showMessage(enabling?'正在启用智能频段…':'正在停用智能频段…',false);
+		showMessage(enabling?'正在启用智能频段…':'正在停用并恢复自动频段…',false,false);
 		(new XHR()).post(enabling?smartEnableUrl:smartDisableUrl,{token:csrfToken},function(x){
 			try{
 				var data=JSON.parse(x.responseText||'{}');
-				showMessage(data.message||'操作完成',!data.ok);
-			}catch(e){showMessage(enabling?'智能频段启用失败':'智能频段停用失败',true);}
-			window.setTimeout(function(){loadStatus(true);},800);
+				showMessage(data.message||'操作完成',!data.ok,true);
+			}catch(e){showMessage(enabling?'智能频段启用失败':'智能频段停用失败',true,true);}
+			window.setTimeout(function(){loadStatus(true);},300);
 		});
 	};
 	document.getElementById('nr5g-clear-events').onclick=function(){
@@ -63302,6 +64697,7 @@ EOF_NRADIO_CPEOPT_CONTROLLER
 				if(!data.ok){throw new Error(data.message||'清空失败');}
 				timelineEvents=[];
 				renderEvents('empty');
+				renderPeriods([]);
 				document.getElementById('nr5g-monitor-events').textContent='0 条';
 				showMessage(data.message||'后台切换记录已清空',false);
 			}catch(e){showMessage(e.message||'清空失败',true);}
@@ -63359,7 +64755,6 @@ EOF_NRADIO_CPEOPT_VIEW
 </svg>
 EOF_NRADIO_CPEOPT_ICON_SVG
 
-    nradio_cpeopt_payload_markers_ok "$cpeopt_payload_root" || die "5G 连接监听内嵌组件校验失败"
     NRADIO_CPEOPT_PAYLOAD_ROOT="$cpeopt_payload_root"
 }
 install_nradio_cpeopt_payload_file() {
@@ -63532,11 +64927,11 @@ manage_nradio_cpe_connection_monitoring() {
         fi
         printf '1. 安装或更新 5G 连接监听\n'
         printf '2. 卸载 5G 连接监听\n'
-        printf '0. 返回设备维护与检测\n'
-        printf '请选择 0、1 或 2: '
+        printf '3. 返回设备维护与检测\n'
+        printf '请选择 1、2 或 3: '
         read_category_choice
         case "$UI_READ_RESULT" in
-            0)
+            0|3)
                 return 0
                 ;;
             1)
@@ -63593,6 +64988,7 @@ write_nradio_smart_band_script() {
     cat > "$smart_band_tmp" <<'EOF_NRADIO_SMART_BAND_V7'
 #!/bin/sh
 # NRadio 智能频段切换 v7 - 运营商频段规则与同机模组确认
+SMART_BAND_VERSION="v7"
 LOG_TAG="nradio-band"
 RUNTIME_DIR="/var/run/nradio-smart-band"
 STATE_FILE="$RUNTIME_DIR/band_state"
@@ -63603,6 +64999,7 @@ LOCK_DIR="$RUNTIME_DIR/lock"
 LOCK_PID_FILE="$LOCK_DIR/pid"
 LOCK_STARTTIME_FILE="$LOCK_DIR/starttime"
 RUNTIME_LOG="$RUNTIME_DIR/runtime.log"
+LAST_RUN_FILE="$RUNTIME_DIR/last_run"
 MIN_BW=20000
 MAX_RETRIES=1
 COOLDOWN=43200
@@ -63654,6 +65051,11 @@ PREFERENCE_LOCK_IFACE=""
 PREFERENCE_LOCK_SIM="1"
 IPV6_STATUS="unknown"
 EXEC_MODE="apply"
+MANUAL_RUN=0
+RUN_STARTED=0
+RUN_SOURCE="auto"
+RUN_STATE="failed"
+PROCESS_RESULT="failed"
 
 log() {
     local _line _size _log_tmp
@@ -63691,7 +65093,7 @@ ensure_runtime_dir() {
     if [ -e "$RUNTIME_DIR" ] && [ ! -d "$RUNTIME_DIR" ]; then
         return 1
     fi
-    for _runtime_path in "$STATE_FILE" "$PREFERENCE_STATE_FILE" "$RUNTIME_LOG" "$PENDING_AUTO_FILE" "$STOP_FILE"; do
+    for _runtime_path in "$STATE_FILE" "$PREFERENCE_STATE_FILE" "$RUNTIME_LOG" "$PENDING_AUTO_FILE" "$STOP_FILE" "$LAST_RUN_FILE"; do
         [ ! -L "$_runtime_path" ] || return 1
         if [ -e "$_runtime_path" ] && [ ! -f "$_runtime_path" ]; then
             return 1
@@ -64624,6 +66026,7 @@ process() {
     state_set_health_failures "$_iface" "$_next_failures" || { log "${_iface}(${_desc}): 健康失败状态写入失败"; return 1; }
     log "${_iface}(${_desc}): IPv4异常 ${_next_failures}/${HEALTH_FAILURE_LIMIT}; operator=${OPERATOR_NAME}/${OPERATOR_PROFILE}; band=${BAND_KEY}; reason=${HEALTH_REASON}"
     if [ "$_next_failures" -lt "$HEALTH_FAILURE_LIMIT" ]; then
+        PROCESS_RESULT="attention"
         echo "${_iface}=UNHEALTHY WAIT failures=${_next_failures}/${HEALTH_FAILURE_LIMIT} reason=${HEALTH_REASON}"
         return 1
     fi
@@ -64637,6 +66040,7 @@ process() {
 
     if ! retry_ok "$_iface"; then
         log "${_iface}(${_desc}): CFUN 已阻止；${RETRY_BLOCK_REASON}"
+        PROCESS_RESULT="attention"
         echo "${_iface}=UNHEALTHY BLOCKED ${RETRY_BLOCK_REASON}"
         return 1
     fi
@@ -64655,9 +66059,10 @@ fi
 
 case "${1:-}" in
     ''|apply|--apply) EXEC_MODE="apply" ;;
+    manual|--manual) EXEC_MODE="apply"; MANUAL_RUN=1 ;;
     status|--status) EXEC_MODE="status" ;;
     dry-run|--dry-run) EXEC_MODE="dry-run" ;;
-    *) echo "usage: $0 [apply|status|dry-run]" >&2; exit 2 ;;
+    *) echo "usage: $0 [apply|manual|status|dry-run]" >&2; exit 2 ;;
 esac
 
 ensure_runtime_dir || { echo "智能频段运行路径异常：$RUNTIME_DIR" >&2; exit 1; }
@@ -64712,7 +66117,7 @@ release_lock() {
     return 1
 }
 
-if [ "$EXEC_MODE" = "apply" ]; then
+if [ "$EXEC_MODE" = "apply" ] && [ "$MANUAL_RUN" != "1" ]; then
     HOUR="$(date +%H)"
     if [ "$HOUR" -lt "$DAY_START" ] || [ "$HOUR" -ge "$DAY_END" ]; then
         exit 0
@@ -64724,25 +66129,43 @@ if [ "$EXEC_MODE" = "apply" ]; then
     smart_band_lock_rc="$?"
     case "$smart_band_lock_rc" in
         0) ;;
-        1) exit 0 ;;
+        1) [ "$MANUAL_RUN" = "1" ] && exit 3; exit 0 ;;
         *) exit 1 ;;
     esac
 fi
 
+write_run_result() {
+    local _tmp="$LAST_RUN_FILE.tmp.$$"
+    (umask 077; printf '%s\t%s\t%s\t%s\t%s\n' "$RUN_SOURCE" "$RUN_STARTED" "$2" "$1" "$3" > "$_tmp") &&
+        mv -f "$_tmp" "$LAST_RUN_FILE" && return 0
+    rm -f "$_tmp"
+    log "最近执行结果写入失败"
+    return 1
+}
+
 cleanup() {
+    local _rc="$?"
     [ -n "$TMP_FILE" ] && rm -f "$TMP_FILE"
     if [ "$EXEC_MODE" = "apply" ]; then
+        if [ -e "$STOP_FILE" ]; then RUN_STATE="stopped"; fi
         if [ -n "$PREFERENCE_LOCK_IFACE" ]; then
-            restore_auto_band "$PREFERENCE_LOCK_IFACE" "$PREFERENCE_LOCK_SIM" || true
+            restore_auto_band "$PREFERENCE_LOCK_IFACE" "$PREFERENCE_LOCK_SIM" ||
+                { RUN_STATE="failed"; _rc=1; }
+        fi
+        if [ "$RUN_STARTED" -gt 0 ]; then
+            write_run_result "$RUN_STATE" "$(date +%s)" "$_rc" || true
         fi
         release_lock
     fi
 }
 trap cleanup EXIT
-trap 'exit 1' INT TERM HUP
+trap 'RUN_STATE="interrupted"; exit 1' INT TERM HUP
 
 if [ "$EXEC_MODE" = "apply" ]; then
     [ ! -e "$STOP_FILE" ] || exit 0
+    RUN_STARTED="$(date +%s)"
+    [ "$MANUAL_RUN" = "1" ] && RUN_SOURCE="manual"
+    write_run_result "running" 0 0 || true
     if [ -e "$PENDING_AUTO_FILE" ]; then
         read -r PREFERENCE_LOCK_IFACE PREFERENCE_LOCK_SIM < "$PENDING_AUTO_FILE"
         case "$PREFERENCE_LOCK_IFACE" in cpe|cpe1) ;; *) PREFERENCE_LOCK_IFACE=""; exit 1 ;; esac
@@ -64752,12 +66175,20 @@ if [ "$EXEC_MODE" = "apply" ]; then
 fi
 
 RESULT=0
-process "cpe1" "蜂窝接口2" || RESULT=1
-if [ -z "$PREFERENCE_LOCK_IFACE" ]; then
-    process "cpe" "蜂窝接口1" || RESULT=1
-else
-    RESULT=1
-fi
+RUN_STATE="success"
+for smart_band_iface in cpe1 cpe; do
+    if [ -n "$PREFERENCE_LOCK_IFACE" ]; then
+        RESULT=1
+        RUN_STATE="failed"
+        break
+    fi
+    PROCESS_RESULT="failed"
+    if [ "$smart_band_iface" = "cpe1" ]; then smart_band_desc="蜂窝接口2"; else smart_band_desc="蜂窝接口1"; fi
+    if ! process "$smart_band_iface" "$smart_band_desc"; then
+        RESULT=1
+        if [ "$RUN_STATE" != "failed" ]; then RUN_STATE="$PROCESS_RESULT"; fi
+    fi
+done
 exit "$RESULT"
 EOF_NRADIO_SMART_BAND_V7
 
@@ -65050,11 +66481,40 @@ require_nradio_main_theme_assets() {
 
 restore_nradio_main_theme_selection() {
     require_nradio_main_theme_assets
+    # A deferred Bootstrap package hook must not select the main site's theme at boot.
+    rm -f /etc/uci-defaults/30_luci-theme-bootstrap || die "清理 Bootstrap 延迟主题初始化失败"
     uci -q set luci.main.mediaurlbase='/luci-static/nradio' || die "恢复 NRadio 主站主题选择失败"
     uci -q set luci.themes.NRadio='/luci-static/nradio' || die "恢复 NRadio 主站主题映射失败"
     uci -q commit luci || die "提交 NRadio 主站主题配置失败"
     [ "$(uci -q get luci.main.mediaurlbase 2>/dev/null || true)" = '/luci-static/nradio' ] || die "NRadio 主站主题配置复核失败"
+    rm -f /tmp/luci-indexcache 2>/dev/null || true
     log "主站:   已保持 NRadio 默认主题 /luci-static/nradio"
+}
+
+install_nradio_main_theme_guard() {
+    cat > /etc/init.d/nradio-main-theme <<'EOF_NRADIO_MAIN_THEME_GUARD'
+#!/bin/sh /etc/rc.common
+# Restore the OEM theme after boot defaults and before uhttpd (START=50).
+START=49
+
+start() {
+    [ "$(uci -q get uhttpd.openwrt8080.enabled)" = '1' ] || return 0
+    [ -d /www/luci-static/nradio ] || return 0
+    [ -d /usr/lib/lua/luci/view/themes/nradio ] || return 0
+    rm -f /etc/uci-defaults/30_luci-theme-bootstrap || return 1
+    if [ "$(uci -q get luci.main.mediaurlbase)" = '/luci-static/nradio' ] &&
+       [ "$(uci -q get luci.themes.NRadio)" = '/luci-static/nradio' ]; then
+        return 0
+    fi
+    uci -q set luci.main.mediaurlbase='/luci-static/nradio' || return 1
+    uci -q set luci.themes.NRadio='/luci-static/nradio' || return 1
+    uci -q commit luci || return 1
+    rm -f /tmp/luci-indexcache /tmp/luci-indexcache-bootstrap
+}
+EOF_NRADIO_MAIN_THEME_GUARD
+    [ "$?" -eq 0 ] || die "写入 NRadio 开机主题恢复失败"
+    chmod 755 /etc/init.d/nradio-main-theme || die "设置 NRadio 开机主题恢复权限失败"
+    /etc/init.d/nradio-main-theme enable || die "启用 NRadio 开机主题恢复失败"
 }
 
 install_openwrt_luci_8080_theme() {
@@ -65070,6 +66530,7 @@ install_openwrt_luci_8080_theme() {
     fi
     restore_nradio_main_theme_selection
     [ "$openwrt_luci_8080_theme_install_ok" = '1' ] || die "安装兼容版 luci-theme-bootstrap 失败"
+    install_nradio_main_theme_guard
 }
 
 write_openwrt_luci_8080_files() {
@@ -65087,6 +66548,7 @@ write_openwrt_luci_8080_files() {
 <html lang="zh-cn">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="0; url=/cgi-bin/luci/admin/status/details">
 <title>OpenWrt LuCI</title>
 </head>
@@ -65110,58 +66572,38 @@ end
 local original_httpdispatch = luci.dispatcher.httpdispatch
 local original_createtree = luci.dispatcher.createtree
 
-local function trim(value)
-	local cleaned = tostring(value or ""):gsub("^%s+", ""):gsub("%s+$", "")
-	return cleaned
+-- The stock system form writes the shared luci.main.mediaurlbase setting.
+-- Disable that field only in this CGI, including crafted form submissions.
+local cbi = require "luci.cbi"
+local original_cbi_load = cbi.load
+function cbi.load(model, ...)
+	local maps = original_cbi_load(model, ...)
+	if model == "admin_system/system" then
+		for _, map in ipairs(maps) do
+			for _, section in ipairs(map.children or {}) do
+				local field = section.fields and section.fields._mediaurlbase
+				if field then
+					field.parse = function() end
+					field.render = function() end
+				end
+			end
+		end
+	end
+	return maps
 end
 
-local function read(path)
-	local file = io.open(path, "r")
-	if not file then
-		return ""
+local function route_node(tree, path)
+	local node = tree
+	for _, name in ipairs(path) do
+		node = type(node) == "table" and node.nodes and node.nodes[name]
+		if type(node) ~= "table" then return nil end
 	end
-	local value = file:read("*a") or ""
-	file:close()
-	return trim(value:gsub("%z", " "))
-end
-
-local function normalize_nradio_model(raw_model, raw_board, raw_compatible)
-	local combined = string.upper(table.concat({
-		tostring(raw_model or ""),
-		tostring(raw_board or ""),
-		tostring(raw_compatible or "")
-	}, " "))
-	if combined:find("HC%-WT9108") then
-		return "NRadio_C8-668"
-	elseif combined:find("HC%-WT9104") then
-		return "NRadio_C8-688"
-	elseif combined:find("HC%-WT9302") or combined:find("HCMT7987%-NAND") then
-		return "NRadio_C8-788"
-	elseif combined:find("HC%-WT9120") then
-		return "NRadio_C5800-650"
-	elseif combined:find("HC%-WT9126") then
-		return "NRadio_C5800-688"
-	elseif combined:find("HC%-WT9111") or combined:find("NRADIO%-WT9111") then
-		return "NRadio_NBCPE"
-	elseif combined:find("HC%-WT9500") then
-		return "NRadio_C2000Ultra"
-	elseif combined:find("HC%-WT9303") then
-		return "NRadio_C2000MAX"
-	elseif combined:find("UDX710") or combined:find("RG200U%-CN") then
-		return "NRadio_C2000Pro"
-	end
-	return ""
+	return node
 end
 
 local function route_exists(tree, path)
-	local node = tree
-	for _, name in ipairs(path) do
-		node = node.nodes and node.nodes[name]
-		if not node then
-			return false
-		end
-	end
-	return true
+	local node = route_node(tree, path)
+	return node ~= nil and node.target ~= nil and not node.hidden
 end
 
 local function add_admin_alias(tree, menu, name, title, order, path)
@@ -65177,60 +66619,88 @@ local function add_admin_alias(tree, menu, name, title, order, path)
 	}
 end
 
-local function inject_model_menu(tree, admin)
-	local raw_model = read("/tmp/sysinfo/model")
-	local raw_board = read("/tmp/sysinfo/board_name")
-	local raw_compatible = read("/proc/device-tree/compatible")
-	local model = normalize_nradio_model(raw_model, raw_board, raw_compatible)
-	if model == "" then
-		return
+local function inject_plugin_menu(tree, admin)
+	local native, factory, known = {}, {}, {}
+	local menu = { nodes = {}, target = luci.dispatcher.firstchild(), title = "插件", order = 55 }
+	for _, group in ipairs({ "services", "vpn" }) do
+		local parent = route_node(tree, { "admin", group })
+		for name, child in pairs(parent and parent.nodes or {}) do
+			if type(child) == "table" and child.target and child.title and not child.hidden then
+				local path = { "admin", group, name }
+				local title = tostring(child.title)
+				native[#native + 1] = { title = title, path = path }
+				known[name:lower()] = true
+				add_admin_alias(tree, menu, group .. "_" .. name, title, tonumber(child.order) or 100, path)
+			end
+		end
 	end
-
-	local model_name = model:gsub("^NRadio_", "")
-	local menu = {
-		nodes = {},
-		target = luci.dispatcher.firstchild(),
-		title = model_name,
-		order = 35
-	}
-	admin.nodes.modelmap = menu
-
-	menu.nodes.details = {
-		nodes = {},
-		target = luci.dispatcher.template("admin_status/nradio_details"),
-		title = "型号总览",
-		order = 1,
-		leaf = true
-	}
-	add_admin_alias(tree, menu, "interfaces", "上网接口", 10, { "admin", "network", "network" })
-	add_admin_alias(tree, menu, "wireless", "无线网络", 20, { "admin", "network", "wireless" })
-	add_admin_alias(tree, menu, "routes", "路由表", 30, { "admin", "status", "routes" })
-	add_admin_alias(tree, menu, "openvpn", "OpenVPN", 40, { "admin", "services", "openvpn" })
-	add_admin_alias(tree, menu, "openclash", "OpenClash", 50, { "admin", "services", "openclash" })
-	add_admin_alias(tree, menu, "adguardhome", "AdGuardHome", 60, { "admin", "services", "AdGuardHome" })
+	for _, item in ipairs({
+		{ "ttyd", "Web SSH", { "admin", "system", "ttyd" } },
+		{ "docker", "Docker", { "admin", "docker" } }
+	}) do
+		if not known[item[1]] and route_exists(tree, item[3]) then
+			native[#native + 1] = { title = item[2], path = item[3] }
+			known[item[1]] = true
+			add_admin_alias(tree, menu, item[1], item[2], 200, item[3])
+		end
+	end
+	for _, item in ipairs({
+		{ "openvpn", "OpenVPN", { "nradioadv", "system", "openvpnfull" } },
+		{ "zerotier", "ZeroTier", { "nradioadv", "system", "zerotier" } },
+		{ "openlist", "OpenList", { "nradioadv", "system", "openlist" } },
+		{ "mosdns", "MosDNS", { "nradioadv", "system", "mosdns" } },
+		{ "ddns-go", "DDNS-GO", { "nradioadv", "system", "ddnsgo" } },
+		{ "docker", "Docker", { "nradioadv", "system", "docker" } },
+		{ "ttyd", "Web SSH", { "nradioadv", "system", "webssh" } },
+		{ "qiyou", "奇游联机宝", { "nradioadv", "system", "qiyou" } },
+		{ "leigod", "雷神加速器", { "nradioadv", "system", "leigod" } },
+		{ "aibot", "AI 助手", { "nradioadv", "system", "aibot" } },
+		{ "fanctrl", "风扇控制", { "nradioadv", "system", "fanctrl" } },
+		{ "cpeopt", "5G 连接监听", { "nradioadv", "cellular", "cpeopt" } }
+	}) do
+		if not known[item[1]] and route_exists(tree, item[3]) then
+			factory[#factory + 1] = { title = item[2], path = "/cgi-bin/luci/" .. table.concat(item[3], "/") }
+		end
+	end
+	table.sort(native, function(a, b) return a.title < b.title end)
+	luci.dispatcher.context.nradio_8080_links = { native = native, factory = factory }
+	if #native + #factory > 0 then
+		menu.nodes.overview = {
+			nodes = {}, title = "全部插件入口", order = 0, leaf = true,
+			target = function()
+				require("luci.http").redirect(luci.dispatcher.build_url("admin", "status", "details") .. "#nradio-plugin-links")
+			end
+		}
+		admin.nodes.nradio_plugins = menu
+	end
 end
 
 function luci.dispatcher.createtree()
 	local tree = original_createtree()
 	local admin = tree.nodes and tree.nodes.admin
 	if admin then
+		admin.nodes = admin.nodes or {}
+		inject_plugin_menu(tree, admin)
 		tree.nodes.nradio = nil
 		tree.nodes.nradioadv = nil
 		tree.nodes.authcheck = nil
 		admin.nodes = admin.nodes or {}
-		admin.sysauth_template = "sysauth"
-		local status = admin.nodes and admin.nodes.status
+		admin.sysauth_template = "admin_status/nradio_8080_sysauth"
+		local status = admin.nodes.status
+		if not status then
+			status = { nodes = {}, target = luci.dispatcher.firstchild(), title = "状态", order = 10 }
+			admin.nodes.status = status
+		end
 		if status then
 			status.nodes = status.nodes or {}
 			status.nodes.details = {
 				nodes = {},
 				target = luci.dispatcher.template("admin_status/nradio_details"),
-				title = "详细状态",
+				title = "设备总览",
 				order = 0,
 				leaf = true
 			}
 		end
-		inject_model_menu(tree, admin)
 	end
 	return tree
 end
@@ -65266,17 +66736,76 @@ luci.dispatcher.indexcache = "/tmp/luci-indexcache-bootstrap"
 luci.sgi.cgi.run()
 EOF_OPENWRT_LUCI_8080_WRAPPER
 
+    cat > "$OPENWRT_LUCI_8080_SYSAUTH" <<'EOF_OPENWRT_LUCI_8080_SYSAUTH'
+<%#
+ Copyright 2008 Steven Barth <steven@midlink.org>
+ Copyright 2008-2012 Jo-Philipp Wich <jow@openwrt.org>
+ Licensed to the public under the Apache License 2.0.
+ Source: https://github.com/openwrt/luci/blob/openwrt-18.06/modules/luci-base/luasrc/view/sysauth.htm
+ Modified for NRadio 8080 (2026-09-06): use the NROS request URI,
+ return JSON for status polling, and keep authentication on this listener.
+-%>
+<%
+	if luci.http.formvalue("refresh") == "1" then
+		luci.http.status(403, "Forbidden")
+		luci.http.header("Cache-Control", "no-store")
+		luci.http.write_json({ ok = false, login_required = true })
+		return
+	end
+-%>
+<%+header%>
+
+<form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI") or luci.dispatcher.build_url("admin", "status", "details"))%>">
+	<%- if fuser then %>
+		<div class="alert-message warning">
+			<p><%:Invalid username and/or password! Please try again.%></p>
+		</div>
+	<% end -%>
+	<div class="cbi-map">
+		<h2 name="content"><%:Authorization Required%></h2>
+		<div class="cbi-map-descr">
+			<%:Please enter your username and password.%>
+		</div>
+		<div class="cbi-section"><div class="cbi-section-node">
+			<div class="cbi-value">
+				<label class="cbi-value-title"><%:Username%></label>
+				<div class="cbi-value-field">
+					<input class="cbi-input-text" type="text" name="luci_username" value="<%=pcdata(duser or "root")%>" />
+				</div>
+			</div>
+			<div class="cbi-value cbi-value-last">
+				<label class="cbi-value-title"><%:Password%></label>
+				<div class="cbi-value-field">
+					<input class="cbi-input-text" type="password" name="luci_password" />
+				</div>
+			</div>
+		</div></div>
+	</div>
+	<div class="cbi-page-actions">
+		<input type="submit" value="<%:Login%>" class="cbi-button cbi-button-apply" />
+		<input type="reset" value="<%:Reset%>" class="cbi-button cbi-button-reset" />
+	</div>
+</form>
+<script type="text/javascript">//<![CDATA[
+	var input = document.getElementsByName('luci_password')[0];
+	if (input)
+		input.focus();
+//]]></script>
+
+<%+footer%>
+EOF_OPENWRT_LUCI_8080_SYSAUTH
+
     cat > "$OPENWRT_LUCI_8080_DETAILS" <<'EOF_OPENWRT_LUCI_8080_DETAILS'
-<%# NRadio C5800 detailed status page for the isolated LuCI instance on port 8080. -%>
+<%# NRadio device overview 20260906-1 for the isolated LuCI instance on port 8080. -%>
 <%
 	local fs = require "nixio.fs"
 	local sys = require "luci.sys"
 	local util = require "luci.util"
 	local stat = require "luci.tools.status"
-	local network = require "luci.model.network".init()
+	local http = require "luci.http"
 
 	local function trim(value)
-		local cleaned = (value or ""):gsub("^%s+", ""):gsub("%s+$", "")
+		local cleaned = tostring(value or ""):gsub("^%s+", ""):gsub("%s+$", "")
 		return cleaned
 	end
 
@@ -65305,8 +66834,12 @@ EOF_OPENWRT_LUCI_8080_WRAPPER
 	end
 
 	local function has_route(...)
-		local node = safe_call(luci.dispatcher.node, ...)
-		return type(node) == "table" and node.target ~= nil
+		local node = luci.dispatcher.context.tree
+		for _, name in ipairs({ ... }) do
+			node = type(node) == "table" and node.nodes and node.nodes[name]
+			if type(node) ~= "table" then return false end
+		end
+		return node.target ~= nil and not node.hidden
 	end
 
 	local function normalize_nradio_model(raw_model, raw_board, raw_compatible)
@@ -65337,15 +66870,6 @@ EOF_OPENWRT_LUCI_8080_WRAPPER
 		return "未知机型"
 	end
 
-	local function model_is(model, values)
-		for _, value in ipairs(values) do
-			if model == value then
-				return true
-			end
-		end
-		return false
-	end
-
 	local function mib(kib)
 		return string.format("%.1f MiB", (tonumber(kib) or 0) / 1024)
 	end
@@ -65370,6 +66894,116 @@ EOF_OPENWRT_LUCI_8080_WRAPPER
 		return string.format("%d 天 %02d:%02d:%02d", days, hours, minutes, seconds % 60)
 	end
 
+	local function metric(value, unit)
+		local number = tonumber(value)
+		if not number then return "-" end
+		return tostring(number) .. (unit or "")
+	end
+
+	local function band_text(mode, band)
+		local value = trim(band)
+		if value == "" or value == "-" then return "-" end
+		if value:match("^[NBnb]") then return value:upper() end
+		local kind = trim(mode):upper()
+		local prefix = ""
+		if kind:find("NR", 1, true) or kind:find("5G", 1, true) or kind == "SA" or kind == "NSA" then
+			prefix = "N"
+		elseif kind:find("LTE", 1, true) or kind:find("4G", 1, true) then
+			prefix = "B"
+		end
+		return prefix .. value
+	end
+
+	local function collect_live_status()
+		local info = safe_table(safe_call(util.ubus, "system", "info"))
+		local runtime = safe_table(safe_call(util.ubus, "infocd", "runtime"))
+		local global = safe_table(runtime.global)
+		local memory = {}
+		for key, value in read("/proc/meminfo"):gmatch("([%w_]+):%s+(%d+)%s+kB") do
+			memory[key] = tonumber(value)
+		end
+		local total = memory.MemTotal
+		local available = memory.MemAvailable
+		if not available and memory.MemFree then
+			available = memory.MemFree + (memory.Buffers or 0) + (memory.Cached or 0)
+		end
+		if total and available then available = math.max(0, math.min(total, available)) end
+		local used = total and available and total - available
+		local percent = total and total > 0 and used and used * 100 / total
+		local swap_total, swap_free = memory.SwapTotal, memory.SwapFree
+		local swap = "-"
+		if swap_total == 0 then
+			swap = "未启用"
+		elseif swap_total and swap_free then
+			swap = "已用 " .. mib(math.max(0, swap_total - swap_free)) .. " / " .. mib(swap_total)
+		end
+		local temperature = tonumber(trim(read("/sys/class/thermal/thermal_zone0/temp")))
+		if temperature and math.abs(temperature) >= 1000 then temperature = temperature / 1000 end
+		local load = safe_table(info.load)
+		local fields = {
+			cpu_usage = metric(global.cpu_percent, "%"),
+			cpu_temperature = temperature and string.format("%.1f °C", temperature) or "-",
+			current_time = os.date("%Y-%m-%d %H:%M:%S"),
+			uptime = info.uptime and duration(info.uptime) or "-",
+			load = load[1] and string.format("%.2f / %.2f / %.2f", (tonumber(load[1]) or 0) / 65536, (tonumber(load[2]) or 0) / 65536, (tonumber(load[3]) or 0) / 65536) or "-",
+			memory_usage = percent and string.format("%.0f%%", percent) or "-",
+			memory_total = total and mib(total) or "-",
+			memory_available = (available and mib(available) or "-") .. " / " .. (memory.MemFree and mib(memory.MemFree) or "-"),
+			memory_cache = (memory.Cached and mib(memory.Cached) or "-") .. " / " .. (memory.Buffers and mib(memory.Buffers) or "-"),
+			swap = swap
+		}
+		local addresses = {}
+		for _, wan in ipairs(safe_table(runtime.wans)) do
+			if type(wan) == "table" then
+				local first = safe_table(safe_table(wan.ipaddrs)[1])
+				addresses[tostring(wan.name or "")] = first.ipaddr
+			end
+		end
+		local by_name = {}
+		for _, item in ipairs(safe_table(runtime.cpe)) do
+			if type(item) == "table" and (item.name == "cpe" or item.name == "cpe1") then
+				local state = tonumber(item.status)
+				by_name[item.name] = {
+					name = item.name,
+					label = item.name == "cpe" and "主线路" or "副线路",
+					connection = state == 0 and "已连接" or (state and "未连接" or "状态未知"),
+					up = state == 0,
+					mode = trim(item.mode),
+					band = band_text(item.mode, item.band),
+					rsrp = metric(item.rsrp, " dBm"),
+					rsrq = metric(item.rsrq, " dB"),
+					sinr = metric(item.sinr, " dB"),
+					temperature = metric(item.model_temp, " °C"),
+					operator = trim(item.sim_company) ~= "" and trim(item.sim_company) or trim(item.isp_company),
+					sim_name = trim(item.sim_name),
+					ipaddr = addresses[item.name] or "-",
+					default_route = tonumber(item.gateway_if) == 1,
+					pci = trim(item.pci),
+					earfcn = trim(item.earfcn)
+				}
+			end
+		end
+		local lines = {}
+		for _, name in ipairs({ "cpe", "cpe1" }) do
+			if by_name[name] then lines[#lines + 1] = by_name[name] end
+		end
+		return {
+			ok = true, version = "20260906-1", fields = fields, lines = lines,
+			cellular_available = type(runtime.cpe) == "table"
+		}
+	end
+
+	local live = collect_live_status()
+	if http.formvalue("refresh") == "1" then
+		http.header("Cache-Control", "no-store")
+		http.write_json(live)
+		return
+	end
+	local initial_json = util.serialize_json(live):gsub("<", "\\u003c"):gsub("&", "\\u0026"):gsub("\226\128\168", "\\u2028"):gsub("\226\128\169", "\\u2029")
+	local plugin_links = safe_table(luci.dispatcher.context.nradio_8080_links)
+	local network_module = safe_table(safe_call(require, "luci.model.network"))
+	local network = safe_call(network_module.init)
+
 	local function process_state(name)
 		local pids = command("pidof " .. name)
 		if pids ~= "" then
@@ -65384,7 +67018,8 @@ EOF_OPENWRT_LUCI_8080_WRAPPER
 	end
 
 	local function disk(path)
-		local output = command("df -k " .. path)
+		if path == "/mnt/rootfs_2nd_data" and not read("/proc/mounts"):find(" /mnt/rootfs_2nd_data ", 1, true) then return "未挂载" end
+		local output = command("df -kP " .. path)
 		local last = ""
 		for line in output:gmatch("[^\r\n]+") do
 			last = line
@@ -65397,42 +67032,26 @@ EOF_OPENWRT_LUCI_8080_WRAPPER
 	end
 
 	local cpuinfo = read("/proc/cpuinfo")
-	local cpu_model = cpuinfo:match("model name%s*:%s*([^\r\n]+)") or "-"
+	local cpu_model = cpuinfo:match("model name%s*:%s*([^\r\n]+)") or cpuinfo:match("Hardware%s*:%s*([^\r\n]+)") or cpuinfo:match("Processor%s*:%s*([^\r\n]+)") or "ARM"
 	local cpu_cores = 0
 	for _ in cpuinfo:gmatch("processor%s*:%s*%d+") do
 		cpu_cores = cpu_cores + 1
 	end
 	local cpu_frequency = tonumber(trim(read("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq")))
-	local cpu_temperature = tonumber(trim(read("/sys/class/thermal/thermal_zone0/temp")))
 	local cpu_summary = string.format("%s，%d 核", cpu_model, cpu_cores)
 	if cpu_frequency then
 		cpu_summary = cpu_summary .. string.format("，%.0f MHz", cpu_frequency / 1000)
 	end
 
-	local meminfo = {}
-	for key, value in read("/proc/meminfo"):gmatch("([%w_]+):%s+(%d+)%s+kB") do
-		meminfo[key] = tonumber(value)
-	end
-
-	local board = util.ubus("system", "board") or {}
-	local info = util.ubus("system", "info") or {}
+	local board = safe_table(safe_call(util.ubus, "system", "board"))
 	local uname = nixio.uname() or {}
 	local release = read("/etc/openwrt_release")
 	local firmware = release:match("DISTRIB_REVISION='([^']+)") or "-"
-	local load = info.load or { 0, 0, 0 }
 	local raw_model = trim(read("/tmp/sysinfo/model"))
 	local raw_board = trim(read("/tmp/sysinfo/board_name"))
 	local raw_compatible = trim(read("/proc/device-tree/compatible"):gsub("%z", " "))
 	local normalized_model = normalize_nradio_model(raw_model, raw_board, raw_compatible)
 	local model_name = normalized_model:gsub("^NRadio_", "")
-	local model_features = {
-		storage = model_is(normalized_model, { "NRadio_C8-688", "NRadio_C5800-650", "NRadio_C5800-688", "NRadio_NBCPE" }),
-		aggregation = model_is(normalized_model, { "NRadio_C8-688", "NRadio_C5800-650", "NRadio_C5800-688" }),
-		docker = model_is(normalized_model, { "NRadio_C8-688", "NRadio_C5800-650", "NRadio_C5800-688" }),
-		fan = model_is(normalized_model, { "NRadio_C8-688", "NRadio_C2000MAX", "NRadio_C8-788" }),
-		swap = normalized_model == "NRadio_C2000MAX",
-		smart_band = normalized_model == "NRadio_C5800-688"
-	}
 
 	local wan = network and safe_call(network.get_wannet, network) or nil
 	local wan6 = network and safe_call(network.get_wan6net, network) or nil
@@ -65476,50 +67095,97 @@ EOF_OPENWRT_LUCI_8080_WRAPPER
 <%+header%>
 
 <style type="text/css">
+	.nradio-overview { min-width: 0; }
+	.nradio-toolbar, .nradio-summary, .nradio-cell-grid, .nradio-links { display: flex; flex-wrap: wrap; align-items: center; }
+	.nradio-toolbar { gap: 12px; margin: 12px 0 18px; }
+	.nradio-toolbar label { margin: 0; }
+	.nradio-note { color: #666; font-size: 12px; }
+	.nradio-summary { align-items: stretch; gap: 10px; margin: 16px 0; }
+	.nradio-summary-item { flex: 1 1 140px; padding: 12px; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; }
+	.nradio-summary-item span { display: block; }
+	.nradio-summary-item strong { display: block; margin-top: 8px; font-size: 20px; line-height: 1.4; overflow-wrap: anywhere; }
+	.nradio-details { width: 100%; table-layout: fixed; }
 	.nradio-details td:first-child { width: 31%; font-weight: bold; vertical-align: top; }
-	.nradio-details td { padding: 7px 10px; }
+	.nradio-details td { padding: 7px 10px; overflow-wrap: anywhere; word-break: break-word; }
 	.nradio-state-ok { color: #16833b; font-weight: bold; }
 	.nradio-state-bad { color: #b52323; font-weight: bold; }
+	.nradio-state-muted { color: #666; }
 	.nradio-routes { white-space: pre-wrap; word-break: break-all; margin: 0; font-size: 12px; }
-	.nradio-links a { margin-right: 14px; }
-	.nradio-capability { display: inline-block; min-width: 64px; }
+	.nradio-links { gap: 8px; margin: 8px 0 14px; }
+	.nradio-links a { display: inline-block; padding: 7px 10px; border: 1px solid #ddd; border-radius: 3px; overflow-wrap: anywhere; }
+	.nradio-links a:focus, .nradio-toolbar button:focus { outline: 2px solid #0088cc; outline-offset: 2px; }
+	.nradio-cell-grid { align-items: stretch; gap: 12px; }
+	.nradio-cell-card { flex: 1 1 260px; min-width: 0; border: 1px solid #ddd; border-radius: 4px; padding: 12px; }
+	.nradio-cell-card h4 { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin: 0 0 12px; }
+	.nradio-cell-card dl { margin: 0; }
+	.nradio-cell-card dt { float: left; clear: left; width: 85px; font-weight: normal; color: #666; }
+	.nradio-cell-card dd { margin: 0 0 7px 90px; overflow-wrap: anywhere; word-break: break-word; min-height: 20px; }
+	@media (max-width: 600px) {
+		.nradio-details, .nradio-details tbody, .nradio-details tr, .nradio-details td { display: block; width: auto !important; }
+		.nradio-details tr { padding: 6px 0; border-bottom: 1px solid #eee; }
+		.nradio-details td { padding: 3px 8px; }
+		.nradio-summary-item { flex-basis: 110px; }
+		.nradio-summary-item strong { font-size: 18px; }
+	}
 </style>
 
-<h2 name="content"><%=pcdata(model_name)%> 详细状态</h2>
+<div class="nradio-overview" id="nradio-overview">
+<h2 name="content"><%=pcdata(model_name)%> 设备总览</h2>
+<div class="nradio-toolbar">
+	<button type="button" class="cbi-button cbi-button-apply" id="nradio-refresh">刷新状态</button>
+	<label><input type="checkbox" id="nradio-auto-refresh" checked="checked" /> 自动刷新</label>
+	<span class="nradio-note" id="nradio-refresh-status" role="status" aria-live="polite">系统与蜂窝状态每 10 秒更新</span>
+</div>
+<div class="nradio-summary">
+	<div class="nradio-summary-item"><span>CPU 使用率</span><strong data-nradio-field="cpu_usage"><%=pcdata(live.fields.cpu_usage)%></strong></div>
+	<div class="nradio-summary-item"><span>内存使用率</span><strong data-nradio-field="memory_usage"><%=pcdata(live.fields.memory_usage)%></strong></div>
+	<div class="nradio-summary-item"><span>CPU 温度</span><strong data-nradio-field="cpu_temperature"><%=pcdata(live.fields.cpu_temperature)%></strong></div>
+	<div class="nradio-summary-item"><span>运行时间</span><strong data-nradio-field="uptime"><%=pcdata(live.fields.uptime)%></strong></div>
+</div>
+
+<fieldset class="cbi-section">
+	<legend>蜂窝网络</legend>
+	<p class="nradio-note" id="nradio-cellular-note"><%=live.cellular_available and (#live.lines > 0 and "当前蜂窝线路" or "当前未检测到蜂窝线路") or "暂时无法读取蜂窝状态"%></p>
+	<div class="nradio-cell-grid" id="nradio-cellular-lines">
+		<% for _, line in ipairs(live.lines) do %>
+		<section class="nradio-cell-card">
+			<h4><span><%=pcdata(line.label)%> · <%=pcdata(line.name)%></span><span class="<%=line.up and 'nradio-state-ok' or 'nradio-state-muted'%>"><%=pcdata(line.connection)%></span></h4>
+			<dl>
+			<% for _, pair in ipairs({
+				{"运营商", line.operator}, {"SIM 卡名", line.sim_name}, {"网络制式", line.mode},
+				{"频段", line.band}, {"RSRP", line.rsrp}, {"SINR", line.sinr}, {"RSRQ", line.rsrq},
+				{"模组温度", line.temperature}, {"IPv4", line.ipaddr}, {"PCI", line.pci},
+				{"信道号", line.earfcn}, {"默认出口", line.default_route and "是" or "否"}
+			}) do %>
+				<dt><%=pcdata(pair[1])%></dt><dd><%=pcdata(pair[2] ~= "" and pair[2] or "-")%></dd>
+			<% end %>
+			</dl>
+		</section>
+		<% end %>
+	</div>
+</fieldset>
 
 <fieldset class="cbi-section">
 	<legend>系统与硬件</legend>
 	<table class="nradio-details" width="100%" cellspacing="0">
 		<tr><td>设备</td><td><%=pcdata(board.model or board.system or "-")%></td></tr>
-		<tr><td>脚本型号映射</td><td><%=pcdata(raw_model ~= "" and raw_model or "-")%> → <strong><%=pcdata(normalized_model)%></strong></td></tr>
 		<tr><td>板型</td><td><%=pcdata(raw_board ~= "" and raw_board or "-")%></td></tr>
 		<tr><td>固件 / 内核</td><td><%=pcdata(firmware)%> / Linux <%=pcdata(uname.release or "-")%></td></tr>
 		<tr><td>CPU</td><td><%=pcdata(cpu_summary)%></td></tr>
-		<tr><td>CPU 温度</td><td><%=cpu_temperature and string.format("%.1f °C", cpu_temperature / 1000) or "-"%></td></tr>
-		<tr><td>当前时间</td><td><%=pcdata(os.date("%Y-%m-%d %H:%M:%S"))%></td></tr>
-		<tr><td>运行时间</td><td><%=pcdata(duration(info.uptime))%></td></tr>
-		<tr><td>系统负载</td><td><%=string.format("%.2f / %.2f / %.2f", (load[1] or 0) / 65535, (load[2] or 0) / 65535, (load[3] or 0) / 65535)%></td></tr>
-	</table>
-</fieldset>
-
-<fieldset class="cbi-section">
-	<legend>脚本型号能力映射</legend>
-	<table class="nradio-details" width="100%" cellspacing="0">
-		<tr><td>eMMC / rootfs_2nd 存储扩展</td><td class="<%=model_features.storage and 'nradio-state-ok' or 'nradio-state-bad'%>"><span class="nradio-capability"><%=model_features.storage and "支持" or "不支持"%></span></td></tr>
-		<tr><td>5G 聚合修复检查</td><td class="<%=model_features.aggregation and 'nradio-state-ok' or 'nradio-state-bad'%>"><span class="nradio-capability"><%=model_features.aggregation and "支持" or "不支持"%></span></td></tr>
-		<tr><td>Docker</td><td class="<%=model_features.docker and 'nradio-state-ok' or 'nradio-state-bad'%>"><span class="nradio-capability"><%=model_features.docker and "支持" or "不支持"%></span></td></tr>
-		<tr><td>智能频段管理</td><td class="<%=model_features.smart_band and 'nradio-state-ok' or 'nradio-state-bad'%>"><span class="nradio-capability"><%=model_features.smart_band and "支持" or "不支持"%></span></td></tr>
-		<tr><td>增强风扇控制</td><td class="<%=model_features.fan and 'nradio-state-ok' or 'nradio-state-bad'%>"><span class="nradio-capability"><%=model_features.fan and "支持" or "不支持"%></span></td></tr>
-		<tr><td>swap 虚拟内存扩容</td><td class="<%=model_features.swap and 'nradio-state-ok' or 'nradio-state-bad'%>"><span class="nradio-capability"><%=model_features.swap and "支持" or "不支持"%></span></td></tr>
+		<tr><td>CPU 温度</td><td><span data-nradio-field="cpu_temperature"><%=pcdata(live.fields.cpu_temperature)%></span></td></tr>
+		<tr><td>当前时间</td><td><span data-nradio-field="current_time"><%=pcdata(live.fields.current_time)%></span></td></tr>
+		<tr><td>运行时间</td><td><span data-nradio-field="uptime"><%=pcdata(live.fields.uptime)%></span></td></tr>
+		<tr><td>系统负载</td><td><span data-nradio-field="load"><%=pcdata(live.fields.load)%></span></td></tr>
 	</table>
 </fieldset>
 
 <fieldset class="cbi-section">
 	<legend>内存与存储</legend>
 	<table class="nradio-details" width="100%" cellspacing="0">
-		<tr><td>内存总量</td><td><%=pcdata(mib(meminfo.MemTotal))%></td></tr>
-		<tr><td>可用 / 空闲</td><td><%=pcdata(mib(meminfo.MemAvailable))%> / <%=pcdata(mib(meminfo.MemFree))%></td></tr>
-		<tr><td>缓存 / 缓冲</td><td><%=pcdata(mib(meminfo.Cached))%> / <%=pcdata(mib(meminfo.Buffers))%></td></tr>
+		<tr><td>内存总量</td><td><span data-nradio-field="memory_total"><%=pcdata(live.fields.memory_total)%></span></td></tr>
+		<tr><td>可用 / 空闲</td><td><span data-nradio-field="memory_available"><%=pcdata(live.fields.memory_available)%></span></td></tr>
+		<tr><td>缓存 / 缓冲</td><td><span data-nradio-field="memory_cache"><%=pcdata(live.fields.memory_cache)%></span></td></tr>
+		<tr><td>Swap 虚拟内存</td><td><span data-nradio-field="swap"><%=pcdata(live.fields.swap)%></span></td></tr>
 		<tr><td>系统 overlay</td><td><%=pcdata(disk("/overlay"))%></td></tr>
 		<tr><td>eMMC 数据盘</td><td><%=pcdata(disk("/mnt/rootfs_2nd_data"))%></td></tr>
 	</table>
@@ -65553,22 +67219,202 @@ EOF_OPENWRT_LUCI_8080_WRAPPER
 </fieldset>
 
 <fieldset class="cbi-section">
-	<legend>快捷入口</legend>
+	<legend>原生管理入口</legend>
 	<div class="nradio-links">
-		<% if has_route('admin', 'status', 'overview') then %><a href="<%=luci.dispatcher.build_url('admin/status/overview')%>">标准概览</a><% end %>
-		<% if has_route('admin', 'network', 'network') then %><a href="<%=luci.dispatcher.build_url('admin/network/network')%>">网络接口</a><% end %>
-		<% if has_route('admin', 'network', 'wireless') then %><a href="<%=luci.dispatcher.build_url('admin/network/wireless')%>">无线网络</a><% end %>
-		<% if has_route('admin', 'services', 'openvpn') then %><a href="<%=luci.dispatcher.build_url('admin/services/openvpn')%>">OpenVPN</a><% end %>
-		<% if has_route('admin', 'services', 'openclash') then %><a href="<%=luci.dispatcher.build_url('admin/services/openclash')%>">OpenClash</a><% end %>
-		<% if has_route('admin', 'services', 'AdGuardHome') then %><a href="<%=luci.dispatcher.build_url('admin/services/AdGuardHome')%>">AdGuardHome</a><% end %>
+		<% for _, item in ipairs({
+			{"标准概览", {"admin", "status", "overview"}},
+			{"实时图表", {"admin", "status", "realtime"}},
+			{"系统日志", {"admin", "status", "syslog"}},
+			{"网络接口", {"admin", "network", "network"}},
+			{"无线网络", {"admin", "network", "wireless"}},
+			{"路由表", {"admin", "status", "routes"}},
+			{"防火墙", {"admin", "network", "firewall"}},
+			{"软件包", {"admin", "system", "packages"}},
+			{"系统设置", {"admin", "system", "system"}}
+		}) do if has_route(unpack(item[2])) then %>
+		<a href="<%=pcdata(luci.dispatcher.build_url(unpack(item[2])))%>"><%=pcdata(item[1])%></a>
+		<% end end %>
 	</div>
 </fieldset>
+
+<fieldset class="cbi-section" id="nradio-plugin-links">
+	<legend>插件入口</legend>
+	<% if #safe_table(plugin_links.native) > 0 then %>
+	<div class="nradio-links">
+		<% for _, item in ipairs(plugin_links.native) do %>
+		<a href="<%=pcdata(luci.dispatcher.build_url(unpack(item.path)))%>"><%=pcdata(item.title)%></a>
+		<% end %>
+	</div>
+	<% end %>
+	<% if #safe_table(plugin_links.factory) > 0 then %>
+	<p class="nradio-note">以下插件使用原厂页面，在新标签页打开。</p>
+	<div class="nradio-links">
+		<% for _, item in ipairs(plugin_links.factory) do %>
+		<a class="nradio-factory-link" data-nradio-path="<%=pcdata(item.path)%>" target="_blank" rel="noopener noreferrer"><%=pcdata(item.title)%> · 原厂入口</a>
+		<% end %>
+	</div>
+	<% end %>
+	<% if #safe_table(plugin_links.native) + #safe_table(plugin_links.factory) == 0 then %>
+	<p class="nradio-note">当前未发现已注册的插件页面，安装插件后刷新本页。</p>
+	<% end %>
+	<div class="nradio-links"><a class="nradio-factory-link" data-nradio-path="/" target="_blank" rel="noopener noreferrer">NRadio 管理首页</a></div>
+	<noscript><p>启用 JavaScript 后可自动刷新状态并打开原厂入口。</p></noscript>
+</fieldset>
+
+<script type="application/json" id="nradio-initial-status"><%=initial_json%></script>
+<script type="text/javascript">
+(function() {
+	'use strict';
+	var button = document.getElementById('nradio-refresh');
+	var automatic = document.getElementById('nradio-auto-refresh');
+	var status = document.getElementById('nradio-refresh-status');
+	var cellNote = document.getElementById('nradio-cellular-note');
+	var cellBox = document.getElementById('nradio-cellular-lines');
+	var fields = document.querySelectorAll('[data-nradio-field]');
+	var endpoint = '<%=luci.dispatcher.build_url("admin", "status", "details")%>';
+	var active = null;
+	var timer = null;
+	var lastUpdated = '';
+	var stopped = false;
+	var host = window.location.hostname;
+	if (host.indexOf(':') !== -1 && host.charAt(0) !== '[') host = '[' + host + ']';
+	var factoryLinks = document.querySelectorAll('.nradio-factory-link');
+	for (var i = 0; i < factoryLinks.length; i++) {
+		factoryLinks[i].href = 'http://' + host + factoryLinks[i].getAttribute('data-nradio-path');
+	}
+
+	function text(value) {
+		return value === undefined || value === null || value === '' ? '-' : String(value);
+	}
+	function append(parent, tag, value, className) {
+		var node = document.createElement(tag);
+		node.textContent = text(value);
+		if (className) node.className = className;
+		parent.appendChild(node);
+		return node;
+	}
+	function renderCells(data) {
+		if (!data.cellular_available) {
+			cellNote.textContent = '蜂窝状态读取失败，保留上次数据显示';
+			return;
+		}
+		var lines = Array.isArray(data.lines) ? data.lines : [];
+		cellNote.textContent = lines.length ? '当前蜂窝线路' : '当前未检测到蜂窝线路';
+		var fragment = document.createDocumentFragment();
+		for (var i = 0; i < lines.length; i++) {
+			var line = lines[i];
+			var card = document.createElement('section');
+			card.className = 'nradio-cell-card';
+			var title = document.createElement('h4');
+			append(title, 'span', text(line.label) + ' · ' + text(line.name));
+			append(title, 'span', line.connection, line.up ? 'nradio-state-ok' : 'nradio-state-muted');
+			card.appendChild(title);
+			var list = document.createElement('dl');
+			var values = [
+				['运营商', line.operator], ['SIM 卡名', line.sim_name], ['网络制式', line.mode],
+				['频段', line.band], ['RSRP', line.rsrp], ['SINR', line.sinr], ['RSRQ', line.rsrq],
+				['模组温度', line.temperature], ['IPv4', line.ipaddr], ['PCI', line.pci],
+				['信道号', line.earfcn], ['默认出口', line.default_route ? '是' : '否']
+			];
+			for (var j = 0; j < values.length; j++) {
+				append(list, 'dt', values[j][0]);
+				append(list, 'dd', values[j][1]);
+			}
+			card.appendChild(list);
+			fragment.appendChild(card);
+		}
+		cellBox.textContent = '';
+		cellBox.appendChild(fragment);
+	}
+	function render(data) {
+		for (var i = 0; i < fields.length; i++) {
+			var key = fields[i].getAttribute('data-nradio-field');
+			if (Object.prototype.hasOwnProperty.call(data.fields, key)) fields[i].textContent = text(data.fields[key]);
+		}
+		renderCells(data);
+		lastUpdated = text(data.fields.current_time);
+		status.textContent = '已更新 ' + lastUpdated + (automatic.checked ? ' · 每 10 秒' : ' · 已暂停');
+	}
+	function schedule() {
+		if (timer !== null) window.clearTimeout(timer);
+		timer = null;
+		if (!stopped && automatic.checked && !document.hidden && !active) timer = window.setTimeout(refresh, 10000);
+	}
+	function refresh() {
+		if (active || document.hidden || stopped) return;
+		if (timer !== null) window.clearTimeout(timer);
+		timer = null;
+		var xhr = new XMLHttpRequest();
+		active = xhr;
+		button.disabled = true;
+		status.textContent = '正在刷新…';
+		function finish(message) {
+			if (active !== xhr) return;
+			active = null;
+			button.disabled = false;
+			if (message) status.textContent = message + (lastUpdated ? ' · 上次更新 ' + lastUpdated : '');
+			schedule();
+		}
+		xhr.open('GET', endpoint + '?refresh=1&_=' + Date.now(), true);
+		xhr.timeout = 8000;
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState !== 4 || active !== xhr) return;
+			if (xhr.status === 0) return;
+			if (xhr.status === 401 || xhr.status === 403) {
+				automatic.checked = false;
+				finish('登录已失效，请刷新页面后重新登录');
+				return;
+			}
+			var data;
+			try { data = JSON.parse(xhr.responseText); } catch (error) { data = null; }
+			if (xhr.status !== 200 || !data || data.ok !== true || data.version !== '20260906-1' || !data.fields) {
+				finish('刷新失败，请重试；若登录已失效，请刷新页面');
+				return;
+			}
+			render(data);
+			finish('');
+		};
+		xhr.onerror = function() { finish('网络连接失败，保留上次数据显示'); };
+		xhr.ontimeout = function() { finish('刷新超时，保留上次数据显示'); };
+		xhr.send(null);
+	}
+	button.addEventListener('click', refresh);
+	automatic.addEventListener('change', function() {
+		status.textContent = (automatic.checked ? '自动刷新已开启' : '自动刷新已暂停') + (lastUpdated ? ' · 上次更新 ' + lastUpdated : '');
+		if (automatic.checked) refresh(); else schedule();
+	});
+	document.addEventListener('visibilitychange', function() {
+		if (document.hidden) {
+			if (timer !== null) window.clearTimeout(timer);
+			timer = null;
+			if (active) { var xhr = active; active = null; xhr.abort(); button.disabled = false; }
+		} else if (automatic.checked) refresh();
+	});
+	window.addEventListener('pagehide', function() {
+		stopped = true;
+		if (timer !== null) window.clearTimeout(timer);
+		timer = null;
+		if (active) { var xhr = active; active = null; xhr.abort(); }
+	});
+	window.addEventListener('pageshow', function() {
+		stopped = false;
+		button.disabled = false;
+		schedule();
+	});
+	try {
+		var initial = JSON.parse(document.getElementById('nradio-initial-status').textContent);
+		if (initial.ok && initial.fields) render(initial);
+	} catch (error) { status.textContent = '点击刷新状态以读取最新数据'; }
+	schedule();
+})();
+</script>
+</div>
 
 <%+footer%>
 EOF_OPENWRT_LUCI_8080_DETAILS
 
     chmod 755 "$OPENWRT_LUCI_8080_CGI" || die "设置 OpenWrt LuCI（8080）CGI 权限失败"
-    chmod 644 "$OPENWRT_LUCI_8080_DOCROOT/index.html" "$OPENWRT_LUCI_8080_DETAILS" || die "设置 OpenWrt LuCI（8080）页面权限失败"
+    chmod 644 "$OPENWRT_LUCI_8080_DOCROOT/index.html" "$OPENWRT_LUCI_8080_DETAILS" "$OPENWRT_LUCI_8080_SYSAUTH" || die "设置 OpenWrt LuCI（8080）页面权限失败"
 }
 
 configure_openwrt_luci_8080_uhttpd() {
@@ -65615,7 +67461,7 @@ install_openwrt_luci_8080() {
     log_stage 2 4 "下载并安装传统 Bootstrap 兼容主题"
     install_openwrt_luci_8080_theme
 
-    log_stage 3 4 "写入独立 CGI、型号菜单和详细状态页"
+    log_stage 3 4 "写入独立 CGI、原生菜单与设备总览"
     write_openwrt_luci_8080_files
 
     log_stage 4 4 "建立 LAN 端口 8080 独立映射"
@@ -65787,7 +67633,7 @@ run_menu_feature() {
             ;;
         30)
             show_support_page_hint='1'
-            run_recorded_menu_feature "1 > 9" "$MT5700_APP_NAME $MT5700_UI_NAME V$MT5700_UI_VERSION 安装" install_mt5700_webui
+            run_recorded_menu_feature "1 > 9" "$MT5700_APP_NAME $MT5700_UI_NAME 上游最新版安装" install_mt5700_webui
             MENU_ACTION_COMPLETED='1'
             ;;
         31)
@@ -65818,10 +67664,10 @@ common_plugin_menu() {
     while :; do
         submenu_feature=''
         if is_current_model_c8_788; then
-            printf '\n常用插件安装（C8-788 小容量模式）:\n'
-            printf '1. 哈基米\n'
-            printf '0. 返回功能分类\n'
-            printf '请选择 0 或 1: '
+            print_menu_header '1 / 常用插件 · C8-788'
+            print_menu_item 1 '哈基米'
+            print_menu_item 0 '返回功能分类'
+            print_menu_prompt '0-1'
             read_category_choice
             case "$UI_READ_RESULT" in
                 0) return 0 ;;
@@ -65831,18 +67677,18 @@ common_plugin_menu() {
             run_menu_feature "$submenu_feature"
             return 0
         fi
-        printf '\n常用插件安装:\n'
-        printf '1. 扩容 swap 虚拟内存（仅支持NRadio_C2000MAX）\n'
-        printf '2. 哈基米\n'
-        printf '3. ttyd / Web SSH\n'
-        printf '4. AdGuardHome\n'
-        printf '5. OpenList\n'
-        printf '6. MosDNS\n'
-        printf '7. DDNS-GO\n'
-        printf '8. Docker（仅支持 NRadio_C5800-650 / NRadio_C5800-688 / NRadio_C8-688）\n'
-        printf '9. MT5700 WebUI V3.0.0（semi-tcpweb / aarch64_cortex-a53）\n'
-        printf '0. 返回功能分类\n'
-        printf '请选择 0、1、2、3、4、5、6、7、8 或 9: '
+        print_menu_header '1 / 常用插件'
+        print_menu_item 1 'swap 虚拟内存（C2000MAX / C2000Ultra）'
+        print_menu_item 2 '哈基米'
+        print_menu_item 3 'ttyd / Web SSH'
+        print_menu_item 4 'AdGuardHome'
+        print_menu_item 5 'OpenList'
+        print_menu_item 6 'MosDNS'
+        print_menu_item 7 'DDNS-GO'
+        print_menu_item 8 'Docker（C5800 系列 / C8-688）'
+        print_menu_item 9 'MT5700 WebUI V3.0.0'
+        print_menu_item 0 '返回功能分类'
+        print_menu_prompt '0-9'
         read_category_choice
         case "$UI_READ_RESULT" in
             0) return 0 ;;
@@ -65865,16 +67711,16 @@ common_plugin_menu() {
 network_route_menu() {
     while :; do
         submenu_feature=''
-        printf '\nVPN / 组网 / 路由向导:\n'
-        printf '1. ZeroTier\n'
-        printf '2. EasyTier\n'
-        printf '3. OpenVPN\n'
-        printf '4. OpenVPN 向导配置并运行\n'
-        printf '5. OpenVPN 路由表向导\n'
-        printf '6. EasyTier 路由表向导\n'
-        printf '7. OpenVPN 自检\n'
-        printf '0. 返回功能分类\n'
-        printf '请选择 0、1、2、3、4、5、6 或 7: '
+        print_menu_header '2 / VPN 与组网'
+        print_menu_item 1 'ZeroTier'
+        print_menu_item 2 'EasyTier'
+        print_menu_item 3 'OpenVPN'
+        print_menu_item 4 'OpenVPN 向导配置并运行'
+        print_menu_item 5 'OpenVPN 路由表向导'
+        print_menu_item 6 'EasyTier 路由表向导'
+        print_menu_item 7 'OpenVPN 自检'
+        print_menu_item 0 '返回功能分类'
+        print_menu_prompt '0-7'
         read_category_choice
         case "$UI_READ_RESULT" in
             0) return 0 ;;
@@ -65894,11 +67740,11 @@ network_route_menu() {
 
 lightweight_appcenter_menu() {
     lightweight_appcenter_model_supported || die "轻量应用商店当前仅支持 C2000Pro / AK68-798"
-    printf '\nC2000Pro / AK68-798 轻量应用商店:\n'
-    printf '1. 创建 / 更新轻量应用商店\n'
-    printf '2. 移除轻量应用商店（保留插件记录）\n'
-    printf '0. 返回应用商店菜单\n'
-    printf '请选择 0、1 或 2: '
+    print_menu_header '4 / 轻量应用商店'
+    print_menu_item 1 '创建 / 更新轻量应用商店'
+    print_menu_item 2 '移除轻量应用商店（保留插件记录）'
+    print_menu_item 0 '返回应用商店菜单'
+    print_menu_prompt '0-2'
     read_category_choice
     case "$UI_READ_RESULT" in
         0) return 0 ;;
@@ -65911,19 +67757,19 @@ lightweight_appcenter_menu() {
 appcenter_polish_menu() {
     while :; do
         submenu_feature=''
-        printf '\n应用商店与页面美化:\n'
+        print_menu_header '4 / 应用商店与页面'
         if ! lightweight_appcenter_model_supported; then
-            printf '1. 美化应用商店\n'
-            printf '2. 还原应用商店\n'
+            print_menu_item 1 '美化应用商店'
+            print_menu_item 2 '还原应用商店'
         fi
         if openwrt_luci_8080_model_supported; then
-            printf '3. OpenWrt 原版 LuCI（8080）安装或更新\n'
+            print_menu_item 3 'OpenWrt 原版 LuCI（8080）'
         fi
         if lightweight_appcenter_model_supported; then
-            printf '4. C2000Pro / AK68-798 轻量应用商店\n'
+            print_menu_item 4 '轻量应用商店'
         fi
-        printf '0. 返回功能分类\n'
-        printf '请选择上方菜单编号: '
+        print_menu_item 0 '返回功能分类'
+        print_menu_prompt '上方编号，0 返回'
         read_category_choice
         case "$UI_READ_RESULT" in
             0) return 0 ;;
@@ -67281,6 +69127,14 @@ EOF_QIYOU_UNINSTALL
     chmod 755 /usr/libexec/nradio-qiyou-uninstall
 }
 
+qiyou_valid_identity_mac() {
+    case "${1:-}" in
+        [0-9A-F][02468ACE]:[0-9A-F][0-9A-F]:[0-9A-F][0-9A-F]:[0-9A-F][0-9A-F]:[0-9A-F][0-9A-F]:[0-9A-F][0-9A-F]) ;;
+        *) return 1 ;;
+    esac
+    [ "$1" != '00:00:00:00:00:00' ]
+}
+
 qiyou_detect_identity() {
     QIYOU_IDENTITY_RAW_MODEL="$(cat /tmp/sysinfo/model 2>/dev/null | sed -n '1p')"
     QIYOU_IDENTITY_BOARD="$(cat /tmp/sysinfo/board_name 2>/dev/null | sed -n '1p')"
@@ -67308,23 +69162,23 @@ qiyou_detect_identity() {
     QIYOU_IDENTITY_MAC=''
     for qy_identity_ifname in br-lan br0 eth0; do
         [ -r "/sys/class/net/$qy_identity_ifname/address" ] || continue
-        QIYOU_IDENTITY_MAC="$(cat "/sys/class/net/$qy_identity_ifname/address" 2>/dev/null | sed -n '1p' | tr 'a-f' 'A-F')"
-        [ -n "$QIYOU_IDENTITY_MAC" ] || continue
+        qy_identity_mac="$(cat "/sys/class/net/$qy_identity_ifname/address" 2>/dev/null | sed -n '1p' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tr 'a-f' 'A-F')"
+        qiyou_valid_identity_mac "$qy_identity_mac" || continue
+        QIYOU_IDENTITY_MAC="$qy_identity_mac"
         QIYOU_IDENTITY_INTERFACE="$qy_identity_ifname"
         break
     done
 
-    qy_identity_prefix="$(sed -n 's/^NAME=//p' /tmp/qy/etc/PKG_INFO 2>/dev/null | sed -n '1p')"
-    [ -n "$qy_identity_prefix" ] || qy_identity_prefix="$(sed -n 's/^BRAND=//p' /tmp/qy/etc/PKG_INFO 2>/dev/null | sed -n '1p')"
+    qy_identity_prefix="$(sed -n 's/^NAME=//p' /tmp/qy/etc/PKG_INFO 2>/dev/null | sed -n '1p' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+    [ -n "$qy_identity_prefix" ] || qy_identity_prefix="$(sed -n 's/^BRAND=//p' /tmp/qy/etc/PKG_INFO 2>/dev/null | sed -n '1p' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
     qy_identity_prefix="$(printf '%s' "${qy_identity_prefix:-SYS}" | tr -cd 'A-Za-z0-9_-')"
     [ -n "$qy_identity_prefix" ] || qy_identity_prefix='SYS'
     qy_identity_prefix="$(printf '%s' "$qy_identity_prefix" | tr 'a-z' 'A-Z')"
-    qy_identity_compact_mac="$(printf '%s' "$QIYOU_IDENTITY_MAC" | tr -cd '0-9A-F')"
-    qy_identity_suffix="$(printf '%s' "$qy_identity_compact_mac" | sed 's/.*\(....\)$/\1/')"
-    if [ -n "$qy_identity_suffix" ]; then
-        QIYOU_IDENTITY_DEVICE_ID="${qy_identity_prefix}_${qy_identity_suffix}"
+    qy_identity_compact_mac="$(printf '%s' "$QIYOU_IDENTITY_MAC" | tr -d ':')"
+    if [ -n "$qy_identity_compact_mac" ]; then
+        QIYOU_IDENTITY_DEVICE_ID="${qy_identity_prefix}_${qy_identity_compact_mac}"
     else
-        QIYOU_IDENTITY_DEVICE_ID="${qy_identity_prefix}_UNKNOWN"
+        QIYOU_IDENTITY_DEVICE_ID=''
     fi
 }
 
@@ -67363,10 +69217,14 @@ local function pkg_info()
     end
     return info
 end
-local function first_readable(paths)
+local function identity_mac()
+    local paths={"/sys/class/net/br-lan/address","/sys/class/net/br0/address","/sys/class/net/eth0/address"}
     for _,path in ipairs(paths or {}) do
-        local value=trim(readfile(path))
-        if value~="" then return value,path end
+        local value=trim(readfile(path):match("^[^\r\n]*") or ""):upper()
+        if value:match("^%x%x:%x%x:%x%x:%x%x:%x%x:%x%x$") and
+            value~="00:00:00:00:00:00" and tonumber(value:sub(1,2),16)%2==0 then
+            return value,path
+        end
     end
     return "",""
 end
@@ -67391,18 +69249,19 @@ local function qiyou_identity(info)
     local raw_model=trim(readfile("/tmp/sysinfo/model"))
     local board=trim(readfile("/tmp/sysinfo/board_name"))
     local hostname=trim(readfile("/proc/sys/kernel/hostname"))
-    local mac,mac_path=first_readable({"/sys/class/net/br-lan/address","/sys/class/net/br0/address","/sys/class/net/eth0/address"})
-    mac=mac:upper()
-    local compact=mac:gsub("[^0-9A-F]","")
-    local prefix=trim(info.NAME or info.BRAND or "SYS"):upper():gsub("[^A-Z0-9_%-]","")
+    local mac,mac_path=identity_mac()
+    local compact=mac:gsub(":","")
+    local prefix=trim(info.NAME)
+    if prefix=="" then prefix=trim(info.BRAND) end
+    prefix=prefix:upper():gsub("[^A-Z0-9_%-]","")
     if prefix=="" then prefix="SYS" end
-    local suffix=#compact>=4 and compact:sub(-4) or "UNKNOWN"
+    local device_id=compact~="" and prefix.."_"..compact or ""
     local ifname=mac_path:match("/net/([^/]+)/address$") or ""
     local model=friendly_model(raw_model,board)
     return {
         raw_model=raw_model,board=board,hostname=hostname,model=model,
         device_name="NRadio "..model,lan_mac=mac,identity_interface=ifname,
-        qiyou_device_id=prefix.."_"..suffix,qiyou_name=info.NAME or "",qiyou_brand=info.BRAND or ""
+        qiyou_device_id=device_id,qiyou_name=info.NAME or "",qiyou_brand=info.BRAND or ""
     }
 end
 function action_status()
@@ -67449,9 +69308,9 @@ qiyou_write_view() {
 html,body{width:100%!important;max-width:none!important;margin:0!important;background:#0b121d!important;overflow-x:hidden}.container.body-container:not(.visible-xs-block),.main,.main-content,#maincontent{width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;padding:0!important}.qy-wrap{width:100%;max-width:none;min-height:100vh;padding:34px 40px 42px;color:#eef8ff;background:radial-gradient(circle at 14% 8%,rgba(56,189,248,.18),transparent 30%),linear-gradient(135deg,#081522,#102b40 58%,#0a1420);box-sizing:border-box}.qy-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}.qy-title{font-size:32px;font-weight:900}.qy-sub{margin-top:8px;color:#b8d7ea;font-size:14px}.qy-pill{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(125,211,252,.36);border-radius:999px;padding:10px 15px;background:rgba(14,165,233,.14);font-weight:900}.qy-dot{width:9px;height:9px;border-radius:50%;background:#94a3b8;box-shadow:0 0 10px currentColor}.qy-dot.boosting{background:#22c55e;color:#22c55e}.qy-dot.running{background:#38bdf8;color:#38bdf8}.qy-dot.off{background:#f97316;color:#f97316}.qy-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin:22px 0 26px}.qy-card{border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:20px 22px;background:linear-gradient(145deg,rgba(255,255,255,.085),rgba(255,255,255,.035));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 36px rgba(0,0,0,.20)}.qy-label{color:#9ec6da;font-size:13px;font-weight:900}.qy-value{margin-top:10px;font-size:26px;font-weight:900;color:#fff;word-break:break-all}.qy-card.qy-device-card{border-color:rgba(34,197,94,.34);background:radial-gradient(circle at 12% 0%,rgba(34,197,94,.17),transparent 52%),linear-gradient(145deg,rgba(255,255,255,.095),rgba(255,255,255,.038))}.qy-card.qy-device-card .qy-value{color:#dcfce7}.qy-row{display:grid;grid-template-columns:240px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);color:#cfe7f5}.qy-k{color:#9ec6da;font-weight:900}.qy-v{font-weight:900;word-break:break-all}.qy-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}.qy-btn{border:1px solid rgba(125,211,252,.36);border-radius:10px;background:rgba(14,165,233,.17);color:#eef8ff;font-weight:900;padding:11px 18px;cursor:pointer}.qy-btn.danger{border-color:rgba(248,113,113,.48);background:rgba(239,68,68,.18)}.qy-note{margin-top:18px;color:#b8d7ea;line-height:1.7;font-size:13px}@media(max-width:1100px){.qy-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:900px){.qy-wrap{padding:24px 18px 30px}.qy-grid{grid-template-columns:1fr}.qy-row{grid-template-columns:1fr}.qy-head{align-items:flex-start;flex-direction:column}}
 /* NRadio QiYou premium visual finish */.qy-wrap{position:relative;overflow:hidden}.qy-wrap:before{content:"";position:absolute;left:34px;right:34px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(125,211,252,.68),rgba(34,197,94,.36),transparent);pointer-events:none}.qy-head,.qy-grid,.qy-card,.qy-actions,.qy-note{position:relative;z-index:1}.qy-title{text-shadow:0 1px 0 rgba(0,0,0,.32),0 0 24px rgba(56,189,248,.10)}.qy-sub{color:#c0d7e8}.qy-pill{box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 12px 26px rgba(2,8,23,.20);backdrop-filter:blur(10px) saturate(1.06);-webkit-backdrop-filter:blur(10px) saturate(1.06)}.qy-card{border-color:rgba(125,211,252,.20);background:radial-gradient(circle at 14% 0%,rgba(56,189,248,.12),transparent 44%),linear-gradient(145deg,rgba(255,255,255,.095),rgba(255,255,255,.038));box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 22px 42px rgba(0,0,0,.24)}.qy-card:hover{border-color:rgba(125,211,252,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 24px 46px rgba(0,0,0,.26)}.qy-label{color:#b9dff1}.qy-value{text-shadow:0 1px 0 rgba(0,0,0,.34)}.qy-row{border-bottom-color:rgba(255,255,255,.10)}.qy-btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 22px rgba(2,8,23,.18)}.qy-btn:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(56,189,248,.18),inset 0 1px 0 rgba(255,255,255,.08),0 10px 22px rgba(2,8,23,.18)}.qy-btn:hover{border-color:rgba(125,211,252,.56);background:linear-gradient(180deg,rgba(14,165,233,.24),rgba(14,165,233,.10))}.qy-btn.danger:hover{border-color:rgba(248,113,113,.66);background:linear-gradient(180deg,rgba(239,68,68,.26),rgba(239,68,68,.12))}.qy-head,.qy-grid,.qy-card,.qy-row,.qy-v,.qy-value{min-width:0;overflow-wrap:anywhere}.qy-card,.qy-pill,.qy-btn{backdrop-filter:saturate(1.04) blur(3px);-webkit-backdrop-filter:saturate(1.04) blur(3px)}@media(max-width:520px){.qy-title{font-size:26px}.qy-card{border-radius:13px}.qy-actions{align-items:stretch;flex-direction:column}.qy-btn{width:100%}}
 </style>
-<div class="qy-wrap"><div class="qy-head"><div><div class="qy-title">奇游联机宝</div><div class="qy-sub">显示当前路由器的真实机型、LAN MAC 与奇游设备 ID；绑定和选择游戏仍在奇游联机宝 App 内完成。</div></div><div class="qy-pill"><span id="qy-dot" class="qy-dot"></span><span id="qy-status">读取中</span></div></div><div class="qy-grid"><div class="qy-card qy-device-card"><div class="qy-label">设备名称</div><div id="qy-device-name" class="qy-value">-</div></div><div class="qy-card"><div class="qy-label">插件状态</div><div id="qy-main" class="qy-value">-</div></div><div class="qy-card"><div class="qy-label">实际代理连接</div><div id="qy-proxy-conn" class="qy-value">-</div></div><div class="qy-card"><div class="qy-label">云端连接</div><div id="qy-cloud-conn" class="qy-value">-</div></div></div><div class="qy-card"><div class="qy-row"><div class="qy-k">奇游设备 ID</div><div id="qy-device-id" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">LAN MAC / 识别接口</div><div id="qy-lan-mac" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">硬件型号 / 板型</div><div id="qy-model" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">主机名</div><div id="qy-hostname" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">安装返回</div><div id="qy-ret" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">qy_acc</div><div id="qy-acc" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">qy_mosq</div><div id="qy-mosq" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">qy_proxy</div><div id="qy-proxy" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">包信息</div><div id="qy-pkg" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">代理监听</div><div id="qy-listen" class="qy-v">-</div></div></div><div class="qy-actions"><button type="button" class="qy-btn" onclick="qyRefresh()">刷新状态</button><button type="button" class="qy-btn danger" onclick="qyUninstall()">卸载奇游联机宝</button></div><div class="qy-note"><strong>识别说明：</strong>奇游通用 SYS 包的设备 ID 由包前缀与本机 LAN MAC 后四位组成。若 App 显示的 ID 与本页不同，表示 App 发现的是另一台路由器或仍在使用旧绑定缓存。<br><strong>状态解释：</strong>BOOSTING 表示正在加速；RUNNING 表示插件在线但未开启加速；实际代理连接不是连接路由器的设备数。</div></div>
+<div class="qy-wrap"><div class="qy-head"><div><div class="qy-title">奇游联机宝</div><div class="qy-sub">显示当前路由器的机型、LAN MAC 与本机设备码；绑定和选择游戏在奇游联机宝 App 内完成。</div></div><div class="qy-pill"><span id="qy-dot" class="qy-dot"></span><span id="qy-status">读取中</span></div></div><div class="qy-grid"><div class="qy-card qy-device-card"><div class="qy-label">设备名称</div><div id="qy-device-name" class="qy-value">-</div></div><div class="qy-card"><div class="qy-label">插件状态</div><div id="qy-main" class="qy-value">-</div></div><div class="qy-card"><div class="qy-label">实际代理连接</div><div id="qy-proxy-conn" class="qy-value">-</div></div><div class="qy-card"><div class="qy-label">云端连接</div><div id="qy-cloud-conn" class="qy-value">-</div></div></div><div class="qy-card"><div class="qy-row"><div class="qy-k">本机设备码</div><div id="qy-device-id" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">LAN MAC / 识别接口</div><div id="qy-lan-mac" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">硬件型号 / 板型</div><div id="qy-model" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">主机名</div><div id="qy-hostname" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">安装返回</div><div id="qy-ret" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">qy_acc</div><div id="qy-acc" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">qy_mosq</div><div id="qy-mosq" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">qy_proxy</div><div id="qy-proxy" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">包信息</div><div id="qy-pkg" class="qy-v">-</div></div><div class="qy-row"><div class="qy-k">代理监听</div><div id="qy-listen" class="qy-v">-</div></div></div><div class="qy-actions"><button type="button" class="qy-btn" onclick="qyRefresh()">刷新状态</button><button type="button" class="qy-btn danger" onclick="qyUninstall()">卸载奇游联机宝</button></div><div class="qy-note"><strong>识别说明：</strong>本机设备码由包前缀和完整 LAN MAC 组成，用于区分路由器；MAC 不变时设备码保持不变。奇游 App 的绑定码以 App 实际显示为准。<br><strong>状态解释：</strong>BOOSTING 表示正在加速；RUNNING 表示插件在线但未开启加速；实际代理连接不是连接路由器的设备数。</div></div>
 <script>
-var qyBase='<%=url("nradioadv/system/qiyou")%>';var qyToken='<%=require("luci.dispatcher").context.authtoken%>';function qyText(id,text){var el=document.getElementById(id);if(el)el.textContent=text||'-';}function qyBool(v,p){return v?('运行中'+(p?' / '+p:'')):'未运行';}function qyApply(d){var st=d.status||'UNKNOWN';var dot=document.getElementById('qy-dot');qyText('qy-status',st);qyText('qy-device-name',d.device_name||'NRadio 未知机型');qyText('qy-device-id',d.qiyou_device_id||'-');qyText('qy-lan-mac',[d.lan_mac,d.identity_interface].filter(Boolean).join(' / ')||'-');qyText('qy-model',[d.raw_model,d.board].filter(Boolean).join(' / ')||'-');qyText('qy-hostname',d.hostname||'-');qyText('qy-main',st==='BOOSTING'?'正在加速':(st==='RUNNING'?'插件在线':st));qyText('qy-proxy-conn',String(d.proxy_conn||0));qyText('qy-cloud-conn',String(d.cloud_conn||0));qyText('qy-ret',d.ret||'-');qyText('qy-acc',qyBool(d.qy_acc,d.qy_acc_pid));qyText('qy-mosq',qyBool(d.qy_mosq,d.qy_mosq_pid));qyText('qy-proxy',qyBool(d.qy_proxy,d.qy_proxy_pid));qyText('qy-pkg',[d.mode,d.version,d.date].filter(Boolean).join(' / ')||'-');qyText('qy-listen',d.proxy_listen||'-');if(dot){dot.className='qy-dot '+(st==='BOOSTING'?'boosting':(st==='RUNNING'?'running':'off'));}}function qyRefresh(){var x=new XMLHttpRequest();x.open('GET',qyBase+'/status?_='+Date.now(),true);x.onreadystatechange=function(){if(x.readyState===4){try{qyApply(JSON.parse(x.responseText||'{}'));}catch(e){qyText('qy-status','读取失败');}}};x.send(null);}function qyUninstall(){if(!confirm('确认卸载奇游联机宝并移除应用商店入口吗？'))return;var x=new XMLHttpRequest();x.open('POST',qyBase+'/uninstall',true);x.onreadystatechange=function(){if(x.readyState===4)alert('已开始卸载，稍后刷新应用商店。');};x.setRequestHeader('Content-Type','application/x-www-form-urlencoded');x.send('token='+encodeURIComponent(qyToken));}qyRefresh();setInterval(qyRefresh,5000);
+var qyBase='<%=url("nradioadv/system/qiyou")%>';var qyToken='<%=require("luci.dispatcher").context.authtoken%>';function qyText(id,text){var el=document.getElementById(id);if(el)el.textContent=text||'-';}function qyBool(v,p){return v?('运行中'+(p?' / '+p:'')):'未运行';}function qyApply(d){var st=d.status||'UNKNOWN';var dot=document.getElementById('qy-dot');qyText('qy-status',st);qyText('qy-device-name',d.device_name||'NRadio 未知机型');qyText('qy-device-id',d.qiyou_device_id||'未获取有效 LAN MAC');qyText('qy-lan-mac',[d.lan_mac,d.identity_interface].filter(Boolean).join(' / ')||'-');qyText('qy-model',[d.raw_model,d.board].filter(Boolean).join(' / ')||'-');qyText('qy-hostname',d.hostname||'-');qyText('qy-main',st==='BOOSTING'?'正在加速':(st==='RUNNING'?'插件在线':st));qyText('qy-proxy-conn',String(d.proxy_conn||0));qyText('qy-cloud-conn',String(d.cloud_conn||0));qyText('qy-ret',d.ret||'-');qyText('qy-acc',qyBool(d.qy_acc,d.qy_acc_pid));qyText('qy-mosq',qyBool(d.qy_mosq,d.qy_mosq_pid));qyText('qy-proxy',qyBool(d.qy_proxy,d.qy_proxy_pid));qyText('qy-pkg',[d.mode,d.version,d.date].filter(Boolean).join(' / ')||'-');qyText('qy-listen',d.proxy_listen||'-');if(dot){dot.className='qy-dot '+(st==='BOOSTING'?'boosting':(st==='RUNNING'?'running':'off'));}}function qyRefresh(){var x=new XMLHttpRequest();x.open('GET',qyBase+'/status?_='+Date.now(),true);x.onreadystatechange=function(){if(x.readyState===4){try{qyApply(JSON.parse(x.responseText||'{}'));}catch(e){qyText('qy-status','读取失败');}}};x.send(null);}function qyUninstall(){if(!confirm('确认卸载奇游联机宝并移除应用商店入口吗？'))return;var x=new XMLHttpRequest();x.open('POST',qyBase+'/uninstall',true);x.onreadystatechange=function(){if(x.readyState===4)alert('已开始卸载，稍后刷新应用商店。');};x.setRequestHeader('Content-Type','application/x-www-form-urlencoded');x.send('token='+encodeURIComponent(qyToken));}qyRefresh();setInterval(qyRefresh,5000);
 </script>
 <script>
 function qyUninstall(){
@@ -67528,7 +69387,7 @@ qiyou_show_status() {
     log "qy_mosq: $(pidof qy_mosq 2>/dev/null || printf '-')"
     log "qy_proxy: $(pidof qy_proxy 2>/dev/null || printf '-')"
     log "设备名称: $QIYOU_IDENTITY_DEVICE_NAME"
-    log "奇游设备 ID: $QIYOU_IDENTITY_DEVICE_ID"
+    log "本机设备码: ${QIYOU_IDENTITY_DEVICE_ID:-未获取（没有有效的 LAN MAC）}"
     log "LAN MAC: ${QIYOU_IDENTITY_MAC:-未知} / ${QIYOU_IDENTITY_INTERFACE:-未知接口}"
     log "硬件型号: ${QIYOU_IDENTITY_RAW_MODEL:-未知} / ${QIYOU_IDENTITY_BOARD:-未知}"
     [ -f /tmp/qy/etc/PKG_INFO ] && cat /tmp/qy/etc/PKG_INFO || true
@@ -67539,7 +69398,7 @@ qiyou_refresh_identity_assets() {
     [ -f /etc/qy/qy_acc.sh ] || die "尚未安装奇游联机宝，无法刷新设备识别页面"
     qiyou_install_assets "刷新奇游设备识别与应用商店页面"
     qiyou_show_status
-    log "完成：奇游插件页已显示当前路由器的设备名称与设备 ID"
+    log "完成：奇游插件页已更新当前路由器的设备名称与完整设备码"
 }
 
 qiyou_uninstall_integrated() {
@@ -67819,13 +69678,13 @@ leigod_uninstall_integrated() {
 
 qiyou_integrated_menu() {
     while :; do
-        printf '\n奇游联机宝:\n'
-        printf '1. 安装奇游官方脚本并接入应用商店\n'
-        printf '2. 查看奇游状态\n'
-        printf '3. 卸载奇游联机宝\n'
-        printf '4. 刷新设备识别与插件页面\n'
-        printf '0. 返回游戏加速器\n'
-        printf '请选择 0、1、2、3 或 4: '
+        print_menu_header '3 / 游戏加速器 / 奇游'
+        print_menu_item 1 '安装奇游并接入应用商店'
+        print_menu_item 2 '查看奇游状态'
+        print_menu_item 3 '卸载奇游联机宝'
+        print_menu_item 4 '刷新设备识别与插件页面'
+        print_menu_item 0 '返回游戏加速器'
+        print_menu_prompt '0-4'
         read_category_choice
         case "$UI_READ_RESULT" in
             0) return 0 ;;
@@ -67855,13 +69714,13 @@ qiyou_integrated_menu() {
 
 leigod_integrated_menu() {
     while :; do
-        printf '\n雷神加速器:\n'
-        printf '1. 安装雷神官方脚本并接入应用商店\n'
-        printf '2. 检测已安装雷神并接入应用商店\n'
-        printf '3. 查看雷神状态\n'
-        printf '4. 卸载雷神加速器\n'
-        printf '0. 返回游戏加速器\n'
-        printf '请选择 0、1、2、3 或 4: '
+        print_menu_header '3 / 游戏加速器 / 雷神'
+        print_menu_item 1 '安装雷神并接入应用商店'
+        print_menu_item 2 '接入已安装的雷神'
+        print_menu_item 3 '查看雷神状态'
+        print_menu_item 4 '卸载雷神加速器'
+        print_menu_item 0 '返回游戏加速器'
+        print_menu_prompt '0-4'
         read_category_choice
         case "$UI_READ_RESULT" in
             0) return 0 ;;
@@ -67891,11 +69750,11 @@ leigod_integrated_menu() {
 
 game_accelerator_menu() {
     while :; do
-        printf '\n游戏加速器:\n'
-        printf '1. 奇游联机宝\n'
-        printf '2. 雷神加速器\n'
-        printf '0. 返回功能分类\n'
-        printf '请选择 0、1 或 2: '
+        print_menu_header '3 / 游戏加速器'
+        print_menu_item 1 '奇游联机宝'
+        print_menu_item 2 '雷神加速器'
+        print_menu_item 0 '返回功能分类'
+        print_menu_prompt '0-2'
         read_category_choice
         case "$UI_READ_RESULT" in
             0)
@@ -67919,11 +69778,12 @@ maintenance_test_menu() {
     while :; do
         submenu_feature=''
         if is_current_model_ak798; then
-            printf '\n设备维护与检测（AK68-798 轻量模式）:\n'
-            printf '1. 统一体检增强版\n'
-            printf '2. LuCI 首页 CPU 温度显示\n'
-            printf '3. 返回功能分类\n'
-            printf '请选择 0、1、2 或 3: '
+            CURRENT_HOME_TEMP_MENU_PATH='5 > 2'
+            print_menu_header '5 / 设备维护 · AK68-798'
+            print_menu_item 1 '统一体检增强版'
+            print_menu_item 2 'LuCI 首页 CPU 温度显示'
+            print_menu_item 3 '返回功能分类'
+            print_menu_prompt '0-3'
             read_category_choice
             case "$UI_READ_RESULT" in
                 0|3) return 0 ;;
@@ -67933,14 +69793,15 @@ maintenance_test_menu() {
             esac
         fi
         if is_current_model_c8_788; then
-            printf '\n设备维护与检测（C8-788 小容量模式）:\n'
-            printf '1. 统一体检增强版\n'
-            printf '2. NRadio_C8-688 / C8-788 / C2000MAX 风扇控制\n'
-            printf '3. 哈基米傻瓜分流助手\n'
-            printf '4. 哈基米依赖检查修复\n'
-            printf '5. LuCI 首页 CPU / 5G 温度切换（全部 NROS）\n'
-            printf '6. 返回功能分类\n'
-            printf '请选择 0、1、2、3、4、5 或 6: '
+            CURRENT_HOME_TEMP_MENU_PATH='5 > 5'
+            print_menu_header '5 / 设备维护 · C8-788'
+            print_menu_item 1 '统一体检增强版'
+            print_menu_item 2 '风扇控制（C8-688/788、C2000MAX）'
+            print_menu_item 3 '哈基米傻瓜分流助手'
+            print_menu_item 4 '哈基米依赖检查修复'
+            print_menu_item 5 '首页 CPU / 5G 温度切换'
+            print_menu_item 6 '返回功能分类'
+            print_menu_prompt '0-6'
             read_category_choice
             case "$UI_READ_RESULT" in
                 0|6) return 0 ;;
@@ -67956,50 +69817,50 @@ maintenance_test_menu() {
         fi
 
         maintenance_next_choice=1
-        printf '\n设备维护与检测:\n'
+        print_menu_header '5 / 设备维护'
         maintenance_health_choice=$maintenance_next_choice
-        printf '%s. 统一体检增强版\n' "$maintenance_health_choice"
+        print_menu_item "$maintenance_health_choice" '统一体检增强版'
         maintenance_next_choice=$((maintenance_next_choice + 1))
         maintenance_fan_choice=$maintenance_next_choice
-        printf '%s. NRadio_C8-688 / C8-788 / C2000MAX 风扇控制\n' "$maintenance_fan_choice"
+        print_menu_item "$maintenance_fan_choice" '风扇控制（C8-688/788、C2000MAX）'
         maintenance_next_choice=$((maintenance_next_choice + 1))
         maintenance_split_choice=$maintenance_next_choice
-        printf '%s. 哈基米傻瓜分流助手\n' "$maintenance_split_choice"
+        print_menu_item "$maintenance_split_choice" '哈基米傻瓜分流助手'
         maintenance_next_choice=$((maintenance_next_choice + 1))
         maintenance_emmc_choice=$maintenance_next_choice
-        printf '%s. eMMC 存储扩展\n' "$maintenance_emmc_choice"
+        print_menu_item "$maintenance_emmc_choice" 'eMMC 存储扩展'
         maintenance_next_choice=$((maintenance_next_choice + 1))
 
         maintenance_aggregation_choice=''
         if nradio_5g_aggregation_model_supported; then
             maintenance_aggregation_choice=$maintenance_next_choice
-            printf '%s. 5G聚合修复检查\n' "$maintenance_aggregation_choice"
+            print_menu_item "$maintenance_aggregation_choice" '5G 聚合修复检查'
             maintenance_next_choice=$((maintenance_next_choice + 1))
         fi
 
         maintenance_dependency_choice=$maintenance_next_choice
-        printf '%s. 哈基米依赖检查修复\n' "$maintenance_dependency_choice"
+        print_menu_item "$maintenance_dependency_choice" '哈基米依赖检查修复'
         maintenance_next_choice=$((maintenance_next_choice + 1))
         maintenance_toolbox_choice=$maintenance_next_choice
-        printf '%s. 封版工具箱\n' "$maintenance_toolbox_choice"
+        print_menu_item "$maintenance_toolbox_choice" '封版工具箱'
         maintenance_next_choice=$((maintenance_next_choice + 1))
         maintenance_operator_choice=$maintenance_next_choice
-        printf '%s. LuCI 运营商与卡名显示修复\n' "$maintenance_operator_choice"
+        print_menu_item "$maintenance_operator_choice" '运营商与卡名显示修复'
         maintenance_next_choice=$((maintenance_next_choice + 1))
         maintenance_temperature_choice=$maintenance_next_choice
-        printf '%s. LuCI 首页 CPU / 5G 温度切换（全部 NROS）\n' "$maintenance_temperature_choice"
+        print_menu_item "$maintenance_temperature_choice" '首页 CPU / 5G 温度切换'
         maintenance_next_choice=$((maintenance_next_choice + 1))
 
         maintenance_monitoring_choice=''
         if nradio_cpe_monitoring_model_supported; then
             maintenance_monitoring_choice=$maintenance_next_choice
-            printf '%s. 5G 连接监听（C5800-650 / C5800-688 / C2000MAX）\n' "$maintenance_monitoring_choice"
+            print_menu_item "$maintenance_monitoring_choice" '5G 连接监听'
             maintenance_next_choice=$((maintenance_next_choice + 1))
         fi
 
         maintenance_return_choice=$maintenance_next_choice
-        printf '%s. 返回功能分类\n' "$maintenance_return_choice"
-        printf '请选择 0-%s: ' "$maintenance_return_choice"
+        print_menu_item "$maintenance_return_choice" '返回功能分类'
+        print_menu_prompt "0-$maintenance_return_choice"
         read_category_choice
         if [ "$UI_READ_RESULT" = '0' ] || [ "$UI_READ_RESULT" = "$maintenance_return_choice" ]; then
             return 0
@@ -68021,6 +69882,7 @@ maintenance_test_menu() {
             submenu_feature='26'
         elif [ "$UI_READ_RESULT" = "$maintenance_temperature_choice" ]; then
             submenu_feature='27'
+            CURRENT_HOME_TEMP_MENU_PATH="5 > $maintenance_temperature_choice"
         elif [ -n "$maintenance_monitoring_choice" ] && [ "$UI_READ_RESULT" = "$maintenance_monitoring_choice" ]; then
             submenu_feature='29'
             CURRENT_CPE_MONITORING_MENU_PATH="5 > $maintenance_monitoring_choice"
@@ -68037,13 +69899,10 @@ main_menu() {
     require_root
     acquire_script_lock
     require_startup_disclaimer_acceptance_once
-printf '%s\n' "$SCRIPT_TITLE"
-printf '%s\n' "$SCRIPT_SIGNATURE"
-printf '%s\n' "$SCRIPT_MODEL_NOTICE"
-    printf '%s\n' "$SCRIPT_SCOPE_NOTICE"
     require_supported_nradio_model_environment
     log_nradio_oem_environment_hint
     require_nradio_appcenter_startup_environment
+    print_main_menu_header
 
     if [ -n "$choice" ]; then
         MENU_ACTION_COMPLETED='0'
@@ -68086,28 +69945,27 @@ printf '%s\n' "$SCRIPT_MODEL_NOTICE"
     fi
 
     while :; do
-        printf '%s\n' "$SCRIPT_SUPPORT_NOTICE"
-        printf '请选择功能分类:\n'
+        print_menu_header '功能分类'
         if is_current_model_ak798; then
-            printf '4. 应用商店与页面美化\n'
-            printf '5. 设备维护与检测\n'
-            printf '0. 退出\n'
-            printf '请输入 0、4 或 5: '
+            print_menu_item 4 '应用商店与页面美化'
+            print_menu_item 5 '设备维护与检测'
+            print_menu_item 0 '退出'
+            print_menu_prompt '0 / 4 / 5'
         elif is_current_model_c8_788; then
-            printf '1. 常用插件安装（仅哈基米）\n'
-            printf '3. 游戏加速器\n'
-            printf '4. 应用商店与页面美化\n'
-            printf '5. 设备维护与检测\n'
-            printf '0. 退出\n'
-            printf '请输入 0、1、3、4 或 5: '
+            print_menu_item 1 '常用插件安装（仅哈基米）'
+            print_menu_item 3 '游戏加速器'
+            print_menu_item 4 '应用商店与页面美化'
+            print_menu_item 5 '设备维护与检测'
+            print_menu_item 0 '退出'
+            print_menu_prompt '0 / 1 / 3 / 4 / 5'
         else
-            printf '1. 常用插件安装\n'
-            printf '2. VPN / 组网 / 路由向导\n'
-            printf '3. 游戏加速器\n'
-            printf '4. 应用商店与页面美化\n'
-            printf '5. 设备维护与检测\n'
-            printf '0. 退出\n'
-            printf '请输入 0、1、2、3、4 或 5: '
+            print_menu_item 1 '常用插件安装'
+            print_menu_item 2 'VPN / 组网 / 路由向导'
+            print_menu_item 3 '游戏加速器'
+            print_menu_item 4 '应用商店与页面美化'
+            print_menu_item 5 '设备维护与检测'
+            print_menu_item 0 '退出'
+            print_menu_prompt '0-5'
         fi
         read_category_choice
         MENU_ACTION_COMPLETED='0'

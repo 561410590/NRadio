@@ -33,14 +33,20 @@ jobs:
           test -f CONTRIBUTING.md
           test -f SECURITY.md
 
-      - name: Verify V3.0.6 script state
+      - name: Verify V3.0.7 script state
         run: |
-          grep -q 'SCRIPT_VERSION="V3.0.6"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'SCRIPT_RELEASE_DATE="2026-09-03"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_VERSION="V3.0.7"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'SCRIPT_RELEASE_DATE="2026-09-07"' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'CURRENT_DETECTED_NROS_REVISION=""' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRADIO_OPERATOR_FIX_VERSION="20260828-1"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'NRADIO_HOME_TEMP_VERSION="20260827-3"' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q 'NRADIO_CPEOPT_VERSION="20260903-4"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'NRADIO_HOME_TEMP_VERSION="20260906-3"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'NRADIO_CPEOPT_VERSION="20260906-1"' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'https://gh-proxy.com/https://' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '^c2000_storage_swap_model_supported()' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'NRadio_C2000MAX|NRadio_C2000Ultra) return 0' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q 'dhcp.@dnsmasq\[0\].localuse=1' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '本机与局域网普通查询统一经 AdGuardHome' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '20260908-1' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C8-788' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'HC-WT9302' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'HCMT7987-NAND' 00-current/ssh-nradio-plugin-installer.sh
@@ -51,14 +57,15 @@ jobs:
           grep -q 'NRadio AI runtime compatibility v3' 00-current/ssh-nradio-plugin-installer.sh
           grep -q "'map,firmware,cache'" 00-current/ssh-nradio-plugin-installer.sh
           grep -q '^install_nradio_cpe_connection_monitoring()' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '5G 连接监听（C5800-650 / C5800-688 / C2000MAX）' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '5G 连接监听（C5800-688，已集成智能频段）' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q '5G 连接监听（C5800-650 / C2000MAX）' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_AK68-798' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'HC-WT9194' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'HCMT7987-S256' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'NRadio_C2000Ultra' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'HC-WT9500' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'C2000Pro / AK68-798 轻量应用商店' 00-current/ssh-nradio-plugin-installer.sh
-          grep -q '设备维护与检测（AK68-798 轻量模式）' 00-current/ssh-nradio-plugin-installer.sh
+          grep -q "print_menu_header '5 / 设备维护 · AK68-798'" 00-current/ssh-nradio-plugin-installer.sh
           grep -q '^install_openwrt_luci_8080()' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'OpenWrt 原版 LuCI（8080）安装或更新' 00-current/ssh-nradio-plugin-installer.sh
           grep -q 'SIM 状态已变化或无法确认' 00-current/ssh-nradio-plugin-installer.sh
@@ -150,9 +157,14 @@ jobs:
           grep -q 'RETRY_WINDOW=86400' /tmp/nradio-smart-band.sh
           grep -q 'PREFERENCE_CONFIRM_SAMPLES=2' /tmp/nradio-smart-band.sh
           grep -q 'PREFERENCE_MAX_DAILY=2' /tmp/nradio-smart-band.sh
+          grep -q 'SMART_BAND_VERSION="v7"' /tmp/nradio-smart-band.sh
+          grep -q 'manual|--manual) EXEC_MODE="apply"; MANUAL_RUN=1' /tmp/nradio-smart-band.sh
+          grep -q '\[ "$MANUAL_RUN" = "1" \] && exit 3' /tmp/nradio-smart-band.sh
           grep -q 'IPv4健康，保持不切换' /tmp/nradio-smart-band.sh
-          grep -q 'process "cpe" "蜂窝接口1"' /tmp/nradio-smart-band.sh
-          grep -q 'process "cpe1" "蜂窝接口2"' /tmp/nradio-smart-band.sh
+          grep -q 'for smart_band_iface in cpe1 cpe' /tmp/nradio-smart-band.sh
+          grep -q 'smart_band_desc="蜂窝接口2"' /tmp/nradio-smart-band.sh
+          grep -q 'smart_band_desc="蜂窝接口1"' /tmp/nradio-smart-band.sh
+          grep -q 'process "$smart_band_iface" "$smart_band_desc"' /tmp/nradio-smart-band.sh
           sh -n /tmp/nradio-smart-band.sh
 
       - name: Verify embedded 5G connection package
@@ -204,15 +216,19 @@ jobs:
           sh -n /tmp/nradio-cpeopt/etc/init.d/nradio-cpe-monitor
           grep -q '/var/log/nradio-cpe-dial.log' /tmp/nradio-cpeopt/usr/bin/cpetools.sh
           grep -q '/var/log/nradio-cpe-dial.log' /tmp/nradio-cpeopt/usr/bin/cpesel.sh
-          grep -q 'version = "20260903-4"' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
-          grep -q 'data-nradio-cpeopt="20260903-4"' /tmp/nradio-cpeopt/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm
+          grep -q 'version = "20260906-1"' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
+          grep -q 'data-nradio-cpeopt="20260906-1"' /tmp/nradio-cpeopt/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm
           grep -q 'network:find("4G", 1, true)' /tmp/nradio-cpeopt/usr/libexec/nradio-cpe-monitor.lua
           grep -q 'name.indexOf('\''4G'\'')' /tmp/nradio-cpeopt/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm
           grep -q 'action_smart_status' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
           grep -q 'action_smart_apply' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
           grep -q 'action_smart_disable' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
           grep -q 'action_smart_enable' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
+          grep -q 'smart_band_cron_state' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
+          grep -q 'start_smart_band_task' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
+          grep -q '\["WOULD-RECOVER"\] = 60' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
           grep -q 'id="nr5g-smart-toggle"' /tmp/nradio-cpeopt/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm
+          grep -q 'id="nr5g-smart-overview"' /tmp/nradio-cpeopt/usr/lib/lua/luci/view/nradio_adv/cpeopt.htm
           grep -q '<svg' /tmp/nradio-cpeopt/www/luci-static/nradio/images/icon/cpeopt.svg
           grep -q 'HC-WT9120' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
           grep -q 'HC-WT9126' /tmp/nradio-cpeopt/usr/lib/lua/luci/controller/nradio_adv/cpeopt.lua
@@ -220,17 +236,16 @@ jobs:
 
       - name: Verify support page state
         run: |
-          grep -q '<title>NRadio 插件脚本 V3.0.6 | 支持页</title>' 40-server-web/mayebano-support/index.html
-          grep -q 'aria-label="当前版本">V3.0.6' 40-server-web/mayebano-support/index.html
-          grep -q 'V3.0.6 / 2026-09-03' 40-server-web/mayebano-support/index.html
+          grep -q '<title>NRadio 插件脚本 V3.0.7 | 支持页</title>' 40-server-web/mayebano-support/index.html
+          grep -q 'aria-label="当前版本">V3.0.7' 40-server-web/mayebano-support/index.html
+          grep -q 'V3.0.7 / 2026-09-07' 40-server-web/mayebano-support/index.html
           grep -q '10 款 NRadio 机型' 40-server-web/mayebano-support/index.html
           grep -q '5G 连接监听' 40-server-web/mayebano-support/index.html
-          grep -q '真正后台持续记录' 40-server-web/mayebano-support/index.html
-          grep -q '频段识别修复' 40-server-web/mayebano-support/index.html
-          grep -q '智能频段能力整合' 40-server-web/mayebano-support/index.html
-          grep -q '系统管理模式' 40-server-web/mayebano-support/index.html
-          grep -q '设备维护菜单整合' 40-server-web/mayebano-support/index.html
-          grep -q '去除重复失败校验' 40-server-web/mayebano-support/index.html
+          grep -q 'GitHub 下载加速' 40-server-web/mayebano-support/index.html
+          grep -q 'SD 卡与 Swap 适配' 40-server-web/mayebano-support/index.html
+          grep -q '安装后同步 DNS 设置' 40-server-web/mayebano-support/index.html
+          grep -q '进度与断点续传' 40-server-web/mayebano-support/index.html
+          grep -q '5800 双线路页面' 40-server-web/mayebano-support/index.html
           grep -q 'href="/ssh-nradio-plugin-installer.sh"' 40-server-web/mayebano-support/index.html
           grep -q 'MT5700 WebUI V3.0.0' 40-server-web/mayebano-support/index.html
           ! grep -q '<div class="step-index">04</div>' 40-server-web/mayebano-support/index.html
@@ -255,7 +270,8 @@ jobs:
           grep -q 'ak68-798-backup-upgrade-menu.png' 40-server-web/mayebano-support/index.html
           grep -q 'ak68-798-backup-restore-page.png' 40-server-web/mayebano-support/index.html
           grep -q 'NRadio_C2000Ultra' 40-server-web/mayebano-support/index.html
-          grep -q 'HC-WT9500 · 通用功能已适配' 40-server-web/mayebano-support/index.html
+          grep -q 'HC-WT9500 · SD 卡检测 / Swap 扩容' 40-server-web/mayebano-support/index.html
+          ! grep -q 'class="ultra-support"' 40-server-web/mayebano-support/index.html
           grep -q 'NRadio_N5000' 40-server-web/mayebano-support/index.html
           grep -q 'NRadio_AK68-798' 40-server-web/mayebano-support/index.html
           grep -q 'HC-WT9194 / HCMT7987-S256' 40-server-web/mayebano-support/index.html
@@ -276,7 +292,7 @@ jobs:
           grep -q 'V2.6.0' 40-server-web/mayebano-support/index.html
           grep -q 'V2.5.0' 40-server-web/mayebano-support/index.html
           grep -q 'PicoClaw / 鲲鹏小龙虾' 40-server-web/mayebano-support/index.html
-          grep -q '下载与校验以 GitHub Release 页面为准' 40-server-web/mayebano-support/index.html
+          grep -q 'V3.0.7 正式版 / 2026-09-07' 40-server-web/mayebano-support/index.html
           ! grep -q 'ChatGPT 会员' 40-server-web/mayebano-support/index.html
           grep -q '动态 Swap' 40-server-web/mayebano-support/index.html
           grep -q '/_vercel/insights/script.js' 40-server-web/mayebano-support/index.html
@@ -401,8 +417,8 @@ jobs:
 
       - name: Verify checksum record
         run: |
-          grep -q 'NRadio V3.0.6 release checksums' CHECKSUMS.txt
-          grep -q 'Generated from local file contents on 2026-09-03' CHECKSUMS.txt
+          grep -q 'NRadio V3.0.7 release checksums' CHECKSUMS.txt
+          grep -q 'Generated from local file contents on 2026-09-08' CHECKSUMS.txt
           ! grep -q '00-current/nradio-smart-band.sh' CHECKSUMS.txt
           records=0
           main_seen=0
@@ -444,9 +460,11 @@ jobs:
         run: |
           grep -q '## Mesh组网插件 1.0.14' README.md
           grep -q '## NRadio Mesh 1.0.14 - 2026-09-02' CHANGELOG.md
-          grep -q '当前本地版本：`V3.0.6`' README.md
-          grep -q '当前公网正式版本：`V3.0.6`' README.md
+          grep -q '当前本地版本：`V3.0.7`' README.md
+          grep -q '当前公网正式版本：`V3.0.7`' README.md
+          grep -q '## V3.0.7 更新' README.md
           grep -q '## V3.0.6 更新' README.md
+          grep -q '## V3.0.7 - 2026-09-07（正式发布）' CHANGELOG.md
           grep -q '## V3.0.6 - 2026-09-03（正式发布）' CHANGELOG.md
           grep -q '## V3.0.5 更新' README.md
           grep -q '## V3.0.0 更新' README.md

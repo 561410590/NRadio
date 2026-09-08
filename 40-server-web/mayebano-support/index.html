@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="description" content="NRadio 官方 NROS SSH 插件脚本 V3.0.6，5G 连接监听改为后台持续记录，智能频段管理并入 LuCI 页面，并修复 4G 频段识别。">
+    <meta name="description" content="NRadio 官方 NROS SSH 插件脚本 V3.0.7，新增 GitHub 下载加速，完善 C2000Ultra SD 卡检测与 Swap 扩容，同步优化 AdGuardHome 安装设置、应用商店及 MT5700 双线路页面。">
     <meta name="robots" content="index,follow">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="color-scheme" content="light">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="NRadio 插件工具 V3.0.6">
-    <meta property="og:description" content="NRadio 官方 NROS SSH 菜单脚本，本地支持 10 款机型，包含 C2000 Ultra、AK68-798、C8-788、MT5700 WebUI、轻量应用商店和设备维护。">
+    <meta property="og:title" content="NRadio 插件工具 V3.0.7">
+    <meta property="og:description" content="V3.0.7 / 2026-09-07：支持 10 款机型，C2000Ultra 新增 SD 卡检测、Swap 创建与扩容、应用商店状态显示；GitHub 下载接入 gh-proxy 优先与官方回退。">
     <meta name="theme-color" content="#fff1f2">
-    <title>NRadio 插件脚本 V3.0.6 | 支持页</title>
+    <title>NRadio 插件脚本 V3.0.7 | 支持页</title>
     <style>
         /* 
          * ============================================================
@@ -714,7 +714,7 @@
             <a href="#compatibility" class="nav-link">适配列表</a>
             <a href="#history" class="nav-link">演进历史</a>
             <a href="#donate" class="nav-link">打赏支持</a>
-            <div class="nav-v-info" aria-label="当前版本">V3.0.6</div>
+            <div class="nav-v-info" aria-label="当前版本">V3.0.7</div>
         </nav>
     </div>
 
@@ -731,39 +731,42 @@
                     <a href="https://github.com/561410590/ssh-nradio-plugin-installer" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" class="btn btn-outline">GitHub 开源</a>
                 </div>
                 <div class="badge-list">
-                    <div class="badge-item">V3.0.6 / 2026-09-03</div>
+                    <div class="badge-item">V3.0.7 / 2026-09-07</div>
+                    <div class="badge-item">GitHub 下载加速</div>
                     <div class="badge-item">MT5700 WebUI V3.0.0</div>
                     <div class="badge-item">5G 连接监听</div>
                     <div class="badge-item">智能频段 v7</div>
                     <div class="badge-item">C8-788 小存储版</div>
                     <div class="badge-item">AK68-798 轻量适配</div>
-                    <div class="badge-item">C2000 Ultra 通用适配</div>
+                    <div class="badge-item">C2000Ultra · SD 卡 / Swap</div>
                 </div>
                 <div class="release-panel" aria-label="当前版本信息">
-                    <div class="release-stat"><span>Release version</span><strong>V3.0.6</strong></div>
-                    <div class="release-stat"><span>Build date</span><strong>2026-09-03</strong></div>
+                    <div class="release-stat"><span>Script version</span><strong>V3.0.7</strong></div>
+                    <div class="release-stat"><span>Build date</span><strong>2026-09-07</strong></div>
                     <div class="release-stat"><span>Delivery</span><strong>单一总脚本</strong></div>
                     <div class="release-stat"><span>Compatibility</span><strong>10 款 NRadio 机型</strong></div>
                 </div>
-                <p class="build-notice">V3.0.6 / 2026-09-03。下载与校验以 GitHub Release 页面为准。</p>
+                <p class="build-notice">V3.0.7 正式版 / 2026-09-07。下载与校验信息以 GitHub Release 页面为准。</p>
             </div>
         </section>
 
         <section class="release-notes" id="release" aria-labelledby="release-title">
             <div class="release-notes-head">
                 <div>
-                    <p class="release-kicker">V3.0.6 · 2026-09-03</p>
-                    <h2 id="release-title">5G 后台监听与智能频段一体化更新</h2>
+                    <p class="release-kicker">V3.0.7 · 2026-09-07</p>
+                    <h2 id="release-title">下载加速与 C2000Ultra 存储适配</h2>
                 </div>
-                <div class="release-date-chip">2026-09-03</div>
+                <div class="release-date-chip">2026-09-07</div>
             </div>
             <div class="fix-grid">
-                <article class="fix-card"><span>10 秒</span><strong>真正后台持续记录</strong><p>连接监听改为路由器常驻服务，每 10 秒采集线路、网络、频段及基站变化；关闭 LuCI 页面后仍继续记录，重新打开即可查看真实切换时间线。</p></article>
-                <article class="fix-card"><span>4G / 5G</span><strong>频段识别修复</strong><p>按当前网络类型区分频段前缀：4G 显示 B 频段，5G 显示 N 频段，避免 LTE 频段被误标为 NR。</p></article>
-                <article class="fix-card"><span>LuCI</span><strong>智能频段能力整合</strong><p>状态、只读预览、立即执行和运行日志全部并入 5G 连接监听页面；删除重复子菜单，安装与卸载统一跟随监听组件生命周期。</p></article>
-                <article class="fix-card"><span>可逆启停</span><strong>系统管理模式</strong><p>C5800-688 可在页面停用智能频段，把频段选择交还系统；停用后可直接重新启用，无需重装，连接监听始终保持运行。</p></article>
-                <article class="fix-card"><span>连续编号</span><strong>设备维护菜单整合</strong><p>菜单按机型连续编号、不留空号；C5800-650、C5800-688 与 C2000MAX 保留 5G 连接监听支持，智能频段仅向 C5800-688 开放。</p></article>
-                <article class="fix-card"><span>安装体验</span><strong>去除重复失败校验</strong><p>删除安装完成后的重复终验，只保留实际安装、服务启动、LuCI 刷新和明确错误；页面按钮改为稳定网格布局，窄屏不再拥挤错位。</p></article>
+                <article class="fix-card"><span>gh-proxy</span><strong>GitHub 下载加速</strong><p>GitHub 下载优先使用 gh-proxy.com，加速失败自动回退官方地址；覆盖哈基米、OpenList、EasyTier、MT5700 与 WebSSH 等安装资源。</p></article>
+                <article class="fix-card"><span>C2000Ultra</span><strong>SD 卡与 Swap 适配</strong><p>HC-WT9500 接入 SD 卡检测与 Swap 管理；新建默认 512 MiB，可扩容至 2048 MiB，应用商店同步显示实际总量与使用量。</p></article>
+                <article class="fix-card"><span>AdGuardHome</span><strong>安装后同步 DNS 设置</strong><p>与哈基米联用时，统一路由器本机和局域网普通查询的 AdGuardHome DNS 链，保留域名专用上游；按实际配置变化重启对应服务。</p></article>
+                <article class="fix-card"><span>下载体验</span><strong>进度与断点续传</strong><p>下载进度取自实际传输，结合断点续传与备用地址回退；终端菜单和提示同步适配手机操作，减少重复等待。</p></article>
+                <article class="fix-card"><span>MT5700 WebUI</span><strong>5800 双线路页面</strong><p>C5800-650 / C5800-688 检测到双线路时并列展示信号，详情可切换线路，AT 连接与计划独立管理；插件安装登记仅更新自身条目。</p></article>
+                <article class="fix-card"><span>应用商店 V3</span><strong>卡片与弹窗优化</strong><p>应用卡片等高排列、操作按钮对齐，手机按钮更易点击；弹窗随可用高度伸展，精简顶部空白，统一插件名称和状态展示。</p></article>
+                <article class="fix-card"><span>LuCI / 温度</span><strong>系统总览与温度切换</strong><p>完善 8080 原生 LuCI 登录与系统总览，隔离主题设置；支持机型的 CPU / 5G 温度切换即时刷新，并记住所选温源。</p></article>
+                <article class="fix-card"><span>5G 连接监听</span><strong>记录与任务状态完善</strong><p>补齐事件写入失败后的记录和自动、手动任务结果，增加频段停留筛选；支持 C5800-650 / C5800-688 / C2000MAX，智能频段仅向 C5800-688 开放。</p></article>
             </div>
         </section>
 
@@ -928,7 +931,7 @@
             <div class="container">
                 <div class="guide-header">
                     <h2 style="color:white;">官方机型适配矩阵</h2>
-                    <p style="color:rgba(255,255,255,0.6); margin-top:15px; font-weight:800; font-size:1.1rem;">已适配机型可用；“即将支持”机型暂未开放</p>
+                    <p style="color:rgba(255,255,255,0.6); margin-top:15px; font-weight:800; font-size:1.1rem;">V3.0.7 已识别 10 款机型，功能按机型开放</p>
                 </div>
                 <div class="device-grid">
                     <div class="device-card"><strong>NRadio_C8-688</strong><span>旗舰性能之选</span></div>
@@ -940,7 +943,7 @@
                     <div class="device-card"><strong>NRadio_C2000MAX</strong><span>超大存储旗舰</span></div>
                     <div class="device-card"><strong>NRadio_C2000Pro</strong><span>轻量有限兼容</span></div>
                     <div class="device-card"><strong>NRadio_AK68-798</strong><span>16 MiB NOR · SSH 配置恢复 TCP 2222</span></div>
-                    <div class="device-card"><strong>NRadio_C2000Ultra</strong><span>HC-WT9500 · 通用功能已适配</span></div>
+                    <div class="device-card"><strong>NRadio_C2000Ultra</strong><span>HC-WT9500 · SD 卡检测 / Swap 扩容</span></div>
                     <div class="device-card is-coming"><strong>NRadio_N5000</strong><span>即将支持 · 暂未适配</span></div>
                 </div>
                 <p class="device-footer-text">“即将支持”机型暂未加入总脚本，请等待适配完成。</p>
@@ -952,9 +955,10 @@
                 <h2>版本演进档案</h2>
             </div>
             <div class="history-grid" id="historyGrid">
-                <div class="v-card is-latest"><span class="v-badge">LATEST</span><h5>V3.0.6 · 2026-09-03</h5><p>5G 连接监听改为后台常驻记录，修复 4G 频段误标；智能频段状态、预览、执行、日志及可逆启停统一并入 LuCI 监听页面。</p></div>
+                <div class="v-card is-latest"><span class="v-badge">LATEST</span><h5>V3.0.7 · 2026-09-07</h5><p>GitHub 下载接入 gh-proxy 优先与官方回退；C2000Ultra 补齐 SD 卡检测、Swap 扩容与状态显示，同步优化 AdGuardHome 安装设置、MT5700 双线路页面及应用商店体验。</p></div>
+                <div class="v-card"><span class="v-badge">V3.0.6</span><h5>2026-09-03 · 5G 后台监听</h5><p>5G 连接监听改为后台常驻记录，修复 4G 频段误标；智能频段状态、预览、执行、日志及可逆启停统一并入 LuCI 监听页面。</p></div>
                 <div class="v-card"><span class="v-badge">V3.0.5</span><h5>2026-09-02 · 机型适配与可靠性更新</h5><p>新增 C2000 Ultra（HC-WT9500）机型适配；保留 AK68-798 轻量应用商店、首页 CPU 温度入口、SSH 2222 配置恢复教程及全量可靠性修复。</p></div>
-                <div class="v-card"><span class="v-badge">V2.9.9</span><h5>2026-08-20 · 当前公开正式版</h5><p>兼容 NROS 2.2.12 官方运营商卡名，固件原生值优先、旧固件精确 ICCID 映射回退；修复 C2000MAX 系统状态默认折叠导致 Swap 指标不可见。</p></div>
+                <div class="v-card"><span class="v-badge">V2.9.9</span><h5>2026-08-20 · 卡名与状态显示</h5><p>兼容 NROS 2.2.12 官方运营商卡名，固件原生值优先、旧固件精确 ICCID 映射回退；修复 C2000MAX 系统状态默认折叠导致 Swap 指标不可见。</p></div>
                 <div class="v-card"><span class="v-badge">V2.9.8</span><h5>可靠性集中修复</h5><p>集中修复 OpenVPN DNS 清理、C2000Pro Web SSH、AdGuardHome 安全卸载、异步卸载陈旧状态与全局锁；Docker 加入系统文件清单和旧残留比对清理，同时增强 wget 后备、终端回显恢复与诊断凭据脱敏。</p></div>
                 <div class="v-card"><span class="v-badge">V2.9.5</span><h5>应用商店 V3 稳定版</h5><p>应用商店 V3 增加搜索、状态徽标、双存储显示与多机型兼容；修复共享接入，移除应用安装固定哈希检查和持久备份写入，并修复 NRadio 定制固件的 OpenClash 依赖安装。</p></div>
                 <div class="v-card"><span class="v-badge">V2.8.5</span><h5>智能频段单文件</h5><p>智能频段 v5 源码加入总脚本，新增 <code>5 &gt; 8</code> 中文管理入口、状态检查、只读模拟、立即执行、日志与卸载；移动/广电 N28/N41 改为联网健康优先。</p></div>
@@ -1013,7 +1017,7 @@
                     <p>本项目用于增强 NRadio 原厂系统功能，并尽量减少对原厂文件和用户配置的影响。</p>
                     <p>代码公开，可查看脚本内容后再决定是否使用。</p>
                     <div class="data-card" style="background:white; border-style:dashed; margin-top: 30px;">
-                        <p style="font-weight:1000; font-size:16px; margin-bottom:0; color:var(--rose-700); text-align: center;">当前页面：V3.0.6｜下载与校验以 GitHub Release 为准</p>
+                        <p style="font-weight:1000; font-size:16px; margin-bottom:0; color:var(--rose-700); text-align: center;">当前页面：V3.0.7 / 2026-09-07｜正式版</p>
                     </div>
                 </div>
             </div>
@@ -1024,7 +1028,7 @@
 
     <footer>
         <span class="footer-logo">NRadio Plugin Toolkit</span>
-        <p class="footer-pause">总脚本和支持页面版本：V3.0.6。下载与校验以 GitHub Release 页面为准。</p>
+        <p class="footer-pause">支持页面同步总脚本 V3.0.7 / 2026-09-07 正式版。下载与校验信息以 GitHub Release 页面为准。</p>
         <p class="footer-copy">Copyright &copy; 2026 NRadio Script Developer Team. <br>Crafted & Designed by MaYe. All Rights Reserved.</p>
     </footer>
 

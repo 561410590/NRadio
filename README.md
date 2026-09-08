@@ -2,15 +2,15 @@
 
 NRadio 官方 NROS 路由器使用的 SSH 菜单脚本。
 
-- 当前本地版本：`V3.0.6`（2026-09-03）
-- 当前公网正式版本：`V3.0.6`，下载与校验以 GitHub Releases 页面为准
-- 当前状态：`V3.0.6` 总脚本、图文支持页、仓库资料与 Repository checks 已同步发布。
+- 当前本地版本：`V3.0.7`（2026-09-07）
+- 当前公网正式版本：`V3.0.7`，下载与校验以 GitHub Releases 页面为准
+- 当前状态：`V3.0.7` 总脚本、图文支持页、仓库资料与 Repository checks 已同步发布。
 - 公网页：[https://nradio.mayebano.shop/](https://nradio.mayebano.shop/)
 - GitHub Releases：[发布页](https://github.com/561410590/ssh-nradio-plugin-installer/releases)
 
 ## 当前维护状态
 
-总脚本、图文支持页、仓库资料与检查规则使用 `V3.0.6`。正式标签与 Release 为 `v3.0.6`。
+总脚本、图文支持页、仓库资料与检查规则使用 `V3.0.7`。正式标签与 Release 为 `v3.0.7`。
 
 ## Mesh组网插件 1.0.14
 
@@ -25,7 +25,7 @@ NRadio 官方 NROS 路由器使用的 SSH 菜单脚本。
 - VPN 与双线路联动：启停、VPN 重连和后台检查同步站点路由的 mwan3 排除集合；失败显示诊断，VPN-only 恢复保留限速队列。
 - C8-788：依据 `HC-WT9302 / HCMT7987-NAND / NROS 2.2.12.n0.c1` 实机输出适配 `eth3` 蜂窝出口及原厂双栈全宽 mark 分类顺序。
 - 合并 IPv6 多地址跟踪、减少队列重建、未保存输入保护和请求超时处理。本地回归与安装包检查通过；实机 VPN 连通性和限速数值需按设备验收。
-- 本节是独立 QoS 插件更新，当前本地总脚本版本为 `V3.0.6`。
+- 本节是独立 QoS 插件更新，当前本地总脚本版本为 `V3.0.7`。
 
 ## 适用设备
 
@@ -42,7 +42,7 @@ NRadio 官方 NROS 路由器使用的 SSH 菜单脚本。
 | `NRadio_C2000MAX` | `HC-WT9303` | NROS 2.x |
 | `NRadio_C2000Pro` | `UDX710` / `RG200U-CN` | NROS 2.x（有限兼容） |
 | `NRadio_AK68-798` | `HC-WT9194` / `HCMT7987-S256` | NROS 2.x（16 MiB NOR 轻量模式） |
-| `NRadio_C2000Ultra` | `HC-WT9500` / `HCMT7987-SNSD` | NROS 2.x（通用功能） |
+| `NRadio_C2000Ultra` | `HC-WT9500` / `HCMT7987-SNSD` | NROS 2.x（通用功能、SD 卡检测与 Swap） |
 
 支持页已预告 `NRadio_N5000`，当前为“即将支持、暂未适配”：不属于上表的当前支持范围，总脚本不会识别或放行，请等待正式适配公告。
 
@@ -74,11 +74,19 @@ sh ssh-nradio-plugin-installer.sh
 
 | 功能分类 | 内容 |
 | --- | --- |
-| 常用插件安装 | swap（仅 C2000MAX）、哈基米、Web SSH、AdGuardHome、OpenList、MosDNS、DDNS-GO、MT5700 WebUI V3.0.0、Docker（仅 C8/C5800 扩展盘） |
+| 常用插件安装 | swap（C2000MAX / C2000Ultra）、哈基米、Web SSH、AdGuardHome、OpenList、MosDNS、DDNS-GO、MT5700 WebUI V3.0.0、Docker（仅 C8/C5800 扩展盘） |
 | VPN / 组网 / 路由向导 | EasyTier、ZeroTier、OpenVPN |
 | 游戏加速器 | 奇游、雷神、状态读取和卸载链 |
 | 应用商店与页面美化 | 卡片视觉、状态徽标、手机保存按钮兼容、原厂还原、C2000Pro / AK68-798 轻量应用商店、OpenWrt LuCI 8080 |
 | 设备维护与检测 | 统一体检、哈基米依赖修复、封版工具箱、C8/C5800 eMMC 存储扩展、PicoClaw / 鲲鹏小龙虾迁移与还原、通用卸载链、风扇控制、智能频段 v7、首页 CPU/5G 温度、5G 连接监听 |
+
+## V3.0.7 更新
+
+- GitHub 资源下载加入 `gh-proxy.com` 优先与官方地址自动回退，覆盖哈基米、OpenList、EasyTier、MT5700 WebUI、Web SSH 等安装资源；下载过程显示实际传输进度并支持断点续传。
+- `NRadio_C2000Ultra` 接入 C2000MAX 的 SD 卡检测和 Swap 管理：`1 > 1` 默认创建 512 MiB，允许扩容至 2048 MiB；统一体检和应用商店同步显示 Swap 状态。
+- MT5700 WebUI 的 C5800 适配按实际 `cpe / cpe1` 显示单线或双线；单线占满一行，只有 `cpe1` 时使用对应连接，双线路的详情、AT 与计划保持隔离。
+- AdGuardHome 安装后统一路由器本机与局域网普通查询的 DNS 链，保留已有域名专用上游，并仅按实际变更重启相关服务。
+- 更新应用商店 V3、插件弹窗、8080 原生 LuCI 总览、首页 CPU / 5G 温度切换及 5G 连接监听。
 
 ## V3.0.6 更新
 
@@ -296,9 +304,9 @@ sh ssh-nradio-plugin-installer.sh
 
 | 文件 | 用途 |
 | --- | --- |
-| `00-current/ssh-nradio-plugin-installer.sh` | V3.0.6 本地总脚本，已内嵌智能频段 v7 与 5G 连接监听 |
+| `00-current/ssh-nradio-plugin-installer.sh` | V3.0.7 本地总脚本，已内嵌智能频段 v7 与 5G 连接监听 |
 | `00-current/nradio-smart-band.sh` | 历史独立开发校验源；当前运行代码以总脚本内嵌 v7 为准，不是运行或发布依赖 |
-| `40-server-web/mayebano-support/index.html` | V3.0.6 本地支持页入口 |
+| `40-server-web/mayebano-support/index.html` | V3.0.7 本地支持页入口 |
 | `40-server-web/mayebano-support/AK68-798-SSH-2222.nr` | AK68-798 SSH 2222 配置恢复包 |
 | `40-server-web/mayebano-support/nradio-ssh-manager.ipk` | C8-788 在 NRadio 应用商店本地安装的 SSH 管理包 |
 | `40-server-web/mayebano-support/nradio-mesh.ipk` | NROS 应用商店本地安装的 Mesh 组网包 |
@@ -334,15 +342,15 @@ sh -n 00-current/ssh-nradio-plugin-installer.sh
 bash -n 00-current/ssh-nradio-plugin-installer.sh
 ```
 
-`CHECKSUMS.txt` 记录 V3.0.6 发布文件；独立 `nradio-smart-band.sh` 不进入发布文件清单。发布 GitHub Release 或更新公网前，需要重新计算并核对总脚本、支持页、AK68-798 SSH 配置包、三个插件 IPK 和 `vercel.json` 的 hash 与大小。
+`CHECKSUMS.txt` 记录 V3.0.7 发布文件；独立 `nradio-smart-band.sh` 不进入发布文件清单。发布前重新核对总脚本、支持页、AK68-798 SSH 配置包、三个插件 IPK 和 `vercel.json` 的 hash 与大小。
 
 ## 脚本校验
 
 当前脚本：
 
 ```text
-SHA256  80af28631bcf6f16f335332ec8f31d1d01aaa7d2a192c04fa59c21fb69ceeb0a
-Bytes   2675263
+SHA256  a4694700e6ff23d8f39be6e197c0836b780978546d751761258e20d1033cb99c
+Bytes   2757647
 Path    00-current/ssh-nradio-plugin-installer.sh
 ```
 
