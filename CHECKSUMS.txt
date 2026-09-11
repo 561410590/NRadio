@@ -1,13 +1,13 @@
-# NRadio V3.0.7 release checksums
+# NRadio V3.0.9 release checksums
 
-Generated from local file contents on 2026-09-08.
+Generated from local file contents on 2026-09-11.
 
 ```text
-a4694700e6ff23d8f39be6e197c0836b780978546d751761258e20d1033cb99c  2757647  00-current/ssh-nradio-plugin-installer.sh
-234d25fd6b776677943a8e961d9c11de6b5d9980050ef89cae2046b85f295a70    74075  40-server-web/mayebano-support/index.html
+b379d1488cd3113b2194b6a2c9276d64229f4a7a60bc3bc2f84f4fe6ebee2511  2778148  00-current/ssh-nradio-plugin-installer.sh
+2588bf363ac0ee3c7dde5a8e4c784b8232a2967cffa268b2801e4e496f451fba    72623  40-server-web/mayebano-support/index.html
 970ee082b03762421d585b6538806b184bdce9d7a7ce6e8379915a3b32c727a1      258  40-server-web/mayebano-support/AK68-798-SSH-2222.nr
 13485656cc0f72664db1fb0a82dc645d30e745c6d0158067e15a67f63f46565c     4319  40-server-web/mayebano-support/nradio-ssh-manager.ipk
-d1603d551c900237f40212a11f6d5e1f0814d40179dc609d6485b1c6dee96751    52697  40-server-web/mayebano-support/nradio-mesh.ipk
+9156a0ceaafef9ddb2a568f7ed13af918ce0a7a5a17461877a4db9c7c0dcd4ce  7500443  40-server-web/mayebano-support/nradio-mesh.ipk
 e8f4742d59b7f49ee03ab6f8f45e9251214ca65cc53775734032d6303b0f6801    29417  40-server-web/mayebano-support/nradio-qos-pro.ipk
 096e5ba5edb548ae7bad38fd9b75880bd566f05c2966d16e9abb010a0ce926c0    36616  40-server-web/mayebano-support/ai_studio_code.html
 430a95f0e39695fab7383b7d88a89d05b7ac82e54663d6486bdf80294eb136c9     1676  vercel.json

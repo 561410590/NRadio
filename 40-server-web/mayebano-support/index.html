@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="description" content="NRadio 官方 NROS SSH 插件脚本 V3.0.7，新增 GitHub 下载加速，完善 C2000Ultra SD 卡检测与 Swap 扩容，同步优化 AdGuardHome 安装设置、应用商店及 MT5700 双线路页面。">
+    <meta name="description" content="NRadio NROS 插件脚本 V3.0.9 与 Mesh 1.20.1-2，提供插件下载、安装教程、适配机型和更新记录。">
     <meta name="robots" content="index,follow">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="color-scheme" content="light">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="NRadio 插件工具 V3.0.7">
-    <meta property="og:description" content="V3.0.7 / 2026-09-07：支持 10 款机型，C2000Ultra 新增 SD 卡检测、Swap 创建与扩容、应用商店状态显示；GitHub 下载接入 gh-proxy 优先与官方回退。">
+    <meta property="og:title" content="NRadio 插件工具 V3.0.9">
+    <meta property="og:description" content="V3.0.9 / 2026-09-11：支持 10 款机型，分流助手可同步域名 DNS 与订阅下载策略；Mesh 1.20.1-2 完善 Q6000 级联组网、断线恢复和拓扑诊断。">
     <meta name="theme-color" content="#fff1f2">
-    <title>NRadio 插件脚本 V3.0.7 | 支持页</title>
+    <title>NRadio 插件脚本 V3.0.9 | 支持页</title>
     <style>
         /* 
          * ============================================================
@@ -708,30 +708,32 @@
 
     <div class="nav-anchor">
         <nav class="nav-pill" aria-label="页面章节导航">
-            <a href="#home" class="nav-link active" aria-current="page">旗舰首页</a>
+            <a href="#home" class="nav-link active" aria-current="page">首页</a>
             <a href="#plugins" class="nav-link">插件介绍</a>
-            <a href="#tutorial" class="nav-link">保姆教程</a>
+            <a href="#tutorial" class="nav-link">安装教程</a>
             <a href="#compatibility" class="nav-link">适配列表</a>
-            <a href="#history" class="nav-link">演进历史</a>
+            <a href="#history" class="nav-link">更新记录</a>
             <a href="#donate" class="nav-link">打赏支持</a>
-            <div class="nav-v-info" aria-label="当前版本">V3.0.7</div>
+            <div class="nav-v-info" aria-label="当前版本">V3.0.9</div>
         </nav>
     </div>
 
     <main class="container" id="main-content" tabindex="-1">
         <section class="hero-section" id="home">
             <div class="hero-content">
-                <h1 class="hero-title">NRadio<br>全量极客脚本</h1>
+                <h1 class="hero-title">NRadio<br>插件安装脚本</h1>
                 <p class="hero-subtitle">
-                    面向 NRadio 官方 NROS 的自动化运维中心。<br>统一管理应用商店、异地组网、硬件控温、存储扩展与运行诊断。
+                    用于 NROS 的插件安装、卸载与设备维护。
                 </p>
                 <div class="hero-btns">
-                    <a href="#tutorial" class="btn btn-solid">立即部署</a>
-                    <a href="/ssh-nradio-plugin-installer.sh" download class="btn btn-outline">直接下载脚本</a>
+                    <a href="#tutorial" class="btn btn-solid">安装教程</a>
+                    <a href="https://ghproxy.vip/https://github.com/561410590/ssh-nradio-plugin-installer/raw/refs/heads/main/00-current/ssh-nradio-plugin-installer.sh" download class="btn btn-outline">代理下载脚本</a>
                     <a href="https://github.com/561410590/ssh-nradio-plugin-installer" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" class="btn btn-outline">GitHub 开源</a>
                 </div>
                 <div class="badge-list">
-                    <div class="badge-item">V3.0.7 / 2026-09-07</div>
+                    <div class="badge-item">V3.0.9 / 2026-09-11</div>
+                    <div class="badge-item">分流与 DNS 联动</div>
+                    <div class="badge-item">Mesh 1.20.1-2</div>
                     <div class="badge-item">GitHub 下载加速</div>
                     <div class="badge-item">MT5700 WebUI V3.0.0</div>
                     <div class="badge-item">5G 连接监听</div>
@@ -741,25 +743,28 @@
                     <div class="badge-item">C2000Ultra · SD 卡 / Swap</div>
                 </div>
                 <div class="release-panel" aria-label="当前版本信息">
-                    <div class="release-stat"><span>Script version</span><strong>V3.0.7</strong></div>
-                    <div class="release-stat"><span>Build date</span><strong>2026-09-07</strong></div>
-                    <div class="release-stat"><span>Delivery</span><strong>单一总脚本</strong></div>
-                    <div class="release-stat"><span>Compatibility</span><strong>10 款 NRadio 机型</strong></div>
+                    <div class="release-stat"><span>脚本版本</span><strong>V3.0.9</strong></div>
+                    <div class="release-stat"><span>更新日期</span><strong>2026-09-11</strong></div>
+                    <div class="release-stat"><span>运行方式</span><strong>SSH 终端</strong></div>
+                    <div class="release-stat"><span>适配机型</span><strong>10 款 NRadio 机型</strong></div>
                 </div>
-                <p class="build-notice">V3.0.7 正式版 / 2026-09-07。下载与校验信息以 GitHub Release 页面为准。</p>
             </div>
         </section>
 
         <section class="release-notes" id="release" aria-labelledby="release-title">
             <div class="release-notes-head">
                 <div>
-                    <p class="release-kicker">V3.0.7 · 2026-09-07</p>
-                    <h2 id="release-title">下载加速与 C2000Ultra 存储适配</h2>
+                    <p class="release-kicker">V3.0.9 · 2026-09-11</p>
+                    <h2 id="release-title">分流与 DNS 联动，Mesh 组网更新</h2>
                 </div>
-                <div class="release-date-chip">2026-09-07</div>
+                <div class="release-date-chip">2026-09-11</div>
             </div>
             <div class="fix-grid">
-                <article class="fix-card"><span>gh-proxy</span><strong>GitHub 下载加速</strong><p>GitHub 下载优先使用 gh-proxy.com，加速失败自动回退官方地址；覆盖哈基米、OpenList、EasyTier、MT5700 与 WebSSH 等安装资源。</p></article>
+                <article class="fix-card"><span>5 → 3 · DNS</span><strong>域名分流与加密解析</strong><p>添加域名分流时，可同时设置加密 DNS，并在重载后清理路由器 DNS 缓存。</p></article>
+                <article class="fix-card"><span>5 → 3 · 订阅</span><strong>同步订阅下载策略</strong><p>可为匹配域名的 HTTP 订阅设置下载出口，修复分流后订阅仍走直连的问题。</p></article>
+                <article class="fix-card"><span>5 → 3 · 重载</span><strong>分流重载修复</strong><p>已有规则可继续重载，重载后检查分流、订阅与 DNS 设置。</p></article>
+                <article class="fix-card"><span>Mesh 1.20.1-2</span><strong>级联组网与断线恢复</strong><p>完善 Q6000 级联组网、节点拓扑，以及无线重载、换信道后的重连。</p></article>
+                <article class="fix-card"><span>ghproxy.vip</span><strong>下载加速</strong><p>脚本、插件和配置包下载统一使用 ghproxy.vip。</p></article>
                 <article class="fix-card"><span>C2000Ultra</span><strong>SD 卡与 Swap 适配</strong><p>HC-WT9500 接入 SD 卡检测与 Swap 管理；新建默认 512 MiB，可扩容至 2048 MiB，应用商店同步显示实际总量与使用量。</p></article>
                 <article class="fix-card"><span>AdGuardHome</span><strong>安装后同步 DNS 设置</strong><p>与哈基米联用时，统一路由器本机和局域网普通查询的 AdGuardHome DNS 链，保留域名专用上游；按实际配置变化重启对应服务。</p></article>
                 <article class="fix-card"><span>下载体验</span><strong>进度与断点续传</strong><p>下载进度取自实际传输，结合断点续传与备用地址回退；终端菜单和提示同步适配手机操作，减少重复等待。</p></article>
@@ -780,26 +785,26 @@
                 <article class="fix-card">
                     <span>V1.0.1-1 · SSH</span>
                     <strong>SSH开启插件</strong>
-                    <p>用于开启或关闭 NROS 的局域网 SSH 访问，在 NROS 官方系统应用商店本地安装。<br><code>NROS官方系统应用商店打开SSH，在应用商店安装.ipk</code></p>
-                    <a href="/nradio-ssh-manager.ipk" download class="btn btn-solid plugin-download">下载 SSH 开启插件</a>
+                    <p>在 NROS 应用商店本地安装，用于开启或关闭局域网 SSH。<br><code>nradio-ssh-manager.ipk</code></p>
+                    <a href="https://ghproxy.vip/https://github.com/561410590/ssh-nradio-plugin-installer/raw/refs/heads/main/40-server-web/mayebano-support/nradio-ssh-manager.ipk" download class="btn btn-solid plugin-download">下载 SSH 开启插件</a>
                 </article>
                 <article class="fix-card">
-                    <span>V1.0.14-1 · MESH</span>
+                    <span>V1.20.1-2 · MESH</span>
                     <strong>Mesh组网插件</strong>
-                    <p>用于 NRadio 设备 Mesh 组网，提供网络拓扑、控制器发现、APCLI 无线回程和漫游管理；自动连接按 5G 优先、同频信号排序，失败后最多尝试 8 个候选。<br><code>luci-app-nradio-roaming_1.0.14-1_all.ipk</code></p>
-                    <a href="/nradio-mesh.ipk" download class="btn btn-solid plugin-download">下载 Mesh 组网插件</a>
+                    <p>提供有线、无线组网、Q6000 级联、节点拓扑和断线重连。Q6000 无线互联按机型和驱动适配。<br><code>luci-app-nradio-roaming_1.20.1-2_all.ipk</code></p>
+                    <a href="https://ghproxy.vip/https://github.com/561410590/ssh-nradio-plugin-installer/raw/refs/heads/main/40-server-web/mayebano-support/nradio-mesh.ipk" download="luci-app-nradio-roaming_1.20.1-2_all.ipk" class="btn btn-solid plugin-download">下载 Mesh 1.20.1-2</a>
                 </article>
                 <article class="fix-card">
                     <span>V1.0.24-1 · QOS</span>
                     <strong>QoS限速插件</strong>
                     <p>按终端设置上传和下载限速，支持优先级、定时策略和在线终端查看。新增 VPN 双线路联动、C8-788 分类适配及页面可靠性优化。<br><code>luci-app-nradio-qos-pro_1.0.24-1_all.ipk</code></p>
-                    <a href="/nradio-qos-pro.ipk" download class="btn btn-solid plugin-download">下载 QoS 限速插件</a>
+                    <a href="https://ghproxy.vip/https://github.com/561410590/ssh-nradio-plugin-installer/raw/refs/heads/main/40-server-web/mayebano-support/nradio-qos-pro.ipk" download class="btn btn-solid plugin-download">下载 QoS 限速插件</a>
                 </article>
                 <article class="fix-card">
                     <span>AK68-798 · SSH 2222</span>
                     <strong>SSH 恢复配置包</strong>
-                    <p>仅适用于已实测的 NRadio_AK68-798（HC-WT9194 / HCMT7987-S256）。包内只写入 Dropbear 配置，开启 LAN TCP 2222，不包含密码或其他整机配置。<br><code>AK68-798-SSH-2222.nr</code></p>
-                    <a href="/AK68-798-SSH-2222.nr" download="AK68-798-SSH-2222.nr" class="btn btn-solid plugin-download">下载 AK68-798 SSH 配置包</a>
+                    <p>用于 NRadio_AK68-798（HC-WT9194 / HCMT7987-S256），通过恢复配置开启局域网 SSH，端口 2222。<br><code>AK68-798-SSH-2222.nr</code></p>
+                    <a href="https://ghproxy.vip/https://github.com/561410590/ssh-nradio-plugin-installer/raw/refs/heads/main/40-server-web/mayebano-support/AK68-798-SSH-2222.nr" download="AK68-798-SSH-2222.nr" class="btn btn-solid plugin-download">下载 AK68-798 SSH 配置包</a>
                     <p style="margin-top:14px; font-size:12px; word-break:break-all;"><strong>SHA-256：</strong><code>970ee082b03762421d585b6538806b184bdce9d7a7ce6e8379915a3b32c727a1</code></p>
                 </article>
             </div>
@@ -808,8 +813,7 @@
         <section id="tutorial">
             <div class="guide-container">
                 <div class="guide-header">
-                    <p style="color:var(--rose-600); font-weight:1000; text-transform:uppercase; margin-bottom:12px;">Full Setup Pipeline</p>
-                    <h2>三步部署，开启全能体验</h2>
+                    <h2>安装步骤</h2>
                 </div>
 
                 <div class="step-list">
@@ -817,17 +821,16 @@
                         <div class="step-index">01</div>
                         <div class="step-content">
                             <h3>激活后台 SSH</h3>
-                            <p>这是所有后续操作的基础。C8-788 使用 SSH 管理 IPK；AK68-798 使用备份恢复配置包；其他支持机型登录后台后直接打开 SSH 隐藏页面。</p>
+                            <p>C8-788 安装 SSH 管理 IPK；AK68-798 恢复 SSH 配置包；其他支持机型通过后台隐藏页面开启 SSH。</p>
                             <div class="data-card" style="background:#fff7ed; border-color:#fb923c;">
                                 <p style="font-weight:1000; color:#9a3412; margin-bottom:10px;">NRadio_C8-788</p>
-                                <p>C8-788 不能通过隐藏链接打开 SSH，使用 SSH 管理插件开启。</p>
                                 <ol class="ssh-guide-steps">
                                     <li>下载下方 C8-788 SSH 管理 IPK（插件版本 <code>1.0.1-1</code>）。</li>
                                     <li>进入 NRadio 应用商店，选择本地安装并上传该 IPK。</li>
                                     <li>安装完成后确认应用商店出现“SSH 管理”卡片，状态显示“已安装”。</li>
                                     <li>点击“打开”，进入插件页面启用 SSH 并保存。</li>
                                 </ol>
-                                <a href="/nradio-ssh-manager.ipk" download class="btn btn-solid">下载 C8-788 SSH 管理 IPK</a>
+                                <a href="https://ghproxy.vip/https://github.com/561410590/ssh-nradio-plugin-installer/raw/refs/heads/main/40-server-web/mayebano-support/nradio-ssh-manager.ipk" download class="btn btn-solid">下载 C8-788 SSH 管理 IPK</a>
                                 <figure class="ssh-guide-figure">
                                     <img src="./c8-788-ssh-manager-plugin.png" alt="C8-788 应用商店中已安装的 SSH 管理插件卡片" width="448" height="285" loading="lazy" decoding="async">
                                     <figcaption><strong>插件图示：</strong>看到“SSH 管理 1.0.1-1”和“已安装”后，点击“打开”进入 SSH 设置。</figcaption>
@@ -835,28 +838,26 @@
                             </div>
                             <div class="data-card" style="background:#fff7ed; border-color:#fb923c;">
                                 <p style="font-weight:1000; color:#9a3412; margin-bottom:10px;">NRadio_AK68-798 · TCP 2222</p>
-                                <p>适用识别码：<code>HC-WT9194 / HCMT7987-S256</code>。先保存当前配置备份，再恢复 SSH 配置包。</p>
+                                <p>适用识别码：<code>HC-WT9194 / HCMT7987-S256</code>。</p>
                                 <ol class="ssh-guide-steps">
                                     <li>进入“更多”，点击“备份/升级”。</li>
-                                    <li>在“备份/恢复”页面点击“下载备份”，保存当前配置。</li>
                                     <li>下载 <code>AK68-798-SSH-2222.nr</code>。</li>
                                     <li>在“恢复配置”处选择下载的 <code>.nr</code> 文件，点击“上传”。</li>
                                     <li>恢复完成后重启路由器，使用 LAN 地址连接，端口 <code>2222</code>。</li>
                                 </ol>
-                                <a href="/AK68-798-SSH-2222.nr" download="AK68-798-SSH-2222.nr" class="btn btn-solid">下载 AK68-798 SSH 配置包</a>
+                                <a href="https://ghproxy.vip/https://github.com/561410590/ssh-nradio-plugin-installer/raw/refs/heads/main/40-server-web/mayebano-support/AK68-798-SSH-2222.nr" download="AK68-798-SSH-2222.nr" class="btn btn-solid">下载 AK68-798 SSH 配置包</a>
                                 <figure class="ssh-guide-figure">
                                     <img src="./ak68-798-backup-upgrade-menu.png" alt="AK68-798 更多页面中的备份升级入口" width="1920" height="1008" loading="lazy" decoding="async">
                                     <figcaption><strong>第 1 步：</strong>进入“更多”，点击系统区域的“备份/升级”。</figcaption>
                                 </figure>
                                 <figure class="ssh-guide-figure">
                                     <img src="./ak68-798-backup-restore-page.png" alt="AK68-798 备份恢复页面中的恢复配置上传区域" width="1210" height="203" loading="lazy" decoding="async">
-                                    <figcaption><strong>第 2 步：</strong>先点击“下载备份”；恢复 SSH 时，在“恢复配置”处选择 <code>AK68-798-SSH-2222.nr</code> 并点击“上传”。</figcaption>
+                                    <figcaption><strong>第 2 步：</strong>在“恢复配置”处选择 <code>AK68-798-SSH-2222.nr</code> 并点击“上传”。</figcaption>
                                 </figure>
-                                <p style="margin-top:16px; font-size:13px; font-weight:800; color:#9a3412;">该文件是配置恢复包，不是固件。不会设置或修改 root 密码；登录时使用设备现有密码。</p>
+                                <p style="margin-top:16px; font-size:13px; font-weight:800; color:#9a3412;">SSH 登录使用设备现有密码。</p>
                             </div>
                             <div class="data-card">
                                 <p style="font-weight:1000; margin-bottom:10px;">其他支持机型 · SSH 隐藏页面</p>
-                                <p>后台菜单没有 SSH 开关入口。必须先登录 NRadio 后台，再直接打开下面的隐藏页面链接。</p>
                                 <ol class="ssh-guide-steps">
                                     <li>先正常登录 NRadio 后台。</li>
                                     <li>点击下方按钮，或把隐藏页面地址粘贴到当前浏览器地址栏打开。</li>
@@ -878,16 +879,16 @@
                         <div class="step-index">02</div>
                         <div class="step-content">
                             <h3>准备 SSH 工具</h3>
-                            <p>根据您的系统平台，选择合适的 SSH 客户端。建议使用如下软件：</p>
+                            <p>使用 SSH 客户端连接路由器。</p>
                             <div class="badge-list">
-                                <div class="badge-item">MobaXterm (Win推荐)</div>
-                                <div class="badge-item">FinalShell (中文首选)</div>
-                                <div class="badge-item">Putty / XShell</div>
+                                <div class="badge-item">MobaXterm</div>
+                                <div class="badge-item">FinalShell</div>
+                                <div class="badge-item">PuTTY / Xshell</div>
                             </div>
                             <div class="data-card" style="background:white; border-style:dashed; margin-top:20px;">
                                 <p style="font-weight:900; margin-bottom:10px;">登录参数：</p>
                                 <ul style="list-style:none; font-size:15px; display:grid; gap:8px;">
-                                    <li>• 主机: <code>192.168.66.1</code></li>
+                                    <li>• 主机: 路由器 LAN 地址，默认 <code>192.168.66.1</code></li>
                                     <li>• 端口: 普通机型 <code>22</code>；AK68-798 <code>2222</code></li>
                                     <li>• 用户: <code>root</code></li>
                                     <li>• 密码: 路由器 Web 登录密码</li>
@@ -900,100 +901,87 @@
                         <div class="step-index">03</div>
                         <div class="step-content">
                             <h3>路由器在线下载</h3>
-                            <p>连接成功后，复制下面的命令，在终端粘贴并回车。总脚本包含轻量应用商店、首页 CPU 温度、MT5700 WebUI、智能频段、5G 连接监听和其他安装菜单；首次执行会显示免责声明，输入 <code>y</code> 后进入中文菜单。</p>
+                            <p>复制下面命令，在 SSH 终端粘贴并回车。</p>
                             <button class="code-well" type="button" onclick="copyShell(this)" aria-label="复制路由器安装命令">
-                                <code>cd /tmp && wget -O ssh-nradio-plugin-installer.sh https://nradio.mayebano.shop/ssh-nradio-plugin-installer.sh && sh ssh-nradio-plugin-installer.sh</code>
+                                <code>cd /tmp && wget -O ssh-nradio-plugin-installer.sh https://ghproxy.vip/https://github.com/561410590/ssh-nradio-plugin-installer/raw/refs/heads/main/00-current/ssh-nradio-plugin-installer.sh && sh ssh-nradio-plugin-installer.sh</code>
                                 <span class="copy-info" aria-live="polite">点击复制代码</span>
                             </button>
-                            <p class="build-notice">仅 AK68-798：请将总脚本放在 <code>/tmp</code> 下运行。</p>
                         </div>
                     </div>
 
                 </div>
 
-                <div class="danger-card">
-                    <h4>重要安全准则</h4>
-                    <ul class="danger-grid">
-                        <li>此工具是 SSH 脚本，不是应用商店安装包或固件包；仅限 SSH 终端内执行</li>
-                        <li>C8-788 必须先在 NRadio 应用商店安装 SSH 管理 IPK，不能使用隐藏链接开启 SSH</li>
-                        <li>AK68-798 恢复前必须先下载当前配置备份；配置包仅实测 HC-WT9194 / HCMT7987-S256，SSH 端口为 2222</li>
-                        <li>支持已列明机型的 NROS 2.x；C5800-650 另兼容已验证的 NROS 1.9.x，标准 OpenWrt 不适用</li>
-                        <li>脚本不会在路由器生成持久备份；重要自定义配置请在执行前自行留存</li>
-                        <li>执行前务必确认路由器已成功连通互联网</li>
-                        <li>安装过程中严禁强行关闭终端窗口或断开电源</li>
-                        <li>仅限下方已适配机型使用；标记“即将支持”的机型暂未适配，请勿运行脚本</li>
-                    </ul>
-                </div>
             </div>
         </section>
 
         <section class="device-section" id="compatibility">
             <div class="container">
                 <div class="guide-header">
-                    <h2 style="color:white;">官方机型适配矩阵</h2>
-                    <p style="color:rgba(255,255,255,0.6); margin-top:15px; font-weight:800; font-size:1.1rem;">V3.0.7 已识别 10 款机型，功能按机型开放</p>
+                    <h2 style="color:white;">适配机型</h2>
+                    <p style="color:rgba(255,255,255,0.6); margin-top:15px; font-weight:800; font-size:1.1rem;">V3.0.9 已识别 10 款机型，功能按机型开放</p>
                 </div>
                 <div class="device-grid">
-                    <div class="device-card"><strong>NRadio_C8-688</strong><span>旗舰性能之选</span></div>
+                    <div class="device-card"><strong>NRadio_C8-688</strong><span>已适配</span></div>
                     <div class="device-card"><strong>NRadio_C8-788</strong><span>128MB NAND · SSH 需安装 IPK</span></div>
-                    <div class="device-card"><strong>NRadio_C8-668</strong><span>标准稳定平衡</span></div>
-                    <div class="device-card"><strong>NRadio_C5800-650</strong><span>高性能 5G 终端</span></div>
-                    <div class="device-card"><strong>NRadio_C5800-688</strong><span>旗舰 5G 定制款</span></div>
-                    <div class="device-card"><strong>NRadio_NBCPE</strong><span>企业外置版</span></div>
-                    <div class="device-card"><strong>NRadio_C2000MAX</strong><span>超大存储旗舰</span></div>
+                    <div class="device-card"><strong>NRadio_C8-668</strong><span>已适配</span></div>
+                    <div class="device-card"><strong>NRadio_C5800-650</strong><span>已适配</span></div>
+                    <div class="device-card"><strong>NRadio_C5800-688</strong><span>已适配</span></div>
+                    <div class="device-card"><strong>NRadio_NBCPE</strong><span>已适配</span></div>
+                    <div class="device-card"><strong>NRadio_C2000MAX</strong><span>已适配</span></div>
                     <div class="device-card"><strong>NRadio_C2000Pro</strong><span>轻量有限兼容</span></div>
                     <div class="device-card"><strong>NRadio_AK68-798</strong><span>16 MiB NOR · SSH 配置恢复 TCP 2222</span></div>
                     <div class="device-card"><strong>NRadio_C2000Ultra</strong><span>HC-WT9500 · SD 卡检测 / Swap 扩容</span></div>
                     <div class="device-card is-coming"><strong>NRadio_N5000</strong><span>即将支持 · 暂未适配</span></div>
                 </div>
-                <p class="device-footer-text">“即将支持”机型暂未加入总脚本，请等待适配完成。</p>
+                <p class="device-footer-text">适用系统：上述已适配机型的 NROS 2.x；C5800-650 另支持已验证的 NROS 1.9.x。</p>
             </div>
         </section>
 
         <section class="history-wall" id="history">
             <div class="guide-header">
-                <h2>版本演进档案</h2>
+                <h2>更新记录</h2>
             </div>
             <div class="history-grid" id="historyGrid">
-                <div class="v-card is-latest"><span class="v-badge">LATEST</span><h5>V3.0.7 · 2026-09-07</h5><p>GitHub 下载接入 gh-proxy 优先与官方回退；C2000Ultra 补齐 SD 卡检测、Swap 扩容与状态显示，同步优化 AdGuardHome 安装设置、MT5700 双线路页面及应用商店体验。</p></div>
+                <div class="v-card is-latest"><span class="v-badge">LATEST</span><h5>V3.0.9 · 2026-09-11</h5><p>分流助手加入域名加密 DNS 与订阅下载策略联动，修复重复规则跳过重载并增加生效核验；同步提供 Mesh 1.20.1-2，完善级联组网、无线重连与拓扑诊断。</p></div>
+                <div class="v-card"><span class="v-badge">V3.0.7</span><h5>2026-09-07 · 下载与存储适配</h5><p>GitHub 下载接入 gh-proxy 优先与官方回退；C2000Ultra 补齐 SD 卡检测、Swap 扩容与状态显示，同步优化 AdGuardHome 安装设置、MT5700 双线路页面及应用商店体验。</p></div>
                 <div class="v-card"><span class="v-badge">V3.0.6</span><h5>2026-09-03 · 5G 后台监听</h5><p>5G 连接监听改为后台常驻记录，修复 4G 频段误标；智能频段状态、预览、执行、日志及可逆启停统一并入 LuCI 监听页面。</p></div>
-                <div class="v-card"><span class="v-badge">V3.0.5</span><h5>2026-09-02 · 机型适配与可靠性更新</h5><p>新增 C2000 Ultra（HC-WT9500）机型适配；保留 AK68-798 轻量应用商店、首页 CPU 温度入口、SSH 2222 配置恢复教程及全量可靠性修复。</p></div>
+                <div class="v-card"><span class="v-badge">V3.0.5</span><h5>2026-09-02 · 机型适配与修复</h5><p>新增 C2000 Ultra（HC-WT9500）机型适配，完善 AK68-798 轻量应用商店、首页 CPU 温度入口和 SSH 2222 配置恢复教程。</p></div>
                 <div class="v-card"><span class="v-badge">V2.9.9</span><h5>2026-08-20 · 卡名与状态显示</h5><p>兼容 NROS 2.2.12 官方运营商卡名，固件原生值优先、旧固件精确 ICCID 映射回退；修复 C2000MAX 系统状态默认折叠导致 Swap 指标不可见。</p></div>
                 <div class="v-card"><span class="v-badge">V2.9.8</span><h5>可靠性集中修复</h5><p>集中修复 OpenVPN DNS 清理、C2000Pro Web SSH、AdGuardHome 安全卸载、异步卸载陈旧状态与全局锁；Docker 加入系统文件清单和旧残留比对清理，同时增强 wget 后备、终端回显恢复与诊断凭据脱敏。</p></div>
                 <div class="v-card"><span class="v-badge">V2.9.5</span><h5>应用商店 V3 稳定版</h5><p>应用商店 V3 增加搜索、状态徽标、双存储显示与多机型兼容；修复共享接入，移除应用安装固定哈希检查和持久备份写入，并修复 NRadio 定制固件的 OpenClash 依赖安装。</p></div>
                 <div class="v-card"><span class="v-badge">V2.8.5</span><h5>智能频段单文件</h5><p>智能频段 v5 源码加入总脚本，新增 <code>5 &gt; 8</code> 中文管理入口、状态检查、只读模拟、立即执行、日志与卸载；移动/广电 N28/N41 改为联网健康优先。</p></div>
-                <div class="v-card"><span class="v-badge">V2.8.0</span><h5>安全加固</h5><p>状态文件加入格式标记并修复单引号转义；恢复全部 TLS 证书校验，软件源更新失败时立即停止对应安装，避免继续执行不完整流程。</p></div>
+                <div class="v-card"><span class="v-badge">V2.8.0</span><h5>安装流程修复</h5><p>状态文件加入格式标记并修复单引号转义；恢复 TLS 证书校验，软件源更新失败时停止对应安装。</p></div>
                 <div class="v-card"><span class="v-badge">V2.7.5</span><h5>新固件兼容更新</h5><p>FanControl 不再写入固件 ROM 文件并跳过 chmod；兼容 OpenClash v0.47.133 新 LuCI，C5800-688 智能频段 v3 完成现场验证。</p></div>
                 <div class="v-card"><span class="v-badge">V2.7.0</span><h5>FanControl ROM 保护</h5><p>适配 C2000MAX NROS 2.2.8 固件内置 controller、CBI 与温度模板，避免重复覆盖原厂 LuCI 文件。</p></div>
                 <div class="v-card"><span class="v-badge">V2.6.5</span><h5>阿里云源与调试日志</h5><p>OpenWrt feed 切换阿里云源；OpenClash Debug Logs 未生成时显示空状态提示，生成后自动更新。</p></div>
                 <div class="v-card"><span class="v-badge">V2.6.0</span><h5>C2000Pro 有限兼容</h5><p>新增 UDX710 / RG200U-CN 识别和基本应用商店兼容，隐藏不适用的扩展盘与硬件功能。</p></div>
                 <div class="v-card"><span class="v-badge">V2.5.0</span><h5>封版工具箱</h5><p>新增哈基米依赖检查修复、脱敏诊断报告、备份清单和写入动作日志。</p></div>
                 <div class="v-card"><span class="v-badge">V2.3.0</span><h5>龙虾扩展盘</h5><p>PicoClaw / 鲲鹏小龙虾接入 eMMC 扩展盘迁移与还原链，支持核心二进制和数据目录迁移。</p></div>
-                <div class="v-card"><span class="v-badge">V2.2.5</span><h5>OpenClash 兼容</h5><p>彻底解决 哈基米 弹窗渲染错位；重构容器注入引擎，修复 OEM 顶栏残留问题。</p></div>
+                <div class="v-card"><span class="v-badge">V2.2.5</span><h5>OpenClash 兼容</h5><p>修复哈基米弹窗错位与 OEM 顶栏残留。</p></div>
                 <div class="v-card"><span class="v-badge">V2.2.0</span><h5>动态 Swap</h5><p>应用商店状态面板接入虚拟内存指标，支持监控 Swap 总量、用量及实时百分比。</p></div>
-                <div class="v-card"><span class="v-badge">V2.1.5</span><h5>系统识别保护</h5><p>增加 C5800-650 机型识别，非官方系统会停止执行，避免修改主闪存。</p></div>
+                <div class="v-card"><span class="v-badge">V2.1.5</span><h5>系统识别</h5><p>增加 C5800-650 机型识别，检测到不支持的系统时停止执行。</p></div>
                 <div class="v-card"><span class="v-badge">V2.1.0</span><h5>Docker 存储迁移</h5><p>Docker 加入安装菜单，数据目录可迁移到 rootfs_2nd 分区，减少主闪存占用。</p></div>
                 <div class="v-card"><span class="v-badge">V2.0.80</span><h5>安装器安全检查</h5><p>修复命令替换污染和危险删除问题，增加安装前路径检查。</p></div>
                 <div class="v-card"><span class="v-badge">V2.0.70</span><h5>5G 负载调优</h5><p>负载均衡支持副 5G 权重微调，重构 mwan3 自动触发逻辑，解决界面显示白条。</p></div>
-                <div class="v-card"><span class="v-badge">V2.0.60</span><h5>eMMC 存储扩展</h5><p>新增 C8/C5800 专属存储扩展，支持应用双空间显示及动态应用无损迁移。</p></div>
+                <div class="v-card"><span class="v-badge">V2.0.60</span><h5>eMMC 存储扩展</h5><p>新增 C8/C5800 存储扩展，支持应用双空间显示与应用迁移。</p></div>
                 <div class="v-card"><span class="v-badge">V2.0.55</span><h5>高频状态采样</h5><p>系统看板改为 2 秒采样；新增哈基米分流助手和设备检查功能。</p></div>
                 <div class="v-card"><span class="v-badge">V2.0.50</span><h5>DDNS-GO 集成</h5><p>增加 DDNS-GO 插件和内网穿透管理页面，并接入应用商店卸载功能。</p></div>
                 <div class="v-card"><span class="v-badge">V2.0.40</span><h5>卸载链清理</h5><p>优化 EasyTier 路由清理与 MosDNS 卸载；AdGuard Home 状态页美化回写总脚本。</p></div>
-                <div class="v-card"><span class="v-badge">V2.0.35</span><h5>MosDNS 集成</h5><p>新增 MosDNS 本地安装链，支持 DNS 灵活分流配置与毫秒级服务状态同步。</p></div>
+                <div class="v-card"><span class="v-badge">V2.0.35</span><h5>MosDNS 集成</h5><p>新增 MosDNS 本地安装、DNS 分流配置与服务状态显示。</p></div>
                 <div class="v-card"><span class="v-badge">V2.0.30</span><h5>残留清理</h5><p>修复雷神加速器卸载残留，清理相关进程和路由配置。</p></div>
-                <div class="v-card"><span class="v-badge">V2.0.25</span><h5>商店还原</h5><p>支持应用商店从美化状态安全还原到原生状态模板，不覆盖底层系统级备份。</p></div>
-                <div class="v-card"><span class="v-badge">V2.0.20</span><h5>视觉主题</h5><p>粉色系 Web 主题上线；OpenVPN 控制台界面全面升级，精确修复多处 CSS 标记。</p></div>
+                <div class="v-card"><span class="v-badge">V2.0.25</span><h5>商店还原</h5><p>支持将应用商店恢复为原厂模板。</p></div>
+                <div class="v-card"><span class="v-badge">V2.0.20</span><h5>视觉主题</h5><p>加入粉色 Web 主题，更新 OpenVPN 控制台界面与 CSS 样式。</p></div>
                 <div class="v-card"><span class="v-badge">V2.0.15</span><h5>奇游 & 雷神</h5><p>奇游联机宝与雷神加速器安装前复用哈基米软件源检查流程；风扇新增定时策略。</p></div>
-                <div class="v-card"><span class="v-badge">V2.0.10</span><h5>控温优化</h5><p>风扇底层逻辑与阈值判定全面优化，提供更无缝的设备性能发热平衡方案。</p></div>
+                <div class="v-card"><span class="v-badge">V2.0.10</span><h5>控温优化</h5><p>调整风扇控制逻辑与温度阈值。</p></div>
                 <div class="v-card"><span class="v-badge">V2.0.7</span><h5>应用标签</h5><p>奇游运行状态接入应用商店，修复应用标记显示。</p></div>
-                <div class="v-card"><span class="v-badge">V2.0.6</span><h5>机型扩容</h5><p>新增 NRadio_C8-668 标准版设备支持，进一步扩大受支持的极客官方机型矩阵。</p></div>
-                <div class="v-card"><span class="v-badge">V2.0.3</span><h5>风扇保护</h5><p>完善风扇控制检测防呆机制以及过热安全保护，延长设备使用寿命与降噪。</p></div>
-                <div class="v-card"><span class="v-badge">V2.0.0</span><h5>菜单重构</h5><p>命令行扁平菜单全面升级为多级分类菜单；游戏加速器入口正式独立分配。</p></div>
+                <div class="v-card"><span class="v-badge">V2.0.6</span><h5>机型扩容</h5><p>新增 NRadio_C8-668 机型支持。</p></div>
+                <div class="v-card"><span class="v-badge">V2.0.3</span><h5>风扇保护</h5><p>完善风扇检测与过热保护。</p></div>
+                <div class="v-card"><span class="v-badge">V2.0.0</span><h5>菜单重构</h5><p>改为多级分类菜单，增加独立的游戏加速器入口。</p></div>
                 <div class="v-card"><span class="v-badge">V1.60.5</span><h5>视觉微调</h5><p>修复应用商店美化页面的排版问题。</p></div>
-                <div class="v-card"><span class="v-badge">V1.60.0</span><h5>视觉重构首发</h5><p>首次引入商店美化菜单，定义 NROS 插件卡片化 UI 标准视觉规范。</p></div>
+                <div class="v-card"><span class="v-badge">V1.60.0</span><h5>商店界面</h5><p>新增商店美化菜单与插件卡片布局。</p></div>
                 <div class="v-card"><span class="v-badge">V1.50.0</span><h5>免责声明确认</h5><p>首次运行增加免责声明确认，并调整应用商店图标缓存和 Web SSH 页面。</p></div>
-                <div class="v-card"><span class="v-badge">V1.30.0</span><h5>硬件调度接入</h5><p>突破底层限制，实现 C8/C2000 系列 SSH 端 PWM 智能调速与定时温控策略。</p></div>
-                <div class="v-card"><span class="v-badge">V1.20.0</span><h5>状态页打磨</h5><p>OpenVPN 最新 OEM 控制台初步完成系统性回写，多网络环境持续打磨。</p></div>
+                <div class="v-card"><span class="v-badge">V1.30.0</span><h5>硬件调度接入</h5><p>增加 C8/C2000 系列 PWM 调速与定时温控。</p></div>
+                <div class="v-card"><span class="v-badge">V1.20.0</span><h5>状态页更新</h5><p>将 OpenVPN OEM 控制台更新纳入总脚本。</p></div>
                 <div class="v-card"><span class="v-badge">V1.10.0</span><h5>异地组网</h5><p>EasyTier 正式接入总脚本，采用 GitHub 包与重打包混合的 OEM 兼容安装路线。</p></div>
                 <div class="v-card"><span class="v-badge">V1.0.5</span><h5>哈基米功能完善</h5><p>修复核心代理显示和按钮冲突问题。</p></div>
                 <div class="v-card"><span class="v-badge">V1.0.0</span><h5>首版发布</h5><p>加入插件下载、安装、卸载和路由检测菜单。</p></div>
@@ -1008,7 +996,7 @@
                     <p style="opacity:0.8; margin-top:20px; font-size:1.1rem; font-weight: 500;">如果您喜欢本工具带来的便利，<br>欢迎支持作者持续维护！</p>
                     <div class="qr-frame">
                         <img id="donateQr" src="./wechat-donate.png" alt="微信赞赏二维码" width="220" height="220" loading="lazy" decoding="async">
-                        <span class="qr-fallback" id="donateQrFallback">当前离线包未包含二维码图片；网站部署目录中存在 <code>wechat-donate.png</code> 时会自动显示。</span>
+                        <span class="qr-fallback" id="donateQrFallback">二维码加载失败</span>
                     </div>
                     <div class="owner-txt">Bano马野(*野)</div>
                 </div>
@@ -1017,7 +1005,7 @@
                     <p>本项目用于增强 NRadio 原厂系统功能，并尽量减少对原厂文件和用户配置的影响。</p>
                     <p>代码公开，可查看脚本内容后再决定是否使用。</p>
                     <div class="data-card" style="background:white; border-style:dashed; margin-top: 30px;">
-                        <p style="font-weight:1000; font-size:16px; margin-bottom:0; color:var(--rose-700); text-align: center;">当前页面：V3.0.7 / 2026-09-07｜正式版</p>
+                        <p style="font-weight:1000; font-size:16px; margin-bottom:0; color:var(--rose-700); text-align: center;">当前页面：V3.0.9 / 2026-09-11｜Mesh 1.20.1-2</p>
                     </div>
                 </div>
             </div>
@@ -1028,7 +1016,7 @@
 
     <footer>
         <span class="footer-logo">NRadio Plugin Toolkit</span>
-        <p class="footer-pause">支持页面同步总脚本 V3.0.7 / 2026-09-07 正式版。下载与校验信息以 GitHub Release 页面为准。</p>
+        <p class="footer-pause">支持页面同步总脚本 V3.0.9 / 2026-09-11 与 Mesh 1.20.1-2 组网插件。</p>
         <p class="footer-copy">Copyright &copy; 2026 NRadio Script Developer Team. <br>Crafted & Designed by MaYe. All Rights Reserved.</p>
     </footer>
 

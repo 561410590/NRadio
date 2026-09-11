@@ -2,9 +2,9 @@
 set -eu
 umask 077
 
-SCRIPT_VERSION="V3.0.7"
+SCRIPT_VERSION="V3.0.9"
 SCRIPT_TITLE="NRadio 官方系统插件安装助手 ${SCRIPT_VERSION}"
-SCRIPT_RELEASE_DATE="2026-09-07"
+SCRIPT_RELEASE_DATE="2026-09-11"
 SCRIPT_SIGNATURE="Designed by maye ${SCRIPT_RELEASE_DATE}"
 SCRIPT_MODEL_NOTICE="适用机型：NRadio_C8-668/NRadio_C8-688/NRadio_C8-788/NRadio_C5800-650/NRadio_C5800-688/NRadio_NBCPE/NRadio_C2000MAX/NRadio_C2000Ultra/NRadio_C2000Pro/NRadio_AK68-798 官方NROS系统"
 SCRIPT_SCOPE_NOTICE="适用于受支持的官方 NROS，含 C2000Pro / AK68-798 兼容应用商店；并非标准 OpenWrt"
@@ -77,14 +77,15 @@ ROOTFS_2ND_STORAGE_INIT="/etc/init.d/rootfs_2nd_data"
 ROOTFS_2ND_STORAGE_MARKER="/etc/nradio_storage_expand_enabled"
 ROOTFS_2ND_STORAGE_APPS_DIR="$ROOTFS_2ND_STORAGE_MOUNT_POINT/nradio-apps"
 ROOTFS_2ND_STORAGE_MIGRATE_LIST="/etc/nradio_storage_expand_migrated.list"
-OPENWRT_LUCI_8080_PORT="${OPENWRT_LUCI_8080_PORT:-8080}"
+OPENWRT_LUCI_8080_PORT="8080"
 OPENWRT_LUCI_8080_OVERLAY_APPS_DIR="/overlay/nradio-apps"
 OPENWRT_LUCI_8080_ROOT=""
 OPENWRT_LUCI_8080_DOCROOT=""
 OPENWRT_LUCI_8080_CGI=""
 OPENWRT_LUCI_8080_STORAGE_LABEL=""
-OPENWRT_LUCI_8080_DETAILS="/usr/lib/lua/luci/view/admin_status/nradio_details.htm"
-OPENWRT_LUCI_8080_SYSAUTH="/usr/lib/lua/luci/view/admin_status/nradio_8080_sysauth.htm"
+OPENWRT_LUCI_8080_VIEWDIR=""
+OPENWRT_LUCI_8080_DETAILS=""
+OPENWRT_LUCI_8080_SYSAUTH=""
 OPENWRT_LUCI_8080_INDEX_CACHE="/tmp/luci-indexcache-bootstrap"
 OPENWRT_LUCI_8080_THEME_VERSION="git-20.356.64372-1259bb1-1"
 OPENWRT_LUCI_8080_THEME_URL="https://downloads.openwrt.org/releases/18.06.9/packages/aarch64_cortex-a53/luci/luci-theme-bootstrap_git-20.356.64372-1259bb1-1_all.ipk"
@@ -21478,6 +21479,321 @@ hakimi_enable_custom_rules() {
     uci commit openclash >/dev/null 2>&1 || die "保存哈基米自定义规则开关失败"
 }
 
+hakimi_prepare_rule_helper() {
+    HAKIMI_HELPER="$WORKDIR/hakimi-rule-helper.rb"
+    command -v ruby >/dev/null 2>&1 || die "分流核验需要 ruby，请先运行哈基米依赖检查修复"
+    cat > "$HAKIMI_HELPER" <<'EOF_HAKIMI_RULE_HELPER'
+require 'yaml'
+
+def nradio_yaml(path)
+  value = YAML.respond_to?(:unsafe_load_file) ? YAML.unsafe_load_file(path) : YAML.load_file(path)
+  raise '配置内容不是 YAML 对象' unless value.is_a?(Hash)
+  value
+end
+
+def nradio_provider_matches(config, rule)
+  kind, value, = rule.split(',')
+  value = value.to_s.downcase
+  providers = config['proxy-providers']
+  return [] unless providers.is_a?(Hash) && !value.empty?
+  providers.map do |name, provider|
+    next unless provider.is_a?(Hash) && provider['type'] == 'http'
+    host = provider['url'].to_s[/\Ahttps?:\/\/(?:[^\/@]+@)?([^\/:?#]+)/i, 1].to_s.downcase
+    matched = case kind
+              when 'DOMAIN' then host == value
+              when 'DOMAIN-SUFFIX' then host == value || host.end_with?('.' + value)
+              when 'DOMAIN-KEYWORD' then host.include?(value)
+              else false
+              end
+    [name, provider, host] if matched && !host.empty?
+  end.compact
+end
+
+def nradio_apply_provider_rules(config, rules)
+  changed = 0
+  handled = {}
+  targets = %w[DIRECT REJECT] + %w[proxies proxy-groups].flat_map do |key|
+    Array(config[key]).map { |entry| entry['name'] if entry.is_a?(Hash) }.compact
+  end
+  rules.each do |rule|
+    target = rule.split(',')[2]
+    nradio_provider_matches(config, rule).each do |name, provider, _host|
+      next if handled[name]
+      handled[name] = true
+      unless targets.include?(target)
+        warn "[NRadio] 订阅 #{name} 的下载策略 #{target} 不存在，保留原设置"
+        next
+      end
+      next if provider['proxy'] == target
+      provider['proxy'] = target
+      changed += 1
+    end
+  end
+  changed
+end
+
+def nradio_dns_policy(rule)
+  kind, domain, target = rule.split(',')
+  raise 'DNS 联动仅支持完整域名或域名后缀' unless %w[DOMAIN DOMAIN-SUFFIX].include?(kind)
+  raise 'DNS 域名格式无效' unless domain.to_s.match?(/\A[a-z0-9_-]+(?:\.[a-z0-9_-]+)+\z/i)
+  raise 'DNS 联动需要选择可用代理策略' if target.to_s.empty? || %w[DIRECT REJECT].include?(target)
+  fragment = target.bytes.map { |byte| byte.chr.match?(/[A-Za-z0-9_.~-]/) ? byte.chr : '%%%02X' % byte }.join
+  [kind == 'DOMAIN' ? domain : '+.' + domain,
+   ["https://1.1.1.1/dns-query##{fragment}", "https://8.8.8.8/dns-query##{fragment}"]]
+end
+
+def nradio_apply_dns_rules(config, rules)
+  return 0 if rules.empty?
+  dns = config['dns']
+  raise '当前配置未启用 DNS' unless dns.is_a?(Hash) && dns['enable'] == true
+  raise '请先配置 proxy-server-nameserver，避免代理节点解析循环' if Array(dns['proxy-server-nameserver']).empty?
+  targets = %w[proxies proxy-groups].flat_map do |key|
+    Array(config[key]).map { |entry| entry['name'] if entry.is_a?(Hash) }.compact
+  end
+  policy = dns.fetch('nameserver-policy', {})
+  raise 'nameserver-policy 格式无效' unless policy.is_a?(Hash)
+  changed = 0
+  rules.reverse_each do |rule|
+    raise 'DNS 联动的代理策略不存在' unless targets.include?(rule.split(',')[2])
+    key, servers = nradio_dns_policy(rule)
+    next if policy[key] == servers
+    policy[key] = servers
+    changed += 1
+  end
+  dns['nameserver-policy'] = policy
+  changed
+end
+# NRADIO_PROVIDER_COMMON_END
+
+def nradio_rule_payload_equal(kind, actual, expected)
+  return actual == expected unless %w[IP-CIDR IP-CIDR6].include?(kind)
+  values = [actual, expected].map do |cidr|
+    address, bits = cidr.to_s.split('/')
+    width = kind == 'IP-CIDR6' ? 128 : 32
+    if width == 128
+      if address.include?('.')
+        tail = address.split(':').last
+        octets = tail.split('.').map(&:to_i)
+        address = address[0...-tail.length] + '%x:%x' % [octets[0] * 256 + octets[1], octets[2] * 256 + octets[3]]
+      end
+      left, right = address.split('::', -1)
+      groups = left.to_s.split(':')
+      groups += Array.new(8 - groups.length - right.to_s.split(':').length, '0') + right.to_s.split(':') unless right.nil?
+      number = groups.inject(0) { |value, group| (value << 16) + group.to_i(16) }
+    else
+      number = address.split('.').inject(0) { |value, octet| (value << 8) + octet.to_i }
+    end
+    prefix = Integer(bits || width)
+    [number >> (width - prefix), prefix]
+  end
+  values[0] == values[1]
+end
+
+begin
+  action = ARGV.shift
+  case action
+  when 'scan'
+    nradio_provider_matches(nradio_yaml(ARGV[0]), ARGV[1]).each do |name, provider, host|
+      puts "订阅源配置: #{name} / #{host}，原始下载策略: #{provider.fetch('proxy', 'DIRECT')}"
+    end
+  when 'check-dns'
+    nradio_apply_dns_rules(nradio_yaml(ARGV[0]), [ARGV[1]])
+  when 'dns-forward'
+    core_port, adg_path = ARGV
+    raise '哈基米 DNS 端口无效' unless core_port.to_s.match?(/\A\d+\z/) && (1..65535).include?(core_port.to_i)
+    if !adg_path.to_s.empty?
+      dns = nradio_yaml(adg_path).fetch('dns')
+      allowed = ["127.0.0.1:#{core_port}", "tcp://127.0.0.1:#{core_port}"]
+      upstream = Array(dns['upstream_dns'])
+      raise 'AdGuardHome 上游不是单一哈基米链路，请先修正上游 DNS' if upstream.empty? || !(upstream - allowed).empty? || !Array(dns['fallback_dns']).empty?
+      port = Integer(dns.fetch('port'))
+      raise 'AdGuardHome DNS 端口无效' unless (1..65535).include?(port) && port != 53 && port != core_port.to_i
+      puts "127.0.0.1##{port}"
+    else
+      puts "127.0.0.1##{core_port}"
+    end
+  when 'save-provider', 'save-overrides'
+    config_path, rule, hook_path, output_path, provider_sync, dns_sync, dns_config_path = ARGV
+    provider_sync = '1' if action == 'save-provider'
+    config = nradio_yaml(config_path)
+    raise '当前配置没有匹配的 HTTP 订阅' if provider_sync == '1' && nradio_provider_matches(config, rule).empty?
+    nradio_apply_dns_rules(dns_config_path.to_s.empty? ? config : nradio_yaml(dns_config_path), [rule]) if dns_sync == '1'
+    original = File.exist?(hook_path) ? File.read(hook_path) : "#!/bin/sh\n"
+    pattern = /^# nradio-provider-routing:begin\n.*?^# nradio-provider-routing:end\n?/m
+    owned = original[pattern].to_s
+    rules = owned.scan(/^# nradio-provider-rule: (.+)$/).flatten
+    dns_rules = owned.scan(/^# nradio-dns-rule: (.+)$/).flatten
+    key = rule.split(',')[0, 2]
+    [[rules, provider_sync], [dns_rules, dns_sync]].each do |entries, enabled|
+      next unless enabled == '1'
+      entries.reject! { |entry| entry.split(',')[0, 2] == key }
+      entries.unshift(rule)
+    end
+    common = File.read(__FILE__).split("\n# NRADIO_PROVIDER_COMMON_END\n", 2).first
+    block = "# nradio-provider-routing:begin\n"
+    rules.each { |entry| block << "# nradio-provider-rule: #{entry}\n" }
+    dns_rules.each { |entry| block << "# nradio-dns-rule: #{entry}\n" }
+    block << "ruby -ryaml - \"$1\" >> /tmp/openclash.log 2>&1 <<'NRADIO_PROVIDER_ROUTING_RUBY'\n"
+    block << common << "\nbegin\n  config = nradio_yaml(ARGV.fetch(0))\n"
+    block << "  changed = nradio_apply_provider_rules(config, #{rules.inspect})\n"
+    block << "  changed += nradio_apply_dns_rules(config, #{dns_rules.inspect})\n"
+    block << "  if changed > 0\n"
+    block << "    File.open(ARGV[0], 'w') { |file| file.write(YAML.dump(config)) }\n  end\n"
+    block << "rescue StandardError => error\n  warn '[NRadio] 分流覆写失败: ' + error.class.to_s\n  exit 1\nend\n"
+    block << "NRADIO_PROVIDER_ROUTING_RUBY\n# nradio-provider-routing:end\n"
+    remaining = original.sub(pattern, '')
+    if remaining.start_with?('#!')
+      first, rest = remaining.split("\n", 2)
+      result = first + "\n" + block + rest.to_s
+    else
+      result = "#!/bin/sh\n" + block + remaining
+    end
+    File.open(output_path, 'w') { |file| file.write(result) }
+  when 'verify'
+    rules_path, config_path, rule, runtime_path, provider_sync, dns_sync = ARGV
+    settings = nradio_yaml(config_path)
+    raise '核心当前不是规则模式，分流规则不会参与匹配' unless settings['mode'].to_s.downcase == 'rule'
+    kind, value, target = rule.split(',')
+    active = Array(nradio_yaml(rules_path)['rules']).find do |entry|
+      entry.is_a?(Hash) && entry['type'].to_s.delete('-').casecmp(kind.delete('-')).zero? &&
+        nradio_rule_payload_equal(kind, entry['payload'], value) && entry['proxy'] == target &&
+        !(entry['extra'].is_a?(Hash) && entry['extra']['disabled'] == true)
+    end
+    raise '核心尚未载入所选分流规则' unless active
+    if provider_sync == '1'
+      matches = nradio_provider_matches(nradio_yaml(runtime_path), rule)
+      raise '运行配置没有匹配的 HTTP 订阅' if matches.empty?
+      raise '订阅下载策略未同步，可能被其他覆写覆盖' unless matches.all? { |_name, provider, _host| provider['proxy'] == target }
+      puts '订阅:   运行配置中的下载策略已同步'
+    end
+    if dns_sync == '1'
+      key, servers = nradio_dns_policy(rule)
+      dns = nradio_yaml(runtime_path)['dns']
+      raise '域名加密 DNS 策略未载入，可能被其他覆写覆盖' unless dns.is_a?(Hash) && dns.fetch('nameserver-policy', {})[key] == servers
+      puts 'DNS:    运行配置已载入该域名的加密 DNS 与指定出口'
+    end
+    puts "规则:   核心已载入 #{rule}"
+    puts '模式:   rule'
+  else
+    raise '未知分流助手操作'
+  end
+rescue StandardError => error
+  # Parser errors can contain subscription URLs; only print our own diagnostics.
+  warn(error.instance_of?(RuntimeError) ? error.message : "分流配置处理失败: #{error.class}")
+  exit 1
+end
+EOF_HAKIMI_RULE_HELPER
+    [ "$?" -eq 0 ] || die "准备分流核验程序失败"
+}
+
+hakimi_select_provider_sync() {
+    local provider_summary
+    HAKIMI_PROVIDER_SYNC='0'
+    provider_summary="$(ruby "$HAKIMI_HELPER" scan "$1" "$2")" || die "读取订阅下载策略失败"
+    [ -n "$provider_summary" ] || return 0
+    printf '%s\n' "$provider_summary"
+    log "说明:   订阅下载使用独立策略，普通域名规则不能覆盖其下载设置"
+    printf '是否同时将这些订阅的下载策略设为 %s？[y/N]: ' "$HAKIMI_SELECTED_TARGET"
+    ui_read_line || die "input cancelled"
+    case "$UI_READ_RESULT" in
+        y|Y|yes|YES) HAKIMI_PROVIDER_SYNC='1' ;;
+        *) log "订阅:   保留当前下载策略" ;;
+    esac
+}
+
+hakimi_select_dns_sync() {
+    local adg_path adg_user adg_password adg_port core_port
+    HAKIMI_DNS_SYNC='0'
+    HAKIMI_DNS_ADG_PORT=''
+    case "$2" in DOMAIN,*|DOMAIN-SUFFIX,*) ;; *) return 0 ;; esac
+    case "$HAKIMI_SELECTED_TARGET" in DIRECT|REJECT) return 0 ;; esac
+    log "DNS:    若出现找不到服务器 IP 或解析异常，可同时为此域名配置加密 DNS"
+    printf '是否同时修正此域名 DNS，经 %s 查询？[y/N]: ' "$HAKIMI_SELECTED_TARGET"
+    ui_read_line || die "input cancelled"
+    case "$UI_READ_RESULT" in y|Y|yes|YES) ;; *) return 0 ;; esac
+    ruby "$HAKIMI_HELPER" check-dns "/etc/openclash/${1##*/}" "$2" || die "DNS 联动条件不满足"
+    HAKIMI_DNS_DOMAIN="${2#*,}"
+    HAKIMI_DNS_DOMAIN="${HAKIMI_DNS_DOMAIN%%,*}"
+    core_port="$(uci -q get openclash.config.dns_port 2>/dev/null || true)"
+    adg_path=''
+    if [ "$(uci -q get AdGuardHome.AdGuardHome.enabled 2>/dev/null || true)" = '1' ]; then
+        adg_path="$(uci -q get AdGuardHome.AdGuardHome.configpath 2>/dev/null || true)"
+        [ -f "$adg_path" ] || die "无法读取 AdGuardHome DNS 配置"
+        adg_port="$(uci -q get AdGuardHome.AdGuardHome.httpport 2>/dev/null || true)"
+        case "$adg_port" in ''|*[!0-9]*) die "AdGuardHome API 端口无效" ;; esac
+        adg_user="$(uci -q get AdGuardHome.AdGuardHome.dashboard_user 2>/dev/null || true)"
+        adg_password="$(uci -q get AdGuardHome.AdGuardHome.dashboard_password 2>/dev/null || true)"
+        HAKIMI_DNS_ADG_HEADERS="$WORKDIR/hakimi-adg.headers"
+        printf '%s:%s' "$adg_user" "$adg_password" | ruby -e 'puts "Authorization: Basic " + [STDIN.read].pack("m0")' > "$HAKIMI_DNS_ADG_HEADERS" || die "准备 DNS 缓存清理认证失败"
+        curl --noproxy '*' -fsS --connect-timeout 2 --max-time 5 --header "@$HAKIMI_DNS_ADG_HEADERS" \
+            "http://127.0.0.1:$adg_port/control/status" -o /dev/null || die "AdGuardHome API 认证失败，无法清理旧 DNS 缓存"
+        HAKIMI_DNS_ADG_PORT="$adg_port"
+    fi
+    HAKIMI_DNS_FORWARD="$(ruby "$HAKIMI_HELPER" dns-forward "$core_port" "$adg_path")" || die "DNS 转发链路检查失败"
+    HAKIMI_DNS_SYNC='1'
+    log "DNS:    此域名及子域名固定转发到 $HAKIMI_DNS_FORWARD，加密解析策略与分流规则一同保存"
+}
+
+hakimi_save_rule_overrides() {
+    local hook_path hook_tmp
+    hook_path='/etc/openclash/custom/openclash_custom_overwrite.sh'
+    hook_tmp="$WORKDIR/hakimi-custom-overwrite.tmp"
+    ruby "$HAKIMI_HELPER" save-overrides "$1" "$2" "$hook_path" "$hook_tmp" "$HAKIMI_PROVIDER_SYNC" "$HAKIMI_DNS_SYNC" "/etc/openclash/${1##*/}" || die "生成分流覆写失败"
+    sh -n "$hook_tmp" || die "分流覆写语法检查失败"
+    cat "$hook_tmp" > "$hook_path" || die "保存分流覆写失败"
+    chmod 755 "$hook_path" || die "设置分流覆写权限失败"
+    if [ "$HAKIMI_DNS_SYNC" = '1' ]; then
+        if ! uci -q get 'dhcp.@dnsmasq[0].server' | tr ' ' '\n' | grep -Fx "/$HAKIMI_DNS_DOMAIN/$HAKIMI_DNS_FORWARD" >/dev/null 2>&1; then
+            uci add_list "dhcp.@dnsmasq[0].server=/$HAKIMI_DNS_DOMAIN/$HAKIMI_DNS_FORWARD" || die "保存域名 DNS 转发失败"
+        fi
+        uci commit dhcp || die "提交域名 DNS 转发失败"
+    fi
+    log "覆写:   所选订阅下载 / DNS 策略已保存，重载后生效"
+}
+
+hakimi_reload_dns_chain() {
+    [ "$HAKIMI_DNS_SYNC" = '1' ] || return 0
+    if [ -n "$HAKIMI_DNS_ADG_PORT" ]; then
+        curl --noproxy '*' -fsS --connect-timeout 2 --max-time 5 --header "@$HAKIMI_DNS_ADG_HEADERS" -X POST \
+            "http://127.0.0.1:$HAKIMI_DNS_ADG_PORT/control/cache_clear" -o /dev/null || return 1
+    fi
+    /etc/init.d/dnsmasq restart > "$WORKDIR/hakimi-dns-restart.log" 2>&1 || return 1
+    log "DNS:    转发已重载，路由器 DNS 旧缓存已清理"
+}
+
+hakimi_verify_reloaded_rule() {
+    local config_path rule_line api_port api_secret api_headers verify_log attempt
+    config_path="$1"
+    rule_line="$2"
+    api_port="$(uci -q get openclash.config.cn_port 2>/dev/null || true)"
+    case "$api_port" in
+        ''|*[!0-9]*) log "核验:   无法读取哈基米控制端口"; return 1 ;;
+    esac
+    command -v curl >/dev/null 2>&1 || { log "核验:   缺少 curl"; return 1; }
+    api_secret="$(uci -q get openclash.config.dashboard_password 2>/dev/null || true)"
+    api_headers="$WORKDIR/hakimi-api.headers"
+    printf 'Authorization: Bearer %s\n' "$api_secret" > "$api_headers" || return 1
+    verify_log="$WORKDIR/hakimi-verify.log"
+    attempt=0
+    while [ "$attempt" -lt 10 ]; do
+        attempt=$((attempt + 1))
+        if curl --noproxy '*' -fsS --connect-timeout 2 --max-time 3 --header "@$api_headers" \
+            "http://127.0.0.1:$api_port/rules" -o "$WORKDIR/hakimi-active-rules.json" 2> "$verify_log" &&
+           curl --noproxy '*' -fsS --connect-timeout 2 --max-time 3 --header "@$api_headers" \
+            "http://127.0.0.1:$api_port/configs" -o "$WORKDIR/hakimi-active-config.json" 2> "$verify_log" &&
+           ruby "$HAKIMI_HELPER" verify "$WORKDIR/hakimi-active-rules.json" "$WORKDIR/hakimi-active-config.json" \
+            "$rule_line" "/etc/openclash/${config_path##*/}" "$HAKIMI_PROVIDER_SYNC" "$HAKIMI_DNS_SYNC" > "$verify_log" 2>&1; then
+            cat "$verify_log"
+            return 0
+        fi
+        [ "$attempt" -ge 10 ] || sleep 2
+    done
+    log "核验:   重载后未确认规则生效"
+    cat "$verify_log"
+    log "日志:   请查看 /tmp/openclash.log"
+    return 1
+}
+
 openclash_asn_mmdb_valid() {
     asn_file="/etc/openclash/ASN.mmdb"
     [ -f "$asn_file" ] || return 1
@@ -21815,6 +22131,7 @@ run_openclash_dependency_repair_check() {
 }
 
 run_hakimi_easy_rule_helper() {
+    local config_path policy_file user_value conflicts
     require_root
     mkdir -p "$WORKDIR"
 
@@ -21828,7 +22145,7 @@ run_hakimi_easy_rule_helper() {
 
     log "$OPENCLASH_DISPLAY_NAME 傻瓜分流助手"
     log "配置:   $config_path"
-    log "说明:   机场订阅或在线订阅生成的 YAML 可能被更新覆盖，本助手只写入哈基米自定义规则文件"
+    log "说明:   分流规则、订阅下载策略与域名 DNS 可联动保存，供重载时应用"
     log "说明:   默认域名使用 DOMAIN-SUFFIX；精确域名前加 =，关键词前加 keyword:"
     log ""
     log "可用分流目标:"
@@ -21851,31 +22168,31 @@ run_hakimi_easy_rule_helper() {
     log "  $HAKIMI_RULE_LINE"
     log "写入:   $OPENCLASH_CUSTOM_RULES_FILE"
 
+    hakimi_prepare_rule_helper
+    hakimi_select_provider_sync "$config_path" "$HAKIMI_RULE_LINE"
+    hakimi_select_dns_sync "$config_path" "$HAKIMI_RULE_LINE"
     if hakimi_rule_exact_exists "$OPENCLASH_CUSTOM_RULES_FILE" "$HAKIMI_RULE_LINE"; then
-        hakimi_enable_custom_rules
-        log "结果:   相同规则已存在，未重复写入；已启用哈基米自定义规则"
-        record_action_history "5 > 3" "$OPENCLASH_DISPLAY_NAME 自定义规则启用" "PASS" "disabled"
-        MENU_ACTION_COMPLETED='1'
-        return 0
+        log "规则:   相同规则已存在，继续应用和重载流程"
+    else
+        conflicts="$(hakimi_rule_conflicts "$OPENCLASH_CUSTOM_RULES_FILE" "$HAKIMI_RULE_KEY" "$HAKIMI_RULE_LINE" 2>/dev/null || true)"
+        if [ -n "$conflicts" ]; then
+            log "冲突:   已存在同对象的其他分流规则:"
+            printf '%s\n' "$conflicts"
+            printf '是否仍然追加新规则？[y/N]: '
+            ui_read_line || die "input cancelled"
+            case "$UI_READ_RESULT" in
+                y|Y|yes|YES) ;;
+                *) log "已取消"; return 0 ;;
+            esac
+        fi
+        confirm_or_exit "确认写入 $OPENCLASH_DISPLAY_NAME 自定义规则吗？"
+        hakimi_insert_custom_rule "$OPENCLASH_CUSTOM_RULES_FILE" "$HAKIMI_RULE_LINE"
     fi
-
-    conflicts="$(hakimi_rule_conflicts "$OPENCLASH_CUSTOM_RULES_FILE" "$HAKIMI_RULE_KEY" "$HAKIMI_RULE_LINE" 2>/dev/null || true)"
-    if [ -n "$conflicts" ]; then
-        log "冲突:   已存在同对象的其他分流规则:"
-        printf '%s\n' "$conflicts"
-        printf '是否仍然追加新规则？[y/N]: '
-        ui_read_line || die "input cancelled"
-        case "$UI_READ_RESULT" in
-            y|Y|yes|YES) ;;
-            *) log "已取消"; return 0 ;;
-        esac
-    fi
-
-    confirm_or_exit "确认写入 $OPENCLASH_DISPLAY_NAME 自定义规则吗？"
-    hakimi_insert_custom_rule "$OPENCLASH_CUSTOM_RULES_FILE" "$HAKIMI_RULE_LINE"
     hakimi_enable_custom_rules
-    log "结果:   已写入并启用哈基米自定义规则"
-    record_action_history "5 > 3" "$OPENCLASH_DISPLAY_NAME 自定义规则写入" "PASS" "disabled"
+    if [ "$HAKIMI_PROVIDER_SYNC" = '1' ] || [ "$HAKIMI_DNS_SYNC" = '1' ]; then
+        hakimi_save_rule_overrides "$config_path" "$HAKIMI_RULE_LINE"
+    fi
+    log "保存:   自定义规则已启用，等待重载"
     MENU_ACTION_COMPLETED='1'
 
     printf '是否现在重载 %s 使规则生效？[y/N]: ' "$OPENCLASH_DISPLAY_NAME"
@@ -21884,11 +22201,20 @@ run_hakimi_easy_rule_helper() {
         y|Y|yes|YES)
             [ -x /etc/init.d/openclash ] || die "$OPENCLASH_DISPLAY_NAME 服务脚本不存在"
             openclash_require_asn_mmdb
-            /etc/init.d/openclash restart >/dev/null 2>&1 || die "$OPENCLASH_DISPLAY_NAME 重载失败"
-            log "结果:   $OPENCLASH_DISPLAY_NAME 已重载"
+            if /etc/init.d/openclash restart > "$WORKDIR/hakimi-restart.log" 2>&1 &&
+               hakimi_verify_reloaded_rule "$config_path" "$HAKIMI_RULE_LINE" &&
+               hakimi_reload_dns_chain; then
+                log "结果:   $OPENCLASH_DISPLAY_NAME 已重载，分流规则已由核心确认"
+                record_action_history "5 > 3" "$OPENCLASH_DISPLAY_NAME 自定义规则生效" "PASS" "disabled"
+            else
+                record_action_history "5 > 3" "$OPENCLASH_DISPLAY_NAME 自定义规则生效" "FAIL" "disabled"
+                die "$OPENCLASH_DISPLAY_NAME 重载或生效核验失败，请查看 /tmp/openclash.log"
+            fi
             ;;
         *)
             log "提示:   写入完成；稍后可在哈基米页面手动重载"
+            [ "$HAKIMI_DNS_SYNC" != '1' ] || log "DNS:    请再次执行 5 > 3 并选择 DNS 联动与立即重载，以应用转发并清理旧缓存"
+            record_action_history "5 > 3" "$OPENCLASH_DISPLAY_NAME 自定义规则保存（待重载）" "WARN" "disabled"
             ;;
     esac
 }
@@ -66444,6 +66770,9 @@ prepare_openwrt_luci_8080_storage() {
     OPENWRT_LUCI_8080_ROOT="$openwrt_luci_8080_storage_base/openwrt-luci-8080"
     OPENWRT_LUCI_8080_DOCROOT="$OPENWRT_LUCI_8080_ROOT/www"
     OPENWRT_LUCI_8080_CGI="$OPENWRT_LUCI_8080_DOCROOT/cgi-bin/luci"
+    OPENWRT_LUCI_8080_VIEWDIR="$OPENWRT_LUCI_8080_ROOT/usr/lib/lua/luci/view"
+    OPENWRT_LUCI_8080_DETAILS="$OPENWRT_LUCI_8080_VIEWDIR/admin_status/nradio_details.htm"
+    OPENWRT_LUCI_8080_SYSAUTH="$OPENWRT_LUCI_8080_VIEWDIR/admin_status/nradio_8080_sysauth.htm"
 }
 
 openwrt_luci_8080_lan_ip() {
@@ -66491,57 +66820,59 @@ restore_nradio_main_theme_selection() {
     log "主站:   已保持 NRadio 默认主题 /luci-static/nradio"
 }
 
-install_nradio_main_theme_guard() {
-    cat > /etc/init.d/nradio-main-theme <<'EOF_NRADIO_MAIN_THEME_GUARD'
-#!/bin/sh /etc/rc.common
-# Restore the OEM theme after boot defaults and before uhttpd (START=50).
-START=49
-
-start() {
-    [ "$(uci -q get uhttpd.openwrt8080.enabled)" = '1' ] || return 0
-    [ -d /www/luci-static/nradio ] || return 0
-    [ -d /usr/lib/lua/luci/view/themes/nradio ] || return 0
-    rm -f /etc/uci-defaults/30_luci-theme-bootstrap || return 1
-    if [ "$(uci -q get luci.main.mediaurlbase)" = '/luci-static/nradio' ] &&
-       [ "$(uci -q get luci.themes.NRadio)" = '/luci-static/nradio' ]; then
-        return 0
+remove_legacy_openwrt_luci_8080_theme_guard() {
+    if [ -f /etc/init.d/nradio-main-theme ] &&
+       grep -Fq '# Restore the OEM theme after boot defaults and before uhttpd (START=50).' /etc/init.d/nradio-main-theme; then
+        /etc/init.d/nradio-main-theme disable || die "停用旧主题恢复服务失败"
+        rm -f /etc/init.d/nradio-main-theme || die "移除旧主题恢复服务失败"
     fi
-    uci -q set luci.main.mediaurlbase='/luci-static/nradio' || return 1
-    uci -q set luci.themes.NRadio='/luci-static/nradio' || return 1
-    uci -q commit luci || return 1
-    rm -f /tmp/luci-indexcache /tmp/luci-indexcache-bootstrap
-}
-EOF_NRADIO_MAIN_THEME_GUARD
-    [ "$?" -eq 0 ] || die "写入 NRadio 开机主题恢复失败"
-    chmod 755 /etc/init.d/nradio-main-theme || die "设置 NRadio 开机主题恢复权限失败"
-    /etc/init.d/nradio-main-theme enable || die "启用 NRadio 开机主题恢复失败"
 }
 
 install_openwrt_luci_8080_theme() {
+    local theme_pkg theme_data theme_static theme_views
     mkdir -p "$WORKDIR/openwrt-luci-8080" || die "创建 OpenWrt LuCI 下载目录失败"
     openwrt_luci_8080_ipk="$WORKDIR/openwrt-luci-8080/luci-theme-bootstrap.ipk"
     require_nradio_main_theme_assets
     log "下载:   OpenWrt 18.06.9 传统 Bootstrap 主题"
     download_file "$OPENWRT_LUCI_8080_THEME_URL" "$openwrt_luci_8080_ipk" || die "下载兼容版 luci-theme-bootstrap 失败"
 
-    openwrt_luci_8080_theme_install_ok='0'
-    if opkg install "$openwrt_luci_8080_ipk" --force-downgrade --force-reinstall; then
-        openwrt_luci_8080_theme_install_ok='1'
+    theme_pkg="$WORKDIR/openwrt-luci-8080/pkg"
+    theme_data="$WORKDIR/openwrt-luci-8080/data"
+    extract_ipk_archive "$openwrt_luci_8080_ipk" "$theme_pkg"
+    mkdir -p "$theme_data" || die "创建 Bootstrap 解包目录失败"
+    tar -xzf "$theme_pkg/data.tar.gz" -C "$theme_data" ./www/luci-static/bootstrap ./usr/lib/lua/luci/view/themes/bootstrap || die "解包 Bootstrap 主题资源失败"
+    [ -s "$theme_data/usr/lib/lua/luci/view/themes/bootstrap/header.htm" ] || die "Bootstrap 主题缺少 header.htm"
+
+    # Replace the old shared link before writing any private theme resources.
+    if [ -L "$OPENWRT_LUCI_8080_DOCROOT/luci-static" ]; then
+        rm -f "$OPENWRT_LUCI_8080_DOCROOT/luci-static" || die "移除旧 LuCI 静态资源链接失败"
     fi
-    restore_nradio_main_theme_selection
-    [ "$openwrt_luci_8080_theme_install_ok" = '1' ] || die "安装兼容版 luci-theme-bootstrap 失败"
-    install_nradio_main_theme_guard
+    theme_static="$OPENWRT_LUCI_8080_DOCROOT/luci-static/bootstrap"
+    theme_views="$OPENWRT_LUCI_8080_VIEWDIR/themes/bootstrap"
+    [ ! -L "$theme_static" ] && [ ! -L "$theme_views" ] || die "Bootstrap 独立目录不能是符号链接"
+    mkdir -p "$theme_static" "$theme_views" || die "创建 Bootstrap 独立目录失败"
+    cp -R "$theme_data/www/luci-static/bootstrap/." "$theme_static/" || die "写入 Bootstrap 静态资源失败"
+    cp -R "$theme_data/usr/lib/lua/luci/view/themes/bootstrap/." "$theme_views/" || die "写入 Bootstrap 模板失败"
+
+    remove_legacy_openwrt_luci_8080_theme_guard
 }
 
 write_openwrt_luci_8080_files() {
+    local shared_static static_name
     mkdir -p "$OPENWRT_LUCI_8080_DOCROOT/cgi-bin" "$(dirname "$OPENWRT_LUCI_8080_DETAILS")" || die "创建 OpenWrt LuCI（8080）目录失败"
     ensure_dir_writable "$OPENWRT_LUCI_8080_ROOT" "OpenWrt LuCI（8080）应用目录"
 
-    if [ -e "$OPENWRT_LUCI_8080_DOCROOT/luci-static" ] && [ ! -L "$OPENWRT_LUCI_8080_DOCROOT/luci-static" ]; then
-        die "拒绝覆盖非符号链接路径：$OPENWRT_LUCI_8080_DOCROOT/luci-static"
-    fi
-    rm -f "$OPENWRT_LUCI_8080_DOCROOT/luci-static" 2>/dev/null || true
-    ln -s /www/luci-static "$OPENWRT_LUCI_8080_DOCROOT/luci-static" || die "创建 LuCI 静态资源链接失败"
+    [ ! -L "$OPENWRT_LUCI_8080_DOCROOT/luci-static" ] || die "LuCI 静态资源目录尚未隔离"
+    mkdir -p "$OPENWRT_LUCI_8080_DOCROOT/luci-static" || die "创建 LuCI 静态资源目录失败"
+    for shared_static in /www/luci-static/*; do
+        [ -e "$shared_static" ] || continue
+        static_name="${shared_static##*/}"
+        [ "$static_name" = 'bootstrap' ] && continue
+        if [ ! -e "$OPENWRT_LUCI_8080_DOCROOT/luci-static/$static_name" ] &&
+           [ ! -L "$OPENWRT_LUCI_8080_DOCROOT/luci-static/$static_name" ]; then
+            ln -s "$shared_static" "$OPENWRT_LUCI_8080_DOCROOT/luci-static/$static_name" || die "创建 LuCI 公共资源链接失败"
+        fi
+    done
 
     cat > "$OPENWRT_LUCI_8080_DOCROOT/index.html" <<'EOF_OPENWRT_LUCI_8080_INDEX'
 <!DOCTYPE html>
@@ -66559,8 +66890,37 @@ EOF_OPENWRT_LUCI_8080_INDEX
     cat > "$OPENWRT_LUCI_8080_CGI" <<'EOF_OPENWRT_LUCI_8080_WRAPPER'
 #!/usr/bin/lua
 
+if os.getenv("SERVER_PORT") ~= "8080" then
+	io.write("Status: 404 Not Found\r\nContent-Type: text/plain\r\n\r\nNot Found\n")
+	return
+end
+
+local script_filename = os.getenv("SCRIPT_FILENAME") or (arg and arg[0]) or ""
+local instance_root = script_filename:match("^(.*)/www/cgi%-bin/luci$")
+if not instance_root or instance_root == "" then
+	io.write("Status: 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nInvalid CGI path\n")
+	return
+end
+local private_viewdir = instance_root .. "/usr/lib/lua/luci/view"
+
 require "luci.cacheloader"
 require "luci.sgi.cgi"
+
+local template = require "luci.template"
+local parser = require "luci.template.parser"
+local original_parse = parser.parse
+local shared_view_prefix = template.viewdir .. "/"
+function parser.parse(path, ...)
+	if path:sub(1, #shared_view_prefix) == shared_view_prefix then
+		local name = path:sub(#shared_view_prefix + 1)
+		if name:match("^themes/bootstrap/") or
+		   name == "admin_status/nradio_details.htm" or
+		   name == "admin_status/nradio_8080_sysauth.htm" then
+			path = private_viewdir .. "/" .. name
+		end
+	end
+	return original_parse(path, ...)
+end
 
 local luci_util = require "luci.util"
 if type(luci_util.shellquote) ~= "function" then
@@ -66675,6 +67035,13 @@ local function inject_plugin_menu(tree, admin)
 	end
 end
 
+local function set_bootstrap_theme(node)
+	node.mediaurlbase = "/luci-static/bootstrap"
+	for _, child in pairs(node.nodes or {}) do
+		if type(child) == "table" then set_bootstrap_theme(child) end
+	end
+end
+
 function luci.dispatcher.createtree()
 	local tree = original_createtree()
 	local admin = tree.nodes and tree.nodes.admin
@@ -66702,14 +67069,14 @@ function luci.dispatcher.createtree()
 			}
 		end
 	end
+	set_bootstrap_theme(tree)
 	return tree
 end
 
 function luci.dispatcher.httpdispatch(request, prefix)
 	local config = require "luci.config"
 	config.main.mediaurlbase = "/luci-static/bootstrap"
-	config.themes = config.themes or {}
-	config.themes.Bootstrap = "/luci-static/bootstrap"
+	config.themes = { Bootstrap = "/luci-static/bootstrap" }
 	return original_httpdispatch(request, prefix)
 end
 
@@ -67470,7 +67837,46 @@ install_openwrt_luci_8080() {
     rm -f "$OPENWRT_LUCI_8080_INDEX_CACHE" 2>/dev/null || true
     /etc/init.d/uhttpd reload || die "重载 uhttpd 失败"
     log "入口:   http://$openwrt_luci_8080_listen/"
-    record_action_history "4 > 3" "OpenWrt 原版 LuCI（8080）安装或更新" "PASS" "disabled"
+    record_action_history "4 > 3 > 1" "OpenWrt 原版 LuCI（8080）安装或更新" "PASS" "disabled"
+}
+
+uninstall_openwrt_luci_8080() {
+    require_root
+    require_openwrt_luci_8080_supported_model
+    confirm_or_exit "确认卸载 OpenWrt 原版 LuCI（8080）吗？"
+
+    if uci -q get uhttpd.openwrt8080 >/dev/null 2>&1; then
+        uci -q delete uhttpd.openwrt8080 || die "删除 8080 服务配置失败"
+        uci -q commit uhttpd || die "提交 8080 服务配置失败"
+    fi
+    remove_legacy_openwrt_luci_8080_theme_guard
+    restore_nradio_main_theme_selection
+    /etc/init.d/uhttpd reload || die "重载 uhttpd 失败"
+
+    rm -rf "$OPENWRT_LUCI_8080_OVERLAY_APPS_DIR/openwrt-luci-8080" \
+        "$ROOTFS_2ND_STORAGE_APPS_DIR/openwrt-luci-8080" || die "删除 8080 独立目录失败"
+    rm -f /usr/lib/lua/luci/view/admin_status/nradio_details.htm \
+        /usr/lib/lua/luci/view/admin_status/nradio_8080_sysauth.htm \
+        "$OPENWRT_LUCI_8080_INDEX_CACHE" || die "删除 8080 旧页面和缓存失败"
+    log "结果:   OpenWrt 原版 LuCI（8080）已卸载"
+    record_action_history "4 > 3 > 2" "OpenWrt 原版 LuCI（8080）卸载" "PASS" "disabled"
+}
+
+manage_openwrt_luci_8080() {
+    require_openwrt_luci_8080_supported_model
+    print_menu_header '4 / 3 / OpenWrt 原版 LuCI（8080）'
+    print_menu_item 1 '安装或更新'
+    print_menu_item 2 '卸载'
+    print_menu_item 0 '返回应用商店与页面'
+    print_menu_prompt '0-2'
+    read_category_choice
+    case "$UI_READ_RESULT" in
+        0) return 0 ;;
+        1) install_openwrt_luci_8080 ;;
+        2) uninstall_openwrt_luci_8080 ;;
+        *) die_menu_input_issue "$UI_READ_RESULT" ;;
+    esac
+    MENU_ACTION_COMPLETED='1'
 }
 
 c8_788_feature_allowed() {
@@ -67625,8 +68031,7 @@ run_menu_feature() {
             manage_nradio_home_temperature_switch
             ;;
         28)
-            install_openwrt_luci_8080
-            MENU_ACTION_COMPLETED='1'
+            manage_openwrt_luci_8080
             ;;
         29)
             manage_nradio_cpe_connection_monitoring
@@ -67777,7 +68182,9 @@ appcenter_polish_menu() {
             2) submenu_feature='16' ;;
             3)
                 if openwrt_luci_8080_model_supported; then
-                    submenu_feature='28'
+                    run_menu_feature 28
+                    [ "${MENU_ACTION_COMPLETED:-0}" = '1' ] && return 0
+                    continue
                 else
                     die_menu_input_issue "$UI_READ_RESULT"
                 fi
